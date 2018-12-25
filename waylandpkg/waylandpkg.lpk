@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <Package Version="4">
+    <Name Value="WaylandPkg"/>
+    <Type Value="RunAndDesignTime"/>
+    <CompilerOptions>
+      <Version Value="11"/>
+      <SearchPaths>
+        <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)/"/>
+      </SearchPaths>
+    </CompilerOptions>
+    <Files Count="7">
+      <Item1>
+        <Filename Value="wayland_cursor.pas"/>
+        <UnitName Value="wayland_cursor"/>
+      </Item1>
+      <Item2>
+        <Filename Value="wayland_protocol.pas"/>
+        <UnitName Value="wayland_protocol"/>
+      </Item2>
+      <Item3>
+        <Filename Value="wayland_shared_buffer.pas"/>
+        <UnitName Value="wayland_shared_buffer"/>
+      </Item3>
+      <Item4>
+        <Filename Value="wayland_util.pas"/>
+        <UnitName Value="wayland_util"/>
+      </Item4>
+      <Item5>
+        <Filename Value="wayland_client.pas"/>
+        <UnitName Value="wayland_client"/>
+      </Item5>
+      <Item6>
+        <Filename Value="wayland_client_core.pas"/>
+        <UnitName Value="wayland_client_core"/>
+      </Item6>
+      <Item7>
+        <Filename Value="wayland_egl.pas"/>
+        <UnitName Value="wayland_egl"/>
+      </Item7>
+    </Files>
+    <RequiredPkgs Count="1">
+      <Item1>
+        <PackageName Value="FCL"/>
+      </Item1>
+    </RequiredPkgs>
+    <UsageOptions>
+      <UnitPath Value="$(PkgOutDir)"/>
+    </UsageOptions>
+    <PublishOptions>
+      <Version Value="2"/>
+    </PublishOptions>
+  </Package>
+</CONFIG>

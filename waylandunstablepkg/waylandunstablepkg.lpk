@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <Package Version="4">
+    <Name Value="WaylandUnstablePkg"/>
+    <Type Value="RunAndDesignTime"/>
+    <CompilerOptions>
+      <Version Value="11"/>
+      <SearchPaths>
+        <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)/"/>
+      </SearchPaths>
+    </CompilerOptions>
+    <Files Count="22">
+      <Item1>
+        <Filename Value="fullscreen_shell_unstable_v1_protocol.pas"/>
+        <UnitName Value="fullscreen_shell_unstable_v1_protocol"/>
+      </Item1>
+      <Item2>
+        <Filename Value="idle_inhibit_unstable_v1_protocol.pas"/>
+        <UnitName Value="idle_inhibit_unstable_v1_protocol"/>
+      </Item2>
+      <Item3>
+        <Filename Value="input_method_unstable_v1_protocol.pas"/>
+        <UnitName Value="input_method_unstable_v1_protocol"/>
+      </Item3>
+      <Item4>
+        <Filename Value="input_timestamps_unstable_v1_protocol.pas"/>
+        <UnitName Value="input_timestamps_unstable_v1_protocol"/>
+      </Item4>
+      <Item5>
+        <Filename Value="keyboard_shortcuts_inhibit_unstable_v1_protocol.pas"/>
+        <UnitName Value="keyboard_shortcuts_inhibit_unstable_v1_protocol"/>
+      </Item5>
+      <Item6>
+        <Filename Value="linux_dmabuf_unstable_v1_protocol.pas"/>
+        <UnitName Value="linux_dmabuf_unstable_v1_protocol"/>
+      </Item6>
+      <Item7>
+        <Filename Value="linux_explicit_synchronization_unstable_v1_protocol.pas"/>
+        <UnitName Value="linux_explicit_synchronization_unstable_v1_protocol"/>
+      </Item7>
+      <Item8>
+        <Filename Value="pointer_constraints_unstable_v1_protocol.pas"/>
+        <UnitName Value="pointer_constraints_unstable_v1_protocol"/>
+      </Item8>
+      <Item9>
+        <Filename Value="pointer_gestures_unstable_v1_protocol.pas"/>
+        <UnitName Value="pointer_gestures_unstable_v1_protocol"/>
+      </Item9>
+      <Item10>
+        <Filename Value="primary_selection_unstable_v1_protocol.pas"/>
+        <UnitName Value="primary_selection_unstable_v1_protocol"/>
+      </Item10>
+      <Item11>
+        <Filename Value="relative_pointer_unstable_v1_protocol.pas"/>
+        <UnitName Value="relative_pointer_unstable_v1_protocol"/>
+      </Item11>
+      <Item12>
+        <Filename Value="tablet_unstable_v1_protocol.pas"/>
+        <UnitName Value="tablet_unstable_v1_protocol"/>
+      </Item12>
+      <Item13>
+        <Filename Value="tablet_unstable_v2_protocol.pas"/>
+        <UnitName Value="tablet_unstable_v2_protocol"/>
+      </Item13>
+      <Item14>
+        <Filename Value="text_input_unstable_v1_protocol.pas"/>
+        <UnitName Value="text_input_unstable_v1_protocol"/>
+      </Item14>
+      <Item15>
+        <Filename Value="text_input_unstable_v3_protocol.pas"/>
+        <UnitName Value="text_input_unstable_v3_protocol"/>
+      </Item15>
+      <Item16>
+        <Filename Value="xdg_decoration_unstable_v1_protocol.pas"/>
+        <UnitName Value="xdg_decoration_unstable_v1_protocol"/>
+      </Item16>
+      <Item17>
+        <Filename Value="xdg_foreign_unstable_v1_protocol.pas"/>
+        <UnitName Value="xdg_foreign_unstable_v1_protocol"/>
+      </Item17>
+      <Item18>
+        <Filename Value="xdg_foreign_unstable_v2_protocol.pas"/>
+        <UnitName Value="xdg_foreign_unstable_v2_protocol"/>
+      </Item18>
+      <Item19>
+        <Filename Value="xdg_output_unstable_v1_protocol.pas"/>
+        <UnitName Value="xdg_output_unstable_v1_protocol"/>
+      </Item19>
+      <Item20>
+        <Filename Value="xdg_shell_unstable_v5_protocol.pas"/>
+        <UnitName Value="xdg_shell_unstable_v5_protocol"/>
+      </Item20>
+      <Item21>
+        <Filename Value="xdg_shell_unstable_v6_protocol.pas"/>
+        <UnitName Value="xdg_shell_unstable_v6_protocol"/>
+      </Item21>
+      <Item22>
+        <Filename Value="xwayland_keyboard_grab_unstable_v1_protocol.pas"/>
+        <UnitName Value="xwayland_keyboard_grab_unstable_v1_protocol"/>
+      </Item22>
+    </Files>
+    <RequiredPkgs Count="3">
+      <Item1>
+        <PackageName Value="WaylandStablePkg"/>
+      </Item1>
+      <Item2>
+        <PackageName Value="WaylandPkg"/>
+      </Item2>
+      <Item3>
+        <PackageName Value="FCL"/>
+      </Item3>
+    </RequiredPkgs>
+    <UsageOptions>
+      <UnitPath Value="$(PkgOutDir)"/>
+    </UsageOptions>
+    <PublishOptions>
+      <Version Value="2"/>
+    </PublishOptions>
+  </Package>
+</CONFIG>
