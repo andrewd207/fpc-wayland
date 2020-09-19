@@ -6,14 +6,12 @@ unit viewporter_protocol;
 interface
 
 uses
-  ctypes, wayland_util, wayland_client_core, wayland_protocol;
+  Classes, Sysutils, ctypes, wayland_util, wayland_client_core, wayland_protocol;
 
 
 type
-  Pwp_viewporter = ^Twp_viewporter;
-  Twp_viewporter = record end;
-  Pwp_viewport = ^Twp_viewport;
-  Twp_viewport = record end;
+  Pwp_viewporter = Pointer;
+  Pwp_viewport = Pointer;
 const
   WP_VIEWPORTER_ERROR_VIEWPORT_EXISTS = 0; // the surface already has a viewport object associated
 
@@ -35,31 +33,45 @@ type
 
 
 
-  Iwp_viewporterListener = interface
-  ['Iwp_viewporterListener']
+  TWpViewporter = class;
+  TWpViewport = class;
+
+
+  IWpViewporterListener = interface
+  ['IWpViewporterListener']
   end;
 
-  Iwp_viewportListener = interface
-  ['Iwp_viewportListener']
+  IWpViewportListener = interface
+  ['IWpViewportListener']
   end;
 
 
 
-procedure wp_viewporter_destroy(wp_viewporter: Pwp_viewporter);
-function  wp_viewporter_get_viewport(wp_viewporter: Pwp_viewporter; surface: Pwl_surface): Pwp_viewport;
-function  wp_viewporter_add_listener(wp_viewporter: Pwp_viewporter; listener: Pwp_viewporter_listener; data: Pointer): cint;
-procedure  wp_viewporter_add_listener(wp_viewporter: Pwp_viewporter; AIntf: Iwp_viewporterListener);
-procedure wp_viewporter_set_user_data(wp_viewporter: Pwp_viewporter; user_data: Pointer);
-function  wp_viewporter_get_user_data(wp_viewporter: Pwp_viewporter): Pointer;
-function  wp_viewporter_get_version(wp_viewporter: Pwp_viewporter): cuint32;
-procedure wp_viewport_destroy(wp_viewport: Pwp_viewport);
-procedure wp_viewport_set_source(wp_viewport: Pwp_viewport; x: cint32; y: cint32; width: cint32; height: cint32);
-procedure wp_viewport_set_destination(wp_viewport: Pwp_viewport; width: cint; height: cint);
-function  wp_viewport_add_listener(wp_viewport: Pwp_viewport; listener: Pwp_viewport_listener; data: Pointer): cint;
-procedure  wp_viewport_add_listener(wp_viewport: Pwp_viewport; AIntf: Iwp_viewportListener);
-procedure wp_viewport_set_user_data(wp_viewport: Pwp_viewport; user_data: Pointer);
-function  wp_viewport_get_user_data(wp_viewport: Pwp_viewport): Pointer;
-function  wp_viewport_get_version(wp_viewport: Pwp_viewport): cuint32;
+
+  TWpViewporter = class(TWLProxyObject)
+  private
+    const _DESTROY = 0;
+    const _GET_VIEWPORT = 1;
+  public
+    destructor Destroy; override;
+    function GetViewport(ASurface: TWlSurface; AProxyClass: TWLProxyObjectClass = nil {TWpViewport}): TWpViewport;
+    function AddListener(AIntf: IWpViewporterListener): LongInt;
+  end;
+
+  TWpViewport = class(TWLProxyObject)
+  private
+    const _DESTROY = 0;
+    const _SET_SOURCE = 1;
+    const _SET_DESTINATION = 2;
+  public
+    destructor Destroy; override;
+    procedure SetSource(AX: Longint{24.8}; AY: Longint{24.8}; AWidth: Longint{24.8}; AHeight: Longint{24.8});
+    procedure SetDestination(AWidth: LongInt; AHeight: LongInt);
+    function AddListener(AIntf: IWpViewportListener): LongInt;
+  end;
+
+
+
 
 
 
@@ -71,102 +83,59 @@ var
 
 implementation
 
-const
-_WP_VIEWPORTER_DESTROY = 0;
-_WP_VIEWPORTER_GET_VIEWPORT = 1;
-_WP_VIEWPORT_DESTROY = 0;
-_WP_VIEWPORT_SET_SOURCE = 1;
-_WP_VIEWPORT_SET_DESTINATION = 2;
-
-
 var
   vIntf_wp_viewporter_Listener: Twp_viewporter_listener;
   vIntf_wp_viewport_Listener: Twp_viewport_listener;
 
 
 
-procedure wp_viewporter_destroy(wp_viewporter: Pwp_viewporter);
+destructor TWpViewporter.Destroy;
 begin
-  wl_proxy_marshal(Pwl_proxy(wp_viewporter), _WP_VIEWPORTER_DESTROY);
-  wl_proxy_destroy(Pwl_proxy(wp_viewporter));
+  wl_proxy_marshal(FProxy, _DESTROY);
+  inherited Destroy;
 end;
 
-function  wp_viewporter_get_viewport(wp_viewporter: Pwp_viewporter; surface: Pwl_surface): Pwp_viewport;
+function TWpViewporter.GetViewport(ASurface: TWlSurface; AProxyClass: TWLProxyObjectClass = nil {TWpViewport}): TWpViewport;
 var
   id: Pwl_proxy;
 begin
-  id := wl_proxy_marshal_constructor(Pwl_proxy(wp_viewporter),
-      _WP_VIEWPORTER_GET_VIEWPORT, @wp_viewport_interface, nil, surface);
-  Result := Pwp_viewport(id);
+  id := wl_proxy_marshal_constructor(FProxy,
+      _GET_VIEWPORT, @wp_viewport_interface, nil, ASurface.Proxy);
+  if AProxyClass = nil then
+    AProxyClass := TWpViewport;
+  Result := TWpViewport(AProxyClass.Create(id));
+  if not AProxyClass.InheritsFrom(TWpViewport) then
+    Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TWpViewport]);
 end;
 
-function  wp_viewporter_add_listener(wp_viewporter: Pwp_viewporter; listener: Pwp_viewporter_listener; data: Pointer): cint;
+function TWpViewporter.AddListener(AIntf: IWpViewporterListener): LongInt;
 begin
-  Result := wl_proxy_add_listener(Pwl_proxy(wp_viewporter), listener, data);
+  FUserDataRec.ListenerUserData := Pointer(AIntf);
+  Result := wl_proxy_add_listener(FProxy, @vIntf_wp_viewporter_Listener, @FUserDataRec);
+end;
+destructor TWpViewport.Destroy;
+begin
+  wl_proxy_marshal(FProxy, _DESTROY);
+  inherited Destroy;
 end;
 
-procedure  wp_viewporter_add_listener(wp_viewporter: Pwp_viewporter; AIntf: Iwp_viewporterListener);
+procedure TWpViewport.SetSource(AX: Longint{24.8}; AY: Longint{24.8}; AWidth: Longint{24.8}; AHeight: Longint{24.8});
 begin
-  wp_viewporter_add_listener(wp_viewporter, @vIntf_wp_viewporter_Listener, AIntf);
+  wl_proxy_marshal(FProxy, _SET_SOURCE, AX, AY, AWidth, AHeight);
 end;
 
-procedure wp_viewporter_set_user_data(wp_viewporter: Pwp_viewporter; user_data: Pointer);
+procedure TWpViewport.SetDestination(AWidth: LongInt; AHeight: LongInt);
 begin
-  wl_proxy_set_user_data(Pwl_proxy(wp_viewporter), user_data);
+  wl_proxy_marshal(FProxy, _SET_DESTINATION, AWidth, AHeight);
 end;
 
-function  wp_viewporter_get_user_data(wp_viewporter: Pwp_viewporter): Pointer;
+function TWpViewport.AddListener(AIntf: IWpViewportListener): LongInt;
 begin
-  Result := wl_proxy_get_user_data(Pwl_proxy(wp_viewporter));
+  FUserDataRec.ListenerUserData := Pointer(AIntf);
+  Result := wl_proxy_add_listener(FProxy, @vIntf_wp_viewport_Listener, @FUserDataRec);
 end;
 
-function  wp_viewporter_get_version(wp_viewporter: Pwp_viewporter): cuint32;
-begin
-  Result := wl_proxy_get_version(Pwl_proxy(wp_viewporter));
-end;
 
-procedure wp_viewport_destroy(wp_viewport: Pwp_viewport);
-begin
-  wl_proxy_marshal(Pwl_proxy(wp_viewport), _WP_VIEWPORT_DESTROY);
-  wl_proxy_destroy(Pwl_proxy(wp_viewport));
-end;
-
-procedure wp_viewport_set_source(wp_viewport: Pwp_viewport; x: cint32; y: cint32; width: cint32; height: cint32);
-begin
-  wl_proxy_marshal(Pwl_proxy(wp_viewport),
-      _WP_VIEWPORT_SET_SOURCE, x, y, width, height);
-end;
-
-procedure wp_viewport_set_destination(wp_viewport: Pwp_viewport; width: cint; height: cint);
-begin
-  wl_proxy_marshal(Pwl_proxy(wp_viewport),
-      _WP_VIEWPORT_SET_DESTINATION, width, height);
-end;
-
-function  wp_viewport_add_listener(wp_viewport: Pwp_viewport; listener: Pwp_viewport_listener; data: Pointer): cint;
-begin
-  Result := wl_proxy_add_listener(Pwl_proxy(wp_viewport), listener, data);
-end;
-
-procedure  wp_viewport_add_listener(wp_viewport: Pwp_viewport; AIntf: Iwp_viewportListener);
-begin
-  wp_viewport_add_listener(wp_viewport, @vIntf_wp_viewport_Listener, AIntf);
-end;
-
-procedure wp_viewport_set_user_data(wp_viewport: Pwp_viewport; user_data: Pointer);
-begin
-  wl_proxy_set_user_data(Pwl_proxy(wp_viewport), user_data);
-end;
-
-function  wp_viewport_get_user_data(wp_viewport: Pwp_viewport): Pointer;
-begin
-  Result := wl_proxy_get_user_data(Pwl_proxy(wp_viewport));
-end;
-
-function  wp_viewport_get_version(wp_viewport: Pwp_viewport): cuint32;
-begin
-  Result := wl_proxy_get_version(Pwl_proxy(wp_viewport));
-end;
 
 
 

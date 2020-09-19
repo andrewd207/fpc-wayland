@@ -6,54 +6,32 @@ unit wayland_protocol;
 interface
 
 uses
-  ctypes, wayland_util, wayland_client_core;
+  Classes, Sysutils, ctypes, wayland_util, wayland_client_core;
 
 
 type
-  Pwl_display = ^Twl_display;
-  Twl_display = record end;
-  Pwl_registry = ^Twl_registry;
-  Twl_registry = record end;
-  Pwl_callback = ^Twl_callback;
-  Twl_callback = record end;
-  Pwl_compositor = ^Twl_compositor;
-  Twl_compositor = record end;
-  Pwl_shm_pool = ^Twl_shm_pool;
-  Twl_shm_pool = record end;
-  Pwl_shm = ^Twl_shm;
-  Twl_shm = record end;
-  Pwl_buffer = ^Twl_buffer;
-  Twl_buffer = record end;
-  Pwl_data_offer = ^Twl_data_offer;
-  Twl_data_offer = record end;
-  Pwl_data_source = ^Twl_data_source;
-  Twl_data_source = record end;
-  Pwl_data_device = ^Twl_data_device;
-  Twl_data_device = record end;
-  Pwl_data_device_manager = ^Twl_data_device_manager;
-  Twl_data_device_manager = record end;
-  Pwl_shell = ^Twl_shell;
-  Twl_shell = record end;
-  Pwl_shell_surface = ^Twl_shell_surface;
-  Twl_shell_surface = record end;
-  Pwl_surface = ^Twl_surface;
-  Twl_surface = record end;
-  Pwl_seat = ^Twl_seat;
-  Twl_seat = record end;
-  Pwl_pointer = ^Twl_pointer;
-  Twl_pointer = record end;
-  Pwl_keyboard = ^Twl_keyboard;
-  Twl_keyboard = record end;
-  Pwl_touch = ^Twl_touch;
-  Twl_touch = record end;
-  Pwl_output = ^Twl_output;
-  Twl_output = record end;
-  Pwl_region = ^Twl_region;
-  Twl_region = record end;
-  Pwl_subcompositor = ^Twl_subcompositor;
-  Twl_subcompositor = record end;
-  Pwl_subsurface = ^Twl_subsurface;
-  Twl_subsurface = record end;
+  Pwl_display = Pointer;
+  Pwl_registry = Pointer;
+  Pwl_callback = Pointer;
+  Pwl_compositor = Pointer;
+  Pwl_shm_pool = Pointer;
+  Pwl_shm = Pointer;
+  Pwl_buffer = Pointer;
+  Pwl_data_offer = Pointer;
+  Pwl_data_source = Pointer;
+  Pwl_data_device = Pointer;
+  Pwl_data_device_manager = Pointer;
+  Pwl_shell = Pointer;
+  Pwl_shell_surface = Pointer;
+  Pwl_surface = Pointer;
+  Pwl_seat = Pointer;
+  Pwl_pointer = Pointer;
+  Pwl_keyboard = Pointer;
+  Pwl_touch = Pointer;
+  Pwl_output = Pointer;
+  Pwl_region = Pointer;
+  Pwl_subcompositor = Pointer;
+  Pwl_subsurface = Pointer;
 const
   WL_DISPLAY_ERROR_INVALID_OBJECT = 0; // server couldn't find object
   WL_DISPLAY_ERROR_INVALID_METHOD = 1; // method doesn't exist on the specified interface
@@ -62,19 +40,19 @@ const
 type
   Pwl_display_listener = ^Twl_display_listener;
   Twl_display_listener = record
-    error : procedure(data: Pointer; wl_display: Pwl_display; object_id: pointer; code: cuint; message: pchar); cdecl;
-    delete_id : procedure(data: Pointer; wl_display: Pwl_display; id: cuint); cdecl;
+    error : procedure(data: Pointer; AWlDisplay: Pwl_display; AObjectId: Pointer; ACode: DWord; AMessage: Pchar); cdecl;
+    delete_id : procedure(data: Pointer; AWlDisplay: Pwl_display; AId: DWord); cdecl;
   end;
 
   Pwl_registry_listener = ^Twl_registry_listener;
   Twl_registry_listener = record
-    global : procedure(data: Pointer; wl_registry: Pwl_registry; name: cuint; &interface: pchar; version: cuint); cdecl;
-    global_remove : procedure(data: Pointer; wl_registry: Pwl_registry; name: cuint); cdecl;
+    global : procedure(data: Pointer; AWlRegistry: Pwl_registry; AName: DWord; AInterface: Pchar; AVersion: DWord); cdecl;
+    global_remove : procedure(data: Pointer; AWlRegistry: Pwl_registry; AName: DWord); cdecl;
   end;
 
   Pwl_callback_listener = ^Twl_callback_listener;
   Twl_callback_listener = record
-    done : procedure(data: Pointer; wl_callback: Pwl_callback; callback_data: cuint); cdecl;
+    done : procedure(data: Pointer; AWlCallback: Pwl_callback; ACallbackData: DWord); cdecl;
   end;
 
   Pwl_compositor_listener = ^Twl_compositor_listener;
@@ -151,12 +129,12 @@ const
 type
   Pwl_shm_listener = ^Twl_shm_listener;
   Twl_shm_listener = record
-    format : procedure(data: Pointer; wl_shm: Pwl_shm; format: cuint); cdecl;
+    format : procedure(data: Pointer; AWlShm: Pwl_shm; AFormat: DWord); cdecl;
   end;
 
   Pwl_buffer_listener = ^Twl_buffer_listener;
   Twl_buffer_listener = record
-    release : procedure(data: Pointer; wl_buffer: Pwl_buffer); cdecl;
+    release : procedure(data: Pointer; AWlBuffer: Pwl_buffer); cdecl;
   end;
 
 const
@@ -168,9 +146,9 @@ const
 type
   Pwl_data_offer_listener = ^Twl_data_offer_listener;
   Twl_data_offer_listener = record
-    offer : procedure(data: Pointer; wl_data_offer: Pwl_data_offer; mime_type: pchar); cdecl;
-    source_actions : procedure(data: Pointer; wl_data_offer: Pwl_data_offer; source_actions: cuint); cdecl;
-    action : procedure(data: Pointer; wl_data_offer: Pwl_data_offer; dnd_action: cuint); cdecl;
+    offer : procedure(data: Pointer; AWlDataOffer: Pwl_data_offer; AMimeType: Pchar); cdecl;
+    source_actions : procedure(data: Pointer; AWlDataOffer: Pwl_data_offer; ASourceActions: DWord); cdecl;
+    action : procedure(data: Pointer; AWlDataOffer: Pwl_data_offer; ADndAction: DWord); cdecl;
   end;
 
 const
@@ -180,12 +158,12 @@ const
 type
   Pwl_data_source_listener = ^Twl_data_source_listener;
   Twl_data_source_listener = record
-    target : procedure(data: Pointer; wl_data_source: Pwl_data_source; mime_type: pchar); cdecl;
-    send : procedure(data: Pointer; wl_data_source: Pwl_data_source; mime_type: pchar; fd: cint); cdecl;
-    cancelled : procedure(data: Pointer; wl_data_source: Pwl_data_source); cdecl;
-    dnd_drop_performed : procedure(data: Pointer; wl_data_source: Pwl_data_source); cdecl;
-    dnd_finished : procedure(data: Pointer; wl_data_source: Pwl_data_source); cdecl;
-    action : procedure(data: Pointer; wl_data_source: Pwl_data_source; dnd_action: cuint); cdecl;
+    target : procedure(data: Pointer; AWlDataSource: Pwl_data_source; AMimeType: Pchar); cdecl;
+    send : procedure(data: Pointer; AWlDataSource: Pwl_data_source; AMimeType: Pchar; AFd: LongInt{fd}); cdecl;
+    cancelled : procedure(data: Pointer; AWlDataSource: Pwl_data_source); cdecl;
+    dnd_drop_performed : procedure(data: Pointer; AWlDataSource: Pwl_data_source); cdecl;
+    dnd_finished : procedure(data: Pointer; AWlDataSource: Pwl_data_source); cdecl;
+    action : procedure(data: Pointer; AWlDataSource: Pwl_data_source; ADndAction: DWord); cdecl;
   end;
 
 const
@@ -194,12 +172,12 @@ const
 type
   Pwl_data_device_listener = ^Twl_data_device_listener;
   Twl_data_device_listener = record
-    data_offer : procedure(data: Pointer; wl_data_device: Pwl_data_device; id: Pwl_data_offer); cdecl;
-    enter : procedure(data: Pointer; wl_data_device: Pwl_data_device; serial: cuint; surface: Pwl_surface; x: cint32; y: cint32; id: Pwl_data_offer); cdecl;
-    leave : procedure(data: Pointer; wl_data_device: Pwl_data_device); cdecl;
-    motion : procedure(data: Pointer; wl_data_device: Pwl_data_device; time: cuint; x: cint32; y: cint32); cdecl;
-    drop : procedure(data: Pointer; wl_data_device: Pwl_data_device); cdecl;
-    selection : procedure(data: Pointer; wl_data_device: Pwl_data_device; id: Pwl_data_offer); cdecl;
+    data_offer : procedure(data: Pointer; AWlDataDevice: Pwl_data_device; AId: Pwl_data_offer); cdecl;
+    enter : procedure(data: Pointer; AWlDataDevice: Pwl_data_device; ASerial: DWord; ASurface: Pwl_surface; AX: Longint{24.8}; AY: Longint{24.8}; AId: Pwl_data_offer); cdecl;
+    leave : procedure(data: Pointer; AWlDataDevice: Pwl_data_device); cdecl;
+    motion : procedure(data: Pointer; AWlDataDevice: Pwl_data_device; ATime: DWord; AX: Longint{24.8}; AY: Longint{24.8}); cdecl;
+    drop : procedure(data: Pointer; AWlDataDevice: Pwl_data_device); cdecl;
+    selection : procedure(data: Pointer; AWlDataDevice: Pwl_data_device; AId: Pwl_data_offer); cdecl;
   end;
 
 const
@@ -240,9 +218,9 @@ const
 type
   Pwl_shell_surface_listener = ^Twl_shell_surface_listener;
   Twl_shell_surface_listener = record
-    ping : procedure(data: Pointer; wl_shell_surface: Pwl_shell_surface; serial: cuint); cdecl;
-    configure : procedure(data: Pointer; wl_shell_surface: Pwl_shell_surface; edges: cuint; width: cint; height: cint); cdecl;
-    popup_done : procedure(data: Pointer; wl_shell_surface: Pwl_shell_surface); cdecl;
+    ping : procedure(data: Pointer; AWlShellSurface: Pwl_shell_surface; ASerial: DWord); cdecl;
+    configure : procedure(data: Pointer; AWlShellSurface: Pwl_shell_surface; AEdges: DWord; AWidth: LongInt; AHeight: LongInt); cdecl;
+    popup_done : procedure(data: Pointer; AWlShellSurface: Pwl_shell_surface); cdecl;
   end;
 
 const
@@ -252,8 +230,8 @@ const
 type
   Pwl_surface_listener = ^Twl_surface_listener;
   Twl_surface_listener = record
-    enter : procedure(data: Pointer; wl_surface: Pwl_surface; output: Pwl_output); cdecl;
-    leave : procedure(data: Pointer; wl_surface: Pwl_surface; output: Pwl_output); cdecl;
+    enter : procedure(data: Pointer; AWlSurface: Pwl_surface; AOutput: Pwl_output); cdecl;
+    leave : procedure(data: Pointer; AWlSurface: Pwl_surface; AOutput: Pwl_output); cdecl;
   end;
 
 const
@@ -264,8 +242,8 @@ const
 type
   Pwl_seat_listener = ^Twl_seat_listener;
   Twl_seat_listener = record
-    capabilities : procedure(data: Pointer; wl_seat: Pwl_seat; capabilities: cuint); cdecl;
-    name : procedure(data: Pointer; wl_seat: Pwl_seat; name: pchar); cdecl;
+    capabilities : procedure(data: Pointer; AWlSeat: Pwl_seat; ACapabilities: DWord); cdecl;
+    name : procedure(data: Pointer; AWlSeat: Pwl_seat; AName: Pchar); cdecl;
   end;
 
 const
@@ -282,15 +260,15 @@ const
 type
   Pwl_pointer_listener = ^Twl_pointer_listener;
   Twl_pointer_listener = record
-    enter : procedure(data: Pointer; wl_pointer: Pwl_pointer; serial: cuint; surface: Pwl_surface; surface_x: cint32; surface_y: cint32); cdecl;
-    leave : procedure(data: Pointer; wl_pointer: Pwl_pointer; serial: cuint; surface: Pwl_surface); cdecl;
-    motion : procedure(data: Pointer; wl_pointer: Pwl_pointer; time: cuint; surface_x: cint32; surface_y: cint32); cdecl;
-    button : procedure(data: Pointer; wl_pointer: Pwl_pointer; serial: cuint; time: cuint; button: cuint; state: cuint); cdecl;
-    axis : procedure(data: Pointer; wl_pointer: Pwl_pointer; time: cuint; axis: cuint; value: cint32); cdecl;
-    frame : procedure(data: Pointer; wl_pointer: Pwl_pointer); cdecl;
-    axis_source : procedure(data: Pointer; wl_pointer: Pwl_pointer; axis_source: cuint); cdecl;
-    axis_stop : procedure(data: Pointer; wl_pointer: Pwl_pointer; time: cuint; axis: cuint); cdecl;
-    axis_discrete : procedure(data: Pointer; wl_pointer: Pwl_pointer; axis: cuint; discrete: cint); cdecl;
+    enter : procedure(data: Pointer; AWlPointer: Pwl_pointer; ASerial: DWord; ASurface: Pwl_surface; ASurfaceX: Longint{24.8}; ASurfaceY: Longint{24.8}); cdecl;
+    leave : procedure(data: Pointer; AWlPointer: Pwl_pointer; ASerial: DWord; ASurface: Pwl_surface); cdecl;
+    motion : procedure(data: Pointer; AWlPointer: Pwl_pointer; ATime: DWord; ASurfaceX: Longint{24.8}; ASurfaceY: Longint{24.8}); cdecl;
+    button : procedure(data: Pointer; AWlPointer: Pwl_pointer; ASerial: DWord; ATime: DWord; AButton: DWord; AState: DWord); cdecl;
+    axis : procedure(data: Pointer; AWlPointer: Pwl_pointer; ATime: DWord; AAxis: DWord; AValue: Longint{24.8}); cdecl;
+    frame : procedure(data: Pointer; AWlPointer: Pwl_pointer); cdecl;
+    axis_source : procedure(data: Pointer; AWlPointer: Pwl_pointer; AAxisSource: DWord); cdecl;
+    axis_stop : procedure(data: Pointer; AWlPointer: Pwl_pointer; ATime: DWord; AAxis: DWord); cdecl;
+    axis_discrete : procedure(data: Pointer; AWlPointer: Pwl_pointer; AAxis: DWord; ADiscrete: LongInt); cdecl;
   end;
 
 const
@@ -302,23 +280,23 @@ const
 type
   Pwl_keyboard_listener = ^Twl_keyboard_listener;
   Twl_keyboard_listener = record
-    keymap : procedure(data: Pointer; wl_keyboard: Pwl_keyboard; format: cuint; fd: cint; size: cuint); cdecl;
-    enter : procedure(data: Pointer; wl_keyboard: Pwl_keyboard; serial: cuint; surface: Pwl_surface; keys: Pwl_array); cdecl;
-    leave : procedure(data: Pointer; wl_keyboard: Pwl_keyboard; serial: cuint; surface: Pwl_surface); cdecl;
-    key : procedure(data: Pointer; wl_keyboard: Pwl_keyboard; serial: cuint; time: cuint; key: cuint; state: cuint); cdecl;
-    modifiers : procedure(data: Pointer; wl_keyboard: Pwl_keyboard; serial: cuint; mods_depressed: cuint; mods_latched: cuint; mods_locked: cuint; group: cuint); cdecl;
-    repeat_info : procedure(data: Pointer; wl_keyboard: Pwl_keyboard; rate: cint; delay: cint); cdecl;
+    keymap : procedure(data: Pointer; AWlKeyboard: Pwl_keyboard; AFormat: DWord; AFd: LongInt{fd}; ASize: DWord); cdecl;
+    enter : procedure(data: Pointer; AWlKeyboard: Pwl_keyboard; ASerial: DWord; ASurface: Pwl_surface; AKeys: Pwl_array); cdecl;
+    leave : procedure(data: Pointer; AWlKeyboard: Pwl_keyboard; ASerial: DWord; ASurface: Pwl_surface); cdecl;
+    key : procedure(data: Pointer; AWlKeyboard: Pwl_keyboard; ASerial: DWord; ATime: DWord; AKey: DWord; AState: DWord); cdecl;
+    modifiers : procedure(data: Pointer; AWlKeyboard: Pwl_keyboard; ASerial: DWord; AModsDepressed: DWord; AModsLatched: DWord; AModsLocked: DWord; AGroup: DWord); cdecl;
+    repeat_info : procedure(data: Pointer; AWlKeyboard: Pwl_keyboard; ARate: LongInt; ADelay: LongInt); cdecl;
   end;
 
   Pwl_touch_listener = ^Twl_touch_listener;
   Twl_touch_listener = record
-    down : procedure(data: Pointer; wl_touch: Pwl_touch; serial: cuint; time: cuint; surface: Pwl_surface; id: cint; x: cint32; y: cint32); cdecl;
-    up : procedure(data: Pointer; wl_touch: Pwl_touch; serial: cuint; time: cuint; id: cint); cdecl;
-    motion : procedure(data: Pointer; wl_touch: Pwl_touch; time: cuint; id: cint; x: cint32; y: cint32); cdecl;
-    frame : procedure(data: Pointer; wl_touch: Pwl_touch); cdecl;
-    cancel : procedure(data: Pointer; wl_touch: Pwl_touch); cdecl;
-    shape : procedure(data: Pointer; wl_touch: Pwl_touch; id: cint; major: cint32; minor: cint32); cdecl;
-    orientation : procedure(data: Pointer; wl_touch: Pwl_touch; id: cint; orientation: cint32); cdecl;
+    down : procedure(data: Pointer; AWlTouch: Pwl_touch; ASerial: DWord; ATime: DWord; ASurface: Pwl_surface; AId: LongInt; AX: Longint{24.8}; AY: Longint{24.8}); cdecl;
+    up : procedure(data: Pointer; AWlTouch: Pwl_touch; ASerial: DWord; ATime: DWord; AId: LongInt); cdecl;
+    motion : procedure(data: Pointer; AWlTouch: Pwl_touch; ATime: DWord; AId: LongInt; AX: Longint{24.8}; AY: Longint{24.8}); cdecl;
+    frame : procedure(data: Pointer; AWlTouch: Pwl_touch); cdecl;
+    cancel : procedure(data: Pointer; AWlTouch: Pwl_touch); cdecl;
+    shape : procedure(data: Pointer; AWlTouch: Pwl_touch; AId: LongInt; AMajor: Longint{24.8}; AMinor: Longint{24.8}); cdecl;
+    orientation : procedure(data: Pointer; AWlTouch: Pwl_touch; AId: LongInt; AOrientation: Longint{24.8}); cdecl;
   end;
 
 const
@@ -342,10 +320,10 @@ const
 type
   Pwl_output_listener = ^Twl_output_listener;
   Twl_output_listener = record
-    geometry : procedure(data: Pointer; wl_output: Pwl_output; x: cint; y: cint; physical_width: cint; physical_height: cint; subpixel: cint; make: pchar; model: pchar; transform: cint); cdecl;
-    mode : procedure(data: Pointer; wl_output: Pwl_output; flags: cuint; width: cint; height: cint; refresh: cint); cdecl;
-    done : procedure(data: Pointer; wl_output: Pwl_output); cdecl;
-    scale : procedure(data: Pointer; wl_output: Pwl_output; factor: cint); cdecl;
+    geometry : procedure(data: Pointer; AWlOutput: Pwl_output; AX: LongInt; AY: LongInt; APhysicalWidth: LongInt; APhysicalHeight: LongInt; ASubpixel: LongInt; AMake: Pchar; AModel: Pchar; ATransform: LongInt); cdecl;
+    mode : procedure(data: Pointer; AWlOutput: Pwl_output; AFlags: DWord; AWidth: LongInt; AHeight: LongInt; ARefresh: LongInt); cdecl;
+    done : procedure(data: Pointer; AWlOutput: Pwl_output); cdecl;
+    scale : procedure(data: Pointer; AWlOutput: Pwl_output; AFactor: LongInt); cdecl;
   end;
 
   Pwl_region_listener = ^Twl_region_listener;
@@ -370,333 +348,436 @@ type
 
 
 
-  Iwl_displayListener = interface
-  ['Iwl_displayListener']
-    procedure wl_display_error(wl_display: Pwl_display; object_id: pointer; code: cuint; message: pchar);
-    procedure wl_display_delete_id(wl_display: Pwl_display; id: cuint);
+  TWlDisplay = class;
+  TWlRegistry = class;
+  TWlCallback = class;
+  TWlCompositor = class;
+  TWlShmPool = class;
+  TWlShm = class;
+  TWlBuffer = class;
+  TWlDataOffer = class;
+  TWlDataSource = class;
+  TWlDataDevice = class;
+  TWlDataDeviceManager = class;
+  TWlShell = class;
+  TWlShellSurface = class;
+  TWlSurface = class;
+  TWlSeat = class;
+  TWlPointer = class;
+  TWlKeyboard = class;
+  TWlTouch = class;
+  TWlOutput = class;
+  TWlRegion = class;
+  TWlSubcompositor = class;
+  TWlSubsurface = class;
+
+
+  IWlDisplayListener = interface
+  ['IWlDisplayListener']
+    procedure wl_display_error(AWlDisplay: TWlDisplay; AObjectId: Pointer; ACode: DWord; AMessage: String);
+    procedure wl_display_delete_id(AWlDisplay: TWlDisplay; AId: DWord);
   end;
 
-  Iwl_registryListener = interface
-  ['Iwl_registryListener']
-    procedure wl_registry_global(wl_registry: Pwl_registry; name: cuint; &interface: pchar; version: cuint);
-    procedure wl_registry_global_remove(wl_registry: Pwl_registry; name: cuint);
+  IWlRegistryListener = interface
+  ['IWlRegistryListener']
+    procedure wl_registry_global(AWlRegistry: TWlRegistry; AName: DWord; AInterface: String; AVersion: DWord);
+    procedure wl_registry_global_remove(AWlRegistry: TWlRegistry; AName: DWord);
   end;
 
-  Iwl_callbackListener = interface
-  ['Iwl_callbackListener']
-    procedure wl_callback_done(wl_callback: Pwl_callback; callback_data: cuint);
+  IWlCallbackListener = interface
+  ['IWlCallbackListener']
+    procedure wl_callback_done(AWlCallback: TWlCallback; ACallbackData: DWord);
   end;
 
-  Iwl_compositorListener = interface
-  ['Iwl_compositorListener']
+  IWlCompositorListener = interface
+  ['IWlCompositorListener']
   end;
 
-  Iwl_shm_poolListener = interface
-  ['Iwl_shm_poolListener']
+  IWlShmPoolListener = interface
+  ['IWlShmPoolListener']
   end;
 
-  Iwl_shmListener = interface
-  ['Iwl_shmListener']
-    procedure wl_shm_format(wl_shm: Pwl_shm; format: cuint);
+  IWlShmListener = interface
+  ['IWlShmListener']
+    procedure wl_shm_format(AWlShm: TWlShm; AFormat: DWord);
   end;
 
-  Iwl_bufferListener = interface
-  ['Iwl_bufferListener']
-    procedure wl_buffer_release(wl_buffer: Pwl_buffer);
+  IWlBufferListener = interface
+  ['IWlBufferListener']
+    procedure wl_buffer_release(AWlBuffer: TWlBuffer);
   end;
 
-  Iwl_data_offerListener = interface
-  ['Iwl_data_offerListener']
-    procedure wl_data_offer_offer(wl_data_offer: Pwl_data_offer; mime_type: pchar);
-    procedure wl_data_offer_source_actions(wl_data_offer: Pwl_data_offer; source_actions: cuint);
-    procedure wl_data_offer_action(wl_data_offer: Pwl_data_offer; dnd_action: cuint);
+  IWlDataOfferListener = interface
+  ['IWlDataOfferListener']
+    procedure wl_data_offer_offer(AWlDataOffer: TWlDataOffer; AMimeType: String);
+    procedure wl_data_offer_source_actions(AWlDataOffer: TWlDataOffer; ASourceActions: DWord);
+    procedure wl_data_offer_action(AWlDataOffer: TWlDataOffer; ADndAction: DWord);
   end;
 
-  Iwl_data_sourceListener = interface
-  ['Iwl_data_sourceListener']
-    procedure wl_data_source_target(wl_data_source: Pwl_data_source; mime_type: pchar);
-    procedure wl_data_source_send(wl_data_source: Pwl_data_source; mime_type: pchar; fd: cint);
-    procedure wl_data_source_cancelled(wl_data_source: Pwl_data_source);
-    procedure wl_data_source_dnd_drop_performed(wl_data_source: Pwl_data_source);
-    procedure wl_data_source_dnd_finished(wl_data_source: Pwl_data_source);
-    procedure wl_data_source_action(wl_data_source: Pwl_data_source; dnd_action: cuint);
+  IWlDataSourceListener = interface
+  ['IWlDataSourceListener']
+    procedure wl_data_source_target(AWlDataSource: TWlDataSource; AMimeType: String);
+    procedure wl_data_source_send(AWlDataSource: TWlDataSource; AMimeType: String; AFd: LongInt{fd});
+    procedure wl_data_source_cancelled(AWlDataSource: TWlDataSource);
+    procedure wl_data_source_dnd_drop_performed(AWlDataSource: TWlDataSource);
+    procedure wl_data_source_dnd_finished(AWlDataSource: TWlDataSource);
+    procedure wl_data_source_action(AWlDataSource: TWlDataSource; ADndAction: DWord);
   end;
 
-  Iwl_data_deviceListener = interface
-  ['Iwl_data_deviceListener']
-    procedure wl_data_device_data_offer(wl_data_device: Pwl_data_device; id: Pwl_data_offer);
-    procedure wl_data_device_enter(wl_data_device: Pwl_data_device; serial: cuint; surface: Pwl_surface; x: cint32; y: cint32; id: Pwl_data_offer);
-    procedure wl_data_device_leave(wl_data_device: Pwl_data_device);
-    procedure wl_data_device_motion(wl_data_device: Pwl_data_device; time: cuint; x: cint32; y: cint32);
-    procedure wl_data_device_drop(wl_data_device: Pwl_data_device);
-    procedure wl_data_device_selection(wl_data_device: Pwl_data_device; id: Pwl_data_offer);
+  IWlDataDeviceListener = interface
+  ['IWlDataDeviceListener']
+    procedure wl_data_device_data_offer(AWlDataDevice: TWlDataDevice; AId: TWlDataOffer);
+    procedure wl_data_device_enter(AWlDataDevice: TWlDataDevice; ASerial: DWord; ASurface: TWlSurface; AX: Longint{24.8}; AY: Longint{24.8}; AId: TWlDataOffer);
+    procedure wl_data_device_leave(AWlDataDevice: TWlDataDevice);
+    procedure wl_data_device_motion(AWlDataDevice: TWlDataDevice; ATime: DWord; AX: Longint{24.8}; AY: Longint{24.8});
+    procedure wl_data_device_drop(AWlDataDevice: TWlDataDevice);
+    procedure wl_data_device_selection(AWlDataDevice: TWlDataDevice; AId: TWlDataOffer);
   end;
 
-  Iwl_data_device_managerListener = interface
-  ['Iwl_data_device_managerListener']
+  IWlDataDeviceManagerListener = interface
+  ['IWlDataDeviceManagerListener']
   end;
 
-  Iwl_shellListener = interface
-  ['Iwl_shellListener']
+  IWlShellListener = interface
+  ['IWlShellListener']
   end;
 
-  Iwl_shell_surfaceListener = interface
-  ['Iwl_shell_surfaceListener']
-    procedure wl_shell_surface_ping(wl_shell_surface: Pwl_shell_surface; serial: cuint);
-    procedure wl_shell_surface_configure(wl_shell_surface: Pwl_shell_surface; edges: cuint; width: cint; height: cint);
-    procedure wl_shell_surface_popup_done(wl_shell_surface: Pwl_shell_surface);
+  IWlShellSurfaceListener = interface
+  ['IWlShellSurfaceListener']
+    procedure wl_shell_surface_ping(AWlShellSurface: TWlShellSurface; ASerial: DWord);
+    procedure wl_shell_surface_configure(AWlShellSurface: TWlShellSurface; AEdges: DWord; AWidth: LongInt; AHeight: LongInt);
+    procedure wl_shell_surface_popup_done(AWlShellSurface: TWlShellSurface);
   end;
 
-  Iwl_surfaceListener = interface
-  ['Iwl_surfaceListener']
-    procedure wl_surface_enter(wl_surface: Pwl_surface; output: Pwl_output);
-    procedure wl_surface_leave(wl_surface: Pwl_surface; output: Pwl_output);
+  IWlSurfaceListener = interface
+  ['IWlSurfaceListener']
+    procedure wl_surface_enter(AWlSurface: TWlSurface; AOutput: TWlOutput);
+    procedure wl_surface_leave(AWlSurface: TWlSurface; AOutput: TWlOutput);
   end;
 
-  Iwl_seatListener = interface
-  ['Iwl_seatListener']
-    procedure wl_seat_capabilities(wl_seat: Pwl_seat; capabilities: cuint);
-    procedure wl_seat_name(wl_seat: Pwl_seat; name: pchar);
+  IWlSeatListener = interface
+  ['IWlSeatListener']
+    procedure wl_seat_capabilities(AWlSeat: TWlSeat; ACapabilities: DWord);
+    procedure wl_seat_name(AWlSeat: TWlSeat; AName: String);
   end;
 
-  Iwl_pointerListener = interface
-  ['Iwl_pointerListener']
-    procedure wl_pointer_enter(wl_pointer: Pwl_pointer; serial: cuint; surface: Pwl_surface; surface_x: cint32; surface_y: cint32);
-    procedure wl_pointer_leave(wl_pointer: Pwl_pointer; serial: cuint; surface: Pwl_surface);
-    procedure wl_pointer_motion(wl_pointer: Pwl_pointer; time: cuint; surface_x: cint32; surface_y: cint32);
-    procedure wl_pointer_button(wl_pointer: Pwl_pointer; serial: cuint; time: cuint; button: cuint; state: cuint);
-    procedure wl_pointer_axis(wl_pointer: Pwl_pointer; time: cuint; axis: cuint; value: cint32);
-    procedure wl_pointer_frame(wl_pointer: Pwl_pointer);
-    procedure wl_pointer_axis_source(wl_pointer: Pwl_pointer; axis_source: cuint);
-    procedure wl_pointer_axis_stop(wl_pointer: Pwl_pointer; time: cuint; axis: cuint);
-    procedure wl_pointer_axis_discrete(wl_pointer: Pwl_pointer; axis: cuint; discrete: cint);
+  IWlPointerListener = interface
+  ['IWlPointerListener']
+    procedure wl_pointer_enter(AWlPointer: TWlPointer; ASerial: DWord; ASurface: TWlSurface; ASurfaceX: Longint{24.8}; ASurfaceY: Longint{24.8});
+    procedure wl_pointer_leave(AWlPointer: TWlPointer; ASerial: DWord; ASurface: TWlSurface);
+    procedure wl_pointer_motion(AWlPointer: TWlPointer; ATime: DWord; ASurfaceX: Longint{24.8}; ASurfaceY: Longint{24.8});
+    procedure wl_pointer_button(AWlPointer: TWlPointer; ASerial: DWord; ATime: DWord; AButton: DWord; AState: DWord);
+    procedure wl_pointer_axis(AWlPointer: TWlPointer; ATime: DWord; AAxis: DWord; AValue: Longint{24.8});
+    procedure wl_pointer_frame(AWlPointer: TWlPointer);
+    procedure wl_pointer_axis_source(AWlPointer: TWlPointer; AAxisSource: DWord);
+    procedure wl_pointer_axis_stop(AWlPointer: TWlPointer; ATime: DWord; AAxis: DWord);
+    procedure wl_pointer_axis_discrete(AWlPointer: TWlPointer; AAxis: DWord; ADiscrete: LongInt);
   end;
 
-  Iwl_keyboardListener = interface
-  ['Iwl_keyboardListener']
-    procedure wl_keyboard_keymap(wl_keyboard: Pwl_keyboard; format: cuint; fd: cint; size: cuint);
-    procedure wl_keyboard_enter(wl_keyboard: Pwl_keyboard; serial: cuint; surface: Pwl_surface; keys: Pwl_array);
-    procedure wl_keyboard_leave(wl_keyboard: Pwl_keyboard; serial: cuint; surface: Pwl_surface);
-    procedure wl_keyboard_key(wl_keyboard: Pwl_keyboard; serial: cuint; time: cuint; key: cuint; state: cuint);
-    procedure wl_keyboard_modifiers(wl_keyboard: Pwl_keyboard; serial: cuint; mods_depressed: cuint; mods_latched: cuint; mods_locked: cuint; group: cuint);
-    procedure wl_keyboard_repeat_info(wl_keyboard: Pwl_keyboard; rate: cint; delay: cint);
+  IWlKeyboardListener = interface
+  ['IWlKeyboardListener']
+    procedure wl_keyboard_keymap(AWlKeyboard: TWlKeyboard; AFormat: DWord; AFd: LongInt{fd}; ASize: DWord);
+    procedure wl_keyboard_enter(AWlKeyboard: TWlKeyboard; ASerial: DWord; ASurface: TWlSurface; AKeys: Pwl_array);
+    procedure wl_keyboard_leave(AWlKeyboard: TWlKeyboard; ASerial: DWord; ASurface: TWlSurface);
+    procedure wl_keyboard_key(AWlKeyboard: TWlKeyboard; ASerial: DWord; ATime: DWord; AKey: DWord; AState: DWord);
+    procedure wl_keyboard_modifiers(AWlKeyboard: TWlKeyboard; ASerial: DWord; AModsDepressed: DWord; AModsLatched: DWord; AModsLocked: DWord; AGroup: DWord);
+    procedure wl_keyboard_repeat_info(AWlKeyboard: TWlKeyboard; ARate: LongInt; ADelay: LongInt);
   end;
 
-  Iwl_touchListener = interface
-  ['Iwl_touchListener']
-    procedure wl_touch_down(wl_touch: Pwl_touch; serial: cuint; time: cuint; surface: Pwl_surface; id: cint; x: cint32; y: cint32);
-    procedure wl_touch_up(wl_touch: Pwl_touch; serial: cuint; time: cuint; id: cint);
-    procedure wl_touch_motion(wl_touch: Pwl_touch; time: cuint; id: cint; x: cint32; y: cint32);
-    procedure wl_touch_frame(wl_touch: Pwl_touch);
-    procedure wl_touch_cancel(wl_touch: Pwl_touch);
-    procedure wl_touch_shape(wl_touch: Pwl_touch; id: cint; major: cint32; minor: cint32);
-    procedure wl_touch_orientation(wl_touch: Pwl_touch; id: cint; orientation: cint32);
+  IWlTouchListener = interface
+  ['IWlTouchListener']
+    procedure wl_touch_down(AWlTouch: TWlTouch; ASerial: DWord; ATime: DWord; ASurface: TWlSurface; AId: LongInt; AX: Longint{24.8}; AY: Longint{24.8});
+    procedure wl_touch_up(AWlTouch: TWlTouch; ASerial: DWord; ATime: DWord; AId: LongInt);
+    procedure wl_touch_motion(AWlTouch: TWlTouch; ATime: DWord; AId: LongInt; AX: Longint{24.8}; AY: Longint{24.8});
+    procedure wl_touch_frame(AWlTouch: TWlTouch);
+    procedure wl_touch_cancel(AWlTouch: TWlTouch);
+    procedure wl_touch_shape(AWlTouch: TWlTouch; AId: LongInt; AMajor: Longint{24.8}; AMinor: Longint{24.8});
+    procedure wl_touch_orientation(AWlTouch: TWlTouch; AId: LongInt; AOrientation: Longint{24.8});
   end;
 
-  Iwl_outputListener = interface
-  ['Iwl_outputListener']
-    procedure wl_output_geometry(wl_output: Pwl_output; x: cint; y: cint; physical_width: cint; physical_height: cint; subpixel: cint; make: pchar; model: pchar; transform: cint);
-    procedure wl_output_mode(wl_output: Pwl_output; flags: cuint; width: cint; height: cint; refresh: cint);
-    procedure wl_output_done(wl_output: Pwl_output);
-    procedure wl_output_scale(wl_output: Pwl_output; factor: cint);
+  IWlOutputListener = interface
+  ['IWlOutputListener']
+    procedure wl_output_geometry(AWlOutput: TWlOutput; AX: LongInt; AY: LongInt; APhysicalWidth: LongInt; APhysicalHeight: LongInt; ASubpixel: LongInt; AMake: String; AModel: String; ATransform: LongInt);
+    procedure wl_output_mode(AWlOutput: TWlOutput; AFlags: DWord; AWidth: LongInt; AHeight: LongInt; ARefresh: LongInt);
+    procedure wl_output_done(AWlOutput: TWlOutput);
+    procedure wl_output_scale(AWlOutput: TWlOutput; AFactor: LongInt);
   end;
 
-  Iwl_regionListener = interface
-  ['Iwl_regionListener']
+  IWlRegionListener = interface
+  ['IWlRegionListener']
   end;
 
-  Iwl_subcompositorListener = interface
-  ['Iwl_subcompositorListener']
+  IWlSubcompositorListener = interface
+  ['IWlSubcompositorListener']
   end;
 
-  Iwl_subsurfaceListener = interface
-  ['Iwl_subsurfaceListener']
+  IWlSubsurfaceListener = interface
+  ['IWlSubsurfaceListener']
   end;
 
 
 
-function  wl_display_sync(wl_display: Pwl_display): Pwl_callback;
-function  wl_display_get_registry(wl_display: Pwl_display): Pwl_registry;
-function  wl_display_add_listener(wl_display: Pwl_display; listener: Pwl_display_listener; data: Pointer): cint;
-procedure  wl_display_add_listener(wl_display: Pwl_display; AIntf: Iwl_displayListener);
-procedure wl_display_set_user_data(wl_display: Pwl_display; user_data: Pointer);
-function  wl_display_get_user_data(wl_display: Pwl_display): Pointer;
-function  wl_display_get_version(wl_display: Pwl_display): cuint32;
-procedure wl_display_destroy(wl_display: Pwl_display);
-function  wl_registry_bind(wl_registry: Pwl_registry; name: cuint; interface_: Pwl_interface; version: cuint32): Pointer;
-function  wl_registry_add_listener(wl_registry: Pwl_registry; listener: Pwl_registry_listener; data: Pointer): cint;
-procedure  wl_registry_add_listener(wl_registry: Pwl_registry; AIntf: Iwl_registryListener);
-procedure wl_registry_set_user_data(wl_registry: Pwl_registry; user_data: Pointer);
-function  wl_registry_get_user_data(wl_registry: Pwl_registry): Pointer;
-function  wl_registry_get_version(wl_registry: Pwl_registry): cuint32;
-procedure wl_registry_destroy(wl_registry: Pwl_registry);
-function  wl_callback_add_listener(wl_callback: Pwl_callback; listener: Pwl_callback_listener; data: Pointer): cint;
-procedure  wl_callback_add_listener(wl_callback: Pwl_callback; AIntf: Iwl_callbackListener);
-procedure wl_callback_set_user_data(wl_callback: Pwl_callback; user_data: Pointer);
-function  wl_callback_get_user_data(wl_callback: Pwl_callback): Pointer;
-function  wl_callback_get_version(wl_callback: Pwl_callback): cuint32;
-procedure wl_callback_destroy(wl_callback: Pwl_callback);
-function  wl_compositor_create_surface(wl_compositor: Pwl_compositor): Pwl_surface;
-function  wl_compositor_create_region(wl_compositor: Pwl_compositor): Pwl_region;
-function  wl_compositor_add_listener(wl_compositor: Pwl_compositor; listener: Pwl_compositor_listener; data: Pointer): cint;
-procedure  wl_compositor_add_listener(wl_compositor: Pwl_compositor; AIntf: Iwl_compositorListener);
-procedure wl_compositor_set_user_data(wl_compositor: Pwl_compositor; user_data: Pointer);
-function  wl_compositor_get_user_data(wl_compositor: Pwl_compositor): Pointer;
-function  wl_compositor_get_version(wl_compositor: Pwl_compositor): cuint32;
-procedure wl_compositor_destroy(wl_compositor: Pwl_compositor);
-function  wl_shm_pool_create_buffer(wl_shm_pool: Pwl_shm_pool; offset: cint; width: cint; height: cint; stride: cint; format: cuint): Pwl_buffer;
-procedure wl_shm_pool_destroy(wl_shm_pool: Pwl_shm_pool);
-procedure wl_shm_pool_resize(wl_shm_pool: Pwl_shm_pool; size: cint);
-function  wl_shm_pool_add_listener(wl_shm_pool: Pwl_shm_pool; listener: Pwl_shm_pool_listener; data: Pointer): cint;
-procedure  wl_shm_pool_add_listener(wl_shm_pool: Pwl_shm_pool; AIntf: Iwl_shm_poolListener);
-procedure wl_shm_pool_set_user_data(wl_shm_pool: Pwl_shm_pool; user_data: Pointer);
-function  wl_shm_pool_get_user_data(wl_shm_pool: Pwl_shm_pool): Pointer;
-function  wl_shm_pool_get_version(wl_shm_pool: Pwl_shm_pool): cuint32;
-function  wl_shm_create_pool(wl_shm: Pwl_shm; fd: cint; size: cint): Pwl_shm_pool;
-function  wl_shm_add_listener(wl_shm: Pwl_shm; listener: Pwl_shm_listener; data: Pointer): cint;
-procedure  wl_shm_add_listener(wl_shm: Pwl_shm; AIntf: Iwl_shmListener);
-procedure wl_shm_set_user_data(wl_shm: Pwl_shm; user_data: Pointer);
-function  wl_shm_get_user_data(wl_shm: Pwl_shm): Pointer;
-function  wl_shm_get_version(wl_shm: Pwl_shm): cuint32;
-procedure wl_shm_destroy(wl_shm: Pwl_shm);
-procedure wl_buffer_destroy(wl_buffer: Pwl_buffer);
-function  wl_buffer_add_listener(wl_buffer: Pwl_buffer; listener: Pwl_buffer_listener; data: Pointer): cint;
-procedure  wl_buffer_add_listener(wl_buffer: Pwl_buffer; AIntf: Iwl_bufferListener);
-procedure wl_buffer_set_user_data(wl_buffer: Pwl_buffer; user_data: Pointer);
-function  wl_buffer_get_user_data(wl_buffer: Pwl_buffer): Pointer;
-function  wl_buffer_get_version(wl_buffer: Pwl_buffer): cuint32;
-procedure wl_data_offer_accept(wl_data_offer: Pwl_data_offer; serial: cuint; mime_type: pchar);
-procedure wl_data_offer_receive(wl_data_offer: Pwl_data_offer; mime_type: pchar; fd: cint);
-procedure wl_data_offer_destroy(wl_data_offer: Pwl_data_offer);
-procedure wl_data_offer_finish(wl_data_offer: Pwl_data_offer);
-procedure wl_data_offer_set_actions(wl_data_offer: Pwl_data_offer; dnd_actions: cuint; preferred_action: cuint);
-function  wl_data_offer_add_listener(wl_data_offer: Pwl_data_offer; listener: Pwl_data_offer_listener; data: Pointer): cint;
-procedure  wl_data_offer_add_listener(wl_data_offer: Pwl_data_offer; AIntf: Iwl_data_offerListener);
-procedure wl_data_offer_set_user_data(wl_data_offer: Pwl_data_offer; user_data: Pointer);
-function  wl_data_offer_get_user_data(wl_data_offer: Pwl_data_offer): Pointer;
-function  wl_data_offer_get_version(wl_data_offer: Pwl_data_offer): cuint32;
-procedure wl_data_source_offer(wl_data_source: Pwl_data_source; mime_type: pchar);
-procedure wl_data_source_destroy(wl_data_source: Pwl_data_source);
-procedure wl_data_source_set_actions(wl_data_source: Pwl_data_source; dnd_actions: cuint);
-function  wl_data_source_add_listener(wl_data_source: Pwl_data_source; listener: Pwl_data_source_listener; data: Pointer): cint;
-procedure  wl_data_source_add_listener(wl_data_source: Pwl_data_source; AIntf: Iwl_data_sourceListener);
-procedure wl_data_source_set_user_data(wl_data_source: Pwl_data_source; user_data: Pointer);
-function  wl_data_source_get_user_data(wl_data_source: Pwl_data_source): Pointer;
-function  wl_data_source_get_version(wl_data_source: Pwl_data_source): cuint32;
-procedure wl_data_device_start_drag(wl_data_device: Pwl_data_device; source: Pwl_data_source; origin: Pwl_surface; icon: Pwl_surface; serial: cuint);
-procedure wl_data_device_set_selection(wl_data_device: Pwl_data_device; source: Pwl_data_source; serial: cuint);
-procedure wl_data_device_release(wl_data_device: Pwl_data_device);
-function  wl_data_device_add_listener(wl_data_device: Pwl_data_device; listener: Pwl_data_device_listener; data: Pointer): cint;
-procedure  wl_data_device_add_listener(wl_data_device: Pwl_data_device; AIntf: Iwl_data_deviceListener);
-procedure wl_data_device_set_user_data(wl_data_device: Pwl_data_device; user_data: Pointer);
-function  wl_data_device_get_user_data(wl_data_device: Pwl_data_device): Pointer;
-function  wl_data_device_get_version(wl_data_device: Pwl_data_device): cuint32;
-function  wl_data_device_manager_create_data_source(wl_data_device_manager: Pwl_data_device_manager): Pwl_data_source;
-function  wl_data_device_manager_get_data_device(wl_data_device_manager: Pwl_data_device_manager; seat: Pwl_seat): Pwl_data_device;
-function  wl_data_device_manager_add_listener(wl_data_device_manager: Pwl_data_device_manager; listener: Pwl_data_device_manager_listener; data: Pointer): cint;
-procedure  wl_data_device_manager_add_listener(wl_data_device_manager: Pwl_data_device_manager; AIntf: Iwl_data_device_managerListener);
-procedure wl_data_device_manager_set_user_data(wl_data_device_manager: Pwl_data_device_manager; user_data: Pointer);
-function  wl_data_device_manager_get_user_data(wl_data_device_manager: Pwl_data_device_manager): Pointer;
-function  wl_data_device_manager_get_version(wl_data_device_manager: Pwl_data_device_manager): cuint32;
-procedure wl_data_device_manager_destroy(wl_data_device_manager: Pwl_data_device_manager);
-function  wl_shell_get_shell_surface(wl_shell: Pwl_shell; surface: Pwl_surface): Pwl_shell_surface;
-function  wl_shell_add_listener(wl_shell: Pwl_shell; listener: Pwl_shell_listener; data: Pointer): cint;
-procedure  wl_shell_add_listener(wl_shell: Pwl_shell; AIntf: Iwl_shellListener);
-procedure wl_shell_set_user_data(wl_shell: Pwl_shell; user_data: Pointer);
-function  wl_shell_get_user_data(wl_shell: Pwl_shell): Pointer;
-function  wl_shell_get_version(wl_shell: Pwl_shell): cuint32;
-procedure wl_shell_destroy(wl_shell: Pwl_shell);
-procedure wl_shell_surface_pong(wl_shell_surface: Pwl_shell_surface; serial: cuint);
-procedure wl_shell_surface_move(wl_shell_surface: Pwl_shell_surface; seat: Pwl_seat; serial: cuint);
-procedure wl_shell_surface_resize(wl_shell_surface: Pwl_shell_surface; seat: Pwl_seat; serial: cuint; edges: cuint);
-procedure wl_shell_surface_set_toplevel(wl_shell_surface: Pwl_shell_surface);
-procedure wl_shell_surface_set_transient(wl_shell_surface: Pwl_shell_surface; parent: Pwl_surface; x: cint; y: cint; flags: cuint);
-procedure wl_shell_surface_set_fullscreen(wl_shell_surface: Pwl_shell_surface; method: cuint; framerate: cuint; output: Pwl_output);
-procedure wl_shell_surface_set_popup(wl_shell_surface: Pwl_shell_surface; seat: Pwl_seat; serial: cuint; parent: Pwl_surface; x: cint; y: cint; flags: cuint);
-procedure wl_shell_surface_set_maximized(wl_shell_surface: Pwl_shell_surface; output: Pwl_output);
-procedure wl_shell_surface_set_title(wl_shell_surface: Pwl_shell_surface; title: pchar);
-procedure wl_shell_surface_set_class(wl_shell_surface: Pwl_shell_surface; class_: pchar);
-function  wl_shell_surface_add_listener(wl_shell_surface: Pwl_shell_surface; listener: Pwl_shell_surface_listener; data: Pointer): cint;
-procedure  wl_shell_surface_add_listener(wl_shell_surface: Pwl_shell_surface; AIntf: Iwl_shell_surfaceListener);
-procedure wl_shell_surface_set_user_data(wl_shell_surface: Pwl_shell_surface; user_data: Pointer);
-function  wl_shell_surface_get_user_data(wl_shell_surface: Pwl_shell_surface): Pointer;
-function  wl_shell_surface_get_version(wl_shell_surface: Pwl_shell_surface): cuint32;
-procedure wl_shell_surface_destroy(wl_shell_surface: Pwl_shell_surface);
-procedure wl_surface_destroy(wl_surface: Pwl_surface);
-procedure wl_surface_attach(wl_surface: Pwl_surface; buffer: Pwl_buffer; x: cint; y: cint);
-procedure wl_surface_damage(wl_surface: Pwl_surface; x: cint; y: cint; width: cint; height: cint);
-function  wl_surface_frame(wl_surface: Pwl_surface): Pwl_callback;
-procedure wl_surface_set_opaque_region(wl_surface: Pwl_surface; region: Pwl_region);
-procedure wl_surface_set_input_region(wl_surface: Pwl_surface; region: Pwl_region);
-procedure wl_surface_commit(wl_surface: Pwl_surface);
-procedure wl_surface_set_buffer_transform(wl_surface: Pwl_surface; transform: cint);
-procedure wl_surface_set_buffer_scale(wl_surface: Pwl_surface; scale: cint);
-procedure wl_surface_damage_buffer(wl_surface: Pwl_surface; x: cint; y: cint; width: cint; height: cint);
-function  wl_surface_add_listener(wl_surface: Pwl_surface; listener: Pwl_surface_listener; data: Pointer): cint;
-procedure  wl_surface_add_listener(wl_surface: Pwl_surface; AIntf: Iwl_surfaceListener);
-procedure wl_surface_set_user_data(wl_surface: Pwl_surface; user_data: Pointer);
-function  wl_surface_get_user_data(wl_surface: Pwl_surface): Pointer;
-function  wl_surface_get_version(wl_surface: Pwl_surface): cuint32;
-function  wl_seat_get_pointer(wl_seat: Pwl_seat): Pwl_pointer;
-function  wl_seat_get_keyboard(wl_seat: Pwl_seat): Pwl_keyboard;
-function  wl_seat_get_touch(wl_seat: Pwl_seat): Pwl_touch;
-procedure wl_seat_release(wl_seat: Pwl_seat);
-function  wl_seat_add_listener(wl_seat: Pwl_seat; listener: Pwl_seat_listener; data: Pointer): cint;
-procedure  wl_seat_add_listener(wl_seat: Pwl_seat; AIntf: Iwl_seatListener);
-procedure wl_seat_set_user_data(wl_seat: Pwl_seat; user_data: Pointer);
-function  wl_seat_get_user_data(wl_seat: Pwl_seat): Pointer;
-function  wl_seat_get_version(wl_seat: Pwl_seat): cuint32;
-procedure wl_pointer_set_cursor(wl_pointer: Pwl_pointer; serial: cuint; surface: Pwl_surface; hotspot_x: cint; hotspot_y: cint);
-procedure wl_pointer_release(wl_pointer: Pwl_pointer);
-function  wl_pointer_add_listener(wl_pointer: Pwl_pointer; listener: Pwl_pointer_listener; data: Pointer): cint;
-procedure  wl_pointer_add_listener(wl_pointer: Pwl_pointer; AIntf: Iwl_pointerListener);
-procedure wl_pointer_set_user_data(wl_pointer: Pwl_pointer; user_data: Pointer);
-function  wl_pointer_get_user_data(wl_pointer: Pwl_pointer): Pointer;
-function  wl_pointer_get_version(wl_pointer: Pwl_pointer): cuint32;
-procedure wl_keyboard_release(wl_keyboard: Pwl_keyboard);
-function  wl_keyboard_add_listener(wl_keyboard: Pwl_keyboard; listener: Pwl_keyboard_listener; data: Pointer): cint;
-procedure  wl_keyboard_add_listener(wl_keyboard: Pwl_keyboard; AIntf: Iwl_keyboardListener);
-procedure wl_keyboard_set_user_data(wl_keyboard: Pwl_keyboard; user_data: Pointer);
-function  wl_keyboard_get_user_data(wl_keyboard: Pwl_keyboard): Pointer;
-function  wl_keyboard_get_version(wl_keyboard: Pwl_keyboard): cuint32;
-procedure wl_touch_release(wl_touch: Pwl_touch);
-function  wl_touch_add_listener(wl_touch: Pwl_touch; listener: Pwl_touch_listener; data: Pointer): cint;
-procedure  wl_touch_add_listener(wl_touch: Pwl_touch; AIntf: Iwl_touchListener);
-procedure wl_touch_set_user_data(wl_touch: Pwl_touch; user_data: Pointer);
-function  wl_touch_get_user_data(wl_touch: Pwl_touch): Pointer;
-function  wl_touch_get_version(wl_touch: Pwl_touch): cuint32;
-procedure wl_output_release(wl_output: Pwl_output);
-function  wl_output_add_listener(wl_output: Pwl_output; listener: Pwl_output_listener; data: Pointer): cint;
-procedure  wl_output_add_listener(wl_output: Pwl_output; AIntf: Iwl_outputListener);
-procedure wl_output_set_user_data(wl_output: Pwl_output; user_data: Pointer);
-function  wl_output_get_user_data(wl_output: Pwl_output): Pointer;
-function  wl_output_get_version(wl_output: Pwl_output): cuint32;
-procedure wl_region_destroy(wl_region: Pwl_region);
-procedure wl_region_add(wl_region: Pwl_region; x: cint; y: cint; width: cint; height: cint);
-procedure wl_region_subtract(wl_region: Pwl_region; x: cint; y: cint; width: cint; height: cint);
-function  wl_region_add_listener(wl_region: Pwl_region; listener: Pwl_region_listener; data: Pointer): cint;
-procedure  wl_region_add_listener(wl_region: Pwl_region; AIntf: Iwl_regionListener);
-procedure wl_region_set_user_data(wl_region: Pwl_region; user_data: Pointer);
-function  wl_region_get_user_data(wl_region: Pwl_region): Pointer;
-function  wl_region_get_version(wl_region: Pwl_region): cuint32;
-procedure wl_subcompositor_destroy(wl_subcompositor: Pwl_subcompositor);
-function  wl_subcompositor_get_subsurface(wl_subcompositor: Pwl_subcompositor; surface: Pwl_surface; parent: Pwl_surface): Pwl_subsurface;
-function  wl_subcompositor_add_listener(wl_subcompositor: Pwl_subcompositor; listener: Pwl_subcompositor_listener; data: Pointer): cint;
-procedure  wl_subcompositor_add_listener(wl_subcompositor: Pwl_subcompositor; AIntf: Iwl_subcompositorListener);
-procedure wl_subcompositor_set_user_data(wl_subcompositor: Pwl_subcompositor; user_data: Pointer);
-function  wl_subcompositor_get_user_data(wl_subcompositor: Pwl_subcompositor): Pointer;
-function  wl_subcompositor_get_version(wl_subcompositor: Pwl_subcompositor): cuint32;
-procedure wl_subsurface_destroy(wl_subsurface: Pwl_subsurface);
-procedure wl_subsurface_set_position(wl_subsurface: Pwl_subsurface; x: cint; y: cint);
-procedure wl_subsurface_place_above(wl_subsurface: Pwl_subsurface; sibling: Pwl_surface);
-procedure wl_subsurface_place_below(wl_subsurface: Pwl_subsurface; sibling: Pwl_surface);
-procedure wl_subsurface_set_sync(wl_subsurface: Pwl_subsurface);
-procedure wl_subsurface_set_desync(wl_subsurface: Pwl_subsurface);
-function  wl_subsurface_add_listener(wl_subsurface: Pwl_subsurface; listener: Pwl_subsurface_listener; data: Pointer): cint;
-procedure  wl_subsurface_add_listener(wl_subsurface: Pwl_subsurface; AIntf: Iwl_subsurfaceListener);
-procedure wl_subsurface_set_user_data(wl_subsurface: Pwl_subsurface; user_data: Pointer);
-function  wl_subsurface_get_user_data(wl_subsurface: Pwl_subsurface): Pointer;
-function  wl_subsurface_get_version(wl_subsurface: Pwl_subsurface): cuint32;
+
+  TWlDisplay = class(TWlDisplayBase)
+  private
+    const _SYNC = 0;
+    const _GET_REGISTRY = 1;
+  public
+    function Sync(AProxyClass: TWLProxyObjectClass = nil {TWlCallback}): TWlCallback;
+    function GetRegistry(AProxyClass: TWLProxyObjectClass = nil {TWlRegistry}): TWlRegistry;
+    function AddListener(AIntf: IWlDisplayListener): LongInt;
+  end;
+
+  TWlRegistry = class(TWLProxyObject)
+  private
+    const _BIND = 0;
+  public
+    function Bind(AName: DWord; AInterface: Pwl_interface; AVersion: LongInt): Pwl_proxy;
+    function AddListener(AIntf: IWlRegistryListener): LongInt;
+  end;
+
+  TWlCallback = class(TWLProxyObject)
+    function AddListener(AIntf: IWlCallbackListener): LongInt;
+  end;
+
+  TWlCompositor = class(TWLProxyObject)
+  private
+    const _CREATE_SURFACE = 0;
+    const _CREATE_REGION = 1;
+  public
+    function CreateSurface(AProxyClass: TWLProxyObjectClass = nil {TWlSurface}): TWlSurface;
+    function CreateRegion(AProxyClass: TWLProxyObjectClass = nil {TWlRegion}): TWlRegion;
+    function AddListener(AIntf: IWlCompositorListener): LongInt;
+  end;
+
+  TWlShmPool = class(TWlShmPoolBase)
+  private
+    const _CREATE_BUFFER = 0;
+    const _DESTROY = 1;
+    const _RESIZE = 2;
+  public
+    function CreateBuffer(AOffset: LongInt; AWidth: LongInt; AHeight: LongInt; AStride: LongInt; AFormat: DWord; AProxyClass: TWLProxyObjectClass = nil {TWlBuffer}): TWlBuffer;
+    destructor Destroy; override;
+    procedure Resize(ASize: LongInt);
+    function AddListener(AIntf: IWlShmPoolListener): LongInt;
+  end;
+
+  TWlShm = class(TWlShmBase)
+  private
+    const _CREATE_POOL = 0;
+  public
+    function CreatePool(AFd: LongInt{fd}; ASize: LongInt; AProxyClass: TWLProxyObjectClass = nil {TWlShmPool}): TWlShmPool;
+    function AddListener(AIntf: IWlShmListener): LongInt;
+  end;
+
+  TWlBuffer = class(TWLProxyObject)
+  private
+    const _DESTROY = 0;
+  public
+    destructor Destroy; override;
+    function AddListener(AIntf: IWlBufferListener): LongInt;
+  end;
+
+  TWlDataOffer = class(TWLProxyObject)
+  private
+    const _ACCEPT = 0;
+    const _RECEIVE = 1;
+    const _DESTROY = 2;
+    const _FINISH = 3;
+    const _SET_ACTIONS = 4;
+  public
+    procedure Accept(ASerial: DWord; AMimeType: String);
+    procedure Receive(AMimeType: String; AFd: LongInt{fd});
+    destructor Destroy; override;
+    procedure Finish;
+    procedure SetActions(ADndActions: DWord; APreferredAction: DWord);
+    function AddListener(AIntf: IWlDataOfferListener): LongInt;
+  end;
+
+  TWlDataSource = class(TWLProxyObject)
+  private
+    const _OFFER = 0;
+    const _DESTROY = 1;
+    const _SET_ACTIONS = 2;
+  public
+    procedure Offer(AMimeType: String);
+    destructor Destroy; override;
+    procedure SetActions(ADndActions: DWord);
+    function AddListener(AIntf: IWlDataSourceListener): LongInt;
+  end;
+
+  TWlDataDevice = class(TWLProxyObject)
+  private
+    const _START_DRAG = 0;
+    const _SET_SELECTION = 1;
+    const _RELEASE = 2;
+  public
+    procedure StartDrag(ASource: TWlDataSource; AOrigin: TWlSurface; AIcon: TWlSurface; ASerial: DWord);
+    procedure SetSelection(ASource: TWlDataSource; ASerial: DWord);
+    destructor Destroy; override;
+    function AddListener(AIntf: IWlDataDeviceListener): LongInt;
+  end;
+
+  TWlDataDeviceManager = class(TWLProxyObject)
+  private
+    const _CREATE_DATA_SOURCE = 0;
+    const _GET_DATA_DEVICE = 1;
+  public
+    function CreateDataSource(AProxyClass: TWLProxyObjectClass = nil {TWlDataSource}): TWlDataSource;
+    function GetDataDevice(ASeat: TWlSeat; AProxyClass: TWLProxyObjectClass = nil {TWlDataDevice}): TWlDataDevice;
+    function AddListener(AIntf: IWlDataDeviceManagerListener): LongInt;
+  end;
+
+  TWlShell = class(TWLProxyObject)
+  private
+    const _GET_SHELL_SURFACE = 0;
+  public
+    function GetShellSurface(ASurface: TWlSurface; AProxyClass: TWLProxyObjectClass = nil {TWlShellSurface}): TWlShellSurface;
+    function AddListener(AIntf: IWlShellListener): LongInt;
+  end;
+
+  TWlShellSurface = class(TWLProxyObject)
+  private
+    const _PONG = 0;
+    const _MOVE = 1;
+    const _RESIZE = 2;
+    const _SET_TOPLEVEL = 3;
+    const _SET_TRANSIENT = 4;
+    const _SET_FULLSCREEN = 5;
+    const _SET_POPUP = 6;
+    const _SET_MAXIMIZED = 7;
+    const _SET_TITLE = 8;
+    const _SET_CLASS = 9;
+  public
+    procedure Pong(ASerial: DWord);
+    procedure Move(ASeat: TWlSeat; ASerial: DWord);
+    procedure Resize(ASeat: TWlSeat; ASerial: DWord; AEdges: DWord);
+    procedure SetToplevel;
+    procedure SetTransient(AParent: TWlSurface; AX: LongInt; AY: LongInt; AFlags: DWord);
+    procedure SetFullscreen(AMethod: DWord; AFramerate: DWord; AOutput: TWlOutput);
+    procedure SetPopup(ASeat: TWlSeat; ASerial: DWord; AParent: TWlSurface; AX: LongInt; AY: LongInt; AFlags: DWord);
+    procedure SetMaximized(AOutput: TWlOutput);
+    procedure SetTitle(ATitle: String);
+    procedure SetClass(AClass: String);
+    function AddListener(AIntf: IWlShellSurfaceListener): LongInt;
+  end;
+
+  TWlSurface = class(TWLProxyObject)
+  private
+    const _DESTROY = 0;
+    const _ATTACH = 1;
+    const _DAMAGE = 2;
+    const _FRAME = 3;
+    const _SET_OPAQUE_REGION = 4;
+    const _SET_INPUT_REGION = 5;
+    const _COMMIT = 6;
+    const _SET_BUFFER_TRANSFORM = 7;
+    const _SET_BUFFER_SCALE = 8;
+    const _DAMAGE_BUFFER = 9;
+  public
+    destructor Destroy; override;
+    procedure Attach(ABuffer: TWlBuffer; AX: LongInt; AY: LongInt);
+    procedure Damage(AX: LongInt; AY: LongInt; AWidth: LongInt; AHeight: LongInt);
+    function Frame(AProxyClass: TWLProxyObjectClass = nil {TWlCallback}): TWlCallback;
+    procedure SetOpaqueRegion(ARegion: TWlRegion);
+    procedure SetInputRegion(ARegion: TWlRegion);
+    procedure Commit;
+    procedure SetBufferTransform(ATransform: LongInt);
+    procedure SetBufferScale(AScale: LongInt);
+    procedure DamageBuffer(AX: LongInt; AY: LongInt; AWidth: LongInt; AHeight: LongInt);
+    function AddListener(AIntf: IWlSurfaceListener): LongInt;
+  end;
+
+  TWlSeat = class(TWLProxyObject)
+  private
+    const _GET_POINTER = 0;
+    const _GET_KEYBOARD = 1;
+    const _GET_TOUCH = 2;
+    const _RELEASE = 3;
+  public
+    function GetPointer(AProxyClass: TWLProxyObjectClass = nil {TWlPointer}): TWlPointer;
+    function GetKeyboard(AProxyClass: TWLProxyObjectClass = nil {TWlKeyboard}): TWlKeyboard;
+    function GetTouch(AProxyClass: TWLProxyObjectClass = nil {TWlTouch}): TWlTouch;
+    destructor Destroy; override;
+    function AddListener(AIntf: IWlSeatListener): LongInt;
+  end;
+
+  TWlPointer = class(TWLProxyObject)
+  private
+    const _SET_CURSOR = 0;
+    const _RELEASE = 1;
+  public
+    procedure SetCursor(ASerial: DWord; ASurface: TWlSurface; AHotspotX: LongInt; AHotspotY: LongInt);
+    destructor Destroy; override;
+    function AddListener(AIntf: IWlPointerListener): LongInt;
+  end;
+
+  TWlKeyboard = class(TWLProxyObject)
+  private
+    const _RELEASE = 0;
+  public
+    destructor Destroy; override;
+    function AddListener(AIntf: IWlKeyboardListener): LongInt;
+  end;
+
+  TWlTouch = class(TWLProxyObject)
+  private
+    const _RELEASE = 0;
+  public
+    destructor Destroy; override;
+    function AddListener(AIntf: IWlTouchListener): LongInt;
+  end;
+
+  TWlOutput = class(TWLProxyObject)
+  private
+    const _RELEASE = 0;
+  public
+    destructor Destroy; override;
+    function AddListener(AIntf: IWlOutputListener): LongInt;
+  end;
+
+  TWlRegion = class(TWLProxyObject)
+  private
+    const _DESTROY = 0;
+    const _ADD = 1;
+    const _SUBTRACT = 2;
+  public
+    destructor Destroy; override;
+    procedure Add(AX: LongInt; AY: LongInt; AWidth: LongInt; AHeight: LongInt);
+    procedure Subtract(AX: LongInt; AY: LongInt; AWidth: LongInt; AHeight: LongInt);
+    function AddListener(AIntf: IWlRegionListener): LongInt;
+  end;
+
+  TWlSubcompositor = class(TWLProxyObject)
+  private
+    const _DESTROY = 0;
+    const _GET_SUBSURFACE = 1;
+  public
+    destructor Destroy; override;
+    function GetSubsurface(ASurface: TWlSurface; AParent: TWlSurface; AProxyClass: TWLProxyObjectClass = nil {TWlSubsurface}): TWlSubsurface;
+    function AddListener(AIntf: IWlSubcompositorListener): LongInt;
+  end;
+
+  TWlSubsurface = class(TWLProxyObject)
+  private
+    const _DESTROY = 0;
+    const _SET_POSITION = 1;
+    const _PLACE_ABOVE = 2;
+    const _PLACE_BELOW = 3;
+    const _SET_SYNC = 4;
+    const _SET_DESYNC = 5;
+  public
+    destructor Destroy; override;
+    procedure SetPosition(AX: LongInt; AY: LongInt);
+    procedure PlaceAbove(ASibling: TWlSurface);
+    procedure PlaceBelow(ASibling: TWlSurface);
+    procedure SetSync;
+    procedure SetDesync;
+    function AddListener(AIntf: IWlSubsurfaceListener): LongInt;
+  end;
+
+
+
 
 
 
@@ -728,73 +809,6 @@ var
 
 implementation
 
-const
-_WL_DISPLAY_SYNC = 0;
-_WL_DISPLAY_GET_REGISTRY = 1;
-_WL_REGISTRY_BIND = 0;
-_WL_COMPOSITOR_CREATE_SURFACE = 0;
-_WL_COMPOSITOR_CREATE_REGION = 1;
-_WL_SHM_POOL_CREATE_BUFFER = 0;
-_WL_SHM_POOL_DESTROY = 1;
-_WL_SHM_POOL_RESIZE = 2;
-_WL_SHM_CREATE_POOL = 0;
-_WL_BUFFER_DESTROY = 0;
-_WL_DATA_OFFER_ACCEPT = 0;
-_WL_DATA_OFFER_RECEIVE = 1;
-_WL_DATA_OFFER_DESTROY = 2;
-_WL_DATA_OFFER_FINISH = 3;
-_WL_DATA_OFFER_SET_ACTIONS = 4;
-_WL_DATA_SOURCE_OFFER = 0;
-_WL_DATA_SOURCE_DESTROY = 1;
-_WL_DATA_SOURCE_SET_ACTIONS = 2;
-_WL_DATA_DEVICE_START_DRAG = 0;
-_WL_DATA_DEVICE_SET_SELECTION = 1;
-_WL_DATA_DEVICE_RELEASE = 2;
-_WL_DATA_DEVICE_MANAGER_CREATE_DATA_SOURCE = 0;
-_WL_DATA_DEVICE_MANAGER_GET_DATA_DEVICE = 1;
-_WL_SHELL_GET_SHELL_SURFACE = 0;
-_WL_SHELL_SURFACE_PONG = 0;
-_WL_SHELL_SURFACE_MOVE = 1;
-_WL_SHELL_SURFACE_RESIZE = 2;
-_WL_SHELL_SURFACE_SET_TOPLEVEL = 3;
-_WL_SHELL_SURFACE_SET_TRANSIENT = 4;
-_WL_SHELL_SURFACE_SET_FULLSCREEN = 5;
-_WL_SHELL_SURFACE_SET_POPUP = 6;
-_WL_SHELL_SURFACE_SET_MAXIMIZED = 7;
-_WL_SHELL_SURFACE_SET_TITLE = 8;
-_WL_SHELL_SURFACE_SET_CLASS = 9;
-_WL_SURFACE_DESTROY = 0;
-_WL_SURFACE_ATTACH = 1;
-_WL_SURFACE_DAMAGE = 2;
-_WL_SURFACE_FRAME = 3;
-_WL_SURFACE_SET_OPAQUE_REGION = 4;
-_WL_SURFACE_SET_INPUT_REGION = 5;
-_WL_SURFACE_COMMIT = 6;
-_WL_SURFACE_SET_BUFFER_TRANSFORM = 7;
-_WL_SURFACE_SET_BUFFER_SCALE = 8;
-_WL_SURFACE_DAMAGE_BUFFER = 9;
-_WL_SEAT_GET_POINTER = 0;
-_WL_SEAT_GET_KEYBOARD = 1;
-_WL_SEAT_GET_TOUCH = 2;
-_WL_SEAT_RELEASE = 3;
-_WL_POINTER_SET_CURSOR = 0;
-_WL_POINTER_RELEASE = 1;
-_WL_KEYBOARD_RELEASE = 0;
-_WL_TOUCH_RELEASE = 0;
-_WL_OUTPUT_RELEASE = 0;
-_WL_REGION_DESTROY = 0;
-_WL_REGION_ADD = 1;
-_WL_REGION_SUBTRACT = 2;
-_WL_SUBCOMPOSITOR_DESTROY = 0;
-_WL_SUBCOMPOSITOR_GET_SUBSURFACE = 1;
-_WL_SUBSURFACE_DESTROY = 0;
-_WL_SUBSURFACE_SET_POSITION = 1;
-_WL_SUBSURFACE_PLACE_ABOVE = 2;
-_WL_SUBSURFACE_PLACE_BELOW = 3;
-_WL_SUBSURFACE_SET_SYNC = 4;
-_WL_SUBSURFACE_SET_DESYNC = 5;
-
-
 var
   vIntf_wl_display_Listener: Twl_display_listener;
   vIntf_wl_registry_Listener: Twl_registry_listener;
@@ -821,1354 +835,1060 @@ var
 
 
 
-function  wl_display_sync(wl_display: Pwl_display): Pwl_callback;
+function TWlDisplay.Sync(AProxyClass: TWLProxyObjectClass = nil {TWlCallback}): TWlCallback;
 var
   callback: Pwl_proxy;
 begin
-  callback := wl_proxy_marshal_constructor(Pwl_proxy(wl_display),
-      _WL_DISPLAY_SYNC, @wl_callback_interface, nil);
-  Result := Pwl_callback(callback);
+  callback := wl_proxy_marshal_constructor(FProxy,
+      _SYNC, @wl_callback_interface, nil);
+  if AProxyClass = nil then
+    AProxyClass := TWlCallback;
+  Result := TWlCallback(AProxyClass.Create(callback));
+  if not AProxyClass.InheritsFrom(TWlCallback) then
+    Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TWlCallback]);
 end;
 
-function  wl_display_get_registry(wl_display: Pwl_display): Pwl_registry;
+function TWlDisplay.GetRegistry(AProxyClass: TWLProxyObjectClass = nil {TWlRegistry}): TWlRegistry;
 var
   registry: Pwl_proxy;
 begin
-  registry := wl_proxy_marshal_constructor(Pwl_proxy(wl_display),
-      _WL_DISPLAY_GET_REGISTRY, @wl_registry_interface, nil);
-  Result := Pwl_registry(registry);
+  registry := wl_proxy_marshal_constructor(FProxy,
+      _GET_REGISTRY, @wl_registry_interface, nil);
+  if AProxyClass = nil then
+    AProxyClass := TWlRegistry;
+  Result := TWlRegistry(AProxyClass.Create(registry));
+  if not AProxyClass.InheritsFrom(TWlRegistry) then
+    Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TWlRegistry]);
 end;
 
-function  wl_display_add_listener(wl_display: Pwl_display; listener: Pwl_display_listener; data: Pointer): cint;
+function TWlDisplay.AddListener(AIntf: IWlDisplayListener): LongInt;
 begin
-  Result := wl_proxy_add_listener(Pwl_proxy(wl_display), listener, data);
+  FUserDataRec.ListenerUserData := Pointer(AIntf);
+  Result := wl_proxy_add_listener(FProxy, @vIntf_wl_display_Listener, @FUserDataRec);
 end;
-
-procedure  wl_display_add_listener(wl_display: Pwl_display; AIntf: Iwl_displayListener);
+function TWlRegistry.Bind(AName: DWord; AInterface: Pwl_interface; AVersion: LongInt): Pwl_proxy;
 begin
-  wl_display_add_listener(wl_display, @vIntf_wl_display_Listener, AIntf);
+  Result := wl_proxy_marshal_constructor_versioned(FProxy,
+      _BIND, AInterface, AVersion, AName, AInterface^.name, AVersion, nil);
 end;
 
-procedure wl_display_set_user_data(wl_display: Pwl_display; user_data: Pointer);
+function TWlRegistry.AddListener(AIntf: IWlRegistryListener): LongInt;
 begin
-  wl_proxy_set_user_data(Pwl_proxy(wl_display), user_data);
+  FUserDataRec.ListenerUserData := Pointer(AIntf);
+  Result := wl_proxy_add_listener(FProxy, @vIntf_wl_registry_Listener, @FUserDataRec);
 end;
-
-function  wl_display_get_user_data(wl_display: Pwl_display): Pointer;
+function TWlCallback.AddListener(AIntf: IWlCallbackListener): LongInt;
 begin
-  Result := wl_proxy_get_user_data(Pwl_proxy(wl_display));
+  FUserDataRec.ListenerUserData := Pointer(AIntf);
+  Result := wl_proxy_add_listener(FProxy, @vIntf_wl_callback_Listener, @FUserDataRec);
 end;
-
-function  wl_display_get_version(wl_display: Pwl_display): cuint32;
-begin
-  Result := wl_proxy_get_version(Pwl_proxy(wl_display));
-end;
-
-procedure wl_display_destroy(wl_display: Pwl_display);
-begin
-  wl_proxy_destroy(Pwl_proxy(wl_display));
-end;
-
-function  wl_registry_bind(wl_registry: Pwl_registry; name: cuint; interface_: Pwl_interface; version: cuint32): Pointer;
+function TWlCompositor.CreateSurface(AProxyClass: TWLProxyObjectClass = nil {TWlSurface}): TWlSurface;
 var
   id: Pwl_proxy;
 begin
-  id := wl_proxy_marshal_constructor_versioned(Pwl_proxy(wl_registry),
-      _WL_REGISTRY_BIND, interface_, version, name, interface_^.name, version, nil);
-  Result := Pointer(id);
+  id := wl_proxy_marshal_constructor(FProxy,
+      _CREATE_SURFACE, @wl_surface_interface, nil);
+  if AProxyClass = nil then
+    AProxyClass := TWlSurface;
+  Result := TWlSurface(AProxyClass.Create(id));
+  if not AProxyClass.InheritsFrom(TWlSurface) then
+    Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TWlSurface]);
 end;
 
-function  wl_registry_add_listener(wl_registry: Pwl_registry; listener: Pwl_registry_listener; data: Pointer): cint;
-begin
-  Result := wl_proxy_add_listener(Pwl_proxy(wl_registry), listener, data);
-end;
-
-procedure  wl_registry_add_listener(wl_registry: Pwl_registry; AIntf: Iwl_registryListener);
-begin
-  wl_registry_add_listener(wl_registry, @vIntf_wl_registry_Listener, AIntf);
-end;
-
-procedure wl_registry_set_user_data(wl_registry: Pwl_registry; user_data: Pointer);
-begin
-  wl_proxy_set_user_data(Pwl_proxy(wl_registry), user_data);
-end;
-
-function  wl_registry_get_user_data(wl_registry: Pwl_registry): Pointer;
-begin
-  Result := wl_proxy_get_user_data(Pwl_proxy(wl_registry));
-end;
-
-function  wl_registry_get_version(wl_registry: Pwl_registry): cuint32;
-begin
-  Result := wl_proxy_get_version(Pwl_proxy(wl_registry));
-end;
-
-procedure wl_registry_destroy(wl_registry: Pwl_registry);
-begin
-  wl_proxy_destroy(Pwl_proxy(wl_registry));
-end;
-
-function  wl_callback_add_listener(wl_callback: Pwl_callback; listener: Pwl_callback_listener; data: Pointer): cint;
-begin
-  Result := wl_proxy_add_listener(Pwl_proxy(wl_callback), listener, data);
-end;
-
-procedure  wl_callback_add_listener(wl_callback: Pwl_callback; AIntf: Iwl_callbackListener);
-begin
-  wl_callback_add_listener(wl_callback, @vIntf_wl_callback_Listener, AIntf);
-end;
-
-procedure wl_callback_set_user_data(wl_callback: Pwl_callback; user_data: Pointer);
-begin
-  wl_proxy_set_user_data(Pwl_proxy(wl_callback), user_data);
-end;
-
-function  wl_callback_get_user_data(wl_callback: Pwl_callback): Pointer;
-begin
-  Result := wl_proxy_get_user_data(Pwl_proxy(wl_callback));
-end;
-
-function  wl_callback_get_version(wl_callback: Pwl_callback): cuint32;
-begin
-  Result := wl_proxy_get_version(Pwl_proxy(wl_callback));
-end;
-
-procedure wl_callback_destroy(wl_callback: Pwl_callback);
-begin
-  wl_proxy_destroy(Pwl_proxy(wl_callback));
-end;
-
-function  wl_compositor_create_surface(wl_compositor: Pwl_compositor): Pwl_surface;
+function TWlCompositor.CreateRegion(AProxyClass: TWLProxyObjectClass = nil {TWlRegion}): TWlRegion;
 var
   id: Pwl_proxy;
 begin
-  id := wl_proxy_marshal_constructor(Pwl_proxy(wl_compositor),
-      _WL_COMPOSITOR_CREATE_SURFACE, @wl_surface_interface, nil);
-  Result := Pwl_surface(id);
+  id := wl_proxy_marshal_constructor(FProxy,
+      _CREATE_REGION, @wl_region_interface, nil);
+  if AProxyClass = nil then
+    AProxyClass := TWlRegion;
+  Result := TWlRegion(AProxyClass.Create(id));
+  if not AProxyClass.InheritsFrom(TWlRegion) then
+    Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TWlRegion]);
 end;
 
-function  wl_compositor_create_region(wl_compositor: Pwl_compositor): Pwl_region;
+function TWlCompositor.AddListener(AIntf: IWlCompositorListener): LongInt;
+begin
+  FUserDataRec.ListenerUserData := Pointer(AIntf);
+  Result := wl_proxy_add_listener(FProxy, @vIntf_wl_compositor_Listener, @FUserDataRec);
+end;
+function TWlShmPool.CreateBuffer(AOffset: LongInt; AWidth: LongInt; AHeight: LongInt; AStride: LongInt; AFormat: DWord; AProxyClass: TWLProxyObjectClass = nil {TWlBuffer}): TWlBuffer;
 var
   id: Pwl_proxy;
 begin
-  id := wl_proxy_marshal_constructor(Pwl_proxy(wl_compositor),
-      _WL_COMPOSITOR_CREATE_REGION, @wl_region_interface, nil);
-  Result := Pwl_region(id);
+  id := wl_proxy_marshal_constructor(FProxy,
+      _CREATE_BUFFER, @wl_buffer_interface, nil, AOffset, AWidth, AHeight, AStride, AFormat);
+  if AProxyClass = nil then
+    AProxyClass := TWlBuffer;
+  Result := TWlBuffer(AProxyClass.Create(id));
+  if not AProxyClass.InheritsFrom(TWlBuffer) then
+    Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TWlBuffer]);
 end;
 
-function  wl_compositor_add_listener(wl_compositor: Pwl_compositor; listener: Pwl_compositor_listener; data: Pointer): cint;
+destructor TWlShmPool.Destroy;
 begin
-  Result := wl_proxy_add_listener(Pwl_proxy(wl_compositor), listener, data);
+  wl_proxy_marshal(FProxy, _DESTROY);
+  inherited Destroy;
 end;
 
-procedure  wl_compositor_add_listener(wl_compositor: Pwl_compositor; AIntf: Iwl_compositorListener);
+procedure TWlShmPool.Resize(ASize: LongInt);
 begin
-  wl_compositor_add_listener(wl_compositor, @vIntf_wl_compositor_Listener, AIntf);
+  wl_proxy_marshal(FProxy, _RESIZE, ASize);
 end;
 
-procedure wl_compositor_set_user_data(wl_compositor: Pwl_compositor; user_data: Pointer);
+function TWlShmPool.AddListener(AIntf: IWlShmPoolListener): LongInt;
 begin
-  wl_proxy_set_user_data(Pwl_proxy(wl_compositor), user_data);
+  FUserDataRec.ListenerUserData := Pointer(AIntf);
+  Result := wl_proxy_add_listener(FProxy, @vIntf_wl_shm_pool_Listener, @FUserDataRec);
 end;
-
-function  wl_compositor_get_user_data(wl_compositor: Pwl_compositor): Pointer;
-begin
-  Result := wl_proxy_get_user_data(Pwl_proxy(wl_compositor));
-end;
-
-function  wl_compositor_get_version(wl_compositor: Pwl_compositor): cuint32;
-begin
-  Result := wl_proxy_get_version(Pwl_proxy(wl_compositor));
-end;
-
-procedure wl_compositor_destroy(wl_compositor: Pwl_compositor);
-begin
-  wl_proxy_destroy(Pwl_proxy(wl_compositor));
-end;
-
-function  wl_shm_pool_create_buffer(wl_shm_pool: Pwl_shm_pool; offset: cint; width: cint; height: cint; stride: cint; format: cuint): Pwl_buffer;
+function TWlShm.CreatePool(AFd: LongInt{fd}; ASize: LongInt; AProxyClass: TWLProxyObjectClass = nil {TWlShmPool}): TWlShmPool;
 var
   id: Pwl_proxy;
 begin
-  id := wl_proxy_marshal_constructor(Pwl_proxy(wl_shm_pool),
-      _WL_SHM_POOL_CREATE_BUFFER, @wl_buffer_interface, nil, offset, width, height, stride, format);
-  Result := Pwl_buffer(id);
+  id := wl_proxy_marshal_constructor(FProxy,
+      _CREATE_POOL, @wl_shm_pool_interface, nil, AFd, ASize);
+  if AProxyClass = nil then
+    AProxyClass := TWlShmPool;
+  Result := TWlShmPool(AProxyClass.Create(id));
+  if not AProxyClass.InheritsFrom(TWlShmPool) then
+    Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TWlShmPool]);
 end;
 
-procedure wl_shm_pool_destroy(wl_shm_pool: Pwl_shm_pool);
+function TWlShm.AddListener(AIntf: IWlShmListener): LongInt;
 begin
-  wl_proxy_marshal(Pwl_proxy(wl_shm_pool), _WL_SHM_POOL_DESTROY);
-  wl_proxy_destroy(Pwl_proxy(wl_shm_pool));
+  FUserDataRec.ListenerUserData := Pointer(AIntf);
+  Result := wl_proxy_add_listener(FProxy, @vIntf_wl_shm_Listener, @FUserDataRec);
 end;
-
-procedure wl_shm_pool_resize(wl_shm_pool: Pwl_shm_pool; size: cint);
+destructor TWlBuffer.Destroy;
 begin
-  wl_proxy_marshal(Pwl_proxy(wl_shm_pool),
-      _WL_SHM_POOL_RESIZE, size);
+  wl_proxy_marshal(FProxy, _DESTROY);
+  inherited Destroy;
 end;
 
-function  wl_shm_pool_add_listener(wl_shm_pool: Pwl_shm_pool; listener: Pwl_shm_pool_listener; data: Pointer): cint;
+function TWlBuffer.AddListener(AIntf: IWlBufferListener): LongInt;
 begin
-  Result := wl_proxy_add_listener(Pwl_proxy(wl_shm_pool), listener, data);
+  FUserDataRec.ListenerUserData := Pointer(AIntf);
+  Result := wl_proxy_add_listener(FProxy, @vIntf_wl_buffer_Listener, @FUserDataRec);
 end;
-
-procedure  wl_shm_pool_add_listener(wl_shm_pool: Pwl_shm_pool; AIntf: Iwl_shm_poolListener);
+procedure TWlDataOffer.Accept(ASerial: DWord; AMimeType: String);
 begin
-  wl_shm_pool_add_listener(wl_shm_pool, @vIntf_wl_shm_pool_Listener, AIntf);
+  wl_proxy_marshal(FProxy, _ACCEPT, ASerial, PChar(AMimeType));
 end;
 
-procedure wl_shm_pool_set_user_data(wl_shm_pool: Pwl_shm_pool; user_data: Pointer);
+procedure TWlDataOffer.Receive(AMimeType: String; AFd: LongInt{fd});
 begin
-  wl_proxy_set_user_data(Pwl_proxy(wl_shm_pool), user_data);
+  wl_proxy_marshal(FProxy, _RECEIVE, PChar(AMimeType), AFd);
 end;
 
-function  wl_shm_pool_get_user_data(wl_shm_pool: Pwl_shm_pool): Pointer;
+destructor TWlDataOffer.Destroy;
 begin
-  Result := wl_proxy_get_user_data(Pwl_proxy(wl_shm_pool));
+  wl_proxy_marshal(FProxy, _DESTROY);
+  inherited Destroy;
 end;
 
-function  wl_shm_pool_get_version(wl_shm_pool: Pwl_shm_pool): cuint32;
+procedure TWlDataOffer.Finish;
 begin
-  Result := wl_proxy_get_version(Pwl_proxy(wl_shm_pool));
+  wl_proxy_marshal(FProxy, _FINISH);
 end;
 
-function  wl_shm_create_pool(wl_shm: Pwl_shm; fd: cint; size: cint): Pwl_shm_pool;
+procedure TWlDataOffer.SetActions(ADndActions: DWord; APreferredAction: DWord);
+begin
+  wl_proxy_marshal(FProxy, _SET_ACTIONS, ADndActions, APreferredAction);
+end;
+
+function TWlDataOffer.AddListener(AIntf: IWlDataOfferListener): LongInt;
+begin
+  FUserDataRec.ListenerUserData := Pointer(AIntf);
+  Result := wl_proxy_add_listener(FProxy, @vIntf_wl_data_offer_Listener, @FUserDataRec);
+end;
+procedure TWlDataSource.Offer(AMimeType: String);
+begin
+  wl_proxy_marshal(FProxy, _OFFER, PChar(AMimeType));
+end;
+
+destructor TWlDataSource.Destroy;
+begin
+  wl_proxy_marshal(FProxy, _DESTROY);
+  inherited Destroy;
+end;
+
+procedure TWlDataSource.SetActions(ADndActions: DWord);
+begin
+  wl_proxy_marshal(FProxy, _SET_ACTIONS, ADndActions);
+end;
+
+function TWlDataSource.AddListener(AIntf: IWlDataSourceListener): LongInt;
+begin
+  FUserDataRec.ListenerUserData := Pointer(AIntf);
+  Result := wl_proxy_add_listener(FProxy, @vIntf_wl_data_source_Listener, @FUserDataRec);
+end;
+procedure TWlDataDevice.StartDrag(ASource: TWlDataSource; AOrigin: TWlSurface; AIcon: TWlSurface; ASerial: DWord);
+begin
+  wl_proxy_marshal(FProxy, _START_DRAG, ASource.Proxy, AOrigin.Proxy, AIcon.Proxy, ASerial);
+end;
+
+procedure TWlDataDevice.SetSelection(ASource: TWlDataSource; ASerial: DWord);
+begin
+  wl_proxy_marshal(FProxy, _SET_SELECTION, ASource.Proxy, ASerial);
+end;
+
+destructor TWlDataDevice.Destroy;
+begin
+  wl_proxy_marshal(FProxy, _RELEASE);
+  inherited Destroy;
+end;
+
+function TWlDataDevice.AddListener(AIntf: IWlDataDeviceListener): LongInt;
+begin
+  FUserDataRec.ListenerUserData := Pointer(AIntf);
+  Result := wl_proxy_add_listener(FProxy, @vIntf_wl_data_device_Listener, @FUserDataRec);
+end;
+function TWlDataDeviceManager.CreateDataSource(AProxyClass: TWLProxyObjectClass = nil {TWlDataSource}): TWlDataSource;
 var
   id: Pwl_proxy;
 begin
-  id := wl_proxy_marshal_constructor(Pwl_proxy(wl_shm),
-      _WL_SHM_CREATE_POOL, @wl_shm_pool_interface, nil, fd, size);
-  Result := Pwl_shm_pool(id);
+  id := wl_proxy_marshal_constructor(FProxy,
+      _CREATE_DATA_SOURCE, @wl_data_source_interface, nil);
+  if AProxyClass = nil then
+    AProxyClass := TWlDataSource;
+  Result := TWlDataSource(AProxyClass.Create(id));
+  if not AProxyClass.InheritsFrom(TWlDataSource) then
+    Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TWlDataSource]);
 end;
 
-function  wl_shm_add_listener(wl_shm: Pwl_shm; listener: Pwl_shm_listener; data: Pointer): cint;
-begin
-  Result := wl_proxy_add_listener(Pwl_proxy(wl_shm), listener, data);
-end;
-
-procedure  wl_shm_add_listener(wl_shm: Pwl_shm; AIntf: Iwl_shmListener);
-begin
-  wl_shm_add_listener(wl_shm, @vIntf_wl_shm_Listener, AIntf);
-end;
-
-procedure wl_shm_set_user_data(wl_shm: Pwl_shm; user_data: Pointer);
-begin
-  wl_proxy_set_user_data(Pwl_proxy(wl_shm), user_data);
-end;
-
-function  wl_shm_get_user_data(wl_shm: Pwl_shm): Pointer;
-begin
-  Result := wl_proxy_get_user_data(Pwl_proxy(wl_shm));
-end;
-
-function  wl_shm_get_version(wl_shm: Pwl_shm): cuint32;
-begin
-  Result := wl_proxy_get_version(Pwl_proxy(wl_shm));
-end;
-
-procedure wl_shm_destroy(wl_shm: Pwl_shm);
-begin
-  wl_proxy_destroy(Pwl_proxy(wl_shm));
-end;
-
-procedure wl_buffer_destroy(wl_buffer: Pwl_buffer);
-begin
-  wl_proxy_marshal(Pwl_proxy(wl_buffer), _WL_BUFFER_DESTROY);
-  wl_proxy_destroy(Pwl_proxy(wl_buffer));
-end;
-
-function  wl_buffer_add_listener(wl_buffer: Pwl_buffer; listener: Pwl_buffer_listener; data: Pointer): cint;
-begin
-  Result := wl_proxy_add_listener(Pwl_proxy(wl_buffer), listener, data);
-end;
-
-procedure  wl_buffer_add_listener(wl_buffer: Pwl_buffer; AIntf: Iwl_bufferListener);
-begin
-  wl_buffer_add_listener(wl_buffer, @vIntf_wl_buffer_Listener, AIntf);
-end;
-
-procedure wl_buffer_set_user_data(wl_buffer: Pwl_buffer; user_data: Pointer);
-begin
-  wl_proxy_set_user_data(Pwl_proxy(wl_buffer), user_data);
-end;
-
-function  wl_buffer_get_user_data(wl_buffer: Pwl_buffer): Pointer;
-begin
-  Result := wl_proxy_get_user_data(Pwl_proxy(wl_buffer));
-end;
-
-function  wl_buffer_get_version(wl_buffer: Pwl_buffer): cuint32;
-begin
-  Result := wl_proxy_get_version(Pwl_proxy(wl_buffer));
-end;
-
-procedure wl_data_offer_accept(wl_data_offer: Pwl_data_offer; serial: cuint; mime_type: pchar);
-begin
-  wl_proxy_marshal(Pwl_proxy(wl_data_offer),
-      _WL_DATA_OFFER_ACCEPT, serial, mime_type);
-end;
-
-procedure wl_data_offer_receive(wl_data_offer: Pwl_data_offer; mime_type: pchar; fd: cint);
-begin
-  wl_proxy_marshal(Pwl_proxy(wl_data_offer),
-      _WL_DATA_OFFER_RECEIVE, mime_type, fd);
-end;
-
-procedure wl_data_offer_destroy(wl_data_offer: Pwl_data_offer);
-begin
-  wl_proxy_marshal(Pwl_proxy(wl_data_offer), _WL_DATA_OFFER_DESTROY);
-  wl_proxy_destroy(Pwl_proxy(wl_data_offer));
-end;
-
-procedure wl_data_offer_finish(wl_data_offer: Pwl_data_offer);
-begin
-  wl_proxy_marshal(Pwl_proxy(wl_data_offer),
-      _WL_DATA_OFFER_FINISH);
-end;
-
-procedure wl_data_offer_set_actions(wl_data_offer: Pwl_data_offer; dnd_actions: cuint; preferred_action: cuint);
-begin
-  wl_proxy_marshal(Pwl_proxy(wl_data_offer),
-      _WL_DATA_OFFER_SET_ACTIONS, dnd_actions, preferred_action);
-end;
-
-function  wl_data_offer_add_listener(wl_data_offer: Pwl_data_offer; listener: Pwl_data_offer_listener; data: Pointer): cint;
-begin
-  Result := wl_proxy_add_listener(Pwl_proxy(wl_data_offer), listener, data);
-end;
-
-procedure  wl_data_offer_add_listener(wl_data_offer: Pwl_data_offer; AIntf: Iwl_data_offerListener);
-begin
-  wl_data_offer_add_listener(wl_data_offer, @vIntf_wl_data_offer_Listener, AIntf);
-end;
-
-procedure wl_data_offer_set_user_data(wl_data_offer: Pwl_data_offer; user_data: Pointer);
-begin
-  wl_proxy_set_user_data(Pwl_proxy(wl_data_offer), user_data);
-end;
-
-function  wl_data_offer_get_user_data(wl_data_offer: Pwl_data_offer): Pointer;
-begin
-  Result := wl_proxy_get_user_data(Pwl_proxy(wl_data_offer));
-end;
-
-function  wl_data_offer_get_version(wl_data_offer: Pwl_data_offer): cuint32;
-begin
-  Result := wl_proxy_get_version(Pwl_proxy(wl_data_offer));
-end;
-
-procedure wl_data_source_offer(wl_data_source: Pwl_data_source; mime_type: pchar);
-begin
-  wl_proxy_marshal(Pwl_proxy(wl_data_source),
-      _WL_DATA_SOURCE_OFFER, mime_type);
-end;
-
-procedure wl_data_source_destroy(wl_data_source: Pwl_data_source);
-begin
-  wl_proxy_marshal(Pwl_proxy(wl_data_source), _WL_DATA_SOURCE_DESTROY);
-  wl_proxy_destroy(Pwl_proxy(wl_data_source));
-end;
-
-procedure wl_data_source_set_actions(wl_data_source: Pwl_data_source; dnd_actions: cuint);
-begin
-  wl_proxy_marshal(Pwl_proxy(wl_data_source),
-      _WL_DATA_SOURCE_SET_ACTIONS, dnd_actions);
-end;
-
-function  wl_data_source_add_listener(wl_data_source: Pwl_data_source; listener: Pwl_data_source_listener; data: Pointer): cint;
-begin
-  Result := wl_proxy_add_listener(Pwl_proxy(wl_data_source), listener, data);
-end;
-
-procedure  wl_data_source_add_listener(wl_data_source: Pwl_data_source; AIntf: Iwl_data_sourceListener);
-begin
-  wl_data_source_add_listener(wl_data_source, @vIntf_wl_data_source_Listener, AIntf);
-end;
-
-procedure wl_data_source_set_user_data(wl_data_source: Pwl_data_source; user_data: Pointer);
-begin
-  wl_proxy_set_user_data(Pwl_proxy(wl_data_source), user_data);
-end;
-
-function  wl_data_source_get_user_data(wl_data_source: Pwl_data_source): Pointer;
-begin
-  Result := wl_proxy_get_user_data(Pwl_proxy(wl_data_source));
-end;
-
-function  wl_data_source_get_version(wl_data_source: Pwl_data_source): cuint32;
-begin
-  Result := wl_proxy_get_version(Pwl_proxy(wl_data_source));
-end;
-
-procedure wl_data_device_start_drag(wl_data_device: Pwl_data_device; source: Pwl_data_source; origin: Pwl_surface; icon: Pwl_surface; serial: cuint);
-begin
-  wl_proxy_marshal(Pwl_proxy(wl_data_device),
-      _WL_DATA_DEVICE_START_DRAG, source, origin, icon, serial);
-end;
-
-procedure wl_data_device_set_selection(wl_data_device: Pwl_data_device; source: Pwl_data_source; serial: cuint);
-begin
-  wl_proxy_marshal(Pwl_proxy(wl_data_device),
-      _WL_DATA_DEVICE_SET_SELECTION, source, serial);
-end;
-
-procedure wl_data_device_release(wl_data_device: Pwl_data_device);
-begin
-  wl_proxy_marshal(Pwl_proxy(wl_data_device), _WL_DATA_DEVICE_RELEASE);
-  wl_proxy_destroy(Pwl_proxy(wl_data_device));
-end;
-
-function  wl_data_device_add_listener(wl_data_device: Pwl_data_device; listener: Pwl_data_device_listener; data: Pointer): cint;
-begin
-  Result := wl_proxy_add_listener(Pwl_proxy(wl_data_device), listener, data);
-end;
-
-procedure  wl_data_device_add_listener(wl_data_device: Pwl_data_device; AIntf: Iwl_data_deviceListener);
-begin
-  wl_data_device_add_listener(wl_data_device, @vIntf_wl_data_device_Listener, AIntf);
-end;
-
-procedure wl_data_device_set_user_data(wl_data_device: Pwl_data_device; user_data: Pointer);
-begin
-  wl_proxy_set_user_data(Pwl_proxy(wl_data_device), user_data);
-end;
-
-function  wl_data_device_get_user_data(wl_data_device: Pwl_data_device): Pointer;
-begin
-  Result := wl_proxy_get_user_data(Pwl_proxy(wl_data_device));
-end;
-
-function  wl_data_device_get_version(wl_data_device: Pwl_data_device): cuint32;
-begin
-  Result := wl_proxy_get_version(Pwl_proxy(wl_data_device));
-end;
-
-function  wl_data_device_manager_create_data_source(wl_data_device_manager: Pwl_data_device_manager): Pwl_data_source;
+function TWlDataDeviceManager.GetDataDevice(ASeat: TWlSeat; AProxyClass: TWLProxyObjectClass = nil {TWlDataDevice}): TWlDataDevice;
 var
   id: Pwl_proxy;
 begin
-  id := wl_proxy_marshal_constructor(Pwl_proxy(wl_data_device_manager),
-      _WL_DATA_DEVICE_MANAGER_CREATE_DATA_SOURCE, @wl_data_source_interface, nil);
-  Result := Pwl_data_source(id);
+  id := wl_proxy_marshal_constructor(FProxy,
+      _GET_DATA_DEVICE, @wl_data_device_interface, nil, ASeat.Proxy);
+  if AProxyClass = nil then
+    AProxyClass := TWlDataDevice;
+  Result := TWlDataDevice(AProxyClass.Create(id));
+  if not AProxyClass.InheritsFrom(TWlDataDevice) then
+    Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TWlDataDevice]);
 end;
 
-function  wl_data_device_manager_get_data_device(wl_data_device_manager: Pwl_data_device_manager; seat: Pwl_seat): Pwl_data_device;
+function TWlDataDeviceManager.AddListener(AIntf: IWlDataDeviceManagerListener): LongInt;
+begin
+  FUserDataRec.ListenerUserData := Pointer(AIntf);
+  Result := wl_proxy_add_listener(FProxy, @vIntf_wl_data_device_manager_Listener, @FUserDataRec);
+end;
+function TWlShell.GetShellSurface(ASurface: TWlSurface; AProxyClass: TWLProxyObjectClass = nil {TWlShellSurface}): TWlShellSurface;
 var
   id: Pwl_proxy;
 begin
-  id := wl_proxy_marshal_constructor(Pwl_proxy(wl_data_device_manager),
-      _WL_DATA_DEVICE_MANAGER_GET_DATA_DEVICE, @wl_data_device_interface, nil, seat);
-  Result := Pwl_data_device(id);
+  id := wl_proxy_marshal_constructor(FProxy,
+      _GET_SHELL_SURFACE, @wl_shell_surface_interface, nil, ASurface.Proxy);
+  if AProxyClass = nil then
+    AProxyClass := TWlShellSurface;
+  Result := TWlShellSurface(AProxyClass.Create(id));
+  if not AProxyClass.InheritsFrom(TWlShellSurface) then
+    Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TWlShellSurface]);
 end;
 
-function  wl_data_device_manager_add_listener(wl_data_device_manager: Pwl_data_device_manager; listener: Pwl_data_device_manager_listener; data: Pointer): cint;
+function TWlShell.AddListener(AIntf: IWlShellListener): LongInt;
 begin
-  Result := wl_proxy_add_listener(Pwl_proxy(wl_data_device_manager), listener, data);
+  FUserDataRec.ListenerUserData := Pointer(AIntf);
+  Result := wl_proxy_add_listener(FProxy, @vIntf_wl_shell_Listener, @FUserDataRec);
 end;
-
-procedure  wl_data_device_manager_add_listener(wl_data_device_manager: Pwl_data_device_manager; AIntf: Iwl_data_device_managerListener);
+procedure TWlShellSurface.Pong(ASerial: DWord);
 begin
-  wl_data_device_manager_add_listener(wl_data_device_manager, @vIntf_wl_data_device_manager_Listener, AIntf);
+  wl_proxy_marshal(FProxy, _PONG, ASerial);
 end;
 
-procedure wl_data_device_manager_set_user_data(wl_data_device_manager: Pwl_data_device_manager; user_data: Pointer);
+procedure TWlShellSurface.Move(ASeat: TWlSeat; ASerial: DWord);
 begin
-  wl_proxy_set_user_data(Pwl_proxy(wl_data_device_manager), user_data);
+  wl_proxy_marshal(FProxy, _MOVE, ASeat.Proxy, ASerial);
 end;
 
-function  wl_data_device_manager_get_user_data(wl_data_device_manager: Pwl_data_device_manager): Pointer;
+procedure TWlShellSurface.Resize(ASeat: TWlSeat; ASerial: DWord; AEdges: DWord);
 begin
-  Result := wl_proxy_get_user_data(Pwl_proxy(wl_data_device_manager));
+  wl_proxy_marshal(FProxy, _RESIZE, ASeat.Proxy, ASerial, AEdges);
 end;
 
-function  wl_data_device_manager_get_version(wl_data_device_manager: Pwl_data_device_manager): cuint32;
+procedure TWlShellSurface.SetToplevel;
 begin
-  Result := wl_proxy_get_version(Pwl_proxy(wl_data_device_manager));
+  wl_proxy_marshal(FProxy, _SET_TOPLEVEL);
 end;
 
-procedure wl_data_device_manager_destroy(wl_data_device_manager: Pwl_data_device_manager);
+procedure TWlShellSurface.SetTransient(AParent: TWlSurface; AX: LongInt; AY: LongInt; AFlags: DWord);
 begin
-  wl_proxy_destroy(Pwl_proxy(wl_data_device_manager));
+  wl_proxy_marshal(FProxy, _SET_TRANSIENT, AParent.Proxy, AX, AY, AFlags);
 end;
 
-function  wl_shell_get_shell_surface(wl_shell: Pwl_shell; surface: Pwl_surface): Pwl_shell_surface;
-var
-  id: Pwl_proxy;
+procedure TWlShellSurface.SetFullscreen(AMethod: DWord; AFramerate: DWord; AOutput: TWlOutput);
 begin
-  id := wl_proxy_marshal_constructor(Pwl_proxy(wl_shell),
-      _WL_SHELL_GET_SHELL_SURFACE, @wl_shell_surface_interface, nil, surface);
-  Result := Pwl_shell_surface(id);
+  wl_proxy_marshal(FProxy, _SET_FULLSCREEN, AMethod, AFramerate, AOutput.Proxy);
 end;
 
-function  wl_shell_add_listener(wl_shell: Pwl_shell; listener: Pwl_shell_listener; data: Pointer): cint;
+procedure TWlShellSurface.SetPopup(ASeat: TWlSeat; ASerial: DWord; AParent: TWlSurface; AX: LongInt; AY: LongInt; AFlags: DWord);
 begin
-  Result := wl_proxy_add_listener(Pwl_proxy(wl_shell), listener, data);
+  wl_proxy_marshal(FProxy, _SET_POPUP, ASeat.Proxy, ASerial, AParent.Proxy, AX, AY, AFlags);
 end;
 
-procedure  wl_shell_add_listener(wl_shell: Pwl_shell; AIntf: Iwl_shellListener);
+procedure TWlShellSurface.SetMaximized(AOutput: TWlOutput);
 begin
-  wl_shell_add_listener(wl_shell, @vIntf_wl_shell_Listener, AIntf);
+  wl_proxy_marshal(FProxy, _SET_MAXIMIZED, AOutput.Proxy);
 end;
 
-procedure wl_shell_set_user_data(wl_shell: Pwl_shell; user_data: Pointer);
+procedure TWlShellSurface.SetTitle(ATitle: String);
 begin
-  wl_proxy_set_user_data(Pwl_proxy(wl_shell), user_data);
+  wl_proxy_marshal(FProxy, _SET_TITLE, PChar(ATitle));
 end;
 
-function  wl_shell_get_user_data(wl_shell: Pwl_shell): Pointer;
+procedure TWlShellSurface.SetClass(AClass: String);
 begin
-  Result := wl_proxy_get_user_data(Pwl_proxy(wl_shell));
+  wl_proxy_marshal(FProxy, _SET_CLASS, PChar(AClass));
 end;
 
-function  wl_shell_get_version(wl_shell: Pwl_shell): cuint32;
+function TWlShellSurface.AddListener(AIntf: IWlShellSurfaceListener): LongInt;
 begin
-  Result := wl_proxy_get_version(Pwl_proxy(wl_shell));
+  FUserDataRec.ListenerUserData := Pointer(AIntf);
+  Result := wl_proxy_add_listener(FProxy, @vIntf_wl_shell_surface_Listener, @FUserDataRec);
 end;
-
-procedure wl_shell_destroy(wl_shell: Pwl_shell);
+destructor TWlSurface.Destroy;
 begin
-  wl_proxy_destroy(Pwl_proxy(wl_shell));
+  wl_proxy_marshal(FProxy, _DESTROY);
+  inherited Destroy;
 end;
 
-procedure wl_shell_surface_pong(wl_shell_surface: Pwl_shell_surface; serial: cuint);
+procedure TWlSurface.Attach(ABuffer: TWlBuffer; AX: LongInt; AY: LongInt);
 begin
-  wl_proxy_marshal(Pwl_proxy(wl_shell_surface),
-      _WL_SHELL_SURFACE_PONG, serial);
+  wl_proxy_marshal(FProxy, _ATTACH, ABuffer.Proxy, AX, AY);
 end;
 
-procedure wl_shell_surface_move(wl_shell_surface: Pwl_shell_surface; seat: Pwl_seat; serial: cuint);
+procedure TWlSurface.Damage(AX: LongInt; AY: LongInt; AWidth: LongInt; AHeight: LongInt);
 begin
-  wl_proxy_marshal(Pwl_proxy(wl_shell_surface),
-      _WL_SHELL_SURFACE_MOVE, seat, serial);
+  wl_proxy_marshal(FProxy, _DAMAGE, AX, AY, AWidth, AHeight);
 end;
 
-procedure wl_shell_surface_resize(wl_shell_surface: Pwl_shell_surface; seat: Pwl_seat; serial: cuint; edges: cuint);
-begin
-  wl_proxy_marshal(Pwl_proxy(wl_shell_surface),
-      _WL_SHELL_SURFACE_RESIZE, seat, serial, edges);
-end;
-
-procedure wl_shell_surface_set_toplevel(wl_shell_surface: Pwl_shell_surface);
-begin
-  wl_proxy_marshal(Pwl_proxy(wl_shell_surface),
-      _WL_SHELL_SURFACE_SET_TOPLEVEL);
-end;
-
-procedure wl_shell_surface_set_transient(wl_shell_surface: Pwl_shell_surface; parent: Pwl_surface; x: cint; y: cint; flags: cuint);
-begin
-  wl_proxy_marshal(Pwl_proxy(wl_shell_surface),
-      _WL_SHELL_SURFACE_SET_TRANSIENT, parent, x, y, flags);
-end;
-
-procedure wl_shell_surface_set_fullscreen(wl_shell_surface: Pwl_shell_surface; method: cuint; framerate: cuint; output: Pwl_output);
-begin
-  wl_proxy_marshal(Pwl_proxy(wl_shell_surface),
-      _WL_SHELL_SURFACE_SET_FULLSCREEN, method, framerate, output);
-end;
-
-procedure wl_shell_surface_set_popup(wl_shell_surface: Pwl_shell_surface; seat: Pwl_seat; serial: cuint; parent: Pwl_surface; x: cint; y: cint; flags: cuint);
-begin
-  wl_proxy_marshal(Pwl_proxy(wl_shell_surface),
-      _WL_SHELL_SURFACE_SET_POPUP, seat, serial, parent, x, y, flags);
-end;
-
-procedure wl_shell_surface_set_maximized(wl_shell_surface: Pwl_shell_surface; output: Pwl_output);
-begin
-  wl_proxy_marshal(Pwl_proxy(wl_shell_surface),
-      _WL_SHELL_SURFACE_SET_MAXIMIZED, output);
-end;
-
-procedure wl_shell_surface_set_title(wl_shell_surface: Pwl_shell_surface; title: pchar);
-begin
-  wl_proxy_marshal(Pwl_proxy(wl_shell_surface),
-      _WL_SHELL_SURFACE_SET_TITLE, title);
-end;
-
-procedure wl_shell_surface_set_class(wl_shell_surface: Pwl_shell_surface; class_: pchar);
-begin
-  wl_proxy_marshal(Pwl_proxy(wl_shell_surface),
-      _WL_SHELL_SURFACE_SET_CLASS, class_);
-end;
-
-function  wl_shell_surface_add_listener(wl_shell_surface: Pwl_shell_surface; listener: Pwl_shell_surface_listener; data: Pointer): cint;
-begin
-  Result := wl_proxy_add_listener(Pwl_proxy(wl_shell_surface), listener, data);
-end;
-
-procedure  wl_shell_surface_add_listener(wl_shell_surface: Pwl_shell_surface; AIntf: Iwl_shell_surfaceListener);
-begin
-  wl_shell_surface_add_listener(wl_shell_surface, @vIntf_wl_shell_surface_Listener, AIntf);
-end;
-
-procedure wl_shell_surface_set_user_data(wl_shell_surface: Pwl_shell_surface; user_data: Pointer);
-begin
-  wl_proxy_set_user_data(Pwl_proxy(wl_shell_surface), user_data);
-end;
-
-function  wl_shell_surface_get_user_data(wl_shell_surface: Pwl_shell_surface): Pointer;
-begin
-  Result := wl_proxy_get_user_data(Pwl_proxy(wl_shell_surface));
-end;
-
-function  wl_shell_surface_get_version(wl_shell_surface: Pwl_shell_surface): cuint32;
-begin
-  Result := wl_proxy_get_version(Pwl_proxy(wl_shell_surface));
-end;
-
-procedure wl_shell_surface_destroy(wl_shell_surface: Pwl_shell_surface);
-begin
-  wl_proxy_destroy(Pwl_proxy(wl_shell_surface));
-end;
-
-procedure wl_surface_destroy(wl_surface: Pwl_surface);
-begin
-  wl_proxy_marshal(Pwl_proxy(wl_surface), _WL_SURFACE_DESTROY);
-  wl_proxy_destroy(Pwl_proxy(wl_surface));
-end;
-
-procedure wl_surface_attach(wl_surface: Pwl_surface; buffer: Pwl_buffer; x: cint; y: cint);
-begin
-  wl_proxy_marshal(Pwl_proxy(wl_surface),
-      _WL_SURFACE_ATTACH, buffer, x, y);
-end;
-
-procedure wl_surface_damage(wl_surface: Pwl_surface; x: cint; y: cint; width: cint; height: cint);
-begin
-  wl_proxy_marshal(Pwl_proxy(wl_surface),
-      _WL_SURFACE_DAMAGE, x, y, width, height);
-end;
-
-function  wl_surface_frame(wl_surface: Pwl_surface): Pwl_callback;
+function TWlSurface.Frame(AProxyClass: TWLProxyObjectClass = nil {TWlCallback}): TWlCallback;
 var
   callback: Pwl_proxy;
 begin
-  callback := wl_proxy_marshal_constructor(Pwl_proxy(wl_surface),
-      _WL_SURFACE_FRAME, @wl_callback_interface, nil);
-  Result := Pwl_callback(callback);
+  callback := wl_proxy_marshal_constructor(FProxy,
+      _FRAME, @wl_callback_interface, nil);
+  if AProxyClass = nil then
+    AProxyClass := TWlCallback;
+  Result := TWlCallback(AProxyClass.Create(callback));
+  if not AProxyClass.InheritsFrom(TWlCallback) then
+    Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TWlCallback]);
 end;
 
-procedure wl_surface_set_opaque_region(wl_surface: Pwl_surface; region: Pwl_region);
+procedure TWlSurface.SetOpaqueRegion(ARegion: TWlRegion);
 begin
-  wl_proxy_marshal(Pwl_proxy(wl_surface),
-      _WL_SURFACE_SET_OPAQUE_REGION, region);
+  wl_proxy_marshal(FProxy, _SET_OPAQUE_REGION, ARegion.Proxy);
 end;
 
-procedure wl_surface_set_input_region(wl_surface: Pwl_surface; region: Pwl_region);
+procedure TWlSurface.SetInputRegion(ARegion: TWlRegion);
 begin
-  wl_proxy_marshal(Pwl_proxy(wl_surface),
-      _WL_SURFACE_SET_INPUT_REGION, region);
+  wl_proxy_marshal(FProxy, _SET_INPUT_REGION, ARegion.Proxy);
 end;
 
-procedure wl_surface_commit(wl_surface: Pwl_surface);
+procedure TWlSurface.Commit;
 begin
-  wl_proxy_marshal(Pwl_proxy(wl_surface),
-      _WL_SURFACE_COMMIT);
+  wl_proxy_marshal(FProxy, _COMMIT);
 end;
 
-procedure wl_surface_set_buffer_transform(wl_surface: Pwl_surface; transform: cint);
+procedure TWlSurface.SetBufferTransform(ATransform: LongInt);
 begin
-  wl_proxy_marshal(Pwl_proxy(wl_surface),
-      _WL_SURFACE_SET_BUFFER_TRANSFORM, transform);
+  wl_proxy_marshal(FProxy, _SET_BUFFER_TRANSFORM, ATransform);
 end;
 
-procedure wl_surface_set_buffer_scale(wl_surface: Pwl_surface; scale: cint);
+procedure TWlSurface.SetBufferScale(AScale: LongInt);
 begin
-  wl_proxy_marshal(Pwl_proxy(wl_surface),
-      _WL_SURFACE_SET_BUFFER_SCALE, scale);
+  wl_proxy_marshal(FProxy, _SET_BUFFER_SCALE, AScale);
 end;
 
-procedure wl_surface_damage_buffer(wl_surface: Pwl_surface; x: cint; y: cint; width: cint; height: cint);
+procedure TWlSurface.DamageBuffer(AX: LongInt; AY: LongInt; AWidth: LongInt; AHeight: LongInt);
 begin
-  wl_proxy_marshal(Pwl_proxy(wl_surface),
-      _WL_SURFACE_DAMAGE_BUFFER, x, y, width, height);
+  wl_proxy_marshal(FProxy, _DAMAGE_BUFFER, AX, AY, AWidth, AHeight);
 end;
 
-function  wl_surface_add_listener(wl_surface: Pwl_surface; listener: Pwl_surface_listener; data: Pointer): cint;
+function TWlSurface.AddListener(AIntf: IWlSurfaceListener): LongInt;
 begin
-  Result := wl_proxy_add_listener(Pwl_proxy(wl_surface), listener, data);
+  FUserDataRec.ListenerUserData := Pointer(AIntf);
+  Result := wl_proxy_add_listener(FProxy, @vIntf_wl_surface_Listener, @FUserDataRec);
 end;
-
-procedure  wl_surface_add_listener(wl_surface: Pwl_surface; AIntf: Iwl_surfaceListener);
-begin
-  wl_surface_add_listener(wl_surface, @vIntf_wl_surface_Listener, AIntf);
-end;
-
-procedure wl_surface_set_user_data(wl_surface: Pwl_surface; user_data: Pointer);
-begin
-  wl_proxy_set_user_data(Pwl_proxy(wl_surface), user_data);
-end;
-
-function  wl_surface_get_user_data(wl_surface: Pwl_surface): Pointer;
-begin
-  Result := wl_proxy_get_user_data(Pwl_proxy(wl_surface));
-end;
-
-function  wl_surface_get_version(wl_surface: Pwl_surface): cuint32;
-begin
-  Result := wl_proxy_get_version(Pwl_proxy(wl_surface));
-end;
-
-function  wl_seat_get_pointer(wl_seat: Pwl_seat): Pwl_pointer;
+function TWlSeat.GetPointer(AProxyClass: TWLProxyObjectClass = nil {TWlPointer}): TWlPointer;
 var
   id: Pwl_proxy;
 begin
-  id := wl_proxy_marshal_constructor(Pwl_proxy(wl_seat),
-      _WL_SEAT_GET_POINTER, @wl_pointer_interface, nil);
-  Result := Pwl_pointer(id);
+  id := wl_proxy_marshal_constructor(FProxy,
+      _GET_POINTER, @wl_pointer_interface, nil);
+  if AProxyClass = nil then
+    AProxyClass := TWlPointer;
+  Result := TWlPointer(AProxyClass.Create(id));
+  if not AProxyClass.InheritsFrom(TWlPointer) then
+    Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TWlPointer]);
 end;
 
-function  wl_seat_get_keyboard(wl_seat: Pwl_seat): Pwl_keyboard;
+function TWlSeat.GetKeyboard(AProxyClass: TWLProxyObjectClass = nil {TWlKeyboard}): TWlKeyboard;
 var
   id: Pwl_proxy;
 begin
-  id := wl_proxy_marshal_constructor(Pwl_proxy(wl_seat),
-      _WL_SEAT_GET_KEYBOARD, @wl_keyboard_interface, nil);
-  Result := Pwl_keyboard(id);
+  id := wl_proxy_marshal_constructor(FProxy,
+      _GET_KEYBOARD, @wl_keyboard_interface, nil);
+  if AProxyClass = nil then
+    AProxyClass := TWlKeyboard;
+  Result := TWlKeyboard(AProxyClass.Create(id));
+  if not AProxyClass.InheritsFrom(TWlKeyboard) then
+    Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TWlKeyboard]);
 end;
 
-function  wl_seat_get_touch(wl_seat: Pwl_seat): Pwl_touch;
+function TWlSeat.GetTouch(AProxyClass: TWLProxyObjectClass = nil {TWlTouch}): TWlTouch;
 var
   id: Pwl_proxy;
 begin
-  id := wl_proxy_marshal_constructor(Pwl_proxy(wl_seat),
-      _WL_SEAT_GET_TOUCH, @wl_touch_interface, nil);
-  Result := Pwl_touch(id);
+  id := wl_proxy_marshal_constructor(FProxy,
+      _GET_TOUCH, @wl_touch_interface, nil);
+  if AProxyClass = nil then
+    AProxyClass := TWlTouch;
+  Result := TWlTouch(AProxyClass.Create(id));
+  if not AProxyClass.InheritsFrom(TWlTouch) then
+    Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TWlTouch]);
 end;
 
-procedure wl_seat_release(wl_seat: Pwl_seat);
+destructor TWlSeat.Destroy;
 begin
-  wl_proxy_marshal(Pwl_proxy(wl_seat), _WL_SEAT_RELEASE);
-  wl_proxy_destroy(Pwl_proxy(wl_seat));
+  wl_proxy_marshal(FProxy, _RELEASE);
+  inherited Destroy;
 end;
 
-function  wl_seat_add_listener(wl_seat: Pwl_seat; listener: Pwl_seat_listener; data: Pointer): cint;
+function TWlSeat.AddListener(AIntf: IWlSeatListener): LongInt;
 begin
-  Result := wl_proxy_add_listener(Pwl_proxy(wl_seat), listener, data);
+  FUserDataRec.ListenerUserData := Pointer(AIntf);
+  Result := wl_proxy_add_listener(FProxy, @vIntf_wl_seat_Listener, @FUserDataRec);
 end;
-
-procedure  wl_seat_add_listener(wl_seat: Pwl_seat; AIntf: Iwl_seatListener);
+procedure TWlPointer.SetCursor(ASerial: DWord; ASurface: TWlSurface; AHotspotX: LongInt; AHotspotY: LongInt);
 begin
-  wl_seat_add_listener(wl_seat, @vIntf_wl_seat_Listener, AIntf);
+  wl_proxy_marshal(FProxy, _SET_CURSOR, ASerial, ASurface.Proxy, AHotspotX, AHotspotY);
 end;
 
-procedure wl_seat_set_user_data(wl_seat: Pwl_seat; user_data: Pointer);
+destructor TWlPointer.Destroy;
 begin
-  wl_proxy_set_user_data(Pwl_proxy(wl_seat), user_data);
+  wl_proxy_marshal(FProxy, _RELEASE);
+  inherited Destroy;
 end;
 
-function  wl_seat_get_user_data(wl_seat: Pwl_seat): Pointer;
+function TWlPointer.AddListener(AIntf: IWlPointerListener): LongInt;
 begin
-  Result := wl_proxy_get_user_data(Pwl_proxy(wl_seat));
+  FUserDataRec.ListenerUserData := Pointer(AIntf);
+  Result := wl_proxy_add_listener(FProxy, @vIntf_wl_pointer_Listener, @FUserDataRec);
 end;
-
-function  wl_seat_get_version(wl_seat: Pwl_seat): cuint32;
+destructor TWlKeyboard.Destroy;
 begin
-  Result := wl_proxy_get_version(Pwl_proxy(wl_seat));
+  wl_proxy_marshal(FProxy, _RELEASE);
+  inherited Destroy;
 end;
 
-procedure wl_pointer_set_cursor(wl_pointer: Pwl_pointer; serial: cuint; surface: Pwl_surface; hotspot_x: cint; hotspot_y: cint);
+function TWlKeyboard.AddListener(AIntf: IWlKeyboardListener): LongInt;
 begin
-  wl_proxy_marshal(Pwl_proxy(wl_pointer),
-      _WL_POINTER_SET_CURSOR, serial, surface, hotspot_x, hotspot_y);
+  FUserDataRec.ListenerUserData := Pointer(AIntf);
+  Result := wl_proxy_add_listener(FProxy, @vIntf_wl_keyboard_Listener, @FUserDataRec);
 end;
-
-procedure wl_pointer_release(wl_pointer: Pwl_pointer);
+destructor TWlTouch.Destroy;
 begin
-  wl_proxy_marshal(Pwl_proxy(wl_pointer), _WL_POINTER_RELEASE);
-  wl_proxy_destroy(Pwl_proxy(wl_pointer));
+  wl_proxy_marshal(FProxy, _RELEASE);
+  inherited Destroy;
 end;
 
-function  wl_pointer_add_listener(wl_pointer: Pwl_pointer; listener: Pwl_pointer_listener; data: Pointer): cint;
+function TWlTouch.AddListener(AIntf: IWlTouchListener): LongInt;
 begin
-  Result := wl_proxy_add_listener(Pwl_proxy(wl_pointer), listener, data);
+  FUserDataRec.ListenerUserData := Pointer(AIntf);
+  Result := wl_proxy_add_listener(FProxy, @vIntf_wl_touch_Listener, @FUserDataRec);
 end;
-
-procedure  wl_pointer_add_listener(wl_pointer: Pwl_pointer; AIntf: Iwl_pointerListener);
+destructor TWlOutput.Destroy;
 begin
-  wl_pointer_add_listener(wl_pointer, @vIntf_wl_pointer_Listener, AIntf);
+  wl_proxy_marshal(FProxy, _RELEASE);
+  inherited Destroy;
 end;
 
-procedure wl_pointer_set_user_data(wl_pointer: Pwl_pointer; user_data: Pointer);
+function TWlOutput.AddListener(AIntf: IWlOutputListener): LongInt;
 begin
-  wl_proxy_set_user_data(Pwl_proxy(wl_pointer), user_data);
+  FUserDataRec.ListenerUserData := Pointer(AIntf);
+  Result := wl_proxy_add_listener(FProxy, @vIntf_wl_output_Listener, @FUserDataRec);
 end;
-
-function  wl_pointer_get_user_data(wl_pointer: Pwl_pointer): Pointer;
+destructor TWlRegion.Destroy;
 begin
-  Result := wl_proxy_get_user_data(Pwl_proxy(wl_pointer));
+  wl_proxy_marshal(FProxy, _DESTROY);
+  inherited Destroy;
 end;
 
-function  wl_pointer_get_version(wl_pointer: Pwl_pointer): cuint32;
+procedure TWlRegion.Add(AX: LongInt; AY: LongInt; AWidth: LongInt; AHeight: LongInt);
 begin
-  Result := wl_proxy_get_version(Pwl_proxy(wl_pointer));
+  wl_proxy_marshal(FProxy, _ADD, AX, AY, AWidth, AHeight);
 end;
 
-procedure wl_keyboard_release(wl_keyboard: Pwl_keyboard);
+procedure TWlRegion.Subtract(AX: LongInt; AY: LongInt; AWidth: LongInt; AHeight: LongInt);
 begin
-  wl_proxy_marshal(Pwl_proxy(wl_keyboard), _WL_KEYBOARD_RELEASE);
-  wl_proxy_destroy(Pwl_proxy(wl_keyboard));
+  wl_proxy_marshal(FProxy, _SUBTRACT, AX, AY, AWidth, AHeight);
 end;
 
-function  wl_keyboard_add_listener(wl_keyboard: Pwl_keyboard; listener: Pwl_keyboard_listener; data: Pointer): cint;
+function TWlRegion.AddListener(AIntf: IWlRegionListener): LongInt;
 begin
-  Result := wl_proxy_add_listener(Pwl_proxy(wl_keyboard), listener, data);
+  FUserDataRec.ListenerUserData := Pointer(AIntf);
+  Result := wl_proxy_add_listener(FProxy, @vIntf_wl_region_Listener, @FUserDataRec);
 end;
-
-procedure  wl_keyboard_add_listener(wl_keyboard: Pwl_keyboard; AIntf: Iwl_keyboardListener);
+destructor TWlSubcompositor.Destroy;
 begin
-  wl_keyboard_add_listener(wl_keyboard, @vIntf_wl_keyboard_Listener, AIntf);
+  wl_proxy_marshal(FProxy, _DESTROY);
+  inherited Destroy;
 end;
 
-procedure wl_keyboard_set_user_data(wl_keyboard: Pwl_keyboard; user_data: Pointer);
-begin
-  wl_proxy_set_user_data(Pwl_proxy(wl_keyboard), user_data);
-end;
-
-function  wl_keyboard_get_user_data(wl_keyboard: Pwl_keyboard): Pointer;
-begin
-  Result := wl_proxy_get_user_data(Pwl_proxy(wl_keyboard));
-end;
-
-function  wl_keyboard_get_version(wl_keyboard: Pwl_keyboard): cuint32;
-begin
-  Result := wl_proxy_get_version(Pwl_proxy(wl_keyboard));
-end;
-
-procedure wl_touch_release(wl_touch: Pwl_touch);
-begin
-  wl_proxy_marshal(Pwl_proxy(wl_touch), _WL_TOUCH_RELEASE);
-  wl_proxy_destroy(Pwl_proxy(wl_touch));
-end;
-
-function  wl_touch_add_listener(wl_touch: Pwl_touch; listener: Pwl_touch_listener; data: Pointer): cint;
-begin
-  Result := wl_proxy_add_listener(Pwl_proxy(wl_touch), listener, data);
-end;
-
-procedure  wl_touch_add_listener(wl_touch: Pwl_touch; AIntf: Iwl_touchListener);
-begin
-  wl_touch_add_listener(wl_touch, @vIntf_wl_touch_Listener, AIntf);
-end;
-
-procedure wl_touch_set_user_data(wl_touch: Pwl_touch; user_data: Pointer);
-begin
-  wl_proxy_set_user_data(Pwl_proxy(wl_touch), user_data);
-end;
-
-function  wl_touch_get_user_data(wl_touch: Pwl_touch): Pointer;
-begin
-  Result := wl_proxy_get_user_data(Pwl_proxy(wl_touch));
-end;
-
-function  wl_touch_get_version(wl_touch: Pwl_touch): cuint32;
-begin
-  Result := wl_proxy_get_version(Pwl_proxy(wl_touch));
-end;
-
-procedure wl_output_release(wl_output: Pwl_output);
-begin
-  wl_proxy_marshal(Pwl_proxy(wl_output), _WL_OUTPUT_RELEASE);
-  wl_proxy_destroy(Pwl_proxy(wl_output));
-end;
-
-function  wl_output_add_listener(wl_output: Pwl_output; listener: Pwl_output_listener; data: Pointer): cint;
-begin
-  Result := wl_proxy_add_listener(Pwl_proxy(wl_output), listener, data);
-end;
-
-procedure  wl_output_add_listener(wl_output: Pwl_output; AIntf: Iwl_outputListener);
-begin
-  wl_output_add_listener(wl_output, @vIntf_wl_output_Listener, AIntf);
-end;
-
-procedure wl_output_set_user_data(wl_output: Pwl_output; user_data: Pointer);
-begin
-  wl_proxy_set_user_data(Pwl_proxy(wl_output), user_data);
-end;
-
-function  wl_output_get_user_data(wl_output: Pwl_output): Pointer;
-begin
-  Result := wl_proxy_get_user_data(Pwl_proxy(wl_output));
-end;
-
-function  wl_output_get_version(wl_output: Pwl_output): cuint32;
-begin
-  Result := wl_proxy_get_version(Pwl_proxy(wl_output));
-end;
-
-procedure wl_region_destroy(wl_region: Pwl_region);
-begin
-  wl_proxy_marshal(Pwl_proxy(wl_region), _WL_REGION_DESTROY);
-  wl_proxy_destroy(Pwl_proxy(wl_region));
-end;
-
-procedure wl_region_add(wl_region: Pwl_region; x: cint; y: cint; width: cint; height: cint);
-begin
-  wl_proxy_marshal(Pwl_proxy(wl_region),
-      _WL_REGION_ADD, x, y, width, height);
-end;
-
-procedure wl_region_subtract(wl_region: Pwl_region; x: cint; y: cint; width: cint; height: cint);
-begin
-  wl_proxy_marshal(Pwl_proxy(wl_region),
-      _WL_REGION_SUBTRACT, x, y, width, height);
-end;
-
-function  wl_region_add_listener(wl_region: Pwl_region; listener: Pwl_region_listener; data: Pointer): cint;
-begin
-  Result := wl_proxy_add_listener(Pwl_proxy(wl_region), listener, data);
-end;
-
-procedure  wl_region_add_listener(wl_region: Pwl_region; AIntf: Iwl_regionListener);
-begin
-  wl_region_add_listener(wl_region, @vIntf_wl_region_Listener, AIntf);
-end;
-
-procedure wl_region_set_user_data(wl_region: Pwl_region; user_data: Pointer);
-begin
-  wl_proxy_set_user_data(Pwl_proxy(wl_region), user_data);
-end;
-
-function  wl_region_get_user_data(wl_region: Pwl_region): Pointer;
-begin
-  Result := wl_proxy_get_user_data(Pwl_proxy(wl_region));
-end;
-
-function  wl_region_get_version(wl_region: Pwl_region): cuint32;
-begin
-  Result := wl_proxy_get_version(Pwl_proxy(wl_region));
-end;
-
-procedure wl_subcompositor_destroy(wl_subcompositor: Pwl_subcompositor);
-begin
-  wl_proxy_marshal(Pwl_proxy(wl_subcompositor), _WL_SUBCOMPOSITOR_DESTROY);
-  wl_proxy_destroy(Pwl_proxy(wl_subcompositor));
-end;
-
-function  wl_subcompositor_get_subsurface(wl_subcompositor: Pwl_subcompositor; surface: Pwl_surface; parent: Pwl_surface): Pwl_subsurface;
+function TWlSubcompositor.GetSubsurface(ASurface: TWlSurface; AParent: TWlSurface; AProxyClass: TWLProxyObjectClass = nil {TWlSubsurface}): TWlSubsurface;
 var
   id: Pwl_proxy;
 begin
-  id := wl_proxy_marshal_constructor(Pwl_proxy(wl_subcompositor),
-      _WL_SUBCOMPOSITOR_GET_SUBSURFACE, @wl_subsurface_interface, nil, surface, parent);
-  Result := Pwl_subsurface(id);
+  id := wl_proxy_marshal_constructor(FProxy,
+      _GET_SUBSURFACE, @wl_subsurface_interface, nil, ASurface.Proxy, AParent.Proxy);
+  if AProxyClass = nil then
+    AProxyClass := TWlSubsurface;
+  Result := TWlSubsurface(AProxyClass.Create(id));
+  if not AProxyClass.InheritsFrom(TWlSubsurface) then
+    Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TWlSubsurface]);
 end;
 
-function  wl_subcompositor_add_listener(wl_subcompositor: Pwl_subcompositor; listener: Pwl_subcompositor_listener; data: Pointer): cint;
+function TWlSubcompositor.AddListener(AIntf: IWlSubcompositorListener): LongInt;
 begin
-  Result := wl_proxy_add_listener(Pwl_proxy(wl_subcompositor), listener, data);
+  FUserDataRec.ListenerUserData := Pointer(AIntf);
+  Result := wl_proxy_add_listener(FProxy, @vIntf_wl_subcompositor_Listener, @FUserDataRec);
 end;
-
-procedure  wl_subcompositor_add_listener(wl_subcompositor: Pwl_subcompositor; AIntf: Iwl_subcompositorListener);
-begin
-  wl_subcompositor_add_listener(wl_subcompositor, @vIntf_wl_subcompositor_Listener, AIntf);
-end;
-
-procedure wl_subcompositor_set_user_data(wl_subcompositor: Pwl_subcompositor; user_data: Pointer);
-begin
-  wl_proxy_set_user_data(Pwl_proxy(wl_subcompositor), user_data);
-end;
-
-function  wl_subcompositor_get_user_data(wl_subcompositor: Pwl_subcompositor): Pointer;
-begin
-  Result := wl_proxy_get_user_data(Pwl_proxy(wl_subcompositor));
-end;
-
-function  wl_subcompositor_get_version(wl_subcompositor: Pwl_subcompositor): cuint32;
-begin
-  Result := wl_proxy_get_version(Pwl_proxy(wl_subcompositor));
-end;
-
-procedure wl_subsurface_destroy(wl_subsurface: Pwl_subsurface);
-begin
-  wl_proxy_marshal(Pwl_proxy(wl_subsurface), _WL_SUBSURFACE_DESTROY);
-  wl_proxy_destroy(Pwl_proxy(wl_subsurface));
-end;
-
-procedure wl_subsurface_set_position(wl_subsurface: Pwl_subsurface; x: cint; y: cint);
-begin
-  wl_proxy_marshal(Pwl_proxy(wl_subsurface),
-      _WL_SUBSURFACE_SET_POSITION, x, y);
-end;
-
-procedure wl_subsurface_place_above(wl_subsurface: Pwl_subsurface; sibling: Pwl_surface);
+destructor TWlSubsurface.Destroy;
 begin
-  wl_proxy_marshal(Pwl_proxy(wl_subsurface),
-      _WL_SUBSURFACE_PLACE_ABOVE, sibling);
+  wl_proxy_marshal(FProxy, _DESTROY);
+  inherited Destroy;
 end;
 
-procedure wl_subsurface_place_below(wl_subsurface: Pwl_subsurface; sibling: Pwl_surface);
+procedure TWlSubsurface.SetPosition(AX: LongInt; AY: LongInt);
 begin
-  wl_proxy_marshal(Pwl_proxy(wl_subsurface),
-      _WL_SUBSURFACE_PLACE_BELOW, sibling);
+  wl_proxy_marshal(FProxy, _SET_POSITION, AX, AY);
 end;
 
-procedure wl_subsurface_set_sync(wl_subsurface: Pwl_subsurface);
+procedure TWlSubsurface.PlaceAbove(ASibling: TWlSurface);
 begin
-  wl_proxy_marshal(Pwl_proxy(wl_subsurface),
-      _WL_SUBSURFACE_SET_SYNC);
+  wl_proxy_marshal(FProxy, _PLACE_ABOVE, ASibling.Proxy);
 end;
 
-procedure wl_subsurface_set_desync(wl_subsurface: Pwl_subsurface);
+procedure TWlSubsurface.PlaceBelow(ASibling: TWlSurface);
 begin
-  wl_proxy_marshal(Pwl_proxy(wl_subsurface),
-      _WL_SUBSURFACE_SET_DESYNC);
+  wl_proxy_marshal(FProxy, _PLACE_BELOW, ASibling.Proxy);
 end;
 
-function  wl_subsurface_add_listener(wl_subsurface: Pwl_subsurface; listener: Pwl_subsurface_listener; data: Pointer): cint;
+procedure TWlSubsurface.SetSync;
 begin
-  Result := wl_proxy_add_listener(Pwl_proxy(wl_subsurface), listener, data);
+  wl_proxy_marshal(FProxy, _SET_SYNC);
 end;
 
-procedure  wl_subsurface_add_listener(wl_subsurface: Pwl_subsurface; AIntf: Iwl_subsurfaceListener);
+procedure TWlSubsurface.SetDesync;
 begin
-  wl_subsurface_add_listener(wl_subsurface, @vIntf_wl_subsurface_Listener, AIntf);
+  wl_proxy_marshal(FProxy, _SET_DESYNC);
 end;
 
-procedure wl_subsurface_set_user_data(wl_subsurface: Pwl_subsurface; user_data: Pointer);
+function TWlSubsurface.AddListener(AIntf: IWlSubsurfaceListener): LongInt;
 begin
-  wl_proxy_set_user_data(Pwl_proxy(wl_subsurface), user_data);
+  FUserDataRec.ListenerUserData := Pointer(AIntf);
+  Result := wl_proxy_add_listener(FProxy, @vIntf_wl_subsurface_Listener, @FUserDataRec);
 end;
 
-function  wl_subsurface_get_user_data(wl_subsurface: Pwl_subsurface): Pointer;
-begin
-  Result := wl_proxy_get_user_data(Pwl_proxy(wl_subsurface));
-end;
 
-function  wl_subsurface_get_version(wl_subsurface: Pwl_subsurface): cuint32;
-begin
-  Result := wl_proxy_get_version(Pwl_proxy(wl_subsurface));
-end;
 
 
-procedure wl_display_error_Intf(AIntf: Iwl_displayListener; wl_display: Pwl_display; object_id: pointer; code: cuint; message: pchar); cdecl;
+procedure wl_display_error_Intf(AData: PWLUserData; Awl_display: Pwl_display; AObjectId: Pointer; ACode: DWord; AMessage: Pchar); cdecl;
+var
+  AIntf: IWlDisplayListener;
 begin
-  WriteLn('wl_display.error');
-  AIntf.wl_display_error(wl_display, object_id, code, message);
+  if AData = nil then Exit;
+  AIntf := IWlDisplayListener(AData^.ListenerUserData);
+  AIntf.wl_display_error(TWlDisplay(AData^.PascalObject),  Pointer(TWLProxyObject.WLToObj(AObjectId)), ACode, AMessage);
 end;
 
-procedure wl_display_delete_id_Intf(AIntf: Iwl_displayListener; wl_display: Pwl_display; id: cuint); cdecl;
+procedure wl_display_delete_id_Intf(AData: PWLUserData; Awl_display: Pwl_display; AId: DWord); cdecl;
+var
+  AIntf: IWlDisplayListener;
 begin
-  WriteLn('wl_display.delete_id');
-  AIntf.wl_display_delete_id(wl_display, id);
+  if AData = nil then Exit;
+  AIntf := IWlDisplayListener(AData^.ListenerUserData);
+  AIntf.wl_display_delete_id(TWlDisplay(AData^.PascalObject), AId);
 end;
 
-procedure wl_registry_global_Intf(AIntf: Iwl_registryListener; wl_registry: Pwl_registry; name: cuint; &interface: pchar; version: cuint); cdecl;
+procedure wl_registry_global_Intf(AData: PWLUserData; Awl_registry: Pwl_registry; AName: DWord; AInterface: Pchar; AVersion: DWord); cdecl;
+var
+  AIntf: IWlRegistryListener;
 begin
-  WriteLn('wl_registry.global');
-  AIntf.wl_registry_global(wl_registry, name, &interface, version);
+  if AData = nil then Exit;
+  AIntf := IWlRegistryListener(AData^.ListenerUserData);
+  AIntf.wl_registry_global(TWlRegistry(AData^.PascalObject), AName, AInterface, AVersion);
 end;
 
-procedure wl_registry_global_remove_Intf(AIntf: Iwl_registryListener; wl_registry: Pwl_registry; name: cuint); cdecl;
+procedure wl_registry_global_remove_Intf(AData: PWLUserData; Awl_registry: Pwl_registry; AName: DWord); cdecl;
+var
+  AIntf: IWlRegistryListener;
 begin
-  WriteLn('wl_registry.global_remove');
-  AIntf.wl_registry_global_remove(wl_registry, name);
+  if AData = nil then Exit;
+  AIntf := IWlRegistryListener(AData^.ListenerUserData);
+  AIntf.wl_registry_global_remove(TWlRegistry(AData^.PascalObject), AName);
 end;
 
-procedure wl_callback_done_Intf(AIntf: Iwl_callbackListener; wl_callback: Pwl_callback; callback_data: cuint); cdecl;
+procedure wl_callback_done_Intf(AData: PWLUserData; Awl_callback: Pwl_callback; ACallbackData: DWord); cdecl;
+var
+  AIntf: IWlCallbackListener;
 begin
-  WriteLn('wl_callback.done');
-  AIntf.wl_callback_done(wl_callback, callback_data);
+  if AData = nil then Exit;
+  AIntf := IWlCallbackListener(AData^.ListenerUserData);
+  AIntf.wl_callback_done(TWlCallback(AData^.PascalObject), ACallbackData);
 end;
 
-procedure wl_shm_format_Intf(AIntf: Iwl_shmListener; wl_shm: Pwl_shm; format: cuint); cdecl;
+procedure wl_shm_format_Intf(AData: PWLUserData; Awl_shm: Pwl_shm; AFormat: DWord); cdecl;
+var
+  AIntf: IWlShmListener;
 begin
-  WriteLn('wl_shm.format');
-  AIntf.wl_shm_format(wl_shm, format);
+  if AData = nil then Exit;
+  AIntf := IWlShmListener(AData^.ListenerUserData);
+  AIntf.wl_shm_format(TWlShm(AData^.PascalObject), AFormat);
 end;
 
-procedure wl_buffer_release_Intf(AIntf: Iwl_bufferListener; wl_buffer: Pwl_buffer); cdecl;
+procedure wl_buffer_release_Intf(AData: PWLUserData; Awl_buffer: Pwl_buffer); cdecl;
+var
+  AIntf: IWlBufferListener;
 begin
-  WriteLn('wl_buffer.release');
-  AIntf.wl_buffer_release(wl_buffer);
+  if AData = nil then Exit;
+  AIntf := IWlBufferListener(AData^.ListenerUserData);
+  AIntf.wl_buffer_release(TWlBuffer(AData^.PascalObject));
 end;
 
-procedure wl_data_offer_offer_Intf(AIntf: Iwl_data_offerListener; wl_data_offer: Pwl_data_offer; mime_type: pchar); cdecl;
+procedure wl_data_offer_offer_Intf(AData: PWLUserData; Awl_data_offer: Pwl_data_offer; AMimeType: Pchar); cdecl;
+var
+  AIntf: IWlDataOfferListener;
 begin
-  WriteLn('wl_data_offer.offer');
-  AIntf.wl_data_offer_offer(wl_data_offer, mime_type);
+  if AData = nil then Exit;
+  AIntf := IWlDataOfferListener(AData^.ListenerUserData);
+  AIntf.wl_data_offer_offer(TWlDataOffer(AData^.PascalObject), AMimeType);
 end;
 
-procedure wl_data_offer_source_actions_Intf(AIntf: Iwl_data_offerListener; wl_data_offer: Pwl_data_offer; source_actions: cuint); cdecl;
+procedure wl_data_offer_source_actions_Intf(AData: PWLUserData; Awl_data_offer: Pwl_data_offer; ASourceActions: DWord); cdecl;
+var
+  AIntf: IWlDataOfferListener;
 begin
-  WriteLn('wl_data_offer.source_actions');
-  AIntf.wl_data_offer_source_actions(wl_data_offer, source_actions);
+  if AData = nil then Exit;
+  AIntf := IWlDataOfferListener(AData^.ListenerUserData);
+  AIntf.wl_data_offer_source_actions(TWlDataOffer(AData^.PascalObject), ASourceActions);
 end;
 
-procedure wl_data_offer_action_Intf(AIntf: Iwl_data_offerListener; wl_data_offer: Pwl_data_offer; dnd_action: cuint); cdecl;
+procedure wl_data_offer_action_Intf(AData: PWLUserData; Awl_data_offer: Pwl_data_offer; ADndAction: DWord); cdecl;
+var
+  AIntf: IWlDataOfferListener;
 begin
-  WriteLn('wl_data_offer.action');
-  AIntf.wl_data_offer_action(wl_data_offer, dnd_action);
+  if AData = nil then Exit;
+  AIntf := IWlDataOfferListener(AData^.ListenerUserData);
+  AIntf.wl_data_offer_action(TWlDataOffer(AData^.PascalObject), ADndAction);
 end;
 
-procedure wl_data_source_target_Intf(AIntf: Iwl_data_sourceListener; wl_data_source: Pwl_data_source; mime_type: pchar); cdecl;
+procedure wl_data_source_target_Intf(AData: PWLUserData; Awl_data_source: Pwl_data_source; AMimeType: Pchar); cdecl;
+var
+  AIntf: IWlDataSourceListener;
 begin
-  WriteLn('wl_data_source.target');
-  AIntf.wl_data_source_target(wl_data_source, mime_type);
+  if AData = nil then Exit;
+  AIntf := IWlDataSourceListener(AData^.ListenerUserData);
+  AIntf.wl_data_source_target(TWlDataSource(AData^.PascalObject), AMimeType);
 end;
 
-procedure wl_data_source_send_Intf(AIntf: Iwl_data_sourceListener; wl_data_source: Pwl_data_source; mime_type: pchar; fd: cint); cdecl;
+procedure wl_data_source_send_Intf(AData: PWLUserData; Awl_data_source: Pwl_data_source; AMimeType: Pchar; AFd: LongInt{fd}); cdecl;
+var
+  AIntf: IWlDataSourceListener;
 begin
-  WriteLn('wl_data_source.send');
-  AIntf.wl_data_source_send(wl_data_source, mime_type, fd);
+  if AData = nil then Exit;
+  AIntf := IWlDataSourceListener(AData^.ListenerUserData);
+  AIntf.wl_data_source_send(TWlDataSource(AData^.PascalObject), AMimeType, AFd);
 end;
 
-procedure wl_data_source_cancelled_Intf(AIntf: Iwl_data_sourceListener; wl_data_source: Pwl_data_source); cdecl;
+procedure wl_data_source_cancelled_Intf(AData: PWLUserData; Awl_data_source: Pwl_data_source); cdecl;
+var
+  AIntf: IWlDataSourceListener;
 begin
-  WriteLn('wl_data_source.cancelled');
-  AIntf.wl_data_source_cancelled(wl_data_source);
+  if AData = nil then Exit;
+  AIntf := IWlDataSourceListener(AData^.ListenerUserData);
+  AIntf.wl_data_source_cancelled(TWlDataSource(AData^.PascalObject));
 end;
 
-procedure wl_data_source_dnd_drop_performed_Intf(AIntf: Iwl_data_sourceListener; wl_data_source: Pwl_data_source); cdecl;
+procedure wl_data_source_dnd_drop_performed_Intf(AData: PWLUserData; Awl_data_source: Pwl_data_source); cdecl;
+var
+  AIntf: IWlDataSourceListener;
 begin
-  WriteLn('wl_data_source.dnd_drop_performed');
-  AIntf.wl_data_source_dnd_drop_performed(wl_data_source);
+  if AData = nil then Exit;
+  AIntf := IWlDataSourceListener(AData^.ListenerUserData);
+  AIntf.wl_data_source_dnd_drop_performed(TWlDataSource(AData^.PascalObject));
 end;
 
-procedure wl_data_source_dnd_finished_Intf(AIntf: Iwl_data_sourceListener; wl_data_source: Pwl_data_source); cdecl;
+procedure wl_data_source_dnd_finished_Intf(AData: PWLUserData; Awl_data_source: Pwl_data_source); cdecl;
+var
+  AIntf: IWlDataSourceListener;
 begin
-  WriteLn('wl_data_source.dnd_finished');
-  AIntf.wl_data_source_dnd_finished(wl_data_source);
+  if AData = nil then Exit;
+  AIntf := IWlDataSourceListener(AData^.ListenerUserData);
+  AIntf.wl_data_source_dnd_finished(TWlDataSource(AData^.PascalObject));
 end;
 
-procedure wl_data_source_action_Intf(AIntf: Iwl_data_sourceListener; wl_data_source: Pwl_data_source; dnd_action: cuint); cdecl;
+procedure wl_data_source_action_Intf(AData: PWLUserData; Awl_data_source: Pwl_data_source; ADndAction: DWord); cdecl;
+var
+  AIntf: IWlDataSourceListener;
 begin
-  WriteLn('wl_data_source.action');
-  AIntf.wl_data_source_action(wl_data_source, dnd_action);
+  if AData = nil then Exit;
+  AIntf := IWlDataSourceListener(AData^.ListenerUserData);
+  AIntf.wl_data_source_action(TWlDataSource(AData^.PascalObject), ADndAction);
 end;
 
-procedure wl_data_device_data_offer_Intf(AIntf: Iwl_data_deviceListener; wl_data_device: Pwl_data_device; id: Pwl_data_offer); cdecl;
+procedure wl_data_device_data_offer_Intf(AData: PWLUserData; Awl_data_device: Pwl_data_device; AId: Pwl_data_offer); cdecl;
+var
+  AIntf: IWlDataDeviceListener;
 begin
-  WriteLn('wl_data_device.data_offer');
-  AIntf.wl_data_device_data_offer(wl_data_device, id);
+  if AData = nil then Exit;
+  AIntf := IWlDataDeviceListener(AData^.ListenerUserData);
+  AIntf.wl_data_device_data_offer(TWlDataDevice(AData^.PascalObject),  TWlDataOffer.Create(AId));
 end;
 
-procedure wl_data_device_enter_Intf(AIntf: Iwl_data_deviceListener; wl_data_device: Pwl_data_device; serial: cuint; surface: Pwl_surface; x: cint32; y: cint32; id: Pwl_data_offer); cdecl;
+procedure wl_data_device_enter_Intf(AData: PWLUserData; Awl_data_device: Pwl_data_device; ASerial: DWord; ASurface: Pwl_surface; AX: Longint{24.8}; AY: Longint{24.8}; AId: Pwl_data_offer); cdecl;
+var
+  AIntf: IWlDataDeviceListener;
 begin
-  WriteLn('wl_data_device.enter');
-  AIntf.wl_data_device_enter(wl_data_device, serial, surface, x, y, id);
+  if AData = nil then Exit;
+  AIntf := IWlDataDeviceListener(AData^.ListenerUserData);
+  AIntf.wl_data_device_enter(TWlDataDevice(AData^.PascalObject), ASerial,  TWlSurface(TWLProxyObject.WLToObj(ASurface)), AX, AY,  TWlDataOffer(TWLProxyObject.WLToObj(AId)));
 end;
 
-procedure wl_data_device_leave_Intf(AIntf: Iwl_data_deviceListener; wl_data_device: Pwl_data_device); cdecl;
+procedure wl_data_device_leave_Intf(AData: PWLUserData; Awl_data_device: Pwl_data_device); cdecl;
+var
+  AIntf: IWlDataDeviceListener;
 begin
-  WriteLn('wl_data_device.leave');
-  AIntf.wl_data_device_leave(wl_data_device);
+  if AData = nil then Exit;
+  AIntf := IWlDataDeviceListener(AData^.ListenerUserData);
+  AIntf.wl_data_device_leave(TWlDataDevice(AData^.PascalObject));
 end;
 
-procedure wl_data_device_motion_Intf(AIntf: Iwl_data_deviceListener; wl_data_device: Pwl_data_device; time: cuint; x: cint32; y: cint32); cdecl;
+procedure wl_data_device_motion_Intf(AData: PWLUserData; Awl_data_device: Pwl_data_device; ATime: DWord; AX: Longint{24.8}; AY: Longint{24.8}); cdecl;
+var
+  AIntf: IWlDataDeviceListener;
 begin
-  WriteLn('wl_data_device.motion');
-  AIntf.wl_data_device_motion(wl_data_device, time, x, y);
+  if AData = nil then Exit;
+  AIntf := IWlDataDeviceListener(AData^.ListenerUserData);
+  AIntf.wl_data_device_motion(TWlDataDevice(AData^.PascalObject), ATime, AX, AY);
 end;
 
-procedure wl_data_device_drop_Intf(AIntf: Iwl_data_deviceListener; wl_data_device: Pwl_data_device); cdecl;
+procedure wl_data_device_drop_Intf(AData: PWLUserData; Awl_data_device: Pwl_data_device); cdecl;
+var
+  AIntf: IWlDataDeviceListener;
 begin
-  WriteLn('wl_data_device.drop');
-  AIntf.wl_data_device_drop(wl_data_device);
+  if AData = nil then Exit;
+  AIntf := IWlDataDeviceListener(AData^.ListenerUserData);
+  AIntf.wl_data_device_drop(TWlDataDevice(AData^.PascalObject));
 end;
 
-procedure wl_data_device_selection_Intf(AIntf: Iwl_data_deviceListener; wl_data_device: Pwl_data_device; id: Pwl_data_offer); cdecl;
+procedure wl_data_device_selection_Intf(AData: PWLUserData; Awl_data_device: Pwl_data_device; AId: Pwl_data_offer); cdecl;
+var
+  AIntf: IWlDataDeviceListener;
 begin
-  WriteLn('wl_data_device.selection');
-  AIntf.wl_data_device_selection(wl_data_device, id);
+  if AData = nil then Exit;
+  AIntf := IWlDataDeviceListener(AData^.ListenerUserData);
+  AIntf.wl_data_device_selection(TWlDataDevice(AData^.PascalObject),  TWlDataOffer(TWLProxyObject.WLToObj(AId)));
 end;
 
-procedure wl_shell_surface_ping_Intf(AIntf: Iwl_shell_surfaceListener; wl_shell_surface: Pwl_shell_surface; serial: cuint); cdecl;
+procedure wl_shell_surface_ping_Intf(AData: PWLUserData; Awl_shell_surface: Pwl_shell_surface; ASerial: DWord); cdecl;
+var
+  AIntf: IWlShellSurfaceListener;
 begin
-  WriteLn('wl_shell_surface.ping');
-  AIntf.wl_shell_surface_ping(wl_shell_surface, serial);
+  if AData = nil then Exit;
+  AIntf := IWlShellSurfaceListener(AData^.ListenerUserData);
+  AIntf.wl_shell_surface_ping(TWlShellSurface(AData^.PascalObject), ASerial);
 end;
 
-procedure wl_shell_surface_configure_Intf(AIntf: Iwl_shell_surfaceListener; wl_shell_surface: Pwl_shell_surface; edges: cuint; width: cint; height: cint); cdecl;
+procedure wl_shell_surface_configure_Intf(AData: PWLUserData; Awl_shell_surface: Pwl_shell_surface; AEdges: DWord; AWidth: LongInt; AHeight: LongInt); cdecl;
+var
+  AIntf: IWlShellSurfaceListener;
 begin
-  WriteLn('wl_shell_surface.configure');
-  AIntf.wl_shell_surface_configure(wl_shell_surface, edges, width, height);
+  if AData = nil then Exit;
+  AIntf := IWlShellSurfaceListener(AData^.ListenerUserData);
+  AIntf.wl_shell_surface_configure(TWlShellSurface(AData^.PascalObject), AEdges, AWidth, AHeight);
 end;
 
-procedure wl_shell_surface_popup_done_Intf(AIntf: Iwl_shell_surfaceListener; wl_shell_surface: Pwl_shell_surface); cdecl;
+procedure wl_shell_surface_popup_done_Intf(AData: PWLUserData; Awl_shell_surface: Pwl_shell_surface); cdecl;
+var
+  AIntf: IWlShellSurfaceListener;
 begin
-  WriteLn('wl_shell_surface.popup_done');
-  AIntf.wl_shell_surface_popup_done(wl_shell_surface);
+  if AData = nil then Exit;
+  AIntf := IWlShellSurfaceListener(AData^.ListenerUserData);
+  AIntf.wl_shell_surface_popup_done(TWlShellSurface(AData^.PascalObject));
 end;
 
-procedure wl_surface_enter_Intf(AIntf: Iwl_surfaceListener; wl_surface: Pwl_surface; output: Pwl_output); cdecl;
+procedure wl_surface_enter_Intf(AData: PWLUserData; Awl_surface: Pwl_surface; AOutput: Pwl_output); cdecl;
+var
+  AIntf: IWlSurfaceListener;
 begin
-  WriteLn('wl_surface.enter');
-  AIntf.wl_surface_enter(wl_surface, output);
+  if AData = nil then Exit;
+  AIntf := IWlSurfaceListener(AData^.ListenerUserData);
+  AIntf.wl_surface_enter(TWlSurface(AData^.PascalObject),  TWlOutput(TWLProxyObject.WLToObj(AOutput)));
 end;
 
-procedure wl_surface_leave_Intf(AIntf: Iwl_surfaceListener; wl_surface: Pwl_surface; output: Pwl_output); cdecl;
+procedure wl_surface_leave_Intf(AData: PWLUserData; Awl_surface: Pwl_surface; AOutput: Pwl_output); cdecl;
+var
+  AIntf: IWlSurfaceListener;
 begin
-  WriteLn('wl_surface.leave');
-  AIntf.wl_surface_leave(wl_surface, output);
+  if AData = nil then Exit;
+  AIntf := IWlSurfaceListener(AData^.ListenerUserData);
+  AIntf.wl_surface_leave(TWlSurface(AData^.PascalObject),  TWlOutput(TWLProxyObject.WLToObj(AOutput)));
 end;
 
-procedure wl_seat_capabilities_Intf(AIntf: Iwl_seatListener; wl_seat: Pwl_seat; capabilities: cuint); cdecl;
+procedure wl_seat_capabilities_Intf(AData: PWLUserData; Awl_seat: Pwl_seat; ACapabilities: DWord); cdecl;
+var
+  AIntf: IWlSeatListener;
 begin
-  WriteLn('wl_seat.capabilities');
-  AIntf.wl_seat_capabilities(wl_seat, capabilities);
+  if AData = nil then Exit;
+  AIntf := IWlSeatListener(AData^.ListenerUserData);
+  AIntf.wl_seat_capabilities(TWlSeat(AData^.PascalObject), ACapabilities);
 end;
 
-procedure wl_seat_name_Intf(AIntf: Iwl_seatListener; wl_seat: Pwl_seat; name: pchar); cdecl;
+procedure wl_seat_name_Intf(AData: PWLUserData; Awl_seat: Pwl_seat; AName: Pchar); cdecl;
+var
+  AIntf: IWlSeatListener;
 begin
-  WriteLn('wl_seat.name');
-  AIntf.wl_seat_name(wl_seat, name);
+  if AData = nil then Exit;
+  AIntf := IWlSeatListener(AData^.ListenerUserData);
+  AIntf.wl_seat_name(TWlSeat(AData^.PascalObject), AName);
 end;
 
-procedure wl_pointer_enter_Intf(AIntf: Iwl_pointerListener; wl_pointer: Pwl_pointer; serial: cuint; surface: Pwl_surface; surface_x: cint32; surface_y: cint32); cdecl;
+procedure wl_pointer_enter_Intf(AData: PWLUserData; Awl_pointer: Pwl_pointer; ASerial: DWord; ASurface: Pwl_surface; ASurfaceX: Longint{24.8}; ASurfaceY: Longint{24.8}); cdecl;
+var
+  AIntf: IWlPointerListener;
 begin
-  WriteLn('wl_pointer.enter');
-  AIntf.wl_pointer_enter(wl_pointer, serial, surface, surface_x, surface_y);
+  if AData = nil then Exit;
+  AIntf := IWlPointerListener(AData^.ListenerUserData);
+  AIntf.wl_pointer_enter(TWlPointer(AData^.PascalObject), ASerial,  TWlSurface(TWLProxyObject.WLToObj(ASurface)), ASurfaceX, ASurfaceY);
 end;
 
-procedure wl_pointer_leave_Intf(AIntf: Iwl_pointerListener; wl_pointer: Pwl_pointer; serial: cuint; surface: Pwl_surface); cdecl;
+procedure wl_pointer_leave_Intf(AData: PWLUserData; Awl_pointer: Pwl_pointer; ASerial: DWord; ASurface: Pwl_surface); cdecl;
+var
+  AIntf: IWlPointerListener;
 begin
-  WriteLn('wl_pointer.leave');
-  AIntf.wl_pointer_leave(wl_pointer, serial, surface);
+  if AData = nil then Exit;
+  AIntf := IWlPointerListener(AData^.ListenerUserData);
+  AIntf.wl_pointer_leave(TWlPointer(AData^.PascalObject), ASerial,  TWlSurface(TWLProxyObject.WLToObj(ASurface)));
 end;
 
-procedure wl_pointer_motion_Intf(AIntf: Iwl_pointerListener; wl_pointer: Pwl_pointer; time: cuint; surface_x: cint32; surface_y: cint32); cdecl;
+procedure wl_pointer_motion_Intf(AData: PWLUserData; Awl_pointer: Pwl_pointer; ATime: DWord; ASurfaceX: Longint{24.8}; ASurfaceY: Longint{24.8}); cdecl;
+var
+  AIntf: IWlPointerListener;
 begin
-  WriteLn('wl_pointer.motion');
-  AIntf.wl_pointer_motion(wl_pointer, time, surface_x, surface_y);
+  if AData = nil then Exit;
+  AIntf := IWlPointerListener(AData^.ListenerUserData);
+  AIntf.wl_pointer_motion(TWlPointer(AData^.PascalObject), ATime, ASurfaceX, ASurfaceY);
 end;
 
-procedure wl_pointer_button_Intf(AIntf: Iwl_pointerListener; wl_pointer: Pwl_pointer; serial: cuint; time: cuint; button: cuint; state: cuint); cdecl;
+procedure wl_pointer_button_Intf(AData: PWLUserData; Awl_pointer: Pwl_pointer; ASerial: DWord; ATime: DWord; AButton: DWord; AState: DWord); cdecl;
+var
+  AIntf: IWlPointerListener;
 begin
-  WriteLn('wl_pointer.button');
-  AIntf.wl_pointer_button(wl_pointer, serial, time, button, state);
+  if AData = nil then Exit;
+  AIntf := IWlPointerListener(AData^.ListenerUserData);
+  AIntf.wl_pointer_button(TWlPointer(AData^.PascalObject), ASerial, ATime, AButton, AState);
 end;
 
-procedure wl_pointer_axis_Intf(AIntf: Iwl_pointerListener; wl_pointer: Pwl_pointer; time: cuint; axis: cuint; value: cint32); cdecl;
+procedure wl_pointer_axis_Intf(AData: PWLUserData; Awl_pointer: Pwl_pointer; ATime: DWord; AAxis: DWord; AValue: Longint{24.8}); cdecl;
+var
+  AIntf: IWlPointerListener;
 begin
-  WriteLn('wl_pointer.axis');
-  AIntf.wl_pointer_axis(wl_pointer, time, axis, value);
+  if AData = nil then Exit;
+  AIntf := IWlPointerListener(AData^.ListenerUserData);
+  AIntf.wl_pointer_axis(TWlPointer(AData^.PascalObject), ATime, AAxis, AValue);
 end;
 
-procedure wl_pointer_frame_Intf(AIntf: Iwl_pointerListener; wl_pointer: Pwl_pointer); cdecl;
+procedure wl_pointer_frame_Intf(AData: PWLUserData; Awl_pointer: Pwl_pointer); cdecl;
+var
+  AIntf: IWlPointerListener;
 begin
-  WriteLn('wl_pointer.frame');
-  AIntf.wl_pointer_frame(wl_pointer);
+  if AData = nil then Exit;
+  AIntf := IWlPointerListener(AData^.ListenerUserData);
+  AIntf.wl_pointer_frame(TWlPointer(AData^.PascalObject));
 end;
 
-procedure wl_pointer_axis_source_Intf(AIntf: Iwl_pointerListener; wl_pointer: Pwl_pointer; axis_source: cuint); cdecl;
+procedure wl_pointer_axis_source_Intf(AData: PWLUserData; Awl_pointer: Pwl_pointer; AAxisSource: DWord); cdecl;
+var
+  AIntf: IWlPointerListener;
 begin
-  WriteLn('wl_pointer.axis_source');
-  AIntf.wl_pointer_axis_source(wl_pointer, axis_source);
+  if AData = nil then Exit;
+  AIntf := IWlPointerListener(AData^.ListenerUserData);
+  AIntf.wl_pointer_axis_source(TWlPointer(AData^.PascalObject), AAxisSource);
 end;
 
-procedure wl_pointer_axis_stop_Intf(AIntf: Iwl_pointerListener; wl_pointer: Pwl_pointer; time: cuint; axis: cuint); cdecl;
+procedure wl_pointer_axis_stop_Intf(AData: PWLUserData; Awl_pointer: Pwl_pointer; ATime: DWord; AAxis: DWord); cdecl;
+var
+  AIntf: IWlPointerListener;
 begin
-  WriteLn('wl_pointer.axis_stop');
-  AIntf.wl_pointer_axis_stop(wl_pointer, time, axis);
+  if AData = nil then Exit;
+  AIntf := IWlPointerListener(AData^.ListenerUserData);
+  AIntf.wl_pointer_axis_stop(TWlPointer(AData^.PascalObject), ATime, AAxis);
 end;
 
-procedure wl_pointer_axis_discrete_Intf(AIntf: Iwl_pointerListener; wl_pointer: Pwl_pointer; axis: cuint; discrete: cint); cdecl;
+procedure wl_pointer_axis_discrete_Intf(AData: PWLUserData; Awl_pointer: Pwl_pointer; AAxis: DWord; ADiscrete: LongInt); cdecl;
+var
+  AIntf: IWlPointerListener;
 begin
-  WriteLn('wl_pointer.axis_discrete');
-  AIntf.wl_pointer_axis_discrete(wl_pointer, axis, discrete);
+  if AData = nil then Exit;
+  AIntf := IWlPointerListener(AData^.ListenerUserData);
+  AIntf.wl_pointer_axis_discrete(TWlPointer(AData^.PascalObject), AAxis, ADiscrete);
 end;
 
-procedure wl_keyboard_keymap_Intf(AIntf: Iwl_keyboardListener; wl_keyboard: Pwl_keyboard; format: cuint; fd: cint; size: cuint); cdecl;
+procedure wl_keyboard_keymap_Intf(AData: PWLUserData; Awl_keyboard: Pwl_keyboard; AFormat: DWord; AFd: LongInt{fd}; ASize: DWord); cdecl;
+var
+  AIntf: IWlKeyboardListener;
 begin
-  WriteLn('wl_keyboard.keymap');
-  AIntf.wl_keyboard_keymap(wl_keyboard, format, fd, size);
+  if AData = nil then Exit;
+  AIntf := IWlKeyboardListener(AData^.ListenerUserData);
+  AIntf.wl_keyboard_keymap(TWlKeyboard(AData^.PascalObject), AFormat, AFd, ASize);
 end;
 
-procedure wl_keyboard_enter_Intf(AIntf: Iwl_keyboardListener; wl_keyboard: Pwl_keyboard; serial: cuint; surface: Pwl_surface; keys: Pwl_array); cdecl;
+procedure wl_keyboard_enter_Intf(AData: PWLUserData; Awl_keyboard: Pwl_keyboard; ASerial: DWord; ASurface: Pwl_surface; AKeys: Pwl_array); cdecl;
+var
+  AIntf: IWlKeyboardListener;
 begin
-  WriteLn('wl_keyboard.enter');
-  AIntf.wl_keyboard_enter(wl_keyboard, serial, surface, keys);
+  if AData = nil then Exit;
+  AIntf := IWlKeyboardListener(AData^.ListenerUserData);
+  AIntf.wl_keyboard_enter(TWlKeyboard(AData^.PascalObject), ASerial,  TWlSurface(TWLProxyObject.WLToObj(ASurface)), AKeys);
 end;
 
-procedure wl_keyboard_leave_Intf(AIntf: Iwl_keyboardListener; wl_keyboard: Pwl_keyboard; serial: cuint; surface: Pwl_surface); cdecl;
+procedure wl_keyboard_leave_Intf(AData: PWLUserData; Awl_keyboard: Pwl_keyboard; ASerial: DWord; ASurface: Pwl_surface); cdecl;
+var
+  AIntf: IWlKeyboardListener;
 begin
-  WriteLn('wl_keyboard.leave');
-  AIntf.wl_keyboard_leave(wl_keyboard, serial, surface);
+  if AData = nil then Exit;
+  AIntf := IWlKeyboardListener(AData^.ListenerUserData);
+  AIntf.wl_keyboard_leave(TWlKeyboard(AData^.PascalObject), ASerial,  TWlSurface(TWLProxyObject.WLToObj(ASurface)));
 end;
 
-procedure wl_keyboard_key_Intf(AIntf: Iwl_keyboardListener; wl_keyboard: Pwl_keyboard; serial: cuint; time: cuint; key: cuint; state: cuint); cdecl;
+procedure wl_keyboard_key_Intf(AData: PWLUserData; Awl_keyboard: Pwl_keyboard; ASerial: DWord; ATime: DWord; AKey: DWord; AState: DWord); cdecl;
+var
+  AIntf: IWlKeyboardListener;
 begin
-  WriteLn('wl_keyboard.key');
-  AIntf.wl_keyboard_key(wl_keyboard, serial, time, key, state);
+  if AData = nil then Exit;
+  AIntf := IWlKeyboardListener(AData^.ListenerUserData);
+  AIntf.wl_keyboard_key(TWlKeyboard(AData^.PascalObject), ASerial, ATime, AKey, AState);
 end;
 
-procedure wl_keyboard_modifiers_Intf(AIntf: Iwl_keyboardListener; wl_keyboard: Pwl_keyboard; serial: cuint; mods_depressed: cuint; mods_latched: cuint; mods_locked: cuint; group: cuint); cdecl;
+procedure wl_keyboard_modifiers_Intf(AData: PWLUserData; Awl_keyboard: Pwl_keyboard; ASerial: DWord; AModsDepressed: DWord; AModsLatched: DWord; AModsLocked: DWord; AGroup: DWord); cdecl;
+var
+  AIntf: IWlKeyboardListener;
 begin
-  WriteLn('wl_keyboard.modifiers');
-  AIntf.wl_keyboard_modifiers(wl_keyboard, serial, mods_depressed, mods_latched, mods_locked, group);
+  if AData = nil then Exit;
+  AIntf := IWlKeyboardListener(AData^.ListenerUserData);
+  AIntf.wl_keyboard_modifiers(TWlKeyboard(AData^.PascalObject), ASerial, AModsDepressed, AModsLatched, AModsLocked, AGroup);
 end;
 
-procedure wl_keyboard_repeat_info_Intf(AIntf: Iwl_keyboardListener; wl_keyboard: Pwl_keyboard; rate: cint; delay: cint); cdecl;
+procedure wl_keyboard_repeat_info_Intf(AData: PWLUserData; Awl_keyboard: Pwl_keyboard; ARate: LongInt; ADelay: LongInt); cdecl;
+var
+  AIntf: IWlKeyboardListener;
 begin
-  WriteLn('wl_keyboard.repeat_info');
-  AIntf.wl_keyboard_repeat_info(wl_keyboard, rate, delay);
+  if AData = nil then Exit;
+  AIntf := IWlKeyboardListener(AData^.ListenerUserData);
+  AIntf.wl_keyboard_repeat_info(TWlKeyboard(AData^.PascalObject), ARate, ADelay);
 end;
 
-procedure wl_touch_down_Intf(AIntf: Iwl_touchListener; wl_touch: Pwl_touch; serial: cuint; time: cuint; surface: Pwl_surface; id: cint; x: cint32; y: cint32); cdecl;
+procedure wl_touch_down_Intf(AData: PWLUserData; Awl_touch: Pwl_touch; ASerial: DWord; ATime: DWord; ASurface: Pwl_surface; AId: LongInt; AX: Longint{24.8}; AY: Longint{24.8}); cdecl;
+var
+  AIntf: IWlTouchListener;
 begin
-  WriteLn('wl_touch.down');
-  AIntf.wl_touch_down(wl_touch, serial, time, surface, id, x, y);
+  if AData = nil then Exit;
+  AIntf := IWlTouchListener(AData^.ListenerUserData);
+  AIntf.wl_touch_down(TWlTouch(AData^.PascalObject), ASerial, ATime,  TWlSurface(TWLProxyObject.WLToObj(ASurface)), AId, AX, AY);
 end;
 
-procedure wl_touch_up_Intf(AIntf: Iwl_touchListener; wl_touch: Pwl_touch; serial: cuint; time: cuint; id: cint); cdecl;
+procedure wl_touch_up_Intf(AData: PWLUserData; Awl_touch: Pwl_touch; ASerial: DWord; ATime: DWord; AId: LongInt); cdecl;
+var
+  AIntf: IWlTouchListener;
 begin
-  WriteLn('wl_touch.up');
-  AIntf.wl_touch_up(wl_touch, serial, time, id);
+  if AData = nil then Exit;
+  AIntf := IWlTouchListener(AData^.ListenerUserData);
+  AIntf.wl_touch_up(TWlTouch(AData^.PascalObject), ASerial, ATime, AId);
 end;
 
-procedure wl_touch_motion_Intf(AIntf: Iwl_touchListener; wl_touch: Pwl_touch; time: cuint; id: cint; x: cint32; y: cint32); cdecl;
+procedure wl_touch_motion_Intf(AData: PWLUserData; Awl_touch: Pwl_touch; ATime: DWord; AId: LongInt; AX: Longint{24.8}; AY: Longint{24.8}); cdecl;
+var
+  AIntf: IWlTouchListener;
 begin
-  WriteLn('wl_touch.motion');
-  AIntf.wl_touch_motion(wl_touch, time, id, x, y);
+  if AData = nil then Exit;
+  AIntf := IWlTouchListener(AData^.ListenerUserData);
+  AIntf.wl_touch_motion(TWlTouch(AData^.PascalObject), ATime, AId, AX, AY);
 end;
 
-procedure wl_touch_frame_Intf(AIntf: Iwl_touchListener; wl_touch: Pwl_touch); cdecl;
+procedure wl_touch_frame_Intf(AData: PWLUserData; Awl_touch: Pwl_touch); cdecl;
+var
+  AIntf: IWlTouchListener;
 begin
-  WriteLn('wl_touch.frame');
-  AIntf.wl_touch_frame(wl_touch);
+  if AData = nil then Exit;
+  AIntf := IWlTouchListener(AData^.ListenerUserData);
+  AIntf.wl_touch_frame(TWlTouch(AData^.PascalObject));
 end;
 
-procedure wl_touch_cancel_Intf(AIntf: Iwl_touchListener; wl_touch: Pwl_touch); cdecl;
+procedure wl_touch_cancel_Intf(AData: PWLUserData; Awl_touch: Pwl_touch); cdecl;
+var
+  AIntf: IWlTouchListener;
 begin
-  WriteLn('wl_touch.cancel');
-  AIntf.wl_touch_cancel(wl_touch);
+  if AData = nil then Exit;
+  AIntf := IWlTouchListener(AData^.ListenerUserData);
+  AIntf.wl_touch_cancel(TWlTouch(AData^.PascalObject));
 end;
 
-procedure wl_touch_shape_Intf(AIntf: Iwl_touchListener; wl_touch: Pwl_touch; id: cint; major: cint32; minor: cint32); cdecl;
+procedure wl_touch_shape_Intf(AData: PWLUserData; Awl_touch: Pwl_touch; AId: LongInt; AMajor: Longint{24.8}; AMinor: Longint{24.8}); cdecl;
+var
+  AIntf: IWlTouchListener;
 begin
-  WriteLn('wl_touch.shape');
-  AIntf.wl_touch_shape(wl_touch, id, major, minor);
+  if AData = nil then Exit;
+  AIntf := IWlTouchListener(AData^.ListenerUserData);
+  AIntf.wl_touch_shape(TWlTouch(AData^.PascalObject), AId, AMajor, AMinor);
 end;
 
-procedure wl_touch_orientation_Intf(AIntf: Iwl_touchListener; wl_touch: Pwl_touch; id: cint; orientation: cint32); cdecl;
+procedure wl_touch_orientation_Intf(AData: PWLUserData; Awl_touch: Pwl_touch; AId: LongInt; AOrientation: Longint{24.8}); cdecl;
+var
+  AIntf: IWlTouchListener;
 begin
-  WriteLn('wl_touch.orientation');
-  AIntf.wl_touch_orientation(wl_touch, id, orientation);
+  if AData = nil then Exit;
+  AIntf := IWlTouchListener(AData^.ListenerUserData);
+  AIntf.wl_touch_orientation(TWlTouch(AData^.PascalObject), AId, AOrientation);
 end;
 
-procedure wl_output_geometry_Intf(AIntf: Iwl_outputListener; wl_output: Pwl_output; x: cint; y: cint; physical_width: cint; physical_height: cint; subpixel: cint; make: pchar; model: pchar; transform: cint); cdecl;
+procedure wl_output_geometry_Intf(AData: PWLUserData; Awl_output: Pwl_output; AX: LongInt; AY: LongInt; APhysicalWidth: LongInt; APhysicalHeight: LongInt; ASubpixel: LongInt; AMake: Pchar; AModel: Pchar; ATransform: LongInt); cdecl;
+var
+  AIntf: IWlOutputListener;
 begin
-  WriteLn('wl_output.geometry');
-  AIntf.wl_output_geometry(wl_output, x, y, physical_width, physical_height, subpixel, make, model, transform);
+  if AData = nil then Exit;
+  AIntf := IWlOutputListener(AData^.ListenerUserData);
+  AIntf.wl_output_geometry(TWlOutput(AData^.PascalObject), AX, AY, APhysicalWidth, APhysicalHeight, ASubpixel, AMake, AModel, ATransform);
 end;
 
-procedure wl_output_mode_Intf(AIntf: Iwl_outputListener; wl_output: Pwl_output; flags: cuint; width: cint; height: cint; refresh: cint); cdecl;
+procedure wl_output_mode_Intf(AData: PWLUserData; Awl_output: Pwl_output; AFlags: DWord; AWidth: LongInt; AHeight: LongInt; ARefresh: LongInt); cdecl;
+var
+  AIntf: IWlOutputListener;
 begin
-  WriteLn('wl_output.mode');
-  AIntf.wl_output_mode(wl_output, flags, width, height, refresh);
+  if AData = nil then Exit;
+  AIntf := IWlOutputListener(AData^.ListenerUserData);
+  AIntf.wl_output_mode(TWlOutput(AData^.PascalObject), AFlags, AWidth, AHeight, ARefresh);
 end;
 
-procedure wl_output_done_Intf(AIntf: Iwl_outputListener; wl_output: Pwl_output); cdecl;
+procedure wl_output_done_Intf(AData: PWLUserData; Awl_output: Pwl_output); cdecl;
+var
+  AIntf: IWlOutputListener;
 begin
-  WriteLn('wl_output.done');
-  AIntf.wl_output_done(wl_output);
+  if AData = nil then Exit;
+  AIntf := IWlOutputListener(AData^.ListenerUserData);
+  AIntf.wl_output_done(TWlOutput(AData^.PascalObject));
 end;
 
-procedure wl_output_scale_Intf(AIntf: Iwl_outputListener; wl_output: Pwl_output; factor: cint); cdecl;
+procedure wl_output_scale_Intf(AData: PWLUserData; Awl_output: Pwl_output; AFactor: LongInt); cdecl;
+var
+  AIntf: IWlOutputListener;
 begin
-  WriteLn('wl_output.scale');
-  AIntf.wl_output_scale(wl_output, factor);
+  if AData = nil then Exit;
+  AIntf := IWlOutputListener(AData^.ListenerUserData);
+  AIntf.wl_output_scale(TWlOutput(AData^.PascalObject), AFactor);
 end;
 
 

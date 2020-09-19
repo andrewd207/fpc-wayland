@@ -6,18 +6,14 @@ unit xdg_foreign_unstable_v2_protocol;
 interface
 
 uses
-  ctypes, wayland_util, wayland_client_core, wayland_protocol;
+  Classes, Sysutils, ctypes, wayland_util, wayland_client_core, wayland_protocol;
 
 
 type
-  Pzxdg_exporter_v2 = ^Tzxdg_exporter_v2;
-  Tzxdg_exporter_v2 = record end;
-  Pzxdg_importer_v2 = ^Tzxdg_importer_v2;
-  Tzxdg_importer_v2 = record end;
-  Pzxdg_exported_v2 = ^Tzxdg_exported_v2;
-  Tzxdg_exported_v2 = record end;
-  Pzxdg_imported_v2 = ^Tzxdg_imported_v2;
-  Tzxdg_imported_v2 = record end;
+  Pzxdg_exporter_v2 = Pointer;
+  Pzxdg_importer_v2 = Pointer;
+  Pzxdg_exported_v2 = Pointer;
+  Pzxdg_imported_v2 = Pointer;
   Pzxdg_exporter_v2_listener = ^Tzxdg_exporter_v2_listener;
   Tzxdg_exporter_v2_listener = record
   end;
@@ -28,63 +24,83 @@ type
 
   Pzxdg_exported_v2_listener = ^Tzxdg_exported_v2_listener;
   Tzxdg_exported_v2_listener = record
-    handle : procedure(data: Pointer; zxdg_exported_v2: Pzxdg_exported_v2; handle: pchar); cdecl;
+    handle : procedure(data: Pointer; AZxdgExportedV2: Pzxdg_exported_v2; AHandle: Pchar); cdecl;
   end;
 
   Pzxdg_imported_v2_listener = ^Tzxdg_imported_v2_listener;
   Tzxdg_imported_v2_listener = record
-    destroyed : procedure(data: Pointer; zxdg_imported_v2: Pzxdg_imported_v2); cdecl;
+    destroyed : procedure(data: Pointer; AZxdgImportedV2: Pzxdg_imported_v2); cdecl;
   end;
 
 
 
-  Izxdg_exporter_v2Listener = interface
-  ['Izxdg_exporter_v2Listener']
+  TZxdgExporterV2 = class;
+  TZxdgImporterV2 = class;
+  TZxdgExportedV2 = class;
+  TZxdgImportedV2 = class;
+
+
+  IZxdgExporterV2Listener = interface
+  ['IZxdgExporterV2Listener']
   end;
 
-  Izxdg_importer_v2Listener = interface
-  ['Izxdg_importer_v2Listener']
+  IZxdgImporterV2Listener = interface
+  ['IZxdgImporterV2Listener']
   end;
 
-  Izxdg_exported_v2Listener = interface
-  ['Izxdg_exported_v2Listener']
-    procedure zxdg_exported_v2_handle(zxdg_exported_v2: Pzxdg_exported_v2; handle: pchar);
+  IZxdgExportedV2Listener = interface
+  ['IZxdgExportedV2Listener']
+    procedure zxdg_exported_v2_handle(AZxdgExportedV2: TZxdgExportedV2; AHandle: String);
   end;
 
-  Izxdg_imported_v2Listener = interface
-  ['Izxdg_imported_v2Listener']
-    procedure zxdg_imported_v2_destroyed(zxdg_imported_v2: Pzxdg_imported_v2);
+  IZxdgImportedV2Listener = interface
+  ['IZxdgImportedV2Listener']
+    procedure zxdg_imported_v2_destroyed(AZxdgImportedV2: TZxdgImportedV2);
   end;
 
 
 
-procedure zxdg_exporter_v2_destroy(zxdg_exporter_v2: Pzxdg_exporter_v2);
-function  zxdg_exporter_v2_export_toplevel(zxdg_exporter_v2: Pzxdg_exporter_v2; surface: Pwl_surface): Pzxdg_exported_v2;
-function  zxdg_exporter_v2_add_listener(zxdg_exporter_v2: Pzxdg_exporter_v2; listener: Pzxdg_exporter_v2_listener; data: Pointer): cint;
-procedure  zxdg_exporter_v2_add_listener(zxdg_exporter_v2: Pzxdg_exporter_v2; AIntf: Izxdg_exporter_v2Listener);
-procedure zxdg_exporter_v2_set_user_data(zxdg_exporter_v2: Pzxdg_exporter_v2; user_data: Pointer);
-function  zxdg_exporter_v2_get_user_data(zxdg_exporter_v2: Pzxdg_exporter_v2): Pointer;
-function  zxdg_exporter_v2_get_version(zxdg_exporter_v2: Pzxdg_exporter_v2): cuint32;
-procedure zxdg_importer_v2_destroy(zxdg_importer_v2: Pzxdg_importer_v2);
-function  zxdg_importer_v2_import_toplevel(zxdg_importer_v2: Pzxdg_importer_v2; handle: pchar): Pzxdg_imported_v2;
-function  zxdg_importer_v2_add_listener(zxdg_importer_v2: Pzxdg_importer_v2; listener: Pzxdg_importer_v2_listener; data: Pointer): cint;
-procedure  zxdg_importer_v2_add_listener(zxdg_importer_v2: Pzxdg_importer_v2; AIntf: Izxdg_importer_v2Listener);
-procedure zxdg_importer_v2_set_user_data(zxdg_importer_v2: Pzxdg_importer_v2; user_data: Pointer);
-function  zxdg_importer_v2_get_user_data(zxdg_importer_v2: Pzxdg_importer_v2): Pointer;
-function  zxdg_importer_v2_get_version(zxdg_importer_v2: Pzxdg_importer_v2): cuint32;
-procedure zxdg_exported_v2_destroy(zxdg_exported_v2: Pzxdg_exported_v2);
-function  zxdg_exported_v2_add_listener(zxdg_exported_v2: Pzxdg_exported_v2; listener: Pzxdg_exported_v2_listener; data: Pointer): cint;
-procedure  zxdg_exported_v2_add_listener(zxdg_exported_v2: Pzxdg_exported_v2; AIntf: Izxdg_exported_v2Listener);
-procedure zxdg_exported_v2_set_user_data(zxdg_exported_v2: Pzxdg_exported_v2; user_data: Pointer);
-function  zxdg_exported_v2_get_user_data(zxdg_exported_v2: Pzxdg_exported_v2): Pointer;
-function  zxdg_exported_v2_get_version(zxdg_exported_v2: Pzxdg_exported_v2): cuint32;
-procedure zxdg_imported_v2_destroy(zxdg_imported_v2: Pzxdg_imported_v2);
-procedure zxdg_imported_v2_set_parent_of(zxdg_imported_v2: Pzxdg_imported_v2; surface: Pwl_surface);
-function  zxdg_imported_v2_add_listener(zxdg_imported_v2: Pzxdg_imported_v2; listener: Pzxdg_imported_v2_listener; data: Pointer): cint;
-procedure  zxdg_imported_v2_add_listener(zxdg_imported_v2: Pzxdg_imported_v2; AIntf: Izxdg_imported_v2Listener);
-procedure zxdg_imported_v2_set_user_data(zxdg_imported_v2: Pzxdg_imported_v2; user_data: Pointer);
-function  zxdg_imported_v2_get_user_data(zxdg_imported_v2: Pzxdg_imported_v2): Pointer;
-function  zxdg_imported_v2_get_version(zxdg_imported_v2: Pzxdg_imported_v2): cuint32;
+
+  TZxdgExporterV2 = class(TWLProxyObject)
+  private
+    const _DESTROY = 0;
+    const _EXPORT_TOPLEVEL = 1;
+  public
+    destructor Destroy; override;
+    function ExportToplevel(ASurface: TWlSurface; AProxyClass: TWLProxyObjectClass = nil {TZxdgExportedV2}): TZxdgExportedV2;
+    function AddListener(AIntf: IZxdgExporterV2Listener): LongInt;
+  end;
+
+  TZxdgImporterV2 = class(TWLProxyObject)
+  private
+    const _DESTROY = 0;
+    const _IMPORT_TOPLEVEL = 1;
+  public
+    destructor Destroy; override;
+    function ImportToplevel(AHandle: String; AProxyClass: TWLProxyObjectClass = nil {TZxdgImportedV2}): TZxdgImportedV2;
+    function AddListener(AIntf: IZxdgImporterV2Listener): LongInt;
+  end;
+
+  TZxdgExportedV2 = class(TWLProxyObject)
+  private
+    const _DESTROY = 0;
+  public
+    destructor Destroy; override;
+    function AddListener(AIntf: IZxdgExportedV2Listener): LongInt;
+  end;
+
+  TZxdgImportedV2 = class(TWLProxyObject)
+  private
+    const _DESTROY = 0;
+    const _SET_PARENT_OF = 1;
+  public
+    destructor Destroy; override;
+    procedure SetParentOf(ASurface: TWlSurface);
+    function AddListener(AIntf: IZxdgImportedV2Listener): LongInt;
+  end;
+
+
+
 
 
 
@@ -98,16 +114,6 @@ var
 
 implementation
 
-const
-_ZXDG_EXPORTER_V2_DESTROY = 0;
-_ZXDG_EXPORTER_V2_EXPORT_TOPLEVEL = 1;
-_ZXDG_IMPORTER_V2_DESTROY = 0;
-_ZXDG_IMPORTER_V2_IMPORT_TOPLEVEL = 1;
-_ZXDG_EXPORTED_V2_DESTROY = 0;
-_ZXDG_IMPORTED_V2_DESTROY = 0;
-_ZXDG_IMPORTED_V2_SET_PARENT_OF = 1;
-
-
 var
   vIntf_zxdg_exporter_v2_Listener: Tzxdg_exporter_v2_listener;
   vIntf_zxdg_importer_v2_Listener: Tzxdg_importer_v2_listener;
@@ -116,165 +122,101 @@ var
 
 
 
-procedure zxdg_exporter_v2_destroy(zxdg_exporter_v2: Pzxdg_exporter_v2);
+destructor TZxdgExporterV2.Destroy;
 begin
-  wl_proxy_marshal(Pwl_proxy(zxdg_exporter_v2), _ZXDG_EXPORTER_V2_DESTROY);
-  wl_proxy_destroy(Pwl_proxy(zxdg_exporter_v2));
+  wl_proxy_marshal(FProxy, _DESTROY);
+  inherited Destroy;
 end;
 
-function  zxdg_exporter_v2_export_toplevel(zxdg_exporter_v2: Pzxdg_exporter_v2; surface: Pwl_surface): Pzxdg_exported_v2;
+function TZxdgExporterV2.ExportToplevel(ASurface: TWlSurface; AProxyClass: TWLProxyObjectClass = nil {TZxdgExportedV2}): TZxdgExportedV2;
 var
   id: Pwl_proxy;
 begin
-  id := wl_proxy_marshal_constructor(Pwl_proxy(zxdg_exporter_v2),
-      _ZXDG_EXPORTER_V2_EXPORT_TOPLEVEL, @zxdg_exported_v2_interface, nil, surface);
-  Result := Pzxdg_exported_v2(id);
+  id := wl_proxy_marshal_constructor(FProxy,
+      _EXPORT_TOPLEVEL, @zxdg_exported_v2_interface, nil, ASurface.Proxy);
+  if AProxyClass = nil then
+    AProxyClass := TZxdgExportedV2;
+  Result := TZxdgExportedV2(AProxyClass.Create(id));
+  if not AProxyClass.InheritsFrom(TZxdgExportedV2) then
+    Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TZxdgExportedV2]);
 end;
 
-function  zxdg_exporter_v2_add_listener(zxdg_exporter_v2: Pzxdg_exporter_v2; listener: Pzxdg_exporter_v2_listener; data: Pointer): cint;
+function TZxdgExporterV2.AddListener(AIntf: IZxdgExporterV2Listener): LongInt;
 begin
-  Result := wl_proxy_add_listener(Pwl_proxy(zxdg_exporter_v2), listener, data);
+  FUserDataRec.ListenerUserData := Pointer(AIntf);
+  Result := wl_proxy_add_listener(FProxy, @vIntf_zxdg_exporter_v2_Listener, @FUserDataRec);
 end;
-
-procedure  zxdg_exporter_v2_add_listener(zxdg_exporter_v2: Pzxdg_exporter_v2; AIntf: Izxdg_exporter_v2Listener);
+destructor TZxdgImporterV2.Destroy;
 begin
-  zxdg_exporter_v2_add_listener(zxdg_exporter_v2, @vIntf_zxdg_exporter_v2_Listener, AIntf);
+  wl_proxy_marshal(FProxy, _DESTROY);
+  inherited Destroy;
 end;
 
-procedure zxdg_exporter_v2_set_user_data(zxdg_exporter_v2: Pzxdg_exporter_v2; user_data: Pointer);
-begin
-  wl_proxy_set_user_data(Pwl_proxy(zxdg_exporter_v2), user_data);
-end;
-
-function  zxdg_exporter_v2_get_user_data(zxdg_exporter_v2: Pzxdg_exporter_v2): Pointer;
-begin
-  Result := wl_proxy_get_user_data(Pwl_proxy(zxdg_exporter_v2));
-end;
-
-function  zxdg_exporter_v2_get_version(zxdg_exporter_v2: Pzxdg_exporter_v2): cuint32;
-begin
-  Result := wl_proxy_get_version(Pwl_proxy(zxdg_exporter_v2));
-end;
-
-procedure zxdg_importer_v2_destroy(zxdg_importer_v2: Pzxdg_importer_v2);
-begin
-  wl_proxy_marshal(Pwl_proxy(zxdg_importer_v2), _ZXDG_IMPORTER_V2_DESTROY);
-  wl_proxy_destroy(Pwl_proxy(zxdg_importer_v2));
-end;
-
-function  zxdg_importer_v2_import_toplevel(zxdg_importer_v2: Pzxdg_importer_v2; handle: pchar): Pzxdg_imported_v2;
+function TZxdgImporterV2.ImportToplevel(AHandle: String; AProxyClass: TWLProxyObjectClass = nil {TZxdgImportedV2}): TZxdgImportedV2;
 var
   id: Pwl_proxy;
 begin
-  id := wl_proxy_marshal_constructor(Pwl_proxy(zxdg_importer_v2),
-      _ZXDG_IMPORTER_V2_IMPORT_TOPLEVEL, @zxdg_imported_v2_interface, nil, handle);
-  Result := Pzxdg_imported_v2(id);
+  id := wl_proxy_marshal_constructor(FProxy,
+      _IMPORT_TOPLEVEL, @zxdg_imported_v2_interface, nil, PChar(AHandle));
+  if AProxyClass = nil then
+    AProxyClass := TZxdgImportedV2;
+  Result := TZxdgImportedV2(AProxyClass.Create(id));
+  if not AProxyClass.InheritsFrom(TZxdgImportedV2) then
+    Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TZxdgImportedV2]);
 end;
 
-function  zxdg_importer_v2_add_listener(zxdg_importer_v2: Pzxdg_importer_v2; listener: Pzxdg_importer_v2_listener; data: Pointer): cint;
+function TZxdgImporterV2.AddListener(AIntf: IZxdgImporterV2Listener): LongInt;
 begin
-  Result := wl_proxy_add_listener(Pwl_proxy(zxdg_importer_v2), listener, data);
+  FUserDataRec.ListenerUserData := Pointer(AIntf);
+  Result := wl_proxy_add_listener(FProxy, @vIntf_zxdg_importer_v2_Listener, @FUserDataRec);
+end;
+destructor TZxdgExportedV2.Destroy;
+begin
+  wl_proxy_marshal(FProxy, _DESTROY);
+  inherited Destroy;
 end;
 
-procedure  zxdg_importer_v2_add_listener(zxdg_importer_v2: Pzxdg_importer_v2; AIntf: Izxdg_importer_v2Listener);
+function TZxdgExportedV2.AddListener(AIntf: IZxdgExportedV2Listener): LongInt;
 begin
-  zxdg_importer_v2_add_listener(zxdg_importer_v2, @vIntf_zxdg_importer_v2_Listener, AIntf);
+  FUserDataRec.ListenerUserData := Pointer(AIntf);
+  Result := wl_proxy_add_listener(FProxy, @vIntf_zxdg_exported_v2_Listener, @FUserDataRec);
+end;
+destructor TZxdgImportedV2.Destroy;
+begin
+  wl_proxy_marshal(FProxy, _DESTROY);
+  inherited Destroy;
 end;
 
-procedure zxdg_importer_v2_set_user_data(zxdg_importer_v2: Pzxdg_importer_v2; user_data: Pointer);
+procedure TZxdgImportedV2.SetParentOf(ASurface: TWlSurface);
 begin
-  wl_proxy_set_user_data(Pwl_proxy(zxdg_importer_v2), user_data);
+  wl_proxy_marshal(FProxy, _SET_PARENT_OF, ASurface.Proxy);
 end;
 
-function  zxdg_importer_v2_get_user_data(zxdg_importer_v2: Pzxdg_importer_v2): Pointer;
+function TZxdgImportedV2.AddListener(AIntf: IZxdgImportedV2Listener): LongInt;
 begin
-  Result := wl_proxy_get_user_data(Pwl_proxy(zxdg_importer_v2));
-end;
-
-function  zxdg_importer_v2_get_version(zxdg_importer_v2: Pzxdg_importer_v2): cuint32;
-begin
-  Result := wl_proxy_get_version(Pwl_proxy(zxdg_importer_v2));
-end;
-
-procedure zxdg_exported_v2_destroy(zxdg_exported_v2: Pzxdg_exported_v2);
-begin
-  wl_proxy_marshal(Pwl_proxy(zxdg_exported_v2), _ZXDG_EXPORTED_V2_DESTROY);
-  wl_proxy_destroy(Pwl_proxy(zxdg_exported_v2));
-end;
-
-function  zxdg_exported_v2_add_listener(zxdg_exported_v2: Pzxdg_exported_v2; listener: Pzxdg_exported_v2_listener; data: Pointer): cint;
-begin
-  Result := wl_proxy_add_listener(Pwl_proxy(zxdg_exported_v2), listener, data);
-end;
-
-procedure  zxdg_exported_v2_add_listener(zxdg_exported_v2: Pzxdg_exported_v2; AIntf: Izxdg_exported_v2Listener);
-begin
-  zxdg_exported_v2_add_listener(zxdg_exported_v2, @vIntf_zxdg_exported_v2_Listener, AIntf);
-end;
-
-procedure zxdg_exported_v2_set_user_data(zxdg_exported_v2: Pzxdg_exported_v2; user_data: Pointer);
-begin
-  wl_proxy_set_user_data(Pwl_proxy(zxdg_exported_v2), user_data);
-end;
-
-function  zxdg_exported_v2_get_user_data(zxdg_exported_v2: Pzxdg_exported_v2): Pointer;
-begin
-  Result := wl_proxy_get_user_data(Pwl_proxy(zxdg_exported_v2));
-end;
-
-function  zxdg_exported_v2_get_version(zxdg_exported_v2: Pzxdg_exported_v2): cuint32;
-begin
-  Result := wl_proxy_get_version(Pwl_proxy(zxdg_exported_v2));
-end;
-
-procedure zxdg_imported_v2_destroy(zxdg_imported_v2: Pzxdg_imported_v2);
-begin
-  wl_proxy_marshal(Pwl_proxy(zxdg_imported_v2), _ZXDG_IMPORTED_V2_DESTROY);
-  wl_proxy_destroy(Pwl_proxy(zxdg_imported_v2));
-end;
-
-procedure zxdg_imported_v2_set_parent_of(zxdg_imported_v2: Pzxdg_imported_v2; surface: Pwl_surface);
-begin
-  wl_proxy_marshal(Pwl_proxy(zxdg_imported_v2),
-      _ZXDG_IMPORTED_V2_SET_PARENT_OF, surface);
-end;
-
-function  zxdg_imported_v2_add_listener(zxdg_imported_v2: Pzxdg_imported_v2; listener: Pzxdg_imported_v2_listener; data: Pointer): cint;
-begin
-  Result := wl_proxy_add_listener(Pwl_proxy(zxdg_imported_v2), listener, data);
-end;
-
-procedure  zxdg_imported_v2_add_listener(zxdg_imported_v2: Pzxdg_imported_v2; AIntf: Izxdg_imported_v2Listener);
-begin
-  zxdg_imported_v2_add_listener(zxdg_imported_v2, @vIntf_zxdg_imported_v2_Listener, AIntf);
-end;
-
-procedure zxdg_imported_v2_set_user_data(zxdg_imported_v2: Pzxdg_imported_v2; user_data: Pointer);
-begin
-  wl_proxy_set_user_data(Pwl_proxy(zxdg_imported_v2), user_data);
-end;
-
-function  zxdg_imported_v2_get_user_data(zxdg_imported_v2: Pzxdg_imported_v2): Pointer;
-begin
-  Result := wl_proxy_get_user_data(Pwl_proxy(zxdg_imported_v2));
-end;
-
-function  zxdg_imported_v2_get_version(zxdg_imported_v2: Pzxdg_imported_v2): cuint32;
-begin
-  Result := wl_proxy_get_version(Pwl_proxy(zxdg_imported_v2));
+  FUserDataRec.ListenerUserData := Pointer(AIntf);
+  Result := wl_proxy_add_listener(FProxy, @vIntf_zxdg_imported_v2_Listener, @FUserDataRec);
 end;
 
 
-procedure zxdg_exported_v2_handle_Intf(AIntf: Izxdg_exported_v2Listener; zxdg_exported_v2: Pzxdg_exported_v2; handle: pchar); cdecl;
+
+
+procedure zxdg_exported_v2_handle_Intf(AData: PWLUserData; Azxdg_exported_v2: Pzxdg_exported_v2; AHandle: Pchar); cdecl;
+var
+  AIntf: IZxdgExportedV2Listener;
 begin
-  WriteLn('zxdg_exported_v2.handle');
-  AIntf.zxdg_exported_v2_handle(zxdg_exported_v2, handle);
+  if AData = nil then Exit;
+  AIntf := IZxdgExportedV2Listener(AData^.ListenerUserData);
+  AIntf.zxdg_exported_v2_handle(TZxdgExportedV2(AData^.PascalObject), AHandle);
 end;
 
-procedure zxdg_imported_v2_destroyed_Intf(AIntf: Izxdg_imported_v2Listener; zxdg_imported_v2: Pzxdg_imported_v2); cdecl;
+procedure zxdg_imported_v2_destroyed_Intf(AData: PWLUserData; Azxdg_imported_v2: Pzxdg_imported_v2); cdecl;
+var
+  AIntf: IZxdgImportedV2Listener;
 begin
-  WriteLn('zxdg_imported_v2.destroyed');
-  AIntf.zxdg_imported_v2_destroyed(zxdg_imported_v2);
+  if AData = nil then Exit;
+  AIntf := IZxdgImportedV2Listener(AData^.ListenerUserData);
+  AIntf.zxdg_imported_v2_destroyed(TZxdgImportedV2(AData^.PascalObject));
 end;
 
 

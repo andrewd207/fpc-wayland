@@ -6,18 +6,16 @@ unit linux_dmabuf_unstable_v1_protocol;
 interface
 
 uses
-  ctypes, wayland_util, wayland_client_core, wayland_protocol;
+  Classes, Sysutils, ctypes, wayland_util, wayland_client_core, wayland_protocol;
 
 
 type
-  Pzwp_linux_dmabuf_v1 = ^Tzwp_linux_dmabuf_v1;
-  Tzwp_linux_dmabuf_v1 = record end;
-  Pzwp_linux_buffer_params_v1 = ^Tzwp_linux_buffer_params_v1;
-  Tzwp_linux_buffer_params_v1 = record end;
+  Pzwp_linux_dmabuf_v1 = Pointer;
+  Pzwp_linux_buffer_params_v1 = Pointer;
   Pzwp_linux_dmabuf_v1_listener = ^Tzwp_linux_dmabuf_v1_listener;
   Tzwp_linux_dmabuf_v1_listener = record
-    format : procedure(data: Pointer; zwp_linux_dmabuf_v1: Pzwp_linux_dmabuf_v1; format: cuint); cdecl;
-    modifier : procedure(data: Pointer; zwp_linux_dmabuf_v1: Pzwp_linux_dmabuf_v1; format: cuint; modifier_hi: cuint; modifier_lo: cuint); cdecl;
+    format : procedure(data: Pointer; AZwpLinuxDmabufV1: Pzwp_linux_dmabuf_v1; AFormat: DWord); cdecl;
+    modifier : procedure(data: Pointer; AZwpLinuxDmabufV1: Pzwp_linux_dmabuf_v1; AFormat: DWord; AModifierHi: DWord; AModifierLo: DWord); cdecl;
   end;
 
 const
@@ -36,42 +34,57 @@ const
 type
   Pzwp_linux_buffer_params_v1_listener = ^Tzwp_linux_buffer_params_v1_listener;
   Tzwp_linux_buffer_params_v1_listener = record
-    created : procedure(data: Pointer; zwp_linux_buffer_params_v1: Pzwp_linux_buffer_params_v1; buffer: Pwl_buffer); cdecl;
-    failed : procedure(data: Pointer; zwp_linux_buffer_params_v1: Pzwp_linux_buffer_params_v1); cdecl;
+    created : procedure(data: Pointer; AZwpLinuxBufferParamsV1: Pzwp_linux_buffer_params_v1; ABuffer: Pwl_buffer); cdecl;
+    failed : procedure(data: Pointer; AZwpLinuxBufferParamsV1: Pzwp_linux_buffer_params_v1); cdecl;
   end;
 
 
 
-  Izwp_linux_dmabuf_v1Listener = interface
-  ['Izwp_linux_dmabuf_v1Listener']
-    procedure zwp_linux_dmabuf_v1_format(zwp_linux_dmabuf_v1: Pzwp_linux_dmabuf_v1; format: cuint);
-    procedure zwp_linux_dmabuf_v1_modifier(zwp_linux_dmabuf_v1: Pzwp_linux_dmabuf_v1; format: cuint; modifier_hi: cuint; modifier_lo: cuint);
+  TZwpLinuxDmabufV1 = class;
+  TZwpLinuxBufferParamsV1 = class;
+
+
+  IZwpLinuxDmabufV1Listener = interface
+  ['IZwpLinuxDmabufV1Listener']
+    procedure zwp_linux_dmabuf_v1_format(AZwpLinuxDmabufV1: TZwpLinuxDmabufV1; AFormat: DWord);
+    procedure zwp_linux_dmabuf_v1_modifier(AZwpLinuxDmabufV1: TZwpLinuxDmabufV1; AFormat: DWord; AModifierHi: DWord; AModifierLo: DWord);
   end;
 
-  Izwp_linux_buffer_params_v1Listener = interface
-  ['Izwp_linux_buffer_params_v1Listener']
-    procedure zwp_linux_buffer_params_v1_created(zwp_linux_buffer_params_v1: Pzwp_linux_buffer_params_v1; buffer: Pwl_buffer);
-    procedure zwp_linux_buffer_params_v1_failed(zwp_linux_buffer_params_v1: Pzwp_linux_buffer_params_v1);
+  IZwpLinuxBufferParamsV1Listener = interface
+  ['IZwpLinuxBufferParamsV1Listener']
+    procedure zwp_linux_buffer_params_v1_created(AZwpLinuxBufferParamsV1: TZwpLinuxBufferParamsV1; ABuffer: TWlBuffer);
+    procedure zwp_linux_buffer_params_v1_failed(AZwpLinuxBufferParamsV1: TZwpLinuxBufferParamsV1);
   end;
 
 
 
-procedure zwp_linux_dmabuf_v1_destroy(zwp_linux_dmabuf_v1: Pzwp_linux_dmabuf_v1);
-function  zwp_linux_dmabuf_v1_create_params(zwp_linux_dmabuf_v1: Pzwp_linux_dmabuf_v1): Pzwp_linux_buffer_params_v1;
-function  zwp_linux_dmabuf_v1_add_listener(zwp_linux_dmabuf_v1: Pzwp_linux_dmabuf_v1; listener: Pzwp_linux_dmabuf_v1_listener; data: Pointer): cint;
-procedure  zwp_linux_dmabuf_v1_add_listener(zwp_linux_dmabuf_v1: Pzwp_linux_dmabuf_v1; AIntf: Izwp_linux_dmabuf_v1Listener);
-procedure zwp_linux_dmabuf_v1_set_user_data(zwp_linux_dmabuf_v1: Pzwp_linux_dmabuf_v1; user_data: Pointer);
-function  zwp_linux_dmabuf_v1_get_user_data(zwp_linux_dmabuf_v1: Pzwp_linux_dmabuf_v1): Pointer;
-function  zwp_linux_dmabuf_v1_get_version(zwp_linux_dmabuf_v1: Pzwp_linux_dmabuf_v1): cuint32;
-procedure zwp_linux_buffer_params_v1_destroy(zwp_linux_buffer_params_v1: Pzwp_linux_buffer_params_v1);
-procedure zwp_linux_buffer_params_v1_add(zwp_linux_buffer_params_v1: Pzwp_linux_buffer_params_v1; fd: cint; plane_idx: cuint; offset: cuint; stride: cuint; modifier_hi: cuint; modifier_lo: cuint);
-procedure zwp_linux_buffer_params_v1_create(zwp_linux_buffer_params_v1: Pzwp_linux_buffer_params_v1; width: cint; height: cint; format: cuint; flags: cuint);
-function  zwp_linux_buffer_params_v1_create_immed(zwp_linux_buffer_params_v1: Pzwp_linux_buffer_params_v1; width: cint; height: cint; format: cuint; flags: cuint): Pwl_buffer;
-function  zwp_linux_buffer_params_v1_add_listener(zwp_linux_buffer_params_v1: Pzwp_linux_buffer_params_v1; listener: Pzwp_linux_buffer_params_v1_listener; data: Pointer): cint;
-procedure  zwp_linux_buffer_params_v1_add_listener(zwp_linux_buffer_params_v1: Pzwp_linux_buffer_params_v1; AIntf: Izwp_linux_buffer_params_v1Listener);
-procedure zwp_linux_buffer_params_v1_set_user_data(zwp_linux_buffer_params_v1: Pzwp_linux_buffer_params_v1; user_data: Pointer);
-function  zwp_linux_buffer_params_v1_get_user_data(zwp_linux_buffer_params_v1: Pzwp_linux_buffer_params_v1): Pointer;
-function  zwp_linux_buffer_params_v1_get_version(zwp_linux_buffer_params_v1: Pzwp_linux_buffer_params_v1): cuint32;
+
+  TZwpLinuxDmabufV1 = class(TWLProxyObject)
+  private
+    const _DESTROY = 0;
+    const _CREATE_PARAMS = 1;
+  public
+    destructor Destroy; override;
+    function CreateParams(AProxyClass: TWLProxyObjectClass = nil {TZwpLinuxBufferParamsV1}): TZwpLinuxBufferParamsV1;
+    function AddListener(AIntf: IZwpLinuxDmabufV1Listener): LongInt;
+  end;
+
+  TZwpLinuxBufferParamsV1 = class(TWLProxyObject)
+  private
+    const _DESTROY = 0;
+    const _ADD = 1;
+    const _CREATE = 2;
+    const _CREATE_IMMED = 3;
+  public
+    destructor Destroy; override;
+    procedure Add(AFd: LongInt{fd}; APlaneIdx: DWord; AOffset: DWord; AStride: DWord; AModifierHi: DWord; AModifierLo: DWord);
+    procedure Create(AWidth: LongInt; AHeight: LongInt; AFormat: DWord; AFlags: DWord);
+    function CreateImmed(AWidth: LongInt; AHeight: LongInt; AFormat: DWord; AFlags: DWord; AProxyClass: TWLProxyObjectClass = nil {TWlBuffer}): TWlBuffer;
+    function AddListener(AIntf: IZwpLinuxBufferParamsV1Listener): LongInt;
+  end;
+
+
+
 
 
 
@@ -83,136 +96,108 @@ var
 
 implementation
 
-const
-_ZWP_LINUX_DMABUF_V1_DESTROY = 0;
-_ZWP_LINUX_DMABUF_V1_CREATE_PARAMS = 1;
-_ZWP_LINUX_BUFFER_PARAMS_V1_DESTROY = 0;
-_ZWP_LINUX_BUFFER_PARAMS_V1_ADD = 1;
-_ZWP_LINUX_BUFFER_PARAMS_V1_CREATE = 2;
-_ZWP_LINUX_BUFFER_PARAMS_V1_CREATE_IMMED = 3;
-
-
 var
   vIntf_zwp_linux_dmabuf_v1_Listener: Tzwp_linux_dmabuf_v1_listener;
   vIntf_zwp_linux_buffer_params_v1_Listener: Tzwp_linux_buffer_params_v1_listener;
 
 
 
-procedure zwp_linux_dmabuf_v1_destroy(zwp_linux_dmabuf_v1: Pzwp_linux_dmabuf_v1);
+destructor TZwpLinuxDmabufV1.Destroy;
 begin
-  wl_proxy_marshal(Pwl_proxy(zwp_linux_dmabuf_v1), _ZWP_LINUX_DMABUF_V1_DESTROY);
-  wl_proxy_destroy(Pwl_proxy(zwp_linux_dmabuf_v1));
+  wl_proxy_marshal(FProxy, _DESTROY);
+  inherited Destroy;
 end;
 
-function  zwp_linux_dmabuf_v1_create_params(zwp_linux_dmabuf_v1: Pzwp_linux_dmabuf_v1): Pzwp_linux_buffer_params_v1;
+function TZwpLinuxDmabufV1.CreateParams(AProxyClass: TWLProxyObjectClass = nil {TZwpLinuxBufferParamsV1}): TZwpLinuxBufferParamsV1;
 var
   params_id: Pwl_proxy;
 begin
-  params_id := wl_proxy_marshal_constructor(Pwl_proxy(zwp_linux_dmabuf_v1),
-      _ZWP_LINUX_DMABUF_V1_CREATE_PARAMS, @zwp_linux_buffer_params_v1_interface, nil);
-  Result := Pzwp_linux_buffer_params_v1(params_id);
+  params_id := wl_proxy_marshal_constructor(FProxy,
+      _CREATE_PARAMS, @zwp_linux_buffer_params_v1_interface, nil);
+  if AProxyClass = nil then
+    AProxyClass := TZwpLinuxBufferParamsV1;
+  Result := TZwpLinuxBufferParamsV1(AProxyClass.Create(params_id));
+  if not AProxyClass.InheritsFrom(TZwpLinuxBufferParamsV1) then
+    Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TZwpLinuxBufferParamsV1]);
 end;
 
-function  zwp_linux_dmabuf_v1_add_listener(zwp_linux_dmabuf_v1: Pzwp_linux_dmabuf_v1; listener: Pzwp_linux_dmabuf_v1_listener; data: Pointer): cint;
+function TZwpLinuxDmabufV1.AddListener(AIntf: IZwpLinuxDmabufV1Listener): LongInt;
 begin
-  Result := wl_proxy_add_listener(Pwl_proxy(zwp_linux_dmabuf_v1), listener, data);
+  FUserDataRec.ListenerUserData := Pointer(AIntf);
+  Result := wl_proxy_add_listener(FProxy, @vIntf_zwp_linux_dmabuf_v1_Listener, @FUserDataRec);
 end;
-
-procedure  zwp_linux_dmabuf_v1_add_listener(zwp_linux_dmabuf_v1: Pzwp_linux_dmabuf_v1; AIntf: Izwp_linux_dmabuf_v1Listener);
+destructor TZwpLinuxBufferParamsV1.Destroy;
 begin
-  zwp_linux_dmabuf_v1_add_listener(zwp_linux_dmabuf_v1, @vIntf_zwp_linux_dmabuf_v1_Listener, AIntf);
+  wl_proxy_marshal(FProxy, _DESTROY);
+  inherited Destroy;
 end;
 
-procedure zwp_linux_dmabuf_v1_set_user_data(zwp_linux_dmabuf_v1: Pzwp_linux_dmabuf_v1; user_data: Pointer);
+procedure TZwpLinuxBufferParamsV1.Add(AFd: LongInt{fd}; APlaneIdx: DWord; AOffset: DWord; AStride: DWord; AModifierHi: DWord; AModifierLo: DWord);
 begin
-  wl_proxy_set_user_data(Pwl_proxy(zwp_linux_dmabuf_v1), user_data);
+  wl_proxy_marshal(FProxy, _ADD, AFd, APlaneIdx, AOffset, AStride, AModifierHi, AModifierLo);
 end;
 
-function  zwp_linux_dmabuf_v1_get_user_data(zwp_linux_dmabuf_v1: Pzwp_linux_dmabuf_v1): Pointer;
+procedure TZwpLinuxBufferParamsV1.Create(AWidth: LongInt; AHeight: LongInt; AFormat: DWord; AFlags: DWord);
 begin
-  Result := wl_proxy_get_user_data(Pwl_proxy(zwp_linux_dmabuf_v1));
+  wl_proxy_marshal(FProxy, _CREATE, AWidth, AHeight, AFormat, AFlags);
 end;
 
-function  zwp_linux_dmabuf_v1_get_version(zwp_linux_dmabuf_v1: Pzwp_linux_dmabuf_v1): cuint32;
-begin
-  Result := wl_proxy_get_version(Pwl_proxy(zwp_linux_dmabuf_v1));
-end;
-
-procedure zwp_linux_buffer_params_v1_destroy(zwp_linux_buffer_params_v1: Pzwp_linux_buffer_params_v1);
-begin
-  wl_proxy_marshal(Pwl_proxy(zwp_linux_buffer_params_v1), _ZWP_LINUX_BUFFER_PARAMS_V1_DESTROY);
-  wl_proxy_destroy(Pwl_proxy(zwp_linux_buffer_params_v1));
-end;
-
-procedure zwp_linux_buffer_params_v1_add(zwp_linux_buffer_params_v1: Pzwp_linux_buffer_params_v1; fd: cint; plane_idx: cuint; offset: cuint; stride: cuint; modifier_hi: cuint; modifier_lo: cuint);
-begin
-  wl_proxy_marshal(Pwl_proxy(zwp_linux_buffer_params_v1),
-      _ZWP_LINUX_BUFFER_PARAMS_V1_ADD, fd, plane_idx, offset, stride, modifier_hi, modifier_lo);
-end;
-
-procedure zwp_linux_buffer_params_v1_create(zwp_linux_buffer_params_v1: Pzwp_linux_buffer_params_v1; width: cint; height: cint; format: cuint; flags: cuint);
-begin
-  wl_proxy_marshal(Pwl_proxy(zwp_linux_buffer_params_v1),
-      _ZWP_LINUX_BUFFER_PARAMS_V1_CREATE, width, height, format, flags);
-end;
-
-function  zwp_linux_buffer_params_v1_create_immed(zwp_linux_buffer_params_v1: Pzwp_linux_buffer_params_v1; width: cint; height: cint; format: cuint; flags: cuint): Pwl_buffer;
+function TZwpLinuxBufferParamsV1.CreateImmed(AWidth: LongInt; AHeight: LongInt; AFormat: DWord; AFlags: DWord; AProxyClass: TWLProxyObjectClass = nil {TWlBuffer}): TWlBuffer;
 var
   buffer_id: Pwl_proxy;
 begin
-  buffer_id := wl_proxy_marshal_constructor(Pwl_proxy(zwp_linux_buffer_params_v1),
-      _ZWP_LINUX_BUFFER_PARAMS_V1_CREATE_IMMED, @wl_buffer_interface, nil, width, height, format, flags);
-  Result := Pwl_buffer(buffer_id);
+  buffer_id := wl_proxy_marshal_constructor(FProxy,
+      _CREATE_IMMED, @wl_buffer_interface, nil, AWidth, AHeight, AFormat, AFlags);
+  if AProxyClass = nil then
+    AProxyClass := TWlBuffer;
+  Result := TWlBuffer(AProxyClass.Create(buffer_id));
+  if not AProxyClass.InheritsFrom(TWlBuffer) then
+    Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TWlBuffer]);
 end;
 
-function  zwp_linux_buffer_params_v1_add_listener(zwp_linux_buffer_params_v1: Pzwp_linux_buffer_params_v1; listener: Pzwp_linux_buffer_params_v1_listener; data: Pointer): cint;
+function TZwpLinuxBufferParamsV1.AddListener(AIntf: IZwpLinuxBufferParamsV1Listener): LongInt;
 begin
-  Result := wl_proxy_add_listener(Pwl_proxy(zwp_linux_buffer_params_v1), listener, data);
-end;
-
-procedure  zwp_linux_buffer_params_v1_add_listener(zwp_linux_buffer_params_v1: Pzwp_linux_buffer_params_v1; AIntf: Izwp_linux_buffer_params_v1Listener);
-begin
-  zwp_linux_buffer_params_v1_add_listener(zwp_linux_buffer_params_v1, @vIntf_zwp_linux_buffer_params_v1_Listener, AIntf);
-end;
-
-procedure zwp_linux_buffer_params_v1_set_user_data(zwp_linux_buffer_params_v1: Pzwp_linux_buffer_params_v1; user_data: Pointer);
-begin
-  wl_proxy_set_user_data(Pwl_proxy(zwp_linux_buffer_params_v1), user_data);
-end;
-
-function  zwp_linux_buffer_params_v1_get_user_data(zwp_linux_buffer_params_v1: Pzwp_linux_buffer_params_v1): Pointer;
-begin
-  Result := wl_proxy_get_user_data(Pwl_proxy(zwp_linux_buffer_params_v1));
-end;
-
-function  zwp_linux_buffer_params_v1_get_version(zwp_linux_buffer_params_v1: Pzwp_linux_buffer_params_v1): cuint32;
-begin
-  Result := wl_proxy_get_version(Pwl_proxy(zwp_linux_buffer_params_v1));
+  FUserDataRec.ListenerUserData := Pointer(AIntf);
+  Result := wl_proxy_add_listener(FProxy, @vIntf_zwp_linux_buffer_params_v1_Listener, @FUserDataRec);
 end;
 
 
-procedure zwp_linux_dmabuf_v1_format_Intf(AIntf: Izwp_linux_dmabuf_v1Listener; zwp_linux_dmabuf_v1: Pzwp_linux_dmabuf_v1; format: cuint); cdecl;
+
+
+procedure zwp_linux_dmabuf_v1_format_Intf(AData: PWLUserData; Azwp_linux_dmabuf_v1: Pzwp_linux_dmabuf_v1; AFormat: DWord); cdecl;
+var
+  AIntf: IZwpLinuxDmabufV1Listener;
 begin
-  WriteLn('zwp_linux_dmabuf_v1.format');
-  AIntf.zwp_linux_dmabuf_v1_format(zwp_linux_dmabuf_v1, format);
+  if AData = nil then Exit;
+  AIntf := IZwpLinuxDmabufV1Listener(AData^.ListenerUserData);
+  AIntf.zwp_linux_dmabuf_v1_format(TZwpLinuxDmabufV1(AData^.PascalObject), AFormat);
 end;
 
-procedure zwp_linux_dmabuf_v1_modifier_Intf(AIntf: Izwp_linux_dmabuf_v1Listener; zwp_linux_dmabuf_v1: Pzwp_linux_dmabuf_v1; format: cuint; modifier_hi: cuint; modifier_lo: cuint); cdecl;
+procedure zwp_linux_dmabuf_v1_modifier_Intf(AData: PWLUserData; Azwp_linux_dmabuf_v1: Pzwp_linux_dmabuf_v1; AFormat: DWord; AModifierHi: DWord; AModifierLo: DWord); cdecl;
+var
+  AIntf: IZwpLinuxDmabufV1Listener;
 begin
-  WriteLn('zwp_linux_dmabuf_v1.modifier');
-  AIntf.zwp_linux_dmabuf_v1_modifier(zwp_linux_dmabuf_v1, format, modifier_hi, modifier_lo);
+  if AData = nil then Exit;
+  AIntf := IZwpLinuxDmabufV1Listener(AData^.ListenerUserData);
+  AIntf.zwp_linux_dmabuf_v1_modifier(TZwpLinuxDmabufV1(AData^.PascalObject), AFormat, AModifierHi, AModifierLo);
 end;
 
-procedure zwp_linux_buffer_params_v1_created_Intf(AIntf: Izwp_linux_buffer_params_v1Listener; zwp_linux_buffer_params_v1: Pzwp_linux_buffer_params_v1; buffer: Pwl_buffer); cdecl;
+procedure zwp_linux_buffer_params_v1_created_Intf(AData: PWLUserData; Azwp_linux_buffer_params_v1: Pzwp_linux_buffer_params_v1; ABuffer: Pwl_buffer); cdecl;
+var
+  AIntf: IZwpLinuxBufferParamsV1Listener;
 begin
-  WriteLn('zwp_linux_buffer_params_v1.created');
-  AIntf.zwp_linux_buffer_params_v1_created(zwp_linux_buffer_params_v1, buffer);
+  if AData = nil then Exit;
+  AIntf := IZwpLinuxBufferParamsV1Listener(AData^.ListenerUserData);
+  AIntf.zwp_linux_buffer_params_v1_created(TZwpLinuxBufferParamsV1(AData^.PascalObject),  TWlBuffer.Create(ABuffer));
 end;
 
-procedure zwp_linux_buffer_params_v1_failed_Intf(AIntf: Izwp_linux_buffer_params_v1Listener; zwp_linux_buffer_params_v1: Pzwp_linux_buffer_params_v1); cdecl;
+procedure zwp_linux_buffer_params_v1_failed_Intf(AData: PWLUserData; Azwp_linux_buffer_params_v1: Pzwp_linux_buffer_params_v1); cdecl;
+var
+  AIntf: IZwpLinuxBufferParamsV1Listener;
 begin
-  WriteLn('zwp_linux_buffer_params_v1.failed');
-  AIntf.zwp_linux_buffer_params_v1_failed(zwp_linux_buffer_params_v1);
+  if AData = nil then Exit;
+  AIntf := IZwpLinuxBufferParamsV1Listener(AData^.ListenerUserData);
+  AIntf.zwp_linux_buffer_params_v1_failed(TZwpLinuxBufferParamsV1(AData^.PascalObject));
 end;
 
 

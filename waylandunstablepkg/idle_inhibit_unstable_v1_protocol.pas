@@ -6,14 +6,12 @@ unit idle_inhibit_unstable_v1_protocol;
 interface
 
 uses
-  ctypes, wayland_util, wayland_client_core, wayland_protocol;
+  Classes, Sysutils, ctypes, wayland_util, wayland_client_core, wayland_protocol;
 
 
 type
-  Pzwp_idle_inhibit_manager_v1 = ^Tzwp_idle_inhibit_manager_v1;
-  Tzwp_idle_inhibit_manager_v1 = record end;
-  Pzwp_idle_inhibitor_v1 = ^Tzwp_idle_inhibitor_v1;
-  Tzwp_idle_inhibitor_v1 = record end;
+  Pzwp_idle_inhibit_manager_v1 = Pointer;
+  Pzwp_idle_inhibitor_v1 = Pointer;
   Pzwp_idle_inhibit_manager_v1_listener = ^Tzwp_idle_inhibit_manager_v1_listener;
   Tzwp_idle_inhibit_manager_v1_listener = record
   end;
@@ -24,29 +22,41 @@ type
 
 
 
-  Izwp_idle_inhibit_manager_v1Listener = interface
-  ['Izwp_idle_inhibit_manager_v1Listener']
+  TZwpIdleInhibitManagerV1 = class;
+  TZwpIdleInhibitorV1 = class;
+
+
+  IZwpIdleInhibitManagerV1Listener = interface
+  ['IZwpIdleInhibitManagerV1Listener']
   end;
 
-  Izwp_idle_inhibitor_v1Listener = interface
-  ['Izwp_idle_inhibitor_v1Listener']
+  IZwpIdleInhibitorV1Listener = interface
+  ['IZwpIdleInhibitorV1Listener']
   end;
 
 
 
-procedure zwp_idle_inhibit_manager_v1_destroy(zwp_idle_inhibit_manager_v1: Pzwp_idle_inhibit_manager_v1);
-function  zwp_idle_inhibit_manager_v1_create_inhibitor(zwp_idle_inhibit_manager_v1: Pzwp_idle_inhibit_manager_v1; surface: Pwl_surface): Pzwp_idle_inhibitor_v1;
-function  zwp_idle_inhibit_manager_v1_add_listener(zwp_idle_inhibit_manager_v1: Pzwp_idle_inhibit_manager_v1; listener: Pzwp_idle_inhibit_manager_v1_listener; data: Pointer): cint;
-procedure  zwp_idle_inhibit_manager_v1_add_listener(zwp_idle_inhibit_manager_v1: Pzwp_idle_inhibit_manager_v1; AIntf: Izwp_idle_inhibit_manager_v1Listener);
-procedure zwp_idle_inhibit_manager_v1_set_user_data(zwp_idle_inhibit_manager_v1: Pzwp_idle_inhibit_manager_v1; user_data: Pointer);
-function  zwp_idle_inhibit_manager_v1_get_user_data(zwp_idle_inhibit_manager_v1: Pzwp_idle_inhibit_manager_v1): Pointer;
-function  zwp_idle_inhibit_manager_v1_get_version(zwp_idle_inhibit_manager_v1: Pzwp_idle_inhibit_manager_v1): cuint32;
-procedure zwp_idle_inhibitor_v1_destroy(zwp_idle_inhibitor_v1: Pzwp_idle_inhibitor_v1);
-function  zwp_idle_inhibitor_v1_add_listener(zwp_idle_inhibitor_v1: Pzwp_idle_inhibitor_v1; listener: Pzwp_idle_inhibitor_v1_listener; data: Pointer): cint;
-procedure  zwp_idle_inhibitor_v1_add_listener(zwp_idle_inhibitor_v1: Pzwp_idle_inhibitor_v1; AIntf: Izwp_idle_inhibitor_v1Listener);
-procedure zwp_idle_inhibitor_v1_set_user_data(zwp_idle_inhibitor_v1: Pzwp_idle_inhibitor_v1; user_data: Pointer);
-function  zwp_idle_inhibitor_v1_get_user_data(zwp_idle_inhibitor_v1: Pzwp_idle_inhibitor_v1): Pointer;
-function  zwp_idle_inhibitor_v1_get_version(zwp_idle_inhibitor_v1: Pzwp_idle_inhibitor_v1): cuint32;
+
+  TZwpIdleInhibitManagerV1 = class(TWLProxyObject)
+  private
+    const _DESTROY = 0;
+    const _CREATE_INHIBITOR = 1;
+  public
+    destructor Destroy; override;
+    function CreateInhibitor(ASurface: TWlSurface; AProxyClass: TWLProxyObjectClass = nil {TZwpIdleInhibitorV1}): TZwpIdleInhibitorV1;
+    function AddListener(AIntf: IZwpIdleInhibitManagerV1Listener): LongInt;
+  end;
+
+  TZwpIdleInhibitorV1 = class(TWLProxyObject)
+  private
+    const _DESTROY = 0;
+  public
+    destructor Destroy; override;
+    function AddListener(AIntf: IZwpIdleInhibitorV1Listener): LongInt;
+  end;
+
+
+
 
 
 
@@ -58,88 +68,49 @@ var
 
 implementation
 
-const
-_ZWP_IDLE_INHIBIT_MANAGER_V1_DESTROY = 0;
-_ZWP_IDLE_INHIBIT_MANAGER_V1_CREATE_INHIBITOR = 1;
-_ZWP_IDLE_INHIBITOR_V1_DESTROY = 0;
-
-
 var
   vIntf_zwp_idle_inhibit_manager_v1_Listener: Tzwp_idle_inhibit_manager_v1_listener;
   vIntf_zwp_idle_inhibitor_v1_Listener: Tzwp_idle_inhibitor_v1_listener;
 
 
 
-procedure zwp_idle_inhibit_manager_v1_destroy(zwp_idle_inhibit_manager_v1: Pzwp_idle_inhibit_manager_v1);
+destructor TZwpIdleInhibitManagerV1.Destroy;
 begin
-  wl_proxy_marshal(Pwl_proxy(zwp_idle_inhibit_manager_v1), _ZWP_IDLE_INHIBIT_MANAGER_V1_DESTROY);
-  wl_proxy_destroy(Pwl_proxy(zwp_idle_inhibit_manager_v1));
+  wl_proxy_marshal(FProxy, _DESTROY);
+  inherited Destroy;
 end;
 
-function  zwp_idle_inhibit_manager_v1_create_inhibitor(zwp_idle_inhibit_manager_v1: Pzwp_idle_inhibit_manager_v1; surface: Pwl_surface): Pzwp_idle_inhibitor_v1;
+function TZwpIdleInhibitManagerV1.CreateInhibitor(ASurface: TWlSurface; AProxyClass: TWLProxyObjectClass = nil {TZwpIdleInhibitorV1}): TZwpIdleInhibitorV1;
 var
   id: Pwl_proxy;
 begin
-  id := wl_proxy_marshal_constructor(Pwl_proxy(zwp_idle_inhibit_manager_v1),
-      _ZWP_IDLE_INHIBIT_MANAGER_V1_CREATE_INHIBITOR, @zwp_idle_inhibitor_v1_interface, nil, surface);
-  Result := Pzwp_idle_inhibitor_v1(id);
+  id := wl_proxy_marshal_constructor(FProxy,
+      _CREATE_INHIBITOR, @zwp_idle_inhibitor_v1_interface, nil, ASurface.Proxy);
+  if AProxyClass = nil then
+    AProxyClass := TZwpIdleInhibitorV1;
+  Result := TZwpIdleInhibitorV1(AProxyClass.Create(id));
+  if not AProxyClass.InheritsFrom(TZwpIdleInhibitorV1) then
+    Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TZwpIdleInhibitorV1]);
 end;
 
-function  zwp_idle_inhibit_manager_v1_add_listener(zwp_idle_inhibit_manager_v1: Pzwp_idle_inhibit_manager_v1; listener: Pzwp_idle_inhibit_manager_v1_listener; data: Pointer): cint;
+function TZwpIdleInhibitManagerV1.AddListener(AIntf: IZwpIdleInhibitManagerV1Listener): LongInt;
 begin
-  Result := wl_proxy_add_listener(Pwl_proxy(zwp_idle_inhibit_manager_v1), listener, data);
+  FUserDataRec.ListenerUserData := Pointer(AIntf);
+  Result := wl_proxy_add_listener(FProxy, @vIntf_zwp_idle_inhibit_manager_v1_Listener, @FUserDataRec);
+end;
+destructor TZwpIdleInhibitorV1.Destroy;
+begin
+  wl_proxy_marshal(FProxy, _DESTROY);
+  inherited Destroy;
 end;
 
-procedure  zwp_idle_inhibit_manager_v1_add_listener(zwp_idle_inhibit_manager_v1: Pzwp_idle_inhibit_manager_v1; AIntf: Izwp_idle_inhibit_manager_v1Listener);
+function TZwpIdleInhibitorV1.AddListener(AIntf: IZwpIdleInhibitorV1Listener): LongInt;
 begin
-  zwp_idle_inhibit_manager_v1_add_listener(zwp_idle_inhibit_manager_v1, @vIntf_zwp_idle_inhibit_manager_v1_Listener, AIntf);
+  FUserDataRec.ListenerUserData := Pointer(AIntf);
+  Result := wl_proxy_add_listener(FProxy, @vIntf_zwp_idle_inhibitor_v1_Listener, @FUserDataRec);
 end;
 
-procedure zwp_idle_inhibit_manager_v1_set_user_data(zwp_idle_inhibit_manager_v1: Pzwp_idle_inhibit_manager_v1; user_data: Pointer);
-begin
-  wl_proxy_set_user_data(Pwl_proxy(zwp_idle_inhibit_manager_v1), user_data);
-end;
 
-function  zwp_idle_inhibit_manager_v1_get_user_data(zwp_idle_inhibit_manager_v1: Pzwp_idle_inhibit_manager_v1): Pointer;
-begin
-  Result := wl_proxy_get_user_data(Pwl_proxy(zwp_idle_inhibit_manager_v1));
-end;
-
-function  zwp_idle_inhibit_manager_v1_get_version(zwp_idle_inhibit_manager_v1: Pzwp_idle_inhibit_manager_v1): cuint32;
-begin
-  Result := wl_proxy_get_version(Pwl_proxy(zwp_idle_inhibit_manager_v1));
-end;
-
-procedure zwp_idle_inhibitor_v1_destroy(zwp_idle_inhibitor_v1: Pzwp_idle_inhibitor_v1);
-begin
-  wl_proxy_marshal(Pwl_proxy(zwp_idle_inhibitor_v1), _ZWP_IDLE_INHIBITOR_V1_DESTROY);
-  wl_proxy_destroy(Pwl_proxy(zwp_idle_inhibitor_v1));
-end;
-
-function  zwp_idle_inhibitor_v1_add_listener(zwp_idle_inhibitor_v1: Pzwp_idle_inhibitor_v1; listener: Pzwp_idle_inhibitor_v1_listener; data: Pointer): cint;
-begin
-  Result := wl_proxy_add_listener(Pwl_proxy(zwp_idle_inhibitor_v1), listener, data);
-end;
-
-procedure  zwp_idle_inhibitor_v1_add_listener(zwp_idle_inhibitor_v1: Pzwp_idle_inhibitor_v1; AIntf: Izwp_idle_inhibitor_v1Listener);
-begin
-  zwp_idle_inhibitor_v1_add_listener(zwp_idle_inhibitor_v1, @vIntf_zwp_idle_inhibitor_v1_Listener, AIntf);
-end;
-
-procedure zwp_idle_inhibitor_v1_set_user_data(zwp_idle_inhibitor_v1: Pzwp_idle_inhibitor_v1; user_data: Pointer);
-begin
-  wl_proxy_set_user_data(Pwl_proxy(zwp_idle_inhibitor_v1), user_data);
-end;
-
-function  zwp_idle_inhibitor_v1_get_user_data(zwp_idle_inhibitor_v1: Pzwp_idle_inhibitor_v1): Pointer;
-begin
-  Result := wl_proxy_get_user_data(Pwl_proxy(zwp_idle_inhibitor_v1));
-end;
-
-function  zwp_idle_inhibitor_v1_get_version(zwp_idle_inhibitor_v1: Pzwp_idle_inhibitor_v1): cuint32;
-begin
-  Result := wl_proxy_get_version(Pwl_proxy(zwp_idle_inhibitor_v1));
-end;
 
 
 

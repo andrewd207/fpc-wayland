@@ -16,8 +16,8 @@ type
     Shm: Pwl_shm;
   end;
 
-  function Create_shm_pool(shm: Pwl_shm; size: Integer; outdata: PPointer = nil): Pwl_shm_pool;
-  function Create_shm_buffer(shm: Pwl_shm; AWidth, AHeight: Integer; AFormat: cuint32; out data: Pointer): Pwl_buffer;
+  function Create_shm_pool(shm: TWlShm; size: Integer; outdata: PPointer; outfd: Pcuint): TWlShmPool;
+  function Create_shm_buffer(shm: TWlShm; AWidth, AHeight: Integer; AFormat: cuint32; out data: Pointer; out fd: cint): TWlBuffer;
 
 
 
@@ -32,7 +32,7 @@ function mkstemp(filename: PChar):longint;cdecl;external 'libc' name 'mkstemp';
 function mkostemp(filename: PChar; flags: cint):longint;cdecl;external 'libc' name 'mkostemp';
 function CreateAnonymousFile(ASize: PtrUint): cint; {fd} forward;
 
-function Create_shm_pool(shm: Pwl_shm; size: Integer; outData: PPointer): Pwl_shm_pool;
+function Create_shm_pool(shm: TWlShm; size: Integer; outData: PPointer; outfd: Pcuint): TWlShmPool;
 var
   fd: cint;
   data: Pointer;
@@ -51,40 +51,38 @@ begin
     Exit;
   end;
 
-  Result := wl_shm_create_pool(shm, fd, size);
-  FpClose(fd);
+  Result := shm.CreatePool(fd, size);
+  if outfd = nil then
+    FpClose(fd)
+  else
+    outfd^ := fd;
 end;
 
-function Create_shm_buffer(shm: Pwl_shm; AWidth, AHeight: Integer; AFormat: cuint32; out data: Pointer): Pwl_buffer;
+function Create_shm_buffer(shm: TWlShm; AWidth, AHeight: Integer; AFormat: cuint32; out data: Pointer; out fd: cint): TWlBuffer;
 var
-  pool: Pwl_shm_pool;
+  pool: TWlShmPool;
   size, stride: cint;
 begin
   Result := nil;
   stride := AWidth *4;
   size := stride * Aheight;
 
-  pool := Create_shm_pool(shm, size, @Data);
-  Result := wl_shm_pool_create_buffer(pool, 0, AWidth, AHeight, stride, AFormat);
-  wl_shm_pool_destroy(pool); // will be destroyed after the buffer is destroyed
+  pool := Create_shm_pool(shm, size, @Data, @fd);
+  Result := pool.CreateBuffer(0, AWidth, AHeight, stride, AFormat);
+  pool.Free // proxy will be destroyed after the buffer is destroyed
 
 end;
 
-const
-  O_CLOEXEC = $80000;
+
 
 function CreateAnonymousFile(ASize: PtrUint): cint; {fd}
+const
+  O_CLOEXEC = $80000;
 var
   lName: String;
   flags: cint;
 begin
   lName := GetEnvironmentVariable('XDG_RUNTIME_DIR') + '/weston-shared-XXXXXX';
-
-  {Result := mkstemp(PChar(lName));
-  if Result = -1 then
-    Exit;
-  flags := fpfcntl(Result, F_GETFD);
-  fpfcntl(Result, F_SETFD, flags or FD_CLOEXEC);}
 
   Result := mkostemp(PChar(lName), O_CLOEXEC);
   FpUnlink(lName);

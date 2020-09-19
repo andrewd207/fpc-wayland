@@ -6,14 +6,12 @@ unit xwayland_keyboard_grab_unstable_v1_protocol;
 interface
 
 uses
-  ctypes, wayland_util, wayland_client_core, wayland_protocol;
+  Classes, Sysutils, ctypes, wayland_util, wayland_client_core, wayland_protocol;
 
 
 type
-  Pzwp_xwayland_keyboard_grab_manager_v1 = ^Tzwp_xwayland_keyboard_grab_manager_v1;
-  Tzwp_xwayland_keyboard_grab_manager_v1 = record end;
-  Pzwp_xwayland_keyboard_grab_v1 = ^Tzwp_xwayland_keyboard_grab_v1;
-  Tzwp_xwayland_keyboard_grab_v1 = record end;
+  Pzwp_xwayland_keyboard_grab_manager_v1 = Pointer;
+  Pzwp_xwayland_keyboard_grab_v1 = Pointer;
   Pzwp_xwayland_keyboard_grab_manager_v1_listener = ^Tzwp_xwayland_keyboard_grab_manager_v1_listener;
   Tzwp_xwayland_keyboard_grab_manager_v1_listener = record
   end;
@@ -24,29 +22,41 @@ type
 
 
 
-  Izwp_xwayland_keyboard_grab_manager_v1Listener = interface
-  ['Izwp_xwayland_keyboard_grab_manager_v1Listener']
+  TZwpXwaylandKeyboardGrabManagerV1 = class;
+  TZwpXwaylandKeyboardGrabV1 = class;
+
+
+  IZwpXwaylandKeyboardGrabManagerV1Listener = interface
+  ['IZwpXwaylandKeyboardGrabManagerV1Listener']
   end;
 
-  Izwp_xwayland_keyboard_grab_v1Listener = interface
-  ['Izwp_xwayland_keyboard_grab_v1Listener']
+  IZwpXwaylandKeyboardGrabV1Listener = interface
+  ['IZwpXwaylandKeyboardGrabV1Listener']
   end;
 
 
 
-procedure zwp_xwayland_keyboard_grab_manager_v1_destroy(zwp_xwayland_keyboard_grab_manager_v1: Pzwp_xwayland_keyboard_grab_manager_v1);
-function  zwp_xwayland_keyboard_grab_manager_v1_grab_keyboard(zwp_xwayland_keyboard_grab_manager_v1: Pzwp_xwayland_keyboard_grab_manager_v1; surface: Pwl_surface; seat: Pwl_seat): Pzwp_xwayland_keyboard_grab_v1;
-function  zwp_xwayland_keyboard_grab_manager_v1_add_listener(zwp_xwayland_keyboard_grab_manager_v1: Pzwp_xwayland_keyboard_grab_manager_v1; listener: Pzwp_xwayland_keyboard_grab_manager_v1_listener; data: Pointer): cint;
-procedure  zwp_xwayland_keyboard_grab_manager_v1_add_listener(zwp_xwayland_keyboard_grab_manager_v1: Pzwp_xwayland_keyboard_grab_manager_v1; AIntf: Izwp_xwayland_keyboard_grab_manager_v1Listener);
-procedure zwp_xwayland_keyboard_grab_manager_v1_set_user_data(zwp_xwayland_keyboard_grab_manager_v1: Pzwp_xwayland_keyboard_grab_manager_v1; user_data: Pointer);
-function  zwp_xwayland_keyboard_grab_manager_v1_get_user_data(zwp_xwayland_keyboard_grab_manager_v1: Pzwp_xwayland_keyboard_grab_manager_v1): Pointer;
-function  zwp_xwayland_keyboard_grab_manager_v1_get_version(zwp_xwayland_keyboard_grab_manager_v1: Pzwp_xwayland_keyboard_grab_manager_v1): cuint32;
-procedure zwp_xwayland_keyboard_grab_v1_destroy(zwp_xwayland_keyboard_grab_v1: Pzwp_xwayland_keyboard_grab_v1);
-function  zwp_xwayland_keyboard_grab_v1_add_listener(zwp_xwayland_keyboard_grab_v1: Pzwp_xwayland_keyboard_grab_v1; listener: Pzwp_xwayland_keyboard_grab_v1_listener; data: Pointer): cint;
-procedure  zwp_xwayland_keyboard_grab_v1_add_listener(zwp_xwayland_keyboard_grab_v1: Pzwp_xwayland_keyboard_grab_v1; AIntf: Izwp_xwayland_keyboard_grab_v1Listener);
-procedure zwp_xwayland_keyboard_grab_v1_set_user_data(zwp_xwayland_keyboard_grab_v1: Pzwp_xwayland_keyboard_grab_v1; user_data: Pointer);
-function  zwp_xwayland_keyboard_grab_v1_get_user_data(zwp_xwayland_keyboard_grab_v1: Pzwp_xwayland_keyboard_grab_v1): Pointer;
-function  zwp_xwayland_keyboard_grab_v1_get_version(zwp_xwayland_keyboard_grab_v1: Pzwp_xwayland_keyboard_grab_v1): cuint32;
+
+  TZwpXwaylandKeyboardGrabManagerV1 = class(TWLProxyObject)
+  private
+    const _DESTROY = 0;
+    const _GRAB_KEYBOARD = 1;
+  public
+    destructor Destroy; override;
+    function GrabKeyboard(ASurface: TWlSurface; ASeat: TWlSeat; AProxyClass: TWLProxyObjectClass = nil {TZwpXwaylandKeyboardGrabV1}): TZwpXwaylandKeyboardGrabV1;
+    function AddListener(AIntf: IZwpXwaylandKeyboardGrabManagerV1Listener): LongInt;
+  end;
+
+  TZwpXwaylandKeyboardGrabV1 = class(TWLProxyObject)
+  private
+    const _DESTROY = 0;
+  public
+    destructor Destroy; override;
+    function AddListener(AIntf: IZwpXwaylandKeyboardGrabV1Listener): LongInt;
+  end;
+
+
+
 
 
 
@@ -58,88 +68,49 @@ var
 
 implementation
 
-const
-_ZWP_XWAYLAND_KEYBOARD_GRAB_MANAGER_V1_DESTROY = 0;
-_ZWP_XWAYLAND_KEYBOARD_GRAB_MANAGER_V1_GRAB_KEYBOARD = 1;
-_ZWP_XWAYLAND_KEYBOARD_GRAB_V1_DESTROY = 0;
-
-
 var
   vIntf_zwp_xwayland_keyboard_grab_manager_v1_Listener: Tzwp_xwayland_keyboard_grab_manager_v1_listener;
   vIntf_zwp_xwayland_keyboard_grab_v1_Listener: Tzwp_xwayland_keyboard_grab_v1_listener;
 
 
 
-procedure zwp_xwayland_keyboard_grab_manager_v1_destroy(zwp_xwayland_keyboard_grab_manager_v1: Pzwp_xwayland_keyboard_grab_manager_v1);
+destructor TZwpXwaylandKeyboardGrabManagerV1.Destroy;
 begin
-  wl_proxy_marshal(Pwl_proxy(zwp_xwayland_keyboard_grab_manager_v1), _ZWP_XWAYLAND_KEYBOARD_GRAB_MANAGER_V1_DESTROY);
-  wl_proxy_destroy(Pwl_proxy(zwp_xwayland_keyboard_grab_manager_v1));
+  wl_proxy_marshal(FProxy, _DESTROY);
+  inherited Destroy;
 end;
 
-function  zwp_xwayland_keyboard_grab_manager_v1_grab_keyboard(zwp_xwayland_keyboard_grab_manager_v1: Pzwp_xwayland_keyboard_grab_manager_v1; surface: Pwl_surface; seat: Pwl_seat): Pzwp_xwayland_keyboard_grab_v1;
+function TZwpXwaylandKeyboardGrabManagerV1.GrabKeyboard(ASurface: TWlSurface; ASeat: TWlSeat; AProxyClass: TWLProxyObjectClass = nil {TZwpXwaylandKeyboardGrabV1}): TZwpXwaylandKeyboardGrabV1;
 var
   id: Pwl_proxy;
 begin
-  id := wl_proxy_marshal_constructor(Pwl_proxy(zwp_xwayland_keyboard_grab_manager_v1),
-      _ZWP_XWAYLAND_KEYBOARD_GRAB_MANAGER_V1_GRAB_KEYBOARD, @zwp_xwayland_keyboard_grab_v1_interface, nil, surface, seat);
-  Result := Pzwp_xwayland_keyboard_grab_v1(id);
+  id := wl_proxy_marshal_constructor(FProxy,
+      _GRAB_KEYBOARD, @zwp_xwayland_keyboard_grab_v1_interface, nil, ASurface.Proxy, ASeat.Proxy);
+  if AProxyClass = nil then
+    AProxyClass := TZwpXwaylandKeyboardGrabV1;
+  Result := TZwpXwaylandKeyboardGrabV1(AProxyClass.Create(id));
+  if not AProxyClass.InheritsFrom(TZwpXwaylandKeyboardGrabV1) then
+    Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TZwpXwaylandKeyboardGrabV1]);
 end;
 
-function  zwp_xwayland_keyboard_grab_manager_v1_add_listener(zwp_xwayland_keyboard_grab_manager_v1: Pzwp_xwayland_keyboard_grab_manager_v1; listener: Pzwp_xwayland_keyboard_grab_manager_v1_listener; data: Pointer): cint;
+function TZwpXwaylandKeyboardGrabManagerV1.AddListener(AIntf: IZwpXwaylandKeyboardGrabManagerV1Listener): LongInt;
 begin
-  Result := wl_proxy_add_listener(Pwl_proxy(zwp_xwayland_keyboard_grab_manager_v1), listener, data);
+  FUserDataRec.ListenerUserData := Pointer(AIntf);
+  Result := wl_proxy_add_listener(FProxy, @vIntf_zwp_xwayland_keyboard_grab_manager_v1_Listener, @FUserDataRec);
+end;
+destructor TZwpXwaylandKeyboardGrabV1.Destroy;
+begin
+  wl_proxy_marshal(FProxy, _DESTROY);
+  inherited Destroy;
 end;
 
-procedure  zwp_xwayland_keyboard_grab_manager_v1_add_listener(zwp_xwayland_keyboard_grab_manager_v1: Pzwp_xwayland_keyboard_grab_manager_v1; AIntf: Izwp_xwayland_keyboard_grab_manager_v1Listener);
+function TZwpXwaylandKeyboardGrabV1.AddListener(AIntf: IZwpXwaylandKeyboardGrabV1Listener): LongInt;
 begin
-  zwp_xwayland_keyboard_grab_manager_v1_add_listener(zwp_xwayland_keyboard_grab_manager_v1, @vIntf_zwp_xwayland_keyboard_grab_manager_v1_Listener, AIntf);
+  FUserDataRec.ListenerUserData := Pointer(AIntf);
+  Result := wl_proxy_add_listener(FProxy, @vIntf_zwp_xwayland_keyboard_grab_v1_Listener, @FUserDataRec);
 end;
 
-procedure zwp_xwayland_keyboard_grab_manager_v1_set_user_data(zwp_xwayland_keyboard_grab_manager_v1: Pzwp_xwayland_keyboard_grab_manager_v1; user_data: Pointer);
-begin
-  wl_proxy_set_user_data(Pwl_proxy(zwp_xwayland_keyboard_grab_manager_v1), user_data);
-end;
 
-function  zwp_xwayland_keyboard_grab_manager_v1_get_user_data(zwp_xwayland_keyboard_grab_manager_v1: Pzwp_xwayland_keyboard_grab_manager_v1): Pointer;
-begin
-  Result := wl_proxy_get_user_data(Pwl_proxy(zwp_xwayland_keyboard_grab_manager_v1));
-end;
-
-function  zwp_xwayland_keyboard_grab_manager_v1_get_version(zwp_xwayland_keyboard_grab_manager_v1: Pzwp_xwayland_keyboard_grab_manager_v1): cuint32;
-begin
-  Result := wl_proxy_get_version(Pwl_proxy(zwp_xwayland_keyboard_grab_manager_v1));
-end;
-
-procedure zwp_xwayland_keyboard_grab_v1_destroy(zwp_xwayland_keyboard_grab_v1: Pzwp_xwayland_keyboard_grab_v1);
-begin
-  wl_proxy_marshal(Pwl_proxy(zwp_xwayland_keyboard_grab_v1), _ZWP_XWAYLAND_KEYBOARD_GRAB_V1_DESTROY);
-  wl_proxy_destroy(Pwl_proxy(zwp_xwayland_keyboard_grab_v1));
-end;
-
-function  zwp_xwayland_keyboard_grab_v1_add_listener(zwp_xwayland_keyboard_grab_v1: Pzwp_xwayland_keyboard_grab_v1; listener: Pzwp_xwayland_keyboard_grab_v1_listener; data: Pointer): cint;
-begin
-  Result := wl_proxy_add_listener(Pwl_proxy(zwp_xwayland_keyboard_grab_v1), listener, data);
-end;
-
-procedure  zwp_xwayland_keyboard_grab_v1_add_listener(zwp_xwayland_keyboard_grab_v1: Pzwp_xwayland_keyboard_grab_v1; AIntf: Izwp_xwayland_keyboard_grab_v1Listener);
-begin
-  zwp_xwayland_keyboard_grab_v1_add_listener(zwp_xwayland_keyboard_grab_v1, @vIntf_zwp_xwayland_keyboard_grab_v1_Listener, AIntf);
-end;
-
-procedure zwp_xwayland_keyboard_grab_v1_set_user_data(zwp_xwayland_keyboard_grab_v1: Pzwp_xwayland_keyboard_grab_v1; user_data: Pointer);
-begin
-  wl_proxy_set_user_data(Pwl_proxy(zwp_xwayland_keyboard_grab_v1), user_data);
-end;
-
-function  zwp_xwayland_keyboard_grab_v1_get_user_data(zwp_xwayland_keyboard_grab_v1: Pzwp_xwayland_keyboard_grab_v1): Pointer;
-begin
-  Result := wl_proxy_get_user_data(Pwl_proxy(zwp_xwayland_keyboard_grab_v1));
-end;
-
-function  zwp_xwayland_keyboard_grab_v1_get_version(zwp_xwayland_keyboard_grab_v1: Pzwp_xwayland_keyboard_grab_v1): cuint32;
-begin
-  Result := wl_proxy_get_version(Pwl_proxy(zwp_xwayland_keyboard_grab_v1));
-end;
 
 
 

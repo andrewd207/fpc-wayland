@@ -6,76 +6,87 @@ unit pointer_gestures_unstable_v1_protocol;
 interface
 
 uses
-  ctypes, wayland_util, wayland_client_core, wayland_protocol;
+  Classes, Sysutils, ctypes, wayland_util, wayland_client_core, wayland_protocol;
 
 
 type
-  Pzwp_pointer_gestures_v1 = ^Tzwp_pointer_gestures_v1;
-  Tzwp_pointer_gestures_v1 = record end;
-  Pzwp_pointer_gesture_swipe_v1 = ^Tzwp_pointer_gesture_swipe_v1;
-  Tzwp_pointer_gesture_swipe_v1 = record end;
-  Pzwp_pointer_gesture_pinch_v1 = ^Tzwp_pointer_gesture_pinch_v1;
-  Tzwp_pointer_gesture_pinch_v1 = record end;
+  Pzwp_pointer_gestures_v1 = Pointer;
+  Pzwp_pointer_gesture_swipe_v1 = Pointer;
+  Pzwp_pointer_gesture_pinch_v1 = Pointer;
   Pzwp_pointer_gestures_v1_listener = ^Tzwp_pointer_gestures_v1_listener;
   Tzwp_pointer_gestures_v1_listener = record
   end;
 
   Pzwp_pointer_gesture_swipe_v1_listener = ^Tzwp_pointer_gesture_swipe_v1_listener;
   Tzwp_pointer_gesture_swipe_v1_listener = record
-    begin_ : procedure(data: Pointer; zwp_pointer_gesture_swipe_v1: Pzwp_pointer_gesture_swipe_v1; serial: cuint; time: cuint; surface: Pwl_surface; fingers: cuint); cdecl;
-    update : procedure(data: Pointer; zwp_pointer_gesture_swipe_v1: Pzwp_pointer_gesture_swipe_v1; time: cuint; dx: cint32; dy: cint32); cdecl;
-    end_ : procedure(data: Pointer; zwp_pointer_gesture_swipe_v1: Pzwp_pointer_gesture_swipe_v1; serial: cuint; time: cuint; cancelled: cint); cdecl;
+    begin_ : procedure(data: Pointer; AZwpPointerGestureSwipeV1: Pzwp_pointer_gesture_swipe_v1; ASerial: DWord; ATime: DWord; ASurface: Pwl_surface; AFingers: DWord); cdecl;
+    update : procedure(data: Pointer; AZwpPointerGestureSwipeV1: Pzwp_pointer_gesture_swipe_v1; ATime: DWord; ADx: Longint{24.8}; ADy: Longint{24.8}); cdecl;
+    end_ : procedure(data: Pointer; AZwpPointerGestureSwipeV1: Pzwp_pointer_gesture_swipe_v1; ASerial: DWord; ATime: DWord; ACancelled: LongInt); cdecl;
   end;
 
   Pzwp_pointer_gesture_pinch_v1_listener = ^Tzwp_pointer_gesture_pinch_v1_listener;
   Tzwp_pointer_gesture_pinch_v1_listener = record
-    begin_ : procedure(data: Pointer; zwp_pointer_gesture_pinch_v1: Pzwp_pointer_gesture_pinch_v1; serial: cuint; time: cuint; surface: Pwl_surface; fingers: cuint); cdecl;
-    update : procedure(data: Pointer; zwp_pointer_gesture_pinch_v1: Pzwp_pointer_gesture_pinch_v1; time: cuint; dx: cint32; dy: cint32; scale: cint32; rotation: cint32); cdecl;
-    end_ : procedure(data: Pointer; zwp_pointer_gesture_pinch_v1: Pzwp_pointer_gesture_pinch_v1; serial: cuint; time: cuint; cancelled: cint); cdecl;
+    begin_ : procedure(data: Pointer; AZwpPointerGesturePinchV1: Pzwp_pointer_gesture_pinch_v1; ASerial: DWord; ATime: DWord; ASurface: Pwl_surface; AFingers: DWord); cdecl;
+    update : procedure(data: Pointer; AZwpPointerGesturePinchV1: Pzwp_pointer_gesture_pinch_v1; ATime: DWord; ADx: Longint{24.8}; ADy: Longint{24.8}; AScale: Longint{24.8}; ARotation: Longint{24.8}); cdecl;
+    end_ : procedure(data: Pointer; AZwpPointerGesturePinchV1: Pzwp_pointer_gesture_pinch_v1; ASerial: DWord; ATime: DWord; ACancelled: LongInt); cdecl;
   end;
 
 
 
-  Izwp_pointer_gestures_v1Listener = interface
-  ['Izwp_pointer_gestures_v1Listener']
+  TZwpPointerGesturesV1 = class;
+  TZwpPointerGestureSwipeV1 = class;
+  TZwpPointerGesturePinchV1 = class;
+
+
+  IZwpPointerGesturesV1Listener = interface
+  ['IZwpPointerGesturesV1Listener']
   end;
 
-  Izwp_pointer_gesture_swipe_v1Listener = interface
-  ['Izwp_pointer_gesture_swipe_v1Listener']
-    procedure zwp_pointer_gesture_swipe_v1_begin(zwp_pointer_gesture_swipe_v1: Pzwp_pointer_gesture_swipe_v1; serial: cuint; time: cuint; surface: Pwl_surface; fingers: cuint);
-    procedure zwp_pointer_gesture_swipe_v1_update(zwp_pointer_gesture_swipe_v1: Pzwp_pointer_gesture_swipe_v1; time: cuint; dx: cint32; dy: cint32);
-    procedure zwp_pointer_gesture_swipe_v1_end(zwp_pointer_gesture_swipe_v1: Pzwp_pointer_gesture_swipe_v1; serial: cuint; time: cuint; cancelled: cint);
+  IZwpPointerGestureSwipeV1Listener = interface
+  ['IZwpPointerGestureSwipeV1Listener']
+    procedure zwp_pointer_gesture_swipe_v1_begin(AZwpPointerGestureSwipeV1: TZwpPointerGestureSwipeV1; ASerial: DWord; ATime: DWord; ASurface: TWlSurface; AFingers: DWord);
+    procedure zwp_pointer_gesture_swipe_v1_update(AZwpPointerGestureSwipeV1: TZwpPointerGestureSwipeV1; ATime: DWord; ADx: Longint{24.8}; ADy: Longint{24.8});
+    procedure zwp_pointer_gesture_swipe_v1_end(AZwpPointerGestureSwipeV1: TZwpPointerGestureSwipeV1; ASerial: DWord; ATime: DWord; ACancelled: LongInt);
   end;
 
-  Izwp_pointer_gesture_pinch_v1Listener = interface
-  ['Izwp_pointer_gesture_pinch_v1Listener']
-    procedure zwp_pointer_gesture_pinch_v1_begin(zwp_pointer_gesture_pinch_v1: Pzwp_pointer_gesture_pinch_v1; serial: cuint; time: cuint; surface: Pwl_surface; fingers: cuint);
-    procedure zwp_pointer_gesture_pinch_v1_update(zwp_pointer_gesture_pinch_v1: Pzwp_pointer_gesture_pinch_v1; time: cuint; dx: cint32; dy: cint32; scale: cint32; rotation: cint32);
-    procedure zwp_pointer_gesture_pinch_v1_end(zwp_pointer_gesture_pinch_v1: Pzwp_pointer_gesture_pinch_v1; serial: cuint; time: cuint; cancelled: cint);
+  IZwpPointerGesturePinchV1Listener = interface
+  ['IZwpPointerGesturePinchV1Listener']
+    procedure zwp_pointer_gesture_pinch_v1_begin(AZwpPointerGesturePinchV1: TZwpPointerGesturePinchV1; ASerial: DWord; ATime: DWord; ASurface: TWlSurface; AFingers: DWord);
+    procedure zwp_pointer_gesture_pinch_v1_update(AZwpPointerGesturePinchV1: TZwpPointerGesturePinchV1; ATime: DWord; ADx: Longint{24.8}; ADy: Longint{24.8}; AScale: Longint{24.8}; ARotation: Longint{24.8});
+    procedure zwp_pointer_gesture_pinch_v1_end(AZwpPointerGesturePinchV1: TZwpPointerGesturePinchV1; ASerial: DWord; ATime: DWord; ACancelled: LongInt);
   end;
 
 
 
-function  zwp_pointer_gestures_v1_get_swipe_gesture(zwp_pointer_gestures_v1: Pzwp_pointer_gestures_v1; pointer: Pwl_pointer): Pzwp_pointer_gesture_swipe_v1;
-function  zwp_pointer_gestures_v1_get_pinch_gesture(zwp_pointer_gestures_v1: Pzwp_pointer_gestures_v1; pointer: Pwl_pointer): Pzwp_pointer_gesture_pinch_v1;
-function  zwp_pointer_gestures_v1_add_listener(zwp_pointer_gestures_v1: Pzwp_pointer_gestures_v1; listener: Pzwp_pointer_gestures_v1_listener; data: Pointer): cint;
-procedure  zwp_pointer_gestures_v1_add_listener(zwp_pointer_gestures_v1: Pzwp_pointer_gestures_v1; AIntf: Izwp_pointer_gestures_v1Listener);
-procedure zwp_pointer_gestures_v1_set_user_data(zwp_pointer_gestures_v1: Pzwp_pointer_gestures_v1; user_data: Pointer);
-function  zwp_pointer_gestures_v1_get_user_data(zwp_pointer_gestures_v1: Pzwp_pointer_gestures_v1): Pointer;
-function  zwp_pointer_gestures_v1_get_version(zwp_pointer_gestures_v1: Pzwp_pointer_gestures_v1): cuint32;
-procedure zwp_pointer_gestures_v1_destroy(zwp_pointer_gestures_v1: Pzwp_pointer_gestures_v1);
-procedure zwp_pointer_gesture_swipe_v1_destroy(zwp_pointer_gesture_swipe_v1: Pzwp_pointer_gesture_swipe_v1);
-function  zwp_pointer_gesture_swipe_v1_add_listener(zwp_pointer_gesture_swipe_v1: Pzwp_pointer_gesture_swipe_v1; listener: Pzwp_pointer_gesture_swipe_v1_listener; data: Pointer): cint;
-procedure  zwp_pointer_gesture_swipe_v1_add_listener(zwp_pointer_gesture_swipe_v1: Pzwp_pointer_gesture_swipe_v1; AIntf: Izwp_pointer_gesture_swipe_v1Listener);
-procedure zwp_pointer_gesture_swipe_v1_set_user_data(zwp_pointer_gesture_swipe_v1: Pzwp_pointer_gesture_swipe_v1; user_data: Pointer);
-function  zwp_pointer_gesture_swipe_v1_get_user_data(zwp_pointer_gesture_swipe_v1: Pzwp_pointer_gesture_swipe_v1): Pointer;
-function  zwp_pointer_gesture_swipe_v1_get_version(zwp_pointer_gesture_swipe_v1: Pzwp_pointer_gesture_swipe_v1): cuint32;
-procedure zwp_pointer_gesture_pinch_v1_destroy(zwp_pointer_gesture_pinch_v1: Pzwp_pointer_gesture_pinch_v1);
-function  zwp_pointer_gesture_pinch_v1_add_listener(zwp_pointer_gesture_pinch_v1: Pzwp_pointer_gesture_pinch_v1; listener: Pzwp_pointer_gesture_pinch_v1_listener; data: Pointer): cint;
-procedure  zwp_pointer_gesture_pinch_v1_add_listener(zwp_pointer_gesture_pinch_v1: Pzwp_pointer_gesture_pinch_v1; AIntf: Izwp_pointer_gesture_pinch_v1Listener);
-procedure zwp_pointer_gesture_pinch_v1_set_user_data(zwp_pointer_gesture_pinch_v1: Pzwp_pointer_gesture_pinch_v1; user_data: Pointer);
-function  zwp_pointer_gesture_pinch_v1_get_user_data(zwp_pointer_gesture_pinch_v1: Pzwp_pointer_gesture_pinch_v1): Pointer;
-function  zwp_pointer_gesture_pinch_v1_get_version(zwp_pointer_gesture_pinch_v1: Pzwp_pointer_gesture_pinch_v1): cuint32;
+
+  TZwpPointerGesturesV1 = class(TWLProxyObject)
+  private
+    const _GET_SWIPE_GESTURE = 0;
+    const _GET_PINCH_GESTURE = 1;
+  public
+    function GetSwipeGesture(APointer: TWlPointer; AProxyClass: TWLProxyObjectClass = nil {TZwpPointerGestureSwipeV1}): TZwpPointerGestureSwipeV1;
+    function GetPinchGesture(APointer: TWlPointer; AProxyClass: TWLProxyObjectClass = nil {TZwpPointerGesturePinchV1}): TZwpPointerGesturePinchV1;
+    function AddListener(AIntf: IZwpPointerGesturesV1Listener): LongInt;
+  end;
+
+  TZwpPointerGestureSwipeV1 = class(TWLProxyObject)
+  private
+    const _DESTROY = 0;
+  public
+    destructor Destroy; override;
+    function AddListener(AIntf: IZwpPointerGestureSwipeV1Listener): LongInt;
+  end;
+
+  TZwpPointerGesturePinchV1 = class(TWLProxyObject)
+  private
+    const _DESTROY = 0;
+  public
+    destructor Destroy; override;
+    function AddListener(AIntf: IZwpPointerGesturePinchV1Listener): LongInt;
+  end;
+
+
+
 
 
 
@@ -88,13 +99,6 @@ var
 
 implementation
 
-const
-_ZWP_POINTER_GESTURES_V1_GET_SWIPE_GESTURE = 0;
-_ZWP_POINTER_GESTURES_V1_GET_PINCH_GESTURE = 1;
-_ZWP_POINTER_GESTURE_SWIPE_V1_DESTROY = 0;
-_ZWP_POINTER_GESTURE_PINCH_V1_DESTROY = 0;
-
-
 var
   vIntf_zwp_pointer_gestures_v1_Listener: Tzwp_pointer_gestures_v1_listener;
   vIntf_zwp_pointer_gesture_swipe_v1_Listener: Tzwp_pointer_gesture_swipe_v1_listener;
@@ -102,151 +106,115 @@ var
 
 
 
-function  zwp_pointer_gestures_v1_get_swipe_gesture(zwp_pointer_gestures_v1: Pzwp_pointer_gestures_v1; pointer: Pwl_pointer): Pzwp_pointer_gesture_swipe_v1;
+function TZwpPointerGesturesV1.GetSwipeGesture(APointer: TWlPointer; AProxyClass: TWLProxyObjectClass = nil {TZwpPointerGestureSwipeV1}): TZwpPointerGestureSwipeV1;
 var
   id: Pwl_proxy;
 begin
-  id := wl_proxy_marshal_constructor(Pwl_proxy(zwp_pointer_gestures_v1),
-      _ZWP_POINTER_GESTURES_V1_GET_SWIPE_GESTURE, @zwp_pointer_gesture_swipe_v1_interface, nil, pointer);
-  Result := Pzwp_pointer_gesture_swipe_v1(id);
+  id := wl_proxy_marshal_constructor(FProxy,
+      _GET_SWIPE_GESTURE, @zwp_pointer_gesture_swipe_v1_interface, nil, APointer.Proxy);
+  if AProxyClass = nil then
+    AProxyClass := TZwpPointerGestureSwipeV1;
+  Result := TZwpPointerGestureSwipeV1(AProxyClass.Create(id));
+  if not AProxyClass.InheritsFrom(TZwpPointerGestureSwipeV1) then
+    Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TZwpPointerGestureSwipeV1]);
 end;
 
-function  zwp_pointer_gestures_v1_get_pinch_gesture(zwp_pointer_gestures_v1: Pzwp_pointer_gestures_v1; pointer: Pwl_pointer): Pzwp_pointer_gesture_pinch_v1;
+function TZwpPointerGesturesV1.GetPinchGesture(APointer: TWlPointer; AProxyClass: TWLProxyObjectClass = nil {TZwpPointerGesturePinchV1}): TZwpPointerGesturePinchV1;
 var
   id: Pwl_proxy;
 begin
-  id := wl_proxy_marshal_constructor(Pwl_proxy(zwp_pointer_gestures_v1),
-      _ZWP_POINTER_GESTURES_V1_GET_PINCH_GESTURE, @zwp_pointer_gesture_pinch_v1_interface, nil, pointer);
-  Result := Pzwp_pointer_gesture_pinch_v1(id);
+  id := wl_proxy_marshal_constructor(FProxy,
+      _GET_PINCH_GESTURE, @zwp_pointer_gesture_pinch_v1_interface, nil, APointer.Proxy);
+  if AProxyClass = nil then
+    AProxyClass := TZwpPointerGesturePinchV1;
+  Result := TZwpPointerGesturePinchV1(AProxyClass.Create(id));
+  if not AProxyClass.InheritsFrom(TZwpPointerGesturePinchV1) then
+    Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TZwpPointerGesturePinchV1]);
 end;
 
-function  zwp_pointer_gestures_v1_add_listener(zwp_pointer_gestures_v1: Pzwp_pointer_gestures_v1; listener: Pzwp_pointer_gestures_v1_listener; data: Pointer): cint;
+function TZwpPointerGesturesV1.AddListener(AIntf: IZwpPointerGesturesV1Listener): LongInt;
 begin
-  Result := wl_proxy_add_listener(Pwl_proxy(zwp_pointer_gestures_v1), listener, data);
+  FUserDataRec.ListenerUserData := Pointer(AIntf);
+  Result := wl_proxy_add_listener(FProxy, @vIntf_zwp_pointer_gestures_v1_Listener, @FUserDataRec);
+end;
+destructor TZwpPointerGestureSwipeV1.Destroy;
+begin
+  wl_proxy_marshal(FProxy, _DESTROY);
+  inherited Destroy;
 end;
 
-procedure  zwp_pointer_gestures_v1_add_listener(zwp_pointer_gestures_v1: Pzwp_pointer_gestures_v1; AIntf: Izwp_pointer_gestures_v1Listener);
+function TZwpPointerGestureSwipeV1.AddListener(AIntf: IZwpPointerGestureSwipeV1Listener): LongInt;
 begin
-  zwp_pointer_gestures_v1_add_listener(zwp_pointer_gestures_v1, @vIntf_zwp_pointer_gestures_v1_Listener, AIntf);
+  FUserDataRec.ListenerUserData := Pointer(AIntf);
+  Result := wl_proxy_add_listener(FProxy, @vIntf_zwp_pointer_gesture_swipe_v1_Listener, @FUserDataRec);
+end;
+destructor TZwpPointerGesturePinchV1.Destroy;
+begin
+  wl_proxy_marshal(FProxy, _DESTROY);
+  inherited Destroy;
 end;
 
-procedure zwp_pointer_gestures_v1_set_user_data(zwp_pointer_gestures_v1: Pzwp_pointer_gestures_v1; user_data: Pointer);
+function TZwpPointerGesturePinchV1.AddListener(AIntf: IZwpPointerGesturePinchV1Listener): LongInt;
 begin
-  wl_proxy_set_user_data(Pwl_proxy(zwp_pointer_gestures_v1), user_data);
-end;
-
-function  zwp_pointer_gestures_v1_get_user_data(zwp_pointer_gestures_v1: Pzwp_pointer_gestures_v1): Pointer;
-begin
-  Result := wl_proxy_get_user_data(Pwl_proxy(zwp_pointer_gestures_v1));
-end;
-
-function  zwp_pointer_gestures_v1_get_version(zwp_pointer_gestures_v1: Pzwp_pointer_gestures_v1): cuint32;
-begin
-  Result := wl_proxy_get_version(Pwl_proxy(zwp_pointer_gestures_v1));
-end;
-
-procedure zwp_pointer_gestures_v1_destroy(zwp_pointer_gestures_v1: Pzwp_pointer_gestures_v1);
-begin
-  wl_proxy_destroy(Pwl_proxy(zwp_pointer_gestures_v1));
-end;
-
-procedure zwp_pointer_gesture_swipe_v1_destroy(zwp_pointer_gesture_swipe_v1: Pzwp_pointer_gesture_swipe_v1);
-begin
-  wl_proxy_marshal(Pwl_proxy(zwp_pointer_gesture_swipe_v1), _ZWP_POINTER_GESTURE_SWIPE_V1_DESTROY);
-  wl_proxy_destroy(Pwl_proxy(zwp_pointer_gesture_swipe_v1));
-end;
-
-function  zwp_pointer_gesture_swipe_v1_add_listener(zwp_pointer_gesture_swipe_v1: Pzwp_pointer_gesture_swipe_v1; listener: Pzwp_pointer_gesture_swipe_v1_listener; data: Pointer): cint;
-begin
-  Result := wl_proxy_add_listener(Pwl_proxy(zwp_pointer_gesture_swipe_v1), listener, data);
-end;
-
-procedure  zwp_pointer_gesture_swipe_v1_add_listener(zwp_pointer_gesture_swipe_v1: Pzwp_pointer_gesture_swipe_v1; AIntf: Izwp_pointer_gesture_swipe_v1Listener);
-begin
-  zwp_pointer_gesture_swipe_v1_add_listener(zwp_pointer_gesture_swipe_v1, @vIntf_zwp_pointer_gesture_swipe_v1_Listener, AIntf);
-end;
-
-procedure zwp_pointer_gesture_swipe_v1_set_user_data(zwp_pointer_gesture_swipe_v1: Pzwp_pointer_gesture_swipe_v1; user_data: Pointer);
-begin
-  wl_proxy_set_user_data(Pwl_proxy(zwp_pointer_gesture_swipe_v1), user_data);
-end;
-
-function  zwp_pointer_gesture_swipe_v1_get_user_data(zwp_pointer_gesture_swipe_v1: Pzwp_pointer_gesture_swipe_v1): Pointer;
-begin
-  Result := wl_proxy_get_user_data(Pwl_proxy(zwp_pointer_gesture_swipe_v1));
-end;
-
-function  zwp_pointer_gesture_swipe_v1_get_version(zwp_pointer_gesture_swipe_v1: Pzwp_pointer_gesture_swipe_v1): cuint32;
-begin
-  Result := wl_proxy_get_version(Pwl_proxy(zwp_pointer_gesture_swipe_v1));
-end;
-
-procedure zwp_pointer_gesture_pinch_v1_destroy(zwp_pointer_gesture_pinch_v1: Pzwp_pointer_gesture_pinch_v1);
-begin
-  wl_proxy_marshal(Pwl_proxy(zwp_pointer_gesture_pinch_v1), _ZWP_POINTER_GESTURE_PINCH_V1_DESTROY);
-  wl_proxy_destroy(Pwl_proxy(zwp_pointer_gesture_pinch_v1));
-end;
-
-function  zwp_pointer_gesture_pinch_v1_add_listener(zwp_pointer_gesture_pinch_v1: Pzwp_pointer_gesture_pinch_v1; listener: Pzwp_pointer_gesture_pinch_v1_listener; data: Pointer): cint;
-begin
-  Result := wl_proxy_add_listener(Pwl_proxy(zwp_pointer_gesture_pinch_v1), listener, data);
-end;
-
-procedure  zwp_pointer_gesture_pinch_v1_add_listener(zwp_pointer_gesture_pinch_v1: Pzwp_pointer_gesture_pinch_v1; AIntf: Izwp_pointer_gesture_pinch_v1Listener);
-begin
-  zwp_pointer_gesture_pinch_v1_add_listener(zwp_pointer_gesture_pinch_v1, @vIntf_zwp_pointer_gesture_pinch_v1_Listener, AIntf);
-end;
-
-procedure zwp_pointer_gesture_pinch_v1_set_user_data(zwp_pointer_gesture_pinch_v1: Pzwp_pointer_gesture_pinch_v1; user_data: Pointer);
-begin
-  wl_proxy_set_user_data(Pwl_proxy(zwp_pointer_gesture_pinch_v1), user_data);
-end;
-
-function  zwp_pointer_gesture_pinch_v1_get_user_data(zwp_pointer_gesture_pinch_v1: Pzwp_pointer_gesture_pinch_v1): Pointer;
-begin
-  Result := wl_proxy_get_user_data(Pwl_proxy(zwp_pointer_gesture_pinch_v1));
-end;
-
-function  zwp_pointer_gesture_pinch_v1_get_version(zwp_pointer_gesture_pinch_v1: Pzwp_pointer_gesture_pinch_v1): cuint32;
-begin
-  Result := wl_proxy_get_version(Pwl_proxy(zwp_pointer_gesture_pinch_v1));
+  FUserDataRec.ListenerUserData := Pointer(AIntf);
+  Result := wl_proxy_add_listener(FProxy, @vIntf_zwp_pointer_gesture_pinch_v1_Listener, @FUserDataRec);
 end;
 
 
-procedure zwp_pointer_gesture_swipe_v1_begin_Intf(AIntf: Izwp_pointer_gesture_swipe_v1Listener; zwp_pointer_gesture_swipe_v1: Pzwp_pointer_gesture_swipe_v1; serial: cuint; time: cuint; surface: Pwl_surface; fingers: cuint); cdecl;
+
+
+procedure zwp_pointer_gesture_swipe_v1_begin_Intf(AData: PWLUserData; Azwp_pointer_gesture_swipe_v1: Pzwp_pointer_gesture_swipe_v1; ASerial: DWord; ATime: DWord; ASurface: Pwl_surface; AFingers: DWord); cdecl;
+var
+  AIntf: IZwpPointerGestureSwipeV1Listener;
 begin
-  WriteLn('zwp_pointer_gesture_swipe_v1.begin');
-  AIntf.zwp_pointer_gesture_swipe_v1_begin(zwp_pointer_gesture_swipe_v1, serial, time, surface, fingers);
+  if AData = nil then Exit;
+  AIntf := IZwpPointerGestureSwipeV1Listener(AData^.ListenerUserData);
+  AIntf.zwp_pointer_gesture_swipe_v1_begin(TZwpPointerGestureSwipeV1(AData^.PascalObject), ASerial, ATime,  TWlSurface(TWLProxyObject.WLToObj(ASurface)), AFingers);
 end;
 
-procedure zwp_pointer_gesture_swipe_v1_update_Intf(AIntf: Izwp_pointer_gesture_swipe_v1Listener; zwp_pointer_gesture_swipe_v1: Pzwp_pointer_gesture_swipe_v1; time: cuint; dx: cint32; dy: cint32); cdecl;
+procedure zwp_pointer_gesture_swipe_v1_update_Intf(AData: PWLUserData; Azwp_pointer_gesture_swipe_v1: Pzwp_pointer_gesture_swipe_v1; ATime: DWord; ADx: Longint{24.8}; ADy: Longint{24.8}); cdecl;
+var
+  AIntf: IZwpPointerGestureSwipeV1Listener;
 begin
-  WriteLn('zwp_pointer_gesture_swipe_v1.update');
-  AIntf.zwp_pointer_gesture_swipe_v1_update(zwp_pointer_gesture_swipe_v1, time, dx, dy);
+  if AData = nil then Exit;
+  AIntf := IZwpPointerGestureSwipeV1Listener(AData^.ListenerUserData);
+  AIntf.zwp_pointer_gesture_swipe_v1_update(TZwpPointerGestureSwipeV1(AData^.PascalObject), ATime, ADx, ADy);
 end;
 
-procedure zwp_pointer_gesture_swipe_v1_end_Intf(AIntf: Izwp_pointer_gesture_swipe_v1Listener; zwp_pointer_gesture_swipe_v1: Pzwp_pointer_gesture_swipe_v1; serial: cuint; time: cuint; cancelled: cint); cdecl;
+procedure zwp_pointer_gesture_swipe_v1_end_Intf(AData: PWLUserData; Azwp_pointer_gesture_swipe_v1: Pzwp_pointer_gesture_swipe_v1; ASerial: DWord; ATime: DWord; ACancelled: LongInt); cdecl;
+var
+  AIntf: IZwpPointerGestureSwipeV1Listener;
 begin
-  WriteLn('zwp_pointer_gesture_swipe_v1.end');
-  AIntf.zwp_pointer_gesture_swipe_v1_end(zwp_pointer_gesture_swipe_v1, serial, time, cancelled);
+  if AData = nil then Exit;
+  AIntf := IZwpPointerGestureSwipeV1Listener(AData^.ListenerUserData);
+  AIntf.zwp_pointer_gesture_swipe_v1_end(TZwpPointerGestureSwipeV1(AData^.PascalObject), ASerial, ATime, ACancelled);
 end;
 
-procedure zwp_pointer_gesture_pinch_v1_begin_Intf(AIntf: Izwp_pointer_gesture_pinch_v1Listener; zwp_pointer_gesture_pinch_v1: Pzwp_pointer_gesture_pinch_v1; serial: cuint; time: cuint; surface: Pwl_surface; fingers: cuint); cdecl;
+procedure zwp_pointer_gesture_pinch_v1_begin_Intf(AData: PWLUserData; Azwp_pointer_gesture_pinch_v1: Pzwp_pointer_gesture_pinch_v1; ASerial: DWord; ATime: DWord; ASurface: Pwl_surface; AFingers: DWord); cdecl;
+var
+  AIntf: IZwpPointerGesturePinchV1Listener;
 begin
-  WriteLn('zwp_pointer_gesture_pinch_v1.begin');
-  AIntf.zwp_pointer_gesture_pinch_v1_begin(zwp_pointer_gesture_pinch_v1, serial, time, surface, fingers);
+  if AData = nil then Exit;
+  AIntf := IZwpPointerGesturePinchV1Listener(AData^.ListenerUserData);
+  AIntf.zwp_pointer_gesture_pinch_v1_begin(TZwpPointerGesturePinchV1(AData^.PascalObject), ASerial, ATime,  TWlSurface(TWLProxyObject.WLToObj(ASurface)), AFingers);
 end;
 
-procedure zwp_pointer_gesture_pinch_v1_update_Intf(AIntf: Izwp_pointer_gesture_pinch_v1Listener; zwp_pointer_gesture_pinch_v1: Pzwp_pointer_gesture_pinch_v1; time: cuint; dx: cint32; dy: cint32; scale: cint32; rotation: cint32); cdecl;
+procedure zwp_pointer_gesture_pinch_v1_update_Intf(AData: PWLUserData; Azwp_pointer_gesture_pinch_v1: Pzwp_pointer_gesture_pinch_v1; ATime: DWord; ADx: Longint{24.8}; ADy: Longint{24.8}; AScale: Longint{24.8}; ARotation: Longint{24.8}); cdecl;
+var
+  AIntf: IZwpPointerGesturePinchV1Listener;
 begin
-  WriteLn('zwp_pointer_gesture_pinch_v1.update');
-  AIntf.zwp_pointer_gesture_pinch_v1_update(zwp_pointer_gesture_pinch_v1, time, dx, dy, scale, rotation);
+  if AData = nil then Exit;
+  AIntf := IZwpPointerGesturePinchV1Listener(AData^.ListenerUserData);
+  AIntf.zwp_pointer_gesture_pinch_v1_update(TZwpPointerGesturePinchV1(AData^.PascalObject), ATime, ADx, ADy, AScale, ARotation);
 end;
 
-procedure zwp_pointer_gesture_pinch_v1_end_Intf(AIntf: Izwp_pointer_gesture_pinch_v1Listener; zwp_pointer_gesture_pinch_v1: Pzwp_pointer_gesture_pinch_v1; serial: cuint; time: cuint; cancelled: cint); cdecl;
+procedure zwp_pointer_gesture_pinch_v1_end_Intf(AData: PWLUserData; Azwp_pointer_gesture_pinch_v1: Pzwp_pointer_gesture_pinch_v1; ASerial: DWord; ATime: DWord; ACancelled: LongInt); cdecl;
+var
+  AIntf: IZwpPointerGesturePinchV1Listener;
 begin
-  WriteLn('zwp_pointer_gesture_pinch_v1.end');
-  AIntf.zwp_pointer_gesture_pinch_v1_end(zwp_pointer_gesture_pinch_v1, serial, time, cancelled);
+  if AData = nil then Exit;
+  AIntf := IZwpPointerGesturePinchV1Listener(AData^.ListenerUserData);
+  AIntf.zwp_pointer_gesture_pinch_v1_end(TZwpPointerGesturePinchV1(AData^.PascalObject), ASerial, ATime, ACancelled);
 end;
 
 

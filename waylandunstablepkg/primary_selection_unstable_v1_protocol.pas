@@ -6,93 +6,111 @@ unit primary_selection_unstable_v1_protocol;
 interface
 
 uses
-  ctypes, wayland_util, wayland_client_core, wayland_protocol;
+  Classes, Sysutils, ctypes, wayland_util, wayland_client_core, wayland_protocol;
 
 
 type
-  Pzwp_primary_selection_device_manager_v1 = ^Tzwp_primary_selection_device_manager_v1;
-  Tzwp_primary_selection_device_manager_v1 = record end;
-  Pzwp_primary_selection_device_v1 = ^Tzwp_primary_selection_device_v1;
-  Tzwp_primary_selection_device_v1 = record end;
-  Pzwp_primary_selection_offer_v1 = ^Tzwp_primary_selection_offer_v1;
-  Tzwp_primary_selection_offer_v1 = record end;
-  Pzwp_primary_selection_source_v1 = ^Tzwp_primary_selection_source_v1;
-  Tzwp_primary_selection_source_v1 = record end;
+  Pzwp_primary_selection_device_manager_v1 = Pointer;
+  Pzwp_primary_selection_device_v1 = Pointer;
+  Pzwp_primary_selection_offer_v1 = Pointer;
+  Pzwp_primary_selection_source_v1 = Pointer;
   Pzwp_primary_selection_device_manager_v1_listener = ^Tzwp_primary_selection_device_manager_v1_listener;
   Tzwp_primary_selection_device_manager_v1_listener = record
   end;
 
   Pzwp_primary_selection_device_v1_listener = ^Tzwp_primary_selection_device_v1_listener;
   Tzwp_primary_selection_device_v1_listener = record
-    data_offer : procedure(data: Pointer; zwp_primary_selection_device_v1: Pzwp_primary_selection_device_v1; offer: Pzwp_primary_selection_offer_v1); cdecl;
-    selection : procedure(data: Pointer; zwp_primary_selection_device_v1: Pzwp_primary_selection_device_v1; id: Pzwp_primary_selection_offer_v1); cdecl;
+    data_offer : procedure(data: Pointer; AZwpPrimarySelectionDeviceV1: Pzwp_primary_selection_device_v1; AOffer: Pzwp_primary_selection_offer_v1); cdecl;
+    selection : procedure(data: Pointer; AZwpPrimarySelectionDeviceV1: Pzwp_primary_selection_device_v1; AId: Pzwp_primary_selection_offer_v1); cdecl;
   end;
 
   Pzwp_primary_selection_offer_v1_listener = ^Tzwp_primary_selection_offer_v1_listener;
   Tzwp_primary_selection_offer_v1_listener = record
-    offer : procedure(data: Pointer; zwp_primary_selection_offer_v1: Pzwp_primary_selection_offer_v1; mime_type: pchar); cdecl;
+    offer : procedure(data: Pointer; AZwpPrimarySelectionOfferV1: Pzwp_primary_selection_offer_v1; AMimeType: Pchar); cdecl;
   end;
 
   Pzwp_primary_selection_source_v1_listener = ^Tzwp_primary_selection_source_v1_listener;
   Tzwp_primary_selection_source_v1_listener = record
-    send : procedure(data: Pointer; zwp_primary_selection_source_v1: Pzwp_primary_selection_source_v1; mime_type: pchar; fd: cint); cdecl;
-    cancelled : procedure(data: Pointer; zwp_primary_selection_source_v1: Pzwp_primary_selection_source_v1); cdecl;
+    send : procedure(data: Pointer; AZwpPrimarySelectionSourceV1: Pzwp_primary_selection_source_v1; AMimeType: Pchar; AFd: LongInt{fd}); cdecl;
+    cancelled : procedure(data: Pointer; AZwpPrimarySelectionSourceV1: Pzwp_primary_selection_source_v1); cdecl;
   end;
 
 
 
-  Izwp_primary_selection_device_manager_v1Listener = interface
-  ['Izwp_primary_selection_device_manager_v1Listener']
+  TZwpPrimarySelectionDeviceManagerV1 = class;
+  TZwpPrimarySelectionDeviceV1 = class;
+  TZwpPrimarySelectionOfferV1 = class;
+  TZwpPrimarySelectionSourceV1 = class;
+
+
+  IZwpPrimarySelectionDeviceManagerV1Listener = interface
+  ['IZwpPrimarySelectionDeviceManagerV1Listener']
   end;
 
-  Izwp_primary_selection_device_v1Listener = interface
-  ['Izwp_primary_selection_device_v1Listener']
-    procedure zwp_primary_selection_device_v1_data_offer(zwp_primary_selection_device_v1: Pzwp_primary_selection_device_v1; offer: Pzwp_primary_selection_offer_v1);
-    procedure zwp_primary_selection_device_v1_selection(zwp_primary_selection_device_v1: Pzwp_primary_selection_device_v1; id: Pzwp_primary_selection_offer_v1);
+  IZwpPrimarySelectionDeviceV1Listener = interface
+  ['IZwpPrimarySelectionDeviceV1Listener']
+    procedure zwp_primary_selection_device_v1_data_offer(AZwpPrimarySelectionDeviceV1: TZwpPrimarySelectionDeviceV1; AOffer: TZwpPrimarySelectionOfferV1);
+    procedure zwp_primary_selection_device_v1_selection(AZwpPrimarySelectionDeviceV1: TZwpPrimarySelectionDeviceV1; AId: TZwpPrimarySelectionOfferV1);
   end;
 
-  Izwp_primary_selection_offer_v1Listener = interface
-  ['Izwp_primary_selection_offer_v1Listener']
-    procedure zwp_primary_selection_offer_v1_offer(zwp_primary_selection_offer_v1: Pzwp_primary_selection_offer_v1; mime_type: pchar);
+  IZwpPrimarySelectionOfferV1Listener = interface
+  ['IZwpPrimarySelectionOfferV1Listener']
+    procedure zwp_primary_selection_offer_v1_offer(AZwpPrimarySelectionOfferV1: TZwpPrimarySelectionOfferV1; AMimeType: String);
   end;
 
-  Izwp_primary_selection_source_v1Listener = interface
-  ['Izwp_primary_selection_source_v1Listener']
-    procedure zwp_primary_selection_source_v1_send(zwp_primary_selection_source_v1: Pzwp_primary_selection_source_v1; mime_type: pchar; fd: cint);
-    procedure zwp_primary_selection_source_v1_cancelled(zwp_primary_selection_source_v1: Pzwp_primary_selection_source_v1);
+  IZwpPrimarySelectionSourceV1Listener = interface
+  ['IZwpPrimarySelectionSourceV1Listener']
+    procedure zwp_primary_selection_source_v1_send(AZwpPrimarySelectionSourceV1: TZwpPrimarySelectionSourceV1; AMimeType: String; AFd: LongInt{fd});
+    procedure zwp_primary_selection_source_v1_cancelled(AZwpPrimarySelectionSourceV1: TZwpPrimarySelectionSourceV1);
   end;
 
 
 
-function  zwp_primary_selection_device_manager_v1_create_source(zwp_primary_selection_device_manager_v1: Pzwp_primary_selection_device_manager_v1): Pzwp_primary_selection_source_v1;
-function  zwp_primary_selection_device_manager_v1_get_device(zwp_primary_selection_device_manager_v1: Pzwp_primary_selection_device_manager_v1; seat: Pwl_seat): Pzwp_primary_selection_device_v1;
-procedure zwp_primary_selection_device_manager_v1_destroy(zwp_primary_selection_device_manager_v1: Pzwp_primary_selection_device_manager_v1);
-function  zwp_primary_selection_device_manager_v1_add_listener(zwp_primary_selection_device_manager_v1: Pzwp_primary_selection_device_manager_v1; listener: Pzwp_primary_selection_device_manager_v1_listener; data: Pointer): cint;
-procedure  zwp_primary_selection_device_manager_v1_add_listener(zwp_primary_selection_device_manager_v1: Pzwp_primary_selection_device_manager_v1; AIntf: Izwp_primary_selection_device_manager_v1Listener);
-procedure zwp_primary_selection_device_manager_v1_set_user_data(zwp_primary_selection_device_manager_v1: Pzwp_primary_selection_device_manager_v1; user_data: Pointer);
-function  zwp_primary_selection_device_manager_v1_get_user_data(zwp_primary_selection_device_manager_v1: Pzwp_primary_selection_device_manager_v1): Pointer;
-function  zwp_primary_selection_device_manager_v1_get_version(zwp_primary_selection_device_manager_v1: Pzwp_primary_selection_device_manager_v1): cuint32;
-procedure zwp_primary_selection_device_v1_set_selection(zwp_primary_selection_device_v1: Pzwp_primary_selection_device_v1; source: Pzwp_primary_selection_source_v1; serial: cuint);
-procedure zwp_primary_selection_device_v1_destroy(zwp_primary_selection_device_v1: Pzwp_primary_selection_device_v1);
-function  zwp_primary_selection_device_v1_add_listener(zwp_primary_selection_device_v1: Pzwp_primary_selection_device_v1; listener: Pzwp_primary_selection_device_v1_listener; data: Pointer): cint;
-procedure  zwp_primary_selection_device_v1_add_listener(zwp_primary_selection_device_v1: Pzwp_primary_selection_device_v1; AIntf: Izwp_primary_selection_device_v1Listener);
-procedure zwp_primary_selection_device_v1_set_user_data(zwp_primary_selection_device_v1: Pzwp_primary_selection_device_v1; user_data: Pointer);
-function  zwp_primary_selection_device_v1_get_user_data(zwp_primary_selection_device_v1: Pzwp_primary_selection_device_v1): Pointer;
-function  zwp_primary_selection_device_v1_get_version(zwp_primary_selection_device_v1: Pzwp_primary_selection_device_v1): cuint32;
-procedure zwp_primary_selection_offer_v1_receive(zwp_primary_selection_offer_v1: Pzwp_primary_selection_offer_v1; mime_type: pchar; fd: cint);
-procedure zwp_primary_selection_offer_v1_destroy(zwp_primary_selection_offer_v1: Pzwp_primary_selection_offer_v1);
-function  zwp_primary_selection_offer_v1_add_listener(zwp_primary_selection_offer_v1: Pzwp_primary_selection_offer_v1; listener: Pzwp_primary_selection_offer_v1_listener; data: Pointer): cint;
-procedure  zwp_primary_selection_offer_v1_add_listener(zwp_primary_selection_offer_v1: Pzwp_primary_selection_offer_v1; AIntf: Izwp_primary_selection_offer_v1Listener);
-procedure zwp_primary_selection_offer_v1_set_user_data(zwp_primary_selection_offer_v1: Pzwp_primary_selection_offer_v1; user_data: Pointer);
-function  zwp_primary_selection_offer_v1_get_user_data(zwp_primary_selection_offer_v1: Pzwp_primary_selection_offer_v1): Pointer;
-function  zwp_primary_selection_offer_v1_get_version(zwp_primary_selection_offer_v1: Pzwp_primary_selection_offer_v1): cuint32;
-procedure zwp_primary_selection_source_v1_offer(zwp_primary_selection_source_v1: Pzwp_primary_selection_source_v1; mime_type: pchar);
-procedure zwp_primary_selection_source_v1_destroy(zwp_primary_selection_source_v1: Pzwp_primary_selection_source_v1);
-function  zwp_primary_selection_source_v1_add_listener(zwp_primary_selection_source_v1: Pzwp_primary_selection_source_v1; listener: Pzwp_primary_selection_source_v1_listener; data: Pointer): cint;
-procedure  zwp_primary_selection_source_v1_add_listener(zwp_primary_selection_source_v1: Pzwp_primary_selection_source_v1; AIntf: Izwp_primary_selection_source_v1Listener);
-procedure zwp_primary_selection_source_v1_set_user_data(zwp_primary_selection_source_v1: Pzwp_primary_selection_source_v1; user_data: Pointer);
-function  zwp_primary_selection_source_v1_get_user_data(zwp_primary_selection_source_v1: Pzwp_primary_selection_source_v1): Pointer;
-function  zwp_primary_selection_source_v1_get_version(zwp_primary_selection_source_v1: Pzwp_primary_selection_source_v1): cuint32;
+
+  TZwpPrimarySelectionDeviceManagerV1 = class(TWLProxyObject)
+  private
+    const _CREATE_SOURCE = 0;
+    const _GET_DEVICE = 1;
+    const _DESTROY = 2;
+  public
+    function CreateSource(AProxyClass: TWLProxyObjectClass = nil {TZwpPrimarySelectionSourceV1}): TZwpPrimarySelectionSourceV1;
+    function GetDevice(ASeat: TWlSeat; AProxyClass: TWLProxyObjectClass = nil {TZwpPrimarySelectionDeviceV1}): TZwpPrimarySelectionDeviceV1;
+    destructor Destroy; override;
+    function AddListener(AIntf: IZwpPrimarySelectionDeviceManagerV1Listener): LongInt;
+  end;
+
+  TZwpPrimarySelectionDeviceV1 = class(TWLProxyObject)
+  private
+    const _SET_SELECTION = 0;
+    const _DESTROY = 1;
+  public
+    procedure SetSelection(ASource: TZwpPrimarySelectionSourceV1; ASerial: DWord);
+    destructor Destroy; override;
+    function AddListener(AIntf: IZwpPrimarySelectionDeviceV1Listener): LongInt;
+  end;
+
+  TZwpPrimarySelectionOfferV1 = class(TWLProxyObject)
+  private
+    const _RECEIVE = 0;
+    const _DESTROY = 1;
+  public
+    procedure Receive(AMimeType: String; AFd: LongInt{fd});
+    destructor Destroy; override;
+    function AddListener(AIntf: IZwpPrimarySelectionOfferV1Listener): LongInt;
+  end;
+
+  TZwpPrimarySelectionSourceV1 = class(TWLProxyObject)
+  private
+    const _OFFER = 0;
+    const _DESTROY = 1;
+  public
+    procedure Offer(AMimeType: String);
+    destructor Destroy; override;
+    function AddListener(AIntf: IZwpPrimarySelectionSourceV1Listener): LongInt;
+  end;
+
+
+
 
 
 
@@ -106,18 +124,6 @@ var
 
 implementation
 
-const
-_ZWP_PRIMARY_SELECTION_DEVICE_MANAGER_V1_CREATE_SOURCE = 0;
-_ZWP_PRIMARY_SELECTION_DEVICE_MANAGER_V1_GET_DEVICE = 1;
-_ZWP_PRIMARY_SELECTION_DEVICE_MANAGER_V1_DESTROY = 2;
-_ZWP_PRIMARY_SELECTION_DEVICE_V1_SET_SELECTION = 0;
-_ZWP_PRIMARY_SELECTION_DEVICE_V1_DESTROY = 1;
-_ZWP_PRIMARY_SELECTION_OFFER_V1_RECEIVE = 0;
-_ZWP_PRIMARY_SELECTION_OFFER_V1_DESTROY = 1;
-_ZWP_PRIMARY_SELECTION_SOURCE_V1_OFFER = 0;
-_ZWP_PRIMARY_SELECTION_SOURCE_V1_DESTROY = 1;
-
-
 var
   vIntf_zwp_primary_selection_device_manager_v1_Listener: Tzwp_primary_selection_device_manager_v1_listener;
   vIntf_zwp_primary_selection_device_v1_Listener: Tzwp_primary_selection_device_v1_listener;
@@ -126,195 +132,138 @@ var
 
 
 
-function  zwp_primary_selection_device_manager_v1_create_source(zwp_primary_selection_device_manager_v1: Pzwp_primary_selection_device_manager_v1): Pzwp_primary_selection_source_v1;
+function TZwpPrimarySelectionDeviceManagerV1.CreateSource(AProxyClass: TWLProxyObjectClass = nil {TZwpPrimarySelectionSourceV1}): TZwpPrimarySelectionSourceV1;
 var
   id: Pwl_proxy;
 begin
-  id := wl_proxy_marshal_constructor(Pwl_proxy(zwp_primary_selection_device_manager_v1),
-      _ZWP_PRIMARY_SELECTION_DEVICE_MANAGER_V1_CREATE_SOURCE, @zwp_primary_selection_source_v1_interface, nil);
-  Result := Pzwp_primary_selection_source_v1(id);
+  id := wl_proxy_marshal_constructor(FProxy,
+      _CREATE_SOURCE, @zwp_primary_selection_source_v1_interface, nil);
+  if AProxyClass = nil then
+    AProxyClass := TZwpPrimarySelectionSourceV1;
+  Result := TZwpPrimarySelectionSourceV1(AProxyClass.Create(id));
+  if not AProxyClass.InheritsFrom(TZwpPrimarySelectionSourceV1) then
+    Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TZwpPrimarySelectionSourceV1]);
 end;
 
-function  zwp_primary_selection_device_manager_v1_get_device(zwp_primary_selection_device_manager_v1: Pzwp_primary_selection_device_manager_v1; seat: Pwl_seat): Pzwp_primary_selection_device_v1;
+function TZwpPrimarySelectionDeviceManagerV1.GetDevice(ASeat: TWlSeat; AProxyClass: TWLProxyObjectClass = nil {TZwpPrimarySelectionDeviceV1}): TZwpPrimarySelectionDeviceV1;
 var
   id: Pwl_proxy;
 begin
-  id := wl_proxy_marshal_constructor(Pwl_proxy(zwp_primary_selection_device_manager_v1),
-      _ZWP_PRIMARY_SELECTION_DEVICE_MANAGER_V1_GET_DEVICE, @zwp_primary_selection_device_v1_interface, nil, seat);
-  Result := Pzwp_primary_selection_device_v1(id);
+  id := wl_proxy_marshal_constructor(FProxy,
+      _GET_DEVICE, @zwp_primary_selection_device_v1_interface, nil, ASeat.Proxy);
+  if AProxyClass = nil then
+    AProxyClass := TZwpPrimarySelectionDeviceV1;
+  Result := TZwpPrimarySelectionDeviceV1(AProxyClass.Create(id));
+  if not AProxyClass.InheritsFrom(TZwpPrimarySelectionDeviceV1) then
+    Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TZwpPrimarySelectionDeviceV1]);
 end;
 
-procedure zwp_primary_selection_device_manager_v1_destroy(zwp_primary_selection_device_manager_v1: Pzwp_primary_selection_device_manager_v1);
+destructor TZwpPrimarySelectionDeviceManagerV1.Destroy;
 begin
-  wl_proxy_marshal(Pwl_proxy(zwp_primary_selection_device_manager_v1), _ZWP_PRIMARY_SELECTION_DEVICE_MANAGER_V1_DESTROY);
-  wl_proxy_destroy(Pwl_proxy(zwp_primary_selection_device_manager_v1));
+  wl_proxy_marshal(FProxy, _DESTROY);
+  inherited Destroy;
 end;
 
-function  zwp_primary_selection_device_manager_v1_add_listener(zwp_primary_selection_device_manager_v1: Pzwp_primary_selection_device_manager_v1; listener: Pzwp_primary_selection_device_manager_v1_listener; data: Pointer): cint;
+function TZwpPrimarySelectionDeviceManagerV1.AddListener(AIntf: IZwpPrimarySelectionDeviceManagerV1Listener): LongInt;
 begin
-  Result := wl_proxy_add_listener(Pwl_proxy(zwp_primary_selection_device_manager_v1), listener, data);
+  FUserDataRec.ListenerUserData := Pointer(AIntf);
+  Result := wl_proxy_add_listener(FProxy, @vIntf_zwp_primary_selection_device_manager_v1_Listener, @FUserDataRec);
+end;
+procedure TZwpPrimarySelectionDeviceV1.SetSelection(ASource: TZwpPrimarySelectionSourceV1; ASerial: DWord);
+begin
+  wl_proxy_marshal(FProxy, _SET_SELECTION, ASource.Proxy, ASerial);
 end;
 
-procedure  zwp_primary_selection_device_manager_v1_add_listener(zwp_primary_selection_device_manager_v1: Pzwp_primary_selection_device_manager_v1; AIntf: Izwp_primary_selection_device_manager_v1Listener);
+destructor TZwpPrimarySelectionDeviceV1.Destroy;
 begin
-  zwp_primary_selection_device_manager_v1_add_listener(zwp_primary_selection_device_manager_v1, @vIntf_zwp_primary_selection_device_manager_v1_Listener, AIntf);
+  wl_proxy_marshal(FProxy, _DESTROY);
+  inherited Destroy;
 end;
 
-procedure zwp_primary_selection_device_manager_v1_set_user_data(zwp_primary_selection_device_manager_v1: Pzwp_primary_selection_device_manager_v1; user_data: Pointer);
+function TZwpPrimarySelectionDeviceV1.AddListener(AIntf: IZwpPrimarySelectionDeviceV1Listener): LongInt;
 begin
-  wl_proxy_set_user_data(Pwl_proxy(zwp_primary_selection_device_manager_v1), user_data);
+  FUserDataRec.ListenerUserData := Pointer(AIntf);
+  Result := wl_proxy_add_listener(FProxy, @vIntf_zwp_primary_selection_device_v1_Listener, @FUserDataRec);
+end;
+procedure TZwpPrimarySelectionOfferV1.Receive(AMimeType: String; AFd: LongInt{fd});
+begin
+  wl_proxy_marshal(FProxy, _RECEIVE, PChar(AMimeType), AFd);
 end;
 
-function  zwp_primary_selection_device_manager_v1_get_user_data(zwp_primary_selection_device_manager_v1: Pzwp_primary_selection_device_manager_v1): Pointer;
+destructor TZwpPrimarySelectionOfferV1.Destroy;
 begin
-  Result := wl_proxy_get_user_data(Pwl_proxy(zwp_primary_selection_device_manager_v1));
+  wl_proxy_marshal(FProxy, _DESTROY);
+  inherited Destroy;
 end;
 
-function  zwp_primary_selection_device_manager_v1_get_version(zwp_primary_selection_device_manager_v1: Pzwp_primary_selection_device_manager_v1): cuint32;
+function TZwpPrimarySelectionOfferV1.AddListener(AIntf: IZwpPrimarySelectionOfferV1Listener): LongInt;
 begin
-  Result := wl_proxy_get_version(Pwl_proxy(zwp_primary_selection_device_manager_v1));
+  FUserDataRec.ListenerUserData := Pointer(AIntf);
+  Result := wl_proxy_add_listener(FProxy, @vIntf_zwp_primary_selection_offer_v1_Listener, @FUserDataRec);
+end;
+procedure TZwpPrimarySelectionSourceV1.Offer(AMimeType: String);
+begin
+  wl_proxy_marshal(FProxy, _OFFER, PChar(AMimeType));
 end;
 
-procedure zwp_primary_selection_device_v1_set_selection(zwp_primary_selection_device_v1: Pzwp_primary_selection_device_v1; source: Pzwp_primary_selection_source_v1; serial: cuint);
+destructor TZwpPrimarySelectionSourceV1.Destroy;
 begin
-  wl_proxy_marshal(Pwl_proxy(zwp_primary_selection_device_v1),
-      _ZWP_PRIMARY_SELECTION_DEVICE_V1_SET_SELECTION, source, serial);
+  wl_proxy_marshal(FProxy, _DESTROY);
+  inherited Destroy;
 end;
 
-procedure zwp_primary_selection_device_v1_destroy(zwp_primary_selection_device_v1: Pzwp_primary_selection_device_v1);
+function TZwpPrimarySelectionSourceV1.AddListener(AIntf: IZwpPrimarySelectionSourceV1Listener): LongInt;
 begin
-  wl_proxy_marshal(Pwl_proxy(zwp_primary_selection_device_v1), _ZWP_PRIMARY_SELECTION_DEVICE_V1_DESTROY);
-  wl_proxy_destroy(Pwl_proxy(zwp_primary_selection_device_v1));
-end;
-
-function  zwp_primary_selection_device_v1_add_listener(zwp_primary_selection_device_v1: Pzwp_primary_selection_device_v1; listener: Pzwp_primary_selection_device_v1_listener; data: Pointer): cint;
-begin
-  Result := wl_proxy_add_listener(Pwl_proxy(zwp_primary_selection_device_v1), listener, data);
-end;
-
-procedure  zwp_primary_selection_device_v1_add_listener(zwp_primary_selection_device_v1: Pzwp_primary_selection_device_v1; AIntf: Izwp_primary_selection_device_v1Listener);
-begin
-  zwp_primary_selection_device_v1_add_listener(zwp_primary_selection_device_v1, @vIntf_zwp_primary_selection_device_v1_Listener, AIntf);
-end;
-
-procedure zwp_primary_selection_device_v1_set_user_data(zwp_primary_selection_device_v1: Pzwp_primary_selection_device_v1; user_data: Pointer);
-begin
-  wl_proxy_set_user_data(Pwl_proxy(zwp_primary_selection_device_v1), user_data);
-end;
-
-function  zwp_primary_selection_device_v1_get_user_data(zwp_primary_selection_device_v1: Pzwp_primary_selection_device_v1): Pointer;
-begin
-  Result := wl_proxy_get_user_data(Pwl_proxy(zwp_primary_selection_device_v1));
-end;
-
-function  zwp_primary_selection_device_v1_get_version(zwp_primary_selection_device_v1: Pzwp_primary_selection_device_v1): cuint32;
-begin
-  Result := wl_proxy_get_version(Pwl_proxy(zwp_primary_selection_device_v1));
-end;
-
-procedure zwp_primary_selection_offer_v1_receive(zwp_primary_selection_offer_v1: Pzwp_primary_selection_offer_v1; mime_type: pchar; fd: cint);
-begin
-  wl_proxy_marshal(Pwl_proxy(zwp_primary_selection_offer_v1),
-      _ZWP_PRIMARY_SELECTION_OFFER_V1_RECEIVE, mime_type, fd);
-end;
-
-procedure zwp_primary_selection_offer_v1_destroy(zwp_primary_selection_offer_v1: Pzwp_primary_selection_offer_v1);
-begin
-  wl_proxy_marshal(Pwl_proxy(zwp_primary_selection_offer_v1), _ZWP_PRIMARY_SELECTION_OFFER_V1_DESTROY);
-  wl_proxy_destroy(Pwl_proxy(zwp_primary_selection_offer_v1));
-end;
-
-function  zwp_primary_selection_offer_v1_add_listener(zwp_primary_selection_offer_v1: Pzwp_primary_selection_offer_v1; listener: Pzwp_primary_selection_offer_v1_listener; data: Pointer): cint;
-begin
-  Result := wl_proxy_add_listener(Pwl_proxy(zwp_primary_selection_offer_v1), listener, data);
-end;
-
-procedure  zwp_primary_selection_offer_v1_add_listener(zwp_primary_selection_offer_v1: Pzwp_primary_selection_offer_v1; AIntf: Izwp_primary_selection_offer_v1Listener);
-begin
-  zwp_primary_selection_offer_v1_add_listener(zwp_primary_selection_offer_v1, @vIntf_zwp_primary_selection_offer_v1_Listener, AIntf);
-end;
-
-procedure zwp_primary_selection_offer_v1_set_user_data(zwp_primary_selection_offer_v1: Pzwp_primary_selection_offer_v1; user_data: Pointer);
-begin
-  wl_proxy_set_user_data(Pwl_proxy(zwp_primary_selection_offer_v1), user_data);
-end;
-
-function  zwp_primary_selection_offer_v1_get_user_data(zwp_primary_selection_offer_v1: Pzwp_primary_selection_offer_v1): Pointer;
-begin
-  Result := wl_proxy_get_user_data(Pwl_proxy(zwp_primary_selection_offer_v1));
-end;
-
-function  zwp_primary_selection_offer_v1_get_version(zwp_primary_selection_offer_v1: Pzwp_primary_selection_offer_v1): cuint32;
-begin
-  Result := wl_proxy_get_version(Pwl_proxy(zwp_primary_selection_offer_v1));
-end;
-
-procedure zwp_primary_selection_source_v1_offer(zwp_primary_selection_source_v1: Pzwp_primary_selection_source_v1; mime_type: pchar);
-begin
-  wl_proxy_marshal(Pwl_proxy(zwp_primary_selection_source_v1),
-      _ZWP_PRIMARY_SELECTION_SOURCE_V1_OFFER, mime_type);
-end;
-
-procedure zwp_primary_selection_source_v1_destroy(zwp_primary_selection_source_v1: Pzwp_primary_selection_source_v1);
-begin
-  wl_proxy_marshal(Pwl_proxy(zwp_primary_selection_source_v1), _ZWP_PRIMARY_SELECTION_SOURCE_V1_DESTROY);
-  wl_proxy_destroy(Pwl_proxy(zwp_primary_selection_source_v1));
-end;
-
-function  zwp_primary_selection_source_v1_add_listener(zwp_primary_selection_source_v1: Pzwp_primary_selection_source_v1; listener: Pzwp_primary_selection_source_v1_listener; data: Pointer): cint;
-begin
-  Result := wl_proxy_add_listener(Pwl_proxy(zwp_primary_selection_source_v1), listener, data);
-end;
-
-procedure  zwp_primary_selection_source_v1_add_listener(zwp_primary_selection_source_v1: Pzwp_primary_selection_source_v1; AIntf: Izwp_primary_selection_source_v1Listener);
-begin
-  zwp_primary_selection_source_v1_add_listener(zwp_primary_selection_source_v1, @vIntf_zwp_primary_selection_source_v1_Listener, AIntf);
-end;
-
-procedure zwp_primary_selection_source_v1_set_user_data(zwp_primary_selection_source_v1: Pzwp_primary_selection_source_v1; user_data: Pointer);
-begin
-  wl_proxy_set_user_data(Pwl_proxy(zwp_primary_selection_source_v1), user_data);
-end;
-
-function  zwp_primary_selection_source_v1_get_user_data(zwp_primary_selection_source_v1: Pzwp_primary_selection_source_v1): Pointer;
-begin
-  Result := wl_proxy_get_user_data(Pwl_proxy(zwp_primary_selection_source_v1));
-end;
-
-function  zwp_primary_selection_source_v1_get_version(zwp_primary_selection_source_v1: Pzwp_primary_selection_source_v1): cuint32;
-begin
-  Result := wl_proxy_get_version(Pwl_proxy(zwp_primary_selection_source_v1));
+  FUserDataRec.ListenerUserData := Pointer(AIntf);
+  Result := wl_proxy_add_listener(FProxy, @vIntf_zwp_primary_selection_source_v1_Listener, @FUserDataRec);
 end;
 
 
-procedure zwp_primary_selection_device_v1_data_offer_Intf(AIntf: Izwp_primary_selection_device_v1Listener; zwp_primary_selection_device_v1: Pzwp_primary_selection_device_v1; offer: Pzwp_primary_selection_offer_v1); cdecl;
+
+
+procedure zwp_primary_selection_device_v1_data_offer_Intf(AData: PWLUserData; Azwp_primary_selection_device_v1: Pzwp_primary_selection_device_v1; AOffer: Pzwp_primary_selection_offer_v1); cdecl;
+var
+  AIntf: IZwpPrimarySelectionDeviceV1Listener;
 begin
-  WriteLn('zwp_primary_selection_device_v1.data_offer');
-  AIntf.zwp_primary_selection_device_v1_data_offer(zwp_primary_selection_device_v1, offer);
+  if AData = nil then Exit;
+  AIntf := IZwpPrimarySelectionDeviceV1Listener(AData^.ListenerUserData);
+  AIntf.zwp_primary_selection_device_v1_data_offer(TZwpPrimarySelectionDeviceV1(AData^.PascalObject),  TZwpPrimarySelectionOfferV1.Create(AOffer));
 end;
 
-procedure zwp_primary_selection_device_v1_selection_Intf(AIntf: Izwp_primary_selection_device_v1Listener; zwp_primary_selection_device_v1: Pzwp_primary_selection_device_v1; id: Pzwp_primary_selection_offer_v1); cdecl;
+procedure zwp_primary_selection_device_v1_selection_Intf(AData: PWLUserData; Azwp_primary_selection_device_v1: Pzwp_primary_selection_device_v1; AId: Pzwp_primary_selection_offer_v1); cdecl;
+var
+  AIntf: IZwpPrimarySelectionDeviceV1Listener;
 begin
-  WriteLn('zwp_primary_selection_device_v1.selection');
-  AIntf.zwp_primary_selection_device_v1_selection(zwp_primary_selection_device_v1, id);
+  if AData = nil then Exit;
+  AIntf := IZwpPrimarySelectionDeviceV1Listener(AData^.ListenerUserData);
+  AIntf.zwp_primary_selection_device_v1_selection(TZwpPrimarySelectionDeviceV1(AData^.PascalObject),  TZwpPrimarySelectionOfferV1(TWLProxyObject.WLToObj(AId)));
 end;
 
-procedure zwp_primary_selection_offer_v1_offer_Intf(AIntf: Izwp_primary_selection_offer_v1Listener; zwp_primary_selection_offer_v1: Pzwp_primary_selection_offer_v1; mime_type: pchar); cdecl;
+procedure zwp_primary_selection_offer_v1_offer_Intf(AData: PWLUserData; Azwp_primary_selection_offer_v1: Pzwp_primary_selection_offer_v1; AMimeType: Pchar); cdecl;
+var
+  AIntf: IZwpPrimarySelectionOfferV1Listener;
 begin
-  WriteLn('zwp_primary_selection_offer_v1.offer');
-  AIntf.zwp_primary_selection_offer_v1_offer(zwp_primary_selection_offer_v1, mime_type);
+  if AData = nil then Exit;
+  AIntf := IZwpPrimarySelectionOfferV1Listener(AData^.ListenerUserData);
+  AIntf.zwp_primary_selection_offer_v1_offer(TZwpPrimarySelectionOfferV1(AData^.PascalObject), AMimeType);
 end;
 
-procedure zwp_primary_selection_source_v1_send_Intf(AIntf: Izwp_primary_selection_source_v1Listener; zwp_primary_selection_source_v1: Pzwp_primary_selection_source_v1; mime_type: pchar; fd: cint); cdecl;
+procedure zwp_primary_selection_source_v1_send_Intf(AData: PWLUserData; Azwp_primary_selection_source_v1: Pzwp_primary_selection_source_v1; AMimeType: Pchar; AFd: LongInt{fd}); cdecl;
+var
+  AIntf: IZwpPrimarySelectionSourceV1Listener;
 begin
-  WriteLn('zwp_primary_selection_source_v1.send');
-  AIntf.zwp_primary_selection_source_v1_send(zwp_primary_selection_source_v1, mime_type, fd);
+  if AData = nil then Exit;
+  AIntf := IZwpPrimarySelectionSourceV1Listener(AData^.ListenerUserData);
+  AIntf.zwp_primary_selection_source_v1_send(TZwpPrimarySelectionSourceV1(AData^.PascalObject), AMimeType, AFd);
 end;
 
-procedure zwp_primary_selection_source_v1_cancelled_Intf(AIntf: Izwp_primary_selection_source_v1Listener; zwp_primary_selection_source_v1: Pzwp_primary_selection_source_v1); cdecl;
+procedure zwp_primary_selection_source_v1_cancelled_Intf(AData: PWLUserData; Azwp_primary_selection_source_v1: Pzwp_primary_selection_source_v1); cdecl;
+var
+  AIntf: IZwpPrimarySelectionSourceV1Listener;
 begin
-  WriteLn('zwp_primary_selection_source_v1.cancelled');
-  AIntf.zwp_primary_selection_source_v1_cancelled(zwp_primary_selection_source_v1);
+  if AData = nil then Exit;
+  AIntf := IZwpPrimarySelectionSourceV1Listener(AData^.ListenerUserData);
+  AIntf.zwp_primary_selection_source_v1_cancelled(TZwpPrimarySelectionSourceV1(AData^.PascalObject));
 end;
 
 

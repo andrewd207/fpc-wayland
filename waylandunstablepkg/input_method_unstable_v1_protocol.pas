@@ -6,32 +6,28 @@ unit input_method_unstable_v1_protocol;
 interface
 
 uses
-  ctypes, wayland_util, wayland_client_core, wayland_protocol;
+  Classes, Sysutils, ctypes, wayland_util, wayland_client_core, wayland_protocol;
 
 
 type
-  Pzwp_input_method_context_v1 = ^Tzwp_input_method_context_v1;
-  Tzwp_input_method_context_v1 = record end;
-  Pzwp_input_method_v1 = ^Tzwp_input_method_v1;
-  Tzwp_input_method_v1 = record end;
-  Pzwp_input_panel_v1 = ^Tzwp_input_panel_v1;
-  Tzwp_input_panel_v1 = record end;
-  Pzwp_input_panel_surface_v1 = ^Tzwp_input_panel_surface_v1;
-  Tzwp_input_panel_surface_v1 = record end;
+  Pzwp_input_method_context_v1 = Pointer;
+  Pzwp_input_method_v1 = Pointer;
+  Pzwp_input_panel_v1 = Pointer;
+  Pzwp_input_panel_surface_v1 = Pointer;
   Pzwp_input_method_context_v1_listener = ^Tzwp_input_method_context_v1_listener;
   Tzwp_input_method_context_v1_listener = record
-    surrounding_text : procedure(data: Pointer; zwp_input_method_context_v1: Pzwp_input_method_context_v1; text: pchar; cursor: cuint; anchor: cuint); cdecl;
-    reset : procedure(data: Pointer; zwp_input_method_context_v1: Pzwp_input_method_context_v1); cdecl;
-    content_type : procedure(data: Pointer; zwp_input_method_context_v1: Pzwp_input_method_context_v1; hint: cuint; purpose: cuint); cdecl;
-    invoke_action : procedure(data: Pointer; zwp_input_method_context_v1: Pzwp_input_method_context_v1; button: cuint; index: cuint); cdecl;
-    commit_state : procedure(data: Pointer; zwp_input_method_context_v1: Pzwp_input_method_context_v1; serial: cuint); cdecl;
-    preferred_language : procedure(data: Pointer; zwp_input_method_context_v1: Pzwp_input_method_context_v1; language: pchar); cdecl;
+    surrounding_text : procedure(data: Pointer; AZwpInputMethodContextV1: Pzwp_input_method_context_v1; AText: Pchar; ACursor: DWord; AAnchor: DWord); cdecl;
+    reset : procedure(data: Pointer; AZwpInputMethodContextV1: Pzwp_input_method_context_v1); cdecl;
+    content_type : procedure(data: Pointer; AZwpInputMethodContextV1: Pzwp_input_method_context_v1; AHint: DWord; APurpose: DWord); cdecl;
+    invoke_action : procedure(data: Pointer; AZwpInputMethodContextV1: Pzwp_input_method_context_v1; AButton: DWord; AIndex: DWord); cdecl;
+    commit_state : procedure(data: Pointer; AZwpInputMethodContextV1: Pzwp_input_method_context_v1; ASerial: DWord); cdecl;
+    preferred_language : procedure(data: Pointer; AZwpInputMethodContextV1: Pzwp_input_method_context_v1; ALanguage: Pchar); cdecl;
   end;
 
   Pzwp_input_method_v1_listener = ^Tzwp_input_method_v1_listener;
   Tzwp_input_method_v1_listener = record
-    activate : procedure(data: Pointer; zwp_input_method_v1: Pzwp_input_method_v1; id: Pzwp_input_method_context_v1); cdecl;
-    deactivate : procedure(data: Pointer; zwp_input_method_v1: Pzwp_input_method_v1; context: Pzwp_input_method_context_v1); cdecl;
+    activate : procedure(data: Pointer; AZwpInputMethodV1: Pzwp_input_method_v1; AId: Pzwp_input_method_context_v1); cdecl;
+    deactivate : procedure(data: Pointer; AZwpInputMethodV1: Pzwp_input_method_v1; AContext: Pzwp_input_method_context_v1); cdecl;
   end;
 
   Pzwp_input_panel_v1_listener = ^Tzwp_input_panel_v1_listener;
@@ -48,72 +44,97 @@ type
 
 
 
-  Izwp_input_method_context_v1Listener = interface
-  ['Izwp_input_method_context_v1Listener']
-    procedure zwp_input_method_context_v1_surrounding_text(zwp_input_method_context_v1: Pzwp_input_method_context_v1; text: pchar; cursor: cuint; anchor: cuint);
-    procedure zwp_input_method_context_v1_reset(zwp_input_method_context_v1: Pzwp_input_method_context_v1);
-    procedure zwp_input_method_context_v1_content_type(zwp_input_method_context_v1: Pzwp_input_method_context_v1; hint: cuint; purpose: cuint);
-    procedure zwp_input_method_context_v1_invoke_action(zwp_input_method_context_v1: Pzwp_input_method_context_v1; button: cuint; index: cuint);
-    procedure zwp_input_method_context_v1_commit_state(zwp_input_method_context_v1: Pzwp_input_method_context_v1; serial: cuint);
-    procedure zwp_input_method_context_v1_preferred_language(zwp_input_method_context_v1: Pzwp_input_method_context_v1; language: pchar);
+  TZwpInputMethodContextV1 = class;
+  TZwpInputMethodV1 = class;
+  TZwpInputPanelV1 = class;
+  TZwpInputPanelSurfaceV1 = class;
+
+
+  IZwpInputMethodContextV1Listener = interface
+  ['IZwpInputMethodContextV1Listener']
+    procedure zwp_input_method_context_v1_surrounding_text(AZwpInputMethodContextV1: TZwpInputMethodContextV1; AText: String; ACursor: DWord; AAnchor: DWord);
+    procedure zwp_input_method_context_v1_reset(AZwpInputMethodContextV1: TZwpInputMethodContextV1);
+    procedure zwp_input_method_context_v1_content_type(AZwpInputMethodContextV1: TZwpInputMethodContextV1; AHint: DWord; APurpose: DWord);
+    procedure zwp_input_method_context_v1_invoke_action(AZwpInputMethodContextV1: TZwpInputMethodContextV1; AButton: DWord; AIndex: DWord);
+    procedure zwp_input_method_context_v1_commit_state(AZwpInputMethodContextV1: TZwpInputMethodContextV1; ASerial: DWord);
+    procedure zwp_input_method_context_v1_preferred_language(AZwpInputMethodContextV1: TZwpInputMethodContextV1; ALanguage: String);
   end;
 
-  Izwp_input_method_v1Listener = interface
-  ['Izwp_input_method_v1Listener']
-    procedure zwp_input_method_v1_activate(zwp_input_method_v1: Pzwp_input_method_v1; id: Pzwp_input_method_context_v1);
-    procedure zwp_input_method_v1_deactivate(zwp_input_method_v1: Pzwp_input_method_v1; context: Pzwp_input_method_context_v1);
+  IZwpInputMethodV1Listener = interface
+  ['IZwpInputMethodV1Listener']
+    procedure zwp_input_method_v1_activate(AZwpInputMethodV1: TZwpInputMethodV1; AId: TZwpInputMethodContextV1);
+    procedure zwp_input_method_v1_deactivate(AZwpInputMethodV1: TZwpInputMethodV1; AContext: TZwpInputMethodContextV1);
   end;
 
-  Izwp_input_panel_v1Listener = interface
-  ['Izwp_input_panel_v1Listener']
+  IZwpInputPanelV1Listener = interface
+  ['IZwpInputPanelV1Listener']
   end;
 
-  Izwp_input_panel_surface_v1Listener = interface
-  ['Izwp_input_panel_surface_v1Listener']
+  IZwpInputPanelSurfaceV1Listener = interface
+  ['IZwpInputPanelSurfaceV1Listener']
   end;
 
 
 
-procedure zwp_input_method_context_v1_destroy(zwp_input_method_context_v1: Pzwp_input_method_context_v1);
-procedure zwp_input_method_context_v1_commit_string(zwp_input_method_context_v1: Pzwp_input_method_context_v1; serial: cuint; text: pchar);
-procedure zwp_input_method_context_v1_preedit_string(zwp_input_method_context_v1: Pzwp_input_method_context_v1; serial: cuint; text: pchar; commit: pchar);
-procedure zwp_input_method_context_v1_preedit_styling(zwp_input_method_context_v1: Pzwp_input_method_context_v1; index: cuint; length: cuint; style: cuint);
-procedure zwp_input_method_context_v1_preedit_cursor(zwp_input_method_context_v1: Pzwp_input_method_context_v1; index: cint);
-procedure zwp_input_method_context_v1_delete_surrounding_text(zwp_input_method_context_v1: Pzwp_input_method_context_v1; index: cint; length: cuint);
-procedure zwp_input_method_context_v1_cursor_position(zwp_input_method_context_v1: Pzwp_input_method_context_v1; index: cint; anchor: cint);
-procedure zwp_input_method_context_v1_modifiers_map(zwp_input_method_context_v1: Pzwp_input_method_context_v1; map: Pwl_array);
-procedure zwp_input_method_context_v1_keysym(zwp_input_method_context_v1: Pzwp_input_method_context_v1; serial: cuint; time: cuint; sym: cuint; state: cuint; modifiers: cuint);
-function  zwp_input_method_context_v1_grab_keyboard(zwp_input_method_context_v1: Pzwp_input_method_context_v1): Pwl_keyboard;
-procedure zwp_input_method_context_v1_key(zwp_input_method_context_v1: Pzwp_input_method_context_v1; serial: cuint; time: cuint; key: cuint; state: cuint);
-procedure zwp_input_method_context_v1_modifiers(zwp_input_method_context_v1: Pzwp_input_method_context_v1; serial: cuint; mods_depressed: cuint; mods_latched: cuint; mods_locked: cuint; group: cuint);
-procedure zwp_input_method_context_v1_language(zwp_input_method_context_v1: Pzwp_input_method_context_v1; serial: cuint; language: pchar);
-procedure zwp_input_method_context_v1_text_direction(zwp_input_method_context_v1: Pzwp_input_method_context_v1; serial: cuint; direction: cuint);
-function  zwp_input_method_context_v1_add_listener(zwp_input_method_context_v1: Pzwp_input_method_context_v1; listener: Pzwp_input_method_context_v1_listener; data: Pointer): cint;
-procedure  zwp_input_method_context_v1_add_listener(zwp_input_method_context_v1: Pzwp_input_method_context_v1; AIntf: Izwp_input_method_context_v1Listener);
-procedure zwp_input_method_context_v1_set_user_data(zwp_input_method_context_v1: Pzwp_input_method_context_v1; user_data: Pointer);
-function  zwp_input_method_context_v1_get_user_data(zwp_input_method_context_v1: Pzwp_input_method_context_v1): Pointer;
-function  zwp_input_method_context_v1_get_version(zwp_input_method_context_v1: Pzwp_input_method_context_v1): cuint32;
-function  zwp_input_method_v1_add_listener(zwp_input_method_v1: Pzwp_input_method_v1; listener: Pzwp_input_method_v1_listener; data: Pointer): cint;
-procedure  zwp_input_method_v1_add_listener(zwp_input_method_v1: Pzwp_input_method_v1; AIntf: Izwp_input_method_v1Listener);
-procedure zwp_input_method_v1_set_user_data(zwp_input_method_v1: Pzwp_input_method_v1; user_data: Pointer);
-function  zwp_input_method_v1_get_user_data(zwp_input_method_v1: Pzwp_input_method_v1): Pointer;
-function  zwp_input_method_v1_get_version(zwp_input_method_v1: Pzwp_input_method_v1): cuint32;
-procedure zwp_input_method_v1_destroy(zwp_input_method_v1: Pzwp_input_method_v1);
-function  zwp_input_panel_v1_get_input_panel_surface(zwp_input_panel_v1: Pzwp_input_panel_v1; surface: Pwl_surface): Pzwp_input_panel_surface_v1;
-function  zwp_input_panel_v1_add_listener(zwp_input_panel_v1: Pzwp_input_panel_v1; listener: Pzwp_input_panel_v1_listener; data: Pointer): cint;
-procedure  zwp_input_panel_v1_add_listener(zwp_input_panel_v1: Pzwp_input_panel_v1; AIntf: Izwp_input_panel_v1Listener);
-procedure zwp_input_panel_v1_set_user_data(zwp_input_panel_v1: Pzwp_input_panel_v1; user_data: Pointer);
-function  zwp_input_panel_v1_get_user_data(zwp_input_panel_v1: Pzwp_input_panel_v1): Pointer;
-function  zwp_input_panel_v1_get_version(zwp_input_panel_v1: Pzwp_input_panel_v1): cuint32;
-procedure zwp_input_panel_v1_destroy(zwp_input_panel_v1: Pzwp_input_panel_v1);
-procedure zwp_input_panel_surface_v1_set_toplevel(zwp_input_panel_surface_v1: Pzwp_input_panel_surface_v1; output: Pwl_output; position: cuint);
-procedure zwp_input_panel_surface_v1_set_overlay_panel(zwp_input_panel_surface_v1: Pzwp_input_panel_surface_v1);
-function  zwp_input_panel_surface_v1_add_listener(zwp_input_panel_surface_v1: Pzwp_input_panel_surface_v1; listener: Pzwp_input_panel_surface_v1_listener; data: Pointer): cint;
-procedure  zwp_input_panel_surface_v1_add_listener(zwp_input_panel_surface_v1: Pzwp_input_panel_surface_v1; AIntf: Izwp_input_panel_surface_v1Listener);
-procedure zwp_input_panel_surface_v1_set_user_data(zwp_input_panel_surface_v1: Pzwp_input_panel_surface_v1; user_data: Pointer);
-function  zwp_input_panel_surface_v1_get_user_data(zwp_input_panel_surface_v1: Pzwp_input_panel_surface_v1): Pointer;
-function  zwp_input_panel_surface_v1_get_version(zwp_input_panel_surface_v1: Pzwp_input_panel_surface_v1): cuint32;
-procedure zwp_input_panel_surface_v1_destroy(zwp_input_panel_surface_v1: Pzwp_input_panel_surface_v1);
+
+  TZwpInputMethodContextV1 = class(TWLProxyObject)
+  private
+    const _DESTROY = 0;
+    const _COMMIT_STRING = 1;
+    const _PREEDIT_STRING = 2;
+    const _PREEDIT_STYLING = 3;
+    const _PREEDIT_CURSOR = 4;
+    const _DELETE_SURROUNDING_TEXT = 5;
+    const _CURSOR_POSITION = 6;
+    const _MODIFIERS_MAP = 7;
+    const _KEYSYM = 8;
+    const _GRAB_KEYBOARD = 9;
+    const _KEY = 10;
+    const _MODIFIERS = 11;
+    const _LANGUAGE = 12;
+    const _TEXT_DIRECTION = 13;
+  public
+    destructor Destroy; override;
+    procedure CommitString(ASerial: DWord; AText: String);
+    procedure PreeditString(ASerial: DWord; AText: String; ACommit: String);
+    procedure PreeditStyling(AIndex: DWord; ALength: DWord; AStyle: DWord);
+    procedure PreeditCursor(AIndex: LongInt);
+    procedure DeleteSurroundingText(AIndex: LongInt; ALength: DWord);
+    procedure CursorPosition(AIndex: LongInt; AAnchor: LongInt);
+    procedure ModifiersMap(AMap: Pwl_array);
+    procedure Keysym(ASerial: DWord; ATime: DWord; ASym: DWord; AState: DWord; AModifiers: DWord);
+    function GrabKeyboard(AProxyClass: TWLProxyObjectClass = nil {TWlKeyboard}): TWlKeyboard;
+    procedure Key(ASerial: DWord; ATime: DWord; AKey: DWord; AState: DWord);
+    procedure Modifiers(ASerial: DWord; AModsDepressed: DWord; AModsLatched: DWord; AModsLocked: DWord; AGroup: DWord);
+    procedure Language(ASerial: DWord; ALanguage: String);
+    procedure TextDirection(ASerial: DWord; ADirection: DWord);
+    function AddListener(AIntf: IZwpInputMethodContextV1Listener): LongInt;
+  end;
+
+  TZwpInputMethodV1 = class(TWLProxyObject)
+    function AddListener(AIntf: IZwpInputMethodV1Listener): LongInt;
+  end;
+
+  TZwpInputPanelV1 = class(TWLProxyObject)
+  private
+    const _GET_INPUT_PANEL_SURFACE = 0;
+  public
+    function GetInputPanelSurface(ASurface: TWlSurface; AProxyClass: TWLProxyObjectClass = nil {TZwpInputPanelSurfaceV1}): TZwpInputPanelSurfaceV1;
+    function AddListener(AIntf: IZwpInputPanelV1Listener): LongInt;
+  end;
+
+  TZwpInputPanelSurfaceV1 = class(TWLProxyObject)
+  private
+    const _SET_TOPLEVEL = 0;
+    const _SET_OVERLAY_PANEL = 1;
+  public
+    procedure SetToplevel(AOutput: TWlOutput; APosition: DWord);
+    procedure SetOverlayPanel;
+    function AddListener(AIntf: IZwpInputPanelSurfaceV1Listener): LongInt;
+  end;
+
+
+
 
 
 
@@ -127,26 +148,6 @@ var
 
 implementation
 
-const
-_ZWP_INPUT_METHOD_CONTEXT_V1_DESTROY = 0;
-_ZWP_INPUT_METHOD_CONTEXT_V1_COMMIT_STRING = 1;
-_ZWP_INPUT_METHOD_CONTEXT_V1_PREEDIT_STRING = 2;
-_ZWP_INPUT_METHOD_CONTEXT_V1_PREEDIT_STYLING = 3;
-_ZWP_INPUT_METHOD_CONTEXT_V1_PREEDIT_CURSOR = 4;
-_ZWP_INPUT_METHOD_CONTEXT_V1_DELETE_SURROUNDING_TEXT = 5;
-_ZWP_INPUT_METHOD_CONTEXT_V1_CURSOR_POSITION = 6;
-_ZWP_INPUT_METHOD_CONTEXT_V1_MODIFIERS_MAP = 7;
-_ZWP_INPUT_METHOD_CONTEXT_V1_KEYSYM = 8;
-_ZWP_INPUT_METHOD_CONTEXT_V1_GRAB_KEYBOARD = 9;
-_ZWP_INPUT_METHOD_CONTEXT_V1_KEY = 10;
-_ZWP_INPUT_METHOD_CONTEXT_V1_MODIFIERS = 11;
-_ZWP_INPUT_METHOD_CONTEXT_V1_LANGUAGE = 12;
-_ZWP_INPUT_METHOD_CONTEXT_V1_TEXT_DIRECTION = 13;
-_ZWP_INPUT_PANEL_V1_GET_INPUT_PANEL_SURFACE = 0;
-_ZWP_INPUT_PANEL_SURFACE_V1_SET_TOPLEVEL = 0;
-_ZWP_INPUT_PANEL_SURFACE_V1_SET_OVERLAY_PANEL = 1;
-
-
 var
   vIntf_zwp_input_method_context_v1_Listener: Tzwp_input_method_context_v1_listener;
   vIntf_zwp_input_method_v1_Listener: Tzwp_input_method_v1_listener;
@@ -155,276 +156,202 @@ var
 
 
 
-procedure zwp_input_method_context_v1_destroy(zwp_input_method_context_v1: Pzwp_input_method_context_v1);
+destructor TZwpInputMethodContextV1.Destroy;
 begin
-  wl_proxy_marshal(Pwl_proxy(zwp_input_method_context_v1), _ZWP_INPUT_METHOD_CONTEXT_V1_DESTROY);
-  wl_proxy_destroy(Pwl_proxy(zwp_input_method_context_v1));
+  wl_proxy_marshal(FProxy, _DESTROY);
+  inherited Destroy;
 end;
 
-procedure zwp_input_method_context_v1_commit_string(zwp_input_method_context_v1: Pzwp_input_method_context_v1; serial: cuint; text: pchar);
+procedure TZwpInputMethodContextV1.CommitString(ASerial: DWord; AText: String);
 begin
-  wl_proxy_marshal(Pwl_proxy(zwp_input_method_context_v1),
-      _ZWP_INPUT_METHOD_CONTEXT_V1_COMMIT_STRING, serial, text);
+  wl_proxy_marshal(FProxy, _COMMIT_STRING, ASerial, PChar(AText));
 end;
 
-procedure zwp_input_method_context_v1_preedit_string(zwp_input_method_context_v1: Pzwp_input_method_context_v1; serial: cuint; text: pchar; commit: pchar);
+procedure TZwpInputMethodContextV1.PreeditString(ASerial: DWord; AText: String; ACommit: String);
 begin
-  wl_proxy_marshal(Pwl_proxy(zwp_input_method_context_v1),
-      _ZWP_INPUT_METHOD_CONTEXT_V1_PREEDIT_STRING, serial, text, commit);
+  wl_proxy_marshal(FProxy, _PREEDIT_STRING, ASerial, PChar(AText), PChar(ACommit));
 end;
 
-procedure zwp_input_method_context_v1_preedit_styling(zwp_input_method_context_v1: Pzwp_input_method_context_v1; index: cuint; length: cuint; style: cuint);
+procedure TZwpInputMethodContextV1.PreeditStyling(AIndex: DWord; ALength: DWord; AStyle: DWord);
 begin
-  wl_proxy_marshal(Pwl_proxy(zwp_input_method_context_v1),
-      _ZWP_INPUT_METHOD_CONTEXT_V1_PREEDIT_STYLING, index, length, style);
+  wl_proxy_marshal(FProxy, _PREEDIT_STYLING, AIndex, ALength, AStyle);
 end;
 
-procedure zwp_input_method_context_v1_preedit_cursor(zwp_input_method_context_v1: Pzwp_input_method_context_v1; index: cint);
+procedure TZwpInputMethodContextV1.PreeditCursor(AIndex: LongInt);
 begin
-  wl_proxy_marshal(Pwl_proxy(zwp_input_method_context_v1),
-      _ZWP_INPUT_METHOD_CONTEXT_V1_PREEDIT_CURSOR, index);
+  wl_proxy_marshal(FProxy, _PREEDIT_CURSOR, AIndex);
 end;
 
-procedure zwp_input_method_context_v1_delete_surrounding_text(zwp_input_method_context_v1: Pzwp_input_method_context_v1; index: cint; length: cuint);
+procedure TZwpInputMethodContextV1.DeleteSurroundingText(AIndex: LongInt; ALength: DWord);
 begin
-  wl_proxy_marshal(Pwl_proxy(zwp_input_method_context_v1),
-      _ZWP_INPUT_METHOD_CONTEXT_V1_DELETE_SURROUNDING_TEXT, index, length);
+  wl_proxy_marshal(FProxy, _DELETE_SURROUNDING_TEXT, AIndex, ALength);
 end;
 
-procedure zwp_input_method_context_v1_cursor_position(zwp_input_method_context_v1: Pzwp_input_method_context_v1; index: cint; anchor: cint);
+procedure TZwpInputMethodContextV1.CursorPosition(AIndex: LongInt; AAnchor: LongInt);
 begin
-  wl_proxy_marshal(Pwl_proxy(zwp_input_method_context_v1),
-      _ZWP_INPUT_METHOD_CONTEXT_V1_CURSOR_POSITION, index, anchor);
+  wl_proxy_marshal(FProxy, _CURSOR_POSITION, AIndex, AAnchor);
 end;
 
-procedure zwp_input_method_context_v1_modifiers_map(zwp_input_method_context_v1: Pzwp_input_method_context_v1; map: Pwl_array);
+procedure TZwpInputMethodContextV1.ModifiersMap(AMap: Pwl_array);
 begin
-  wl_proxy_marshal(Pwl_proxy(zwp_input_method_context_v1),
-      _ZWP_INPUT_METHOD_CONTEXT_V1_MODIFIERS_MAP, map);
+  wl_proxy_marshal(FProxy, _MODIFIERS_MAP, AMap);
 end;
 
-procedure zwp_input_method_context_v1_keysym(zwp_input_method_context_v1: Pzwp_input_method_context_v1; serial: cuint; time: cuint; sym: cuint; state: cuint; modifiers: cuint);
+procedure TZwpInputMethodContextV1.Keysym(ASerial: DWord; ATime: DWord; ASym: DWord; AState: DWord; AModifiers: DWord);
 begin
-  wl_proxy_marshal(Pwl_proxy(zwp_input_method_context_v1),
-      _ZWP_INPUT_METHOD_CONTEXT_V1_KEYSYM, serial, time, sym, state, modifiers);
+  wl_proxy_marshal(FProxy, _KEYSYM, ASerial, ATime, ASym, AState, AModifiers);
 end;
 
-function  zwp_input_method_context_v1_grab_keyboard(zwp_input_method_context_v1: Pzwp_input_method_context_v1): Pwl_keyboard;
+function TZwpInputMethodContextV1.GrabKeyboard(AProxyClass: TWLProxyObjectClass = nil {TWlKeyboard}): TWlKeyboard;
 var
   keyboard: Pwl_proxy;
 begin
-  keyboard := wl_proxy_marshal_constructor(Pwl_proxy(zwp_input_method_context_v1),
-      _ZWP_INPUT_METHOD_CONTEXT_V1_GRAB_KEYBOARD, @wl_keyboard_interface, nil);
-  Result := Pwl_keyboard(keyboard);
+  keyboard := wl_proxy_marshal_constructor(FProxy,
+      _GRAB_KEYBOARD, @wl_keyboard_interface, nil);
+  if AProxyClass = nil then
+    AProxyClass := TWlKeyboard;
+  Result := TWlKeyboard(AProxyClass.Create(keyboard));
+  if not AProxyClass.InheritsFrom(TWlKeyboard) then
+    Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TWlKeyboard]);
 end;
 
-procedure zwp_input_method_context_v1_key(zwp_input_method_context_v1: Pzwp_input_method_context_v1; serial: cuint; time: cuint; key: cuint; state: cuint);
+procedure TZwpInputMethodContextV1.Key(ASerial: DWord; ATime: DWord; AKey: DWord; AState: DWord);
 begin
-  wl_proxy_marshal(Pwl_proxy(zwp_input_method_context_v1),
-      _ZWP_INPUT_METHOD_CONTEXT_V1_KEY, serial, time, key, state);
+  wl_proxy_marshal(FProxy, _KEY, ASerial, ATime, AKey, AState);
 end;
 
-procedure zwp_input_method_context_v1_modifiers(zwp_input_method_context_v1: Pzwp_input_method_context_v1; serial: cuint; mods_depressed: cuint; mods_latched: cuint; mods_locked: cuint; group: cuint);
+procedure TZwpInputMethodContextV1.Modifiers(ASerial: DWord; AModsDepressed: DWord; AModsLatched: DWord; AModsLocked: DWord; AGroup: DWord);
 begin
-  wl_proxy_marshal(Pwl_proxy(zwp_input_method_context_v1),
-      _ZWP_INPUT_METHOD_CONTEXT_V1_MODIFIERS, serial, mods_depressed, mods_latched, mods_locked, group);
+  wl_proxy_marshal(FProxy, _MODIFIERS, ASerial, AModsDepressed, AModsLatched, AModsLocked, AGroup);
 end;
 
-procedure zwp_input_method_context_v1_language(zwp_input_method_context_v1: Pzwp_input_method_context_v1; serial: cuint; language: pchar);
+procedure TZwpInputMethodContextV1.Language(ASerial: DWord; ALanguage: String);
 begin
-  wl_proxy_marshal(Pwl_proxy(zwp_input_method_context_v1),
-      _ZWP_INPUT_METHOD_CONTEXT_V1_LANGUAGE, serial, language);
+  wl_proxy_marshal(FProxy, _LANGUAGE, ASerial, PChar(ALanguage));
 end;
 
-procedure zwp_input_method_context_v1_text_direction(zwp_input_method_context_v1: Pzwp_input_method_context_v1; serial: cuint; direction: cuint);
+procedure TZwpInputMethodContextV1.TextDirection(ASerial: DWord; ADirection: DWord);
 begin
-  wl_proxy_marshal(Pwl_proxy(zwp_input_method_context_v1),
-      _ZWP_INPUT_METHOD_CONTEXT_V1_TEXT_DIRECTION, serial, direction);
+  wl_proxy_marshal(FProxy, _TEXT_DIRECTION, ASerial, ADirection);
 end;
 
-function  zwp_input_method_context_v1_add_listener(zwp_input_method_context_v1: Pzwp_input_method_context_v1; listener: Pzwp_input_method_context_v1_listener; data: Pointer): cint;
+function TZwpInputMethodContextV1.AddListener(AIntf: IZwpInputMethodContextV1Listener): LongInt;
 begin
-  Result := wl_proxy_add_listener(Pwl_proxy(zwp_input_method_context_v1), listener, data);
+  FUserDataRec.ListenerUserData := Pointer(AIntf);
+  Result := wl_proxy_add_listener(FProxy, @vIntf_zwp_input_method_context_v1_Listener, @FUserDataRec);
 end;
-
-procedure  zwp_input_method_context_v1_add_listener(zwp_input_method_context_v1: Pzwp_input_method_context_v1; AIntf: Izwp_input_method_context_v1Listener);
+function TZwpInputMethodV1.AddListener(AIntf: IZwpInputMethodV1Listener): LongInt;
 begin
-  zwp_input_method_context_v1_add_listener(zwp_input_method_context_v1, @vIntf_zwp_input_method_context_v1_Listener, AIntf);
+  FUserDataRec.ListenerUserData := Pointer(AIntf);
+  Result := wl_proxy_add_listener(FProxy, @vIntf_zwp_input_method_v1_Listener, @FUserDataRec);
 end;
-
-procedure zwp_input_method_context_v1_set_user_data(zwp_input_method_context_v1: Pzwp_input_method_context_v1; user_data: Pointer);
-begin
-  wl_proxy_set_user_data(Pwl_proxy(zwp_input_method_context_v1), user_data);
-end;
-
-function  zwp_input_method_context_v1_get_user_data(zwp_input_method_context_v1: Pzwp_input_method_context_v1): Pointer;
-begin
-  Result := wl_proxy_get_user_data(Pwl_proxy(zwp_input_method_context_v1));
-end;
-
-function  zwp_input_method_context_v1_get_version(zwp_input_method_context_v1: Pzwp_input_method_context_v1): cuint32;
-begin
-  Result := wl_proxy_get_version(Pwl_proxy(zwp_input_method_context_v1));
-end;
-
-function  zwp_input_method_v1_add_listener(zwp_input_method_v1: Pzwp_input_method_v1; listener: Pzwp_input_method_v1_listener; data: Pointer): cint;
-begin
-  Result := wl_proxy_add_listener(Pwl_proxy(zwp_input_method_v1), listener, data);
-end;
-
-procedure  zwp_input_method_v1_add_listener(zwp_input_method_v1: Pzwp_input_method_v1; AIntf: Izwp_input_method_v1Listener);
-begin
-  zwp_input_method_v1_add_listener(zwp_input_method_v1, @vIntf_zwp_input_method_v1_Listener, AIntf);
-end;
-
-procedure zwp_input_method_v1_set_user_data(zwp_input_method_v1: Pzwp_input_method_v1; user_data: Pointer);
-begin
-  wl_proxy_set_user_data(Pwl_proxy(zwp_input_method_v1), user_data);
-end;
-
-function  zwp_input_method_v1_get_user_data(zwp_input_method_v1: Pzwp_input_method_v1): Pointer;
-begin
-  Result := wl_proxy_get_user_data(Pwl_proxy(zwp_input_method_v1));
-end;
-
-function  zwp_input_method_v1_get_version(zwp_input_method_v1: Pzwp_input_method_v1): cuint32;
-begin
-  Result := wl_proxy_get_version(Pwl_proxy(zwp_input_method_v1));
-end;
-
-procedure zwp_input_method_v1_destroy(zwp_input_method_v1: Pzwp_input_method_v1);
-begin
-  wl_proxy_destroy(Pwl_proxy(zwp_input_method_v1));
-end;
-
-function  zwp_input_panel_v1_get_input_panel_surface(zwp_input_panel_v1: Pzwp_input_panel_v1; surface: Pwl_surface): Pzwp_input_panel_surface_v1;
+function TZwpInputPanelV1.GetInputPanelSurface(ASurface: TWlSurface; AProxyClass: TWLProxyObjectClass = nil {TZwpInputPanelSurfaceV1}): TZwpInputPanelSurfaceV1;
 var
   id: Pwl_proxy;
 begin
-  id := wl_proxy_marshal_constructor(Pwl_proxy(zwp_input_panel_v1),
-      _ZWP_INPUT_PANEL_V1_GET_INPUT_PANEL_SURFACE, @zwp_input_panel_surface_v1_interface, nil, surface);
-  Result := Pzwp_input_panel_surface_v1(id);
+  id := wl_proxy_marshal_constructor(FProxy,
+      _GET_INPUT_PANEL_SURFACE, @zwp_input_panel_surface_v1_interface, nil, ASurface.Proxy);
+  if AProxyClass = nil then
+    AProxyClass := TZwpInputPanelSurfaceV1;
+  Result := TZwpInputPanelSurfaceV1(AProxyClass.Create(id));
+  if not AProxyClass.InheritsFrom(TZwpInputPanelSurfaceV1) then
+    Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TZwpInputPanelSurfaceV1]);
 end;
 
-function  zwp_input_panel_v1_add_listener(zwp_input_panel_v1: Pzwp_input_panel_v1; listener: Pzwp_input_panel_v1_listener; data: Pointer): cint;
+function TZwpInputPanelV1.AddListener(AIntf: IZwpInputPanelV1Listener): LongInt;
 begin
-  Result := wl_proxy_add_listener(Pwl_proxy(zwp_input_panel_v1), listener, data);
+  FUserDataRec.ListenerUserData := Pointer(AIntf);
+  Result := wl_proxy_add_listener(FProxy, @vIntf_zwp_input_panel_v1_Listener, @FUserDataRec);
+end;
+procedure TZwpInputPanelSurfaceV1.SetToplevel(AOutput: TWlOutput; APosition: DWord);
+begin
+  wl_proxy_marshal(FProxy, _SET_TOPLEVEL, AOutput.Proxy, APosition);
 end;
 
-procedure  zwp_input_panel_v1_add_listener(zwp_input_panel_v1: Pzwp_input_panel_v1; AIntf: Izwp_input_panel_v1Listener);
+procedure TZwpInputPanelSurfaceV1.SetOverlayPanel;
 begin
-  zwp_input_panel_v1_add_listener(zwp_input_panel_v1, @vIntf_zwp_input_panel_v1_Listener, AIntf);
+  wl_proxy_marshal(FProxy, _SET_OVERLAY_PANEL);
 end;
 
-procedure zwp_input_panel_v1_set_user_data(zwp_input_panel_v1: Pzwp_input_panel_v1; user_data: Pointer);
+function TZwpInputPanelSurfaceV1.AddListener(AIntf: IZwpInputPanelSurfaceV1Listener): LongInt;
 begin
-  wl_proxy_set_user_data(Pwl_proxy(zwp_input_panel_v1), user_data);
-end;
-
-function  zwp_input_panel_v1_get_user_data(zwp_input_panel_v1: Pzwp_input_panel_v1): Pointer;
-begin
-  Result := wl_proxy_get_user_data(Pwl_proxy(zwp_input_panel_v1));
-end;
-
-function  zwp_input_panel_v1_get_version(zwp_input_panel_v1: Pzwp_input_panel_v1): cuint32;
-begin
-  Result := wl_proxy_get_version(Pwl_proxy(zwp_input_panel_v1));
-end;
-
-procedure zwp_input_panel_v1_destroy(zwp_input_panel_v1: Pzwp_input_panel_v1);
-begin
-  wl_proxy_destroy(Pwl_proxy(zwp_input_panel_v1));
-end;
-
-procedure zwp_input_panel_surface_v1_set_toplevel(zwp_input_panel_surface_v1: Pzwp_input_panel_surface_v1; output: Pwl_output; position: cuint);
-begin
-  wl_proxy_marshal(Pwl_proxy(zwp_input_panel_surface_v1),
-      _ZWP_INPUT_PANEL_SURFACE_V1_SET_TOPLEVEL, output, position);
-end;
-
-procedure zwp_input_panel_surface_v1_set_overlay_panel(zwp_input_panel_surface_v1: Pzwp_input_panel_surface_v1);
-begin
-  wl_proxy_marshal(Pwl_proxy(zwp_input_panel_surface_v1),
-      _ZWP_INPUT_PANEL_SURFACE_V1_SET_OVERLAY_PANEL);
-end;
-
-function  zwp_input_panel_surface_v1_add_listener(zwp_input_panel_surface_v1: Pzwp_input_panel_surface_v1; listener: Pzwp_input_panel_surface_v1_listener; data: Pointer): cint;
-begin
-  Result := wl_proxy_add_listener(Pwl_proxy(zwp_input_panel_surface_v1), listener, data);
-end;
-
-procedure  zwp_input_panel_surface_v1_add_listener(zwp_input_panel_surface_v1: Pzwp_input_panel_surface_v1; AIntf: Izwp_input_panel_surface_v1Listener);
-begin
-  zwp_input_panel_surface_v1_add_listener(zwp_input_panel_surface_v1, @vIntf_zwp_input_panel_surface_v1_Listener, AIntf);
-end;
-
-procedure zwp_input_panel_surface_v1_set_user_data(zwp_input_panel_surface_v1: Pzwp_input_panel_surface_v1; user_data: Pointer);
-begin
-  wl_proxy_set_user_data(Pwl_proxy(zwp_input_panel_surface_v1), user_data);
-end;
-
-function  zwp_input_panel_surface_v1_get_user_data(zwp_input_panel_surface_v1: Pzwp_input_panel_surface_v1): Pointer;
-begin
-  Result := wl_proxy_get_user_data(Pwl_proxy(zwp_input_panel_surface_v1));
-end;
-
-function  zwp_input_panel_surface_v1_get_version(zwp_input_panel_surface_v1: Pzwp_input_panel_surface_v1): cuint32;
-begin
-  Result := wl_proxy_get_version(Pwl_proxy(zwp_input_panel_surface_v1));
-end;
-
-procedure zwp_input_panel_surface_v1_destroy(zwp_input_panel_surface_v1: Pzwp_input_panel_surface_v1);
-begin
-  wl_proxy_destroy(Pwl_proxy(zwp_input_panel_surface_v1));
+  FUserDataRec.ListenerUserData := Pointer(AIntf);
+  Result := wl_proxy_add_listener(FProxy, @vIntf_zwp_input_panel_surface_v1_Listener, @FUserDataRec);
 end;
 
 
-procedure zwp_input_method_context_v1_surrounding_text_Intf(AIntf: Izwp_input_method_context_v1Listener; zwp_input_method_context_v1: Pzwp_input_method_context_v1; text: pchar; cursor: cuint; anchor: cuint); cdecl;
+
+
+procedure zwp_input_method_context_v1_surrounding_text_Intf(AData: PWLUserData; Azwp_input_method_context_v1: Pzwp_input_method_context_v1; AText: Pchar; ACursor: DWord; AAnchor: DWord); cdecl;
+var
+  AIntf: IZwpInputMethodContextV1Listener;
 begin
-  WriteLn('zwp_input_method_context_v1.surrounding_text');
-  AIntf.zwp_input_method_context_v1_surrounding_text(zwp_input_method_context_v1, text, cursor, anchor);
+  if AData = nil then Exit;
+  AIntf := IZwpInputMethodContextV1Listener(AData^.ListenerUserData);
+  AIntf.zwp_input_method_context_v1_surrounding_text(TZwpInputMethodContextV1(AData^.PascalObject), AText, ACursor, AAnchor);
 end;
 
-procedure zwp_input_method_context_v1_reset_Intf(AIntf: Izwp_input_method_context_v1Listener; zwp_input_method_context_v1: Pzwp_input_method_context_v1); cdecl;
+procedure zwp_input_method_context_v1_reset_Intf(AData: PWLUserData; Azwp_input_method_context_v1: Pzwp_input_method_context_v1); cdecl;
+var
+  AIntf: IZwpInputMethodContextV1Listener;
 begin
-  WriteLn('zwp_input_method_context_v1.reset');
-  AIntf.zwp_input_method_context_v1_reset(zwp_input_method_context_v1);
+  if AData = nil then Exit;
+  AIntf := IZwpInputMethodContextV1Listener(AData^.ListenerUserData);
+  AIntf.zwp_input_method_context_v1_reset(TZwpInputMethodContextV1(AData^.PascalObject));
 end;
 
-procedure zwp_input_method_context_v1_content_type_Intf(AIntf: Izwp_input_method_context_v1Listener; zwp_input_method_context_v1: Pzwp_input_method_context_v1; hint: cuint; purpose: cuint); cdecl;
+procedure zwp_input_method_context_v1_content_type_Intf(AData: PWLUserData; Azwp_input_method_context_v1: Pzwp_input_method_context_v1; AHint: DWord; APurpose: DWord); cdecl;
+var
+  AIntf: IZwpInputMethodContextV1Listener;
 begin
-  WriteLn('zwp_input_method_context_v1.content_type');
-  AIntf.zwp_input_method_context_v1_content_type(zwp_input_method_context_v1, hint, purpose);
+  if AData = nil then Exit;
+  AIntf := IZwpInputMethodContextV1Listener(AData^.ListenerUserData);
+  AIntf.zwp_input_method_context_v1_content_type(TZwpInputMethodContextV1(AData^.PascalObject), AHint, APurpose);
 end;
 
-procedure zwp_input_method_context_v1_invoke_action_Intf(AIntf: Izwp_input_method_context_v1Listener; zwp_input_method_context_v1: Pzwp_input_method_context_v1; button: cuint; index: cuint); cdecl;
+procedure zwp_input_method_context_v1_invoke_action_Intf(AData: PWLUserData; Azwp_input_method_context_v1: Pzwp_input_method_context_v1; AButton: DWord; AIndex: DWord); cdecl;
+var
+  AIntf: IZwpInputMethodContextV1Listener;
 begin
-  WriteLn('zwp_input_method_context_v1.invoke_action');
-  AIntf.zwp_input_method_context_v1_invoke_action(zwp_input_method_context_v1, button, index);
+  if AData = nil then Exit;
+  AIntf := IZwpInputMethodContextV1Listener(AData^.ListenerUserData);
+  AIntf.zwp_input_method_context_v1_invoke_action(TZwpInputMethodContextV1(AData^.PascalObject), AButton, AIndex);
 end;
 
-procedure zwp_input_method_context_v1_commit_state_Intf(AIntf: Izwp_input_method_context_v1Listener; zwp_input_method_context_v1: Pzwp_input_method_context_v1; serial: cuint); cdecl;
+procedure zwp_input_method_context_v1_commit_state_Intf(AData: PWLUserData; Azwp_input_method_context_v1: Pzwp_input_method_context_v1; ASerial: DWord); cdecl;
+var
+  AIntf: IZwpInputMethodContextV1Listener;
 begin
-  WriteLn('zwp_input_method_context_v1.commit_state');
-  AIntf.zwp_input_method_context_v1_commit_state(zwp_input_method_context_v1, serial);
+  if AData = nil then Exit;
+  AIntf := IZwpInputMethodContextV1Listener(AData^.ListenerUserData);
+  AIntf.zwp_input_method_context_v1_commit_state(TZwpInputMethodContextV1(AData^.PascalObject), ASerial);
 end;
 
-procedure zwp_input_method_context_v1_preferred_language_Intf(AIntf: Izwp_input_method_context_v1Listener; zwp_input_method_context_v1: Pzwp_input_method_context_v1; language: pchar); cdecl;
+procedure zwp_input_method_context_v1_preferred_language_Intf(AData: PWLUserData; Azwp_input_method_context_v1: Pzwp_input_method_context_v1; ALanguage: Pchar); cdecl;
+var
+  AIntf: IZwpInputMethodContextV1Listener;
 begin
-  WriteLn('zwp_input_method_context_v1.preferred_language');
-  AIntf.zwp_input_method_context_v1_preferred_language(zwp_input_method_context_v1, language);
+  if AData = nil then Exit;
+  AIntf := IZwpInputMethodContextV1Listener(AData^.ListenerUserData);
+  AIntf.zwp_input_method_context_v1_preferred_language(TZwpInputMethodContextV1(AData^.PascalObject), ALanguage);
 end;
 
-procedure zwp_input_method_v1_activate_Intf(AIntf: Izwp_input_method_v1Listener; zwp_input_method_v1: Pzwp_input_method_v1; id: Pzwp_input_method_context_v1); cdecl;
+procedure zwp_input_method_v1_activate_Intf(AData: PWLUserData; Azwp_input_method_v1: Pzwp_input_method_v1; AId: Pzwp_input_method_context_v1); cdecl;
+var
+  AIntf: IZwpInputMethodV1Listener;
 begin
-  WriteLn('zwp_input_method_v1.activate');
-  AIntf.zwp_input_method_v1_activate(zwp_input_method_v1, id);
+  if AData = nil then Exit;
+  AIntf := IZwpInputMethodV1Listener(AData^.ListenerUserData);
+  AIntf.zwp_input_method_v1_activate(TZwpInputMethodV1(AData^.PascalObject),  TZwpInputMethodContextV1.Create(AId));
 end;
 
-procedure zwp_input_method_v1_deactivate_Intf(AIntf: Izwp_input_method_v1Listener; zwp_input_method_v1: Pzwp_input_method_v1; context: Pzwp_input_method_context_v1); cdecl;
+procedure zwp_input_method_v1_deactivate_Intf(AData: PWLUserData; Azwp_input_method_v1: Pzwp_input_method_v1; AContext: Pzwp_input_method_context_v1); cdecl;
+var
+  AIntf: IZwpInputMethodV1Listener;
 begin
-  WriteLn('zwp_input_method_v1.deactivate');
-  AIntf.zwp_input_method_v1_deactivate(zwp_input_method_v1, context);
+  if AData = nil then Exit;
+  AIntf := IZwpInputMethodV1Listener(AData^.ListenerUserData);
+  AIntf.zwp_input_method_v1_deactivate(TZwpInputMethodV1(AData^.PascalObject),  TZwpInputMethodContextV1(TWLProxyObject.WLToObj(AContext)));
 end;
 
 

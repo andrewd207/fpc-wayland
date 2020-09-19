@@ -31,7 +31,7 @@ type
 
   { TGenerator }
 
-  TSection = (sPrivateConst, sTypes, sFuncs, sVars, sImplementation, sInterfacePointers, sPrivateVar, sListenerDecl, sListenerImpl, sListenerBind, sRequestandEvents, sInit, sFinalize);
+  TSection = (sPrivateConst, sClassForward, sClasses, sTypes, sFuncs, sVars, sImplementation, sInterfacePointers, sPrivateVar, sListenerDecl, sListenerImpl, sListenerBind, sClassImpl ,sRequestandEvents, sInit, sFinalize);
 
 
 
@@ -42,19 +42,29 @@ type
     FProtocol: TProtocol;
     Sections: array[TSection] of TStrings;
     FImplementInterfaceVars: Boolean;
+    function Pascalify(AName: String): String;
+
+    function ArgToArg(AArg: TArg; APascalify: Boolean; var ANeedsWrapper: Boolean
+      ): String;
+    function ArgTypeToPascalType(AType: String; AInterface: String;
+      APascalify: Boolean; var ANeedsWrapper: Boolean): String;
+
     procedure ArgsToSig(Element: TBaseNode; AData: Pointer{PString});
     procedure ArgTypesToInterfacePointer(Element: TBaseNode; AData: Pointer);
     procedure CollectArgs(Element: TBaseNode; AData: Pointer{TArgList});
     procedure CollectEntries(Element: TBaseNode; AData: Pointer);
     procedure CollectEnums(Element: TBaseNode; AData: Pointer);
     procedure CollectEventsForListener(Element: TBaseNode; AData: Pointer{TNodeList});
-    procedure DeclareInterface(Element: TBaseNode; AData: Pointer);
+    procedure DeclareInterfaceTypes(Element: TBaseNode; AData: Pointer);
+    procedure DeclareInterfaceVars(Element: TBaseNode; AData: Pointer);
     procedure HandleInterface(Element: TInterface);
 
     procedure GenerateListener(Element: TInterface);
 
     procedure WriteRequestConsts(Element: TBaseNode; AData: Pointer{TInterface});
     procedure WriteRequestImplmentation(Element: TBaseNode; Adata: Pointer{TInterface});
+    procedure WriteRequestImplmentationObjects(Element: TBaseNode; Adata: Pointer{TInterface});
+    procedure WriteListenerObjectMethod(Element: TInterface);
     procedure WriteWaylandRequestorEventInterface(Element: TBaseNode; AData: Pointer);
 
   public
@@ -83,23 +93,40 @@ var
   lRequestCount, lEventCount, lIndex: Integer;
   lEventConstName: String = 'nil';
   lRequestConstName: String = 'nil';
+  lParentClass: String;
 begin
   // global vars :(
 
+  DeclareInterfaceVars(Element, nil);
   lInterfaceVar := Element.Name+'_interface';
-  lLine := '  '+lInterfaceVar+': Twl_interface;';
-  if not FImplementInterfaceVars then
-    lLine+=' cvar; external;';
-  Sections[sVars].Add(lLine);
 
+  case Element.Name of
+    'wl_display'  : lParentClass:='TWlDisplayBase';
+    'wl_shm'      : lParentClass:='TWlShmBase';
+    'wl_shm_pool' : lParentClass:='TWlShmPoolBase';
+  else
+    lParentClass:='TWLProxyObject';
 
+  end;
 
+  //Sections[sClassForward].Add('  T'+Pascalify(Element.Name)+'Class = class of T'+Pascalify(Element.Name)+';');
+  Sections[sClassForward].Add('  T'+Pascalify(Element.Name)+' = class;');
+  Sections[sClasses].Add('');
+  Sections[sClasses].Add('  T'+Pascalify(Element.Name)+' = class('+lParentClass+')');
 
   if Element.HasRequests then
   begin
+    Sections[sClasses].Add('  private');
     Element.ForEachRequest(@WriteRequestConsts, Element);
-    Element.ForEachRequest(@WriteRequestImplmentation, Element);
+    Sections[sClasses].Add('  public');
+    // disable flat api and use objects instead
+    //Element.ForEachRequest(@WriteRequestImplmentation, Element);
+    Element.ForEachRequest(@WriteRequestImplmentationObjects, Element);
   end;
+
+  WriteListenerObjectMethod(Element);
+
+  Sections[sClasses].Add('  end;');
 
   // handles events
   GenerateListener(Element);
@@ -170,10 +197,23 @@ begin
   Tevent(Element).ForEachArg(@CollectArgs, AData);
 end;
 
-procedure TGenerator.DeclareInterface(Element: TBaseNode; AData: Pointer);
+procedure TGenerator.DeclareInterfaceTypes(Element: TBaseNode; AData: Pointer);
 begin
-  Sections[sTypes].Add('  P'+Element.Name+' = ^T'+Element.Name+';');
-  Sections[sTypes].Add('  T'+Element.Name+' = record end;');
+  Sections[sTypes].Add('  P'+Element.Name+' = Pointer;');
+  //Sections[sTypes].Add('  P'+Element.Name+' = ^T'+Element.Name+';');
+  //Sections[sTypes].Add('  T'+Element.Name+' = record end;');
+end;
+
+procedure TGenerator.DeclareInterfaceVars(Element: TBaseNode; AData: Pointer);
+var
+  lInterfaceVar, lLine: String;
+begin
+  // global vars :(
+  lInterfaceVar := Element.Name+'_interface';
+  lLine := '  '+lInterfaceVar+': Twl_interface;';
+  if not FImplementInterfaceVars then
+    lLine+=' cvar; external;';
+  Sections[sVars].Add(lLine);
 end;
 
 procedure TGenerator.CollectEnums(Element: TBaseNode; AData: Pointer);
@@ -211,14 +251,20 @@ var
   lInterfaceLine: String;
   lWrapperLine: String;
   lWrapperDecl: String;
-  lWrapperBind: String;
+  lWrapperBind, lWrapperVar, lWrapperVarAssign, lArg, lInterface,
+    lInterfaceArg: String;
+  lNeedsWrapper: Boolean;
       procedure WriteEvent;
       begin
         Sections[sTypes].Add(lArgs+'); cdecl;');
         Sections[sListenerDecl].Add(lInterfaceLine+');');
         Sections[sListenerImpl].Add(lWrapperDecl+'); cdecl;');
+        Sections[sListenerImpl].Add('var');
+        Sections[sListenerImpl].Add(lWrapperVar);
         Sections[sListenerImpl].Add('begin');
-        Sections[sListenerImpl].Add('  WriteLn('''+Element.Name+'.'+lEvent.Name+''');');
+        Sections[sListenerImpl].Add('  if AData = nil then Exit;');
+        Sections[sListenerImpl].Add(lWrapperVarAssign);
+        //Sections[sListenerImpl].Add('  WriteLn('''+Element.Name+'.'+lEvent.Name+''');');
         Sections[sListenerImpl].Add(lWrapperLine+');');
         Sections[sListenerImpl].Add('end;');
         Sections[sListenerImpl].Add('');
@@ -262,7 +308,7 @@ begin
   lTypeName := Element.Name+'_listener';
 
   //CreateGUID(lGUID);
-  lInterfaceName:='I'+Element.Name+'Listener';
+  lInterfaceName:='I'+Pascalify(Element.Name)+'Listener';
   Sections[sListenerDecl].Add('  '+lInterfaceName+' = interface');
   //Sections[sListenerDecl].Add('  ['''+GUIDToString(lGUID)+''']');
   Sections[sListenerDecl].Add('  ['''+lInterfaceName+''']');
@@ -293,12 +339,14 @@ begin
       or (lEventName = 'type') then
         lEventName+= '_';
 
-      lArgs :='    '+ lEventName+' : procedure(data: Pointer; '+Element.Name+': P'+Element.Name;
+      lArgs :='    '+ lEventName+' : procedure(data: Pointer; A'+Pascalify(Element.Name)+': P'+Element.Name;
 
       // for IxxxListener
-      lInterfaceLine := '    procedure '+Element.Name+'_'+lEvent.Name+'('+Element.Name+': P'+Element.Name;
-      lWrapperDecl   := 'procedure '+Element.Name+'_'+lEvent.Name+'_Intf(AIntf: '+lInterfaceName+'; '+Element.Name+': P'+Element.Name;
-      lWrapperLine:= '  AIntf.'+Element.Name+'_'+lEvent.Name+'('+Element.Name;
+      lInterfaceLine := '    procedure '+Element.Name+'_'+lEvent.Name+'(A'+Pascalify(Element.Name)+': T'+Pascalify(Element.Name);
+      lWrapperVar := '  AIntf: ' + lInterfaceName+';';
+      lWrapperVarAssign := '  AIntf := '+lInterfaceName+'(AData^.ListenerUserData);';
+      lWrapperDecl   := 'procedure '+Element.Name+'_'+lEvent.Name+'_Intf(AData: PWLUserData; A'+Element.Name+': P'+Element.Name;
+      lWrapperLine:= '  AIntf.'+Element.Name+'_'+lEvent.Name+'(T'+Pascalify(Element.Name)+'(AData^.PascalObject)';
 
       // setting the listener variable
       lWrapperBind := '  Pointer(vIntf_'+Element.Name+'_Listener.'+lEventName+') := @'+Element.Name+'_'+lEvent.Name+'_Intf;';
@@ -306,35 +354,29 @@ begin
     end
     else
     begin
-      if TArg(lNode).&Type ='object' then
+      lArg := ArgToArg(TArg(lNode), False, lNeedsWrapper);
+      lInterfaceArg := ArgToArg(TArg(lNode), True, lNeedsWrapper);
+      lTypeName:=ArgTypeToPascalType(TArg(lNode).&Type, TArg(lNode).&Interface, True, lNeedsWrapper);
+
+
+      lName := 'A'+Pascalify(lNode.Name);
+
+      if lTypeName = 'String' then
+        lTypeName:='Pchar';
+
+
+      lArgs+='; '+ lArg;
+      lInterfaceLine+='; '+lInterfaceArg;
+      lWrapperDecl+='; '+lArg;
+      if lNeedsWrapper then
       begin
-        lTypeName:='P'+TArg(lNode).&Interface;
-        if lTypeName = 'P' then
-          lTypeName:='pointer';
+        if TArg(lNode).&Type = 'new_id' then
+          lWrapperLine+=',  '+lTypeName+'.Create('+lName+')'
+        else
+          lWrapperLine+=',  '+lTypeName+'(TWLProxyObject.WLToObj('+lName+'))'
       end
-      else if TArg(lNode).&Type ='fixed' then
-        lTypeName:='cint32'
-      else if TArg(lNode).&Type ='fd' then
-        lTypeName:='cint'
-      else if TArg(lNode).&Type ='new_id' then
-        lTypeName:='P'+TArg(lNode).&Interface
-      else if TArg(lNode).&Type ='array' then
-        lTypeName:='Pwl_array'
       else
-        lTypeName:='c'+TArg(lNode).&Type;
-
-      lName := lNode.Name;
-      if lName = 'interface' then
-        lName:='&interface';
-
-      if lTypeName = 'cstring' then
-        lTypeName:='pchar';
-
-
-      lArgs+='; '+lName+': '+ lTypeName;
-      lInterfaceLine+='; '+lName+': '+ lTypeName;
-      lWrapperDecl+='; '+lName+': '+ lTypeName;
-      lWrapperLine+=', '+lName;
+        lWrapperLine+=', '+lName;
     end;
 
   end;
@@ -349,7 +391,7 @@ begin
   lList.Free;
   Sections[sTypes].Add('  end;');
   Sections[sTypes].Add('');
-
+  {
   // add listener
   lIntf := 'function  '+Element.Name+'_add_listener('+Element.Name+': P'+Element.Name+'; listener: P'+Element.Name+'_listener; data: Pointer): cint;';
   Sections[sFuncs].Add(lIntf);
@@ -409,7 +451,7 @@ begin
     Sections[sImplementation].Add('end;');
     Sections[sImplementation].Add('');
   end;
-
+  }
 end;
 
 procedure TGenerator.CollectArgs(Element: TBaseNode; AData: Pointer);
@@ -420,6 +462,90 @@ begin
   lArg := TArg.Create(nil);
   lArg.Assign(Element);
   lArgList.Add(lArg);
+end;
+
+function TGenerator.Pascalify(AName: String): String;
+var
+  lPos: SizeInt;
+begin
+  Result := AName;
+  if Result = '' then
+    Exit;
+  // capitalize the first char if not yet
+  Result[1] := UpperCase(Result[1])[1];
+  Repeat
+    lPos := Pos('_', Result);
+    if lPos > 0 then
+    begin
+      // delete char and capitalize the following one
+      Delete(Result, lPos, 1);
+      Result[lPos] := UpperCase(Result[lPos])[1];
+    end;
+  until lPos < 1;
+end;
+
+function TGenerator.ArgToArg(AArg: TArg; APascalify: Boolean; var ANeedsWrapper: Boolean): String;
+var
+  lName, lType: String;
+begin
+  lName := 'A'+Pascalify(AArg.Name);
+  lType := ArgTypeToPascalType(AArg.&Type, AArg.&Interface, APascalify, ANeedsWrapper);
+
+  Result := Format('%s: %s', [lName, lType]);
+end;
+
+function TGenerator.ArgTypeToPascalType(AType: String; AInterface: String;
+  APascalify: Boolean; var ANeedsWrapper: Boolean): String;
+begin
+  ANeedsWrapper:=False;
+  case AType of
+      'new_id':
+        begin
+          if AInterface = '' then // bind
+            Result :='Pwl_proxy'
+          else
+          begin
+            if APascalify then
+              Result:='T'+ Pascalify(AInterface)
+            else
+              Result := 'P'+AInterface;
+          end;
+          ANeedsWrapper:=True;
+        end;
+      'object':
+        begin
+          if APascalify then
+            Result:='T'+ Pascalify(AInterface)
+          else
+            Result := 'P'+AInterface;
+
+          if Length(Result) = 1 then
+            Result := 'Pointer';
+          ANeedsWrapper:=True;
+        end;
+      'int':  Result := 'LongInt';
+      'uint': Result := 'DWord';
+      'fixed': Result := 'Longint{24.8}';
+      'string':
+        begin
+          if APascalify then
+            Result := 'String'
+          else
+            Result := 'Pchar';
+        end;
+      'array':
+        begin
+          {if APascalify then
+            Result := 'TWlArray'
+          else
+            Result := 'Pwl_array';
+          ANeedsWrapper:=True;}
+          Result := 'Pwl_array';
+        end;
+      'fd': Result := 'LongInt{fd}';
+      else
+        raise Exception.CreateFmt('Unknown argument type : %s', [AType]);
+  end; {case}
 end;
 
 procedure TGenerator.ArgsToSig(Element: TBaseNode; AData: Pointer);
@@ -455,7 +581,8 @@ procedure TGenerator.WriteRequestConsts(Element: TBaseNode; AData: Pointer);
 var
   lInterface: TInterface absolute AData;
 begin
-  Sections[sPrivateConst].Add('_'+UpperCase(lInterface.Name+'_'+Element.Name + ' = ' + IntToStr(Element.ElementIndex)+';'));
+  Sections[sClasses].Add('    const _'+UpperCase(Element.Name) + ' = ' + IntToStr(Element.ElementIndex)+';');
+  //Sections[sPrivateConst].Add('_'+UpperCase(lInterface.Name+'_'+Element.Name + ' = ' + IntToStr(Element.ElementIndex)+';'));
 end;
 
 procedure TGenerator.WriteRequestImplmentation(Element: TBaseNode;
@@ -563,7 +690,7 @@ begin
     Sections[sImplementation].Add('  '+lReturnVar.Name+': Pwl_proxy;');
     Sections[sImplementation].Add('begin');
     Sections[sImplementation].Add('  '+lReturnVar.Name+' := wl_proxy_marshal_constructor(Pwl_proxy('+lInterface.Name+'),' );
-    Sections[sImplementation].Add('      _'+UpperCase(lInterface.Name+'_'+Element.Name)+', @'+ lTypeCast+'_interface, nil'+lArgs);
+    Sections[sImplementation].Add('      _'+UpperCase(lInterface.Name+'_'+Element.Name)+', @'+ lReturnVar.&Interface+'_interface, nil'+lArgs);
     Sections[sImplementation].Add('  Result := P'+lTypeCast+'('+lReturnVar.Name+');');
   end
   else if lReq.&Type <> 'destructor' then
@@ -586,14 +713,164 @@ begin
   Sections[sImplementation].Add('end;');
   Sections[sImplementation].Add('');
 
-
-
-
   lArgList.Free;
   lParams.Free;
+end;
 
+procedure TGenerator.WriteRequestImplmentationObjects(Element: TBaseNode; Adata: Pointer);
+var
+  lInterface: TInterface absolute Adata;
+  lRequest: TRequest absolute Element;
+  lFuncType, lFuncName, lIntf, lArgs, lImpl, lTypeCast, lFuncReturn,
+    lOverride, lTmp, lWrapperArgs: String;
+  lArg, lReturnVar: TArg;
+  lParams: TNodeList;
+  lArgList: TNodeList;
+  lNeedsWrapper: Boolean;
+  lWrapperCode: TStrings;
+begin
+  lWrapperCode := TStringList.Create;
+  lFuncType:='procedure';
+  lFuncName :=  Pascalify(LowerCase(Element.Name));
 
+  // collect declared args
+  lArgList := TNodeList.Create(True);
+  lRequest.ForEachArg(@CollectArgs, lArgList);
 
+  lReturnVar:=nil;
+  lParams := TNodeList.Create(False);
+
+  lArgs := '';
+  lWrapperArgs := '';
+  for TBaseNode(lArg) in lArgList do
+  begin
+    case lArg.&Type of
+      'new_id':
+        begin
+          lFuncType:='function';
+          lFuncReturn:= ': '+ArgTypeToPascalType(lArg.&Type, larg.&Interface, True, lNeedsWrapper);
+          lReturnVar := lArg;
+        end;
+    else
+      lArgs += '; '+ArgToArg(lArg, False, lNeedsWrapper);
+      lWrapperArgs += '; '+ArgToArg(lArg, True, lNeedsWrapper);
+      lParams.Add(lArg);
+      if lNeedsWrapper then
+        larg.NeedsWrapper:=True;
+    end;
+  end;
+
+  if Assigned(lReturnVar) and (lRequest.Name = 'bind') then
+  begin
+    // wl_registry_bind doesn't quite follow the same rules and has some extra vars that are not declared
+    lArgs+='; AInterface: Pwl_interface; AVersion: LongInt';
+    lWrapperArgs+='; AInterface: Pwl_interface; AVersion: LongInt';
+  end
+  else
+  if Assigned(lReturnVar) then
+  begin
+    lArgs+='; AProxyClass: TWLProxyObjectClass = nil {T'+Pascalify(lReturnVar.&Interface+'}');
+    lWrapperArgs+='; AProxyClass: TWLProxyObjectClass = nil {T'+Pascalify(lReturnVar.&Interface+'}');
+  end;
+
+  if lRequest.&Type = 'destructor' then
+  begin
+    lFuncType:='destructor';
+    lFuncName:='Destroy';
+    lOverride:='; override';
+  end;
+
+  if Length(lArgs) > 0 then
+    Delete(lArgs, 1, 2); // delete from the start '; '
+
+  if Length(lWrapperArgs) > 0 then
+    Delete(lWrapperArgs, 1, 2); // delete from the start '; '
+
+  lArgs := '('+lArgs+')';
+  if lArgs = '()' then
+    lArgs := '';
+
+  lWrapperArgs := '('+lWrapperArgs+')';
+  if lWrapperArgs = '()' then
+    lWrapperArgs := '';
+
+  lIntf:=Format('    %s %s%s%s%s;', [lFuncType, lFuncName, lOverride, lWrapperArgs, lFuncReturn]);
+  lImpl:=Format('%s T%s.%s%s%s;', [lFuncType, Pascalify(lInterface.Name), lFuncName, lWrapperArgs, lFuncReturn]);
+
+  // add interface line of request
+  Sections[sClasses].Add(lIntf);
+
+  // for later
+  lArgs := '';
+  for TBaseNode(lArg) in lParams do
+  begin
+    if lArg.&Type = 'object' then
+      lTmp:='.Proxy'
+    else
+      lTmp := '';
+    if lArg.&Type = 'string' then
+      lArgs+=', PChar(A'+Pascalify(lArg.Name)+lTmp+')'
+    else
+      lArgs+=', A'+Pascalify(lArg.Name)+lTmp;
+  end;
+  lArgs+=');';
+
+  // add implementation function line
+  Sections[sClassImpl].Add(lImpl);
+  if Assigned(lReturnVar) and (lReturnVar.&Interface = '') and  (lRequest.Name = 'bind')then
+  begin
+    // wl_registry_bind doesn't quite follow the same rules
+    Sections[sClassImpl].Add('begin');
+    Sections[sClassImpl].Add('  Result := wl_proxy_marshal_constructor_versioned(FProxy,' );
+    Sections[sClassImpl].Add('      _'+UpperCase(Element.Name)+', AInterface, AVersion, AName, AInterface^.name, AVersion, nil);');
+  end
+  else if Assigned(lReturnVar) then
+  begin
+    lTypeCast := lReturnVar.&Interface;
+    if lTypeCast = '' then
+      lTypeCast:=lInterface.Name;
+    lTypeCast:=Pascalify(lTypeCast);
+    Sections[sClassImpl].Add('var');
+    Sections[sClassImpl].Add('  '+lReturnVar.Name+': Pwl_proxy;');
+    Sections[sClassImpl].Add('begin');
+    Sections[sClassImpl].Add('  '+lReturnVar.Name+' := wl_proxy_marshal_constructor(FProxy,' );
+    Sections[sClassImpl].Add('      '+UpperCase('_'+Element.Name)+', @'+ lReturnVar.&Interface+'_interface, nil'+lArgs);
+    Sections[sClassImpl].Add('  if AProxyClass = nil then');
+    Sections[sClassImpl].Add('    AProxyClass := T'+lTypeCast+';');
+    Sections[sClassImpl].Add('  Result := T'+lTypeCast+'(AProxyClass.Create('+lReturnVar.Name+'));');
+    Sections[sClassImpl].Add('  if not AProxyClass.InheritsFrom(T'+lTypeCast+') then');
+    Sections[sClassImpl].Add('    Raise Exception.CreateFmt(''%s does not inherit from %s'', [AProxyClass.ClassName, T'+lTypeCast+']);');
+  end
+  else if lRequest.&Type <> 'destructor' then
+  begin
+    Sections[sClassImpl].Add('begin');
+    Sections[sClassImpl].Add('  wl_proxy_marshal(FProxy, '+UpperCase('_'+Element.Name)+lArgs);
+  end;
+  if lRequest.&Type = 'destructor' then
+  begin
+    lInterface.DestructorDefined := True;
+    Sections[sClassImpl].Add('begin');
+    Sections[sClassImpl].Add('  wl_proxy_marshal(FProxy, '+UpperCase('_'+Element.Name)+');');
+    //Sections[sClassImpl].Add('  wl_proxy_destroy(FProxy);'); // inherited will call this
+    Sections[sClassImpl].Add('  inherited Destroy;');
+  end;
+  Sections[sClassImpl].Add('end;');
+  Sections[sClassImpl].Add('');
+end;
+
+procedure TGenerator.WriteListenerObjectMethod(Element: TInterface);
+var
+  lIntf, lClassname: String;
+begin
+  lIntf:='I'+Pascalify(Element.Name)+'Listener';
+  lClassname := 'T'+Pascalify(Element.Name);
+  Sections[sClasses].Add('    function AddListener(AIntf: '+lIntf+'): LongInt;');
+
+  Sections[sClassImpl].Add('function '+lClassname+'.AddListener(AIntf: '+lIntf+'): LongInt;');
+  Sections[sClassImpl].Add('begin');
+  Sections[sClassImpl].Add('  FUserDataRec.ListenerUserData := Pointer(AIntf);');
+  Sections[sClassImpl].Add('  Result := wl_proxy_add_listener(FProxy, @vIntf_'+Element.Name+'_Listener, @FUserDataRec);');
+  Sections[sClassImpl].Add('end;');
 end;
 
 procedure TGenerator.WriteWaylandRequestorEventInterface(Element: TBaseNode; AData: Pointer);
@@ -684,7 +961,9 @@ begin
   for i := 0 to 7 do
     Sections[sInterfacePointers].Add('    (nil),');
 
-  FProtocol.ForEachInterface(@DeclareInterface, nil);
+  // this sets up pointer types for each interface name.
+  FProtocol.ForEachInterface(@DeclareInterfaceTypes, nil);
+
   FProtocol.ForEachInterface(TForEachHandler(@HandleInterface), nil);
   //WriteLn(Sections[sConst].Text);
   WriteLn(Sections[sFuncs].Text);
@@ -702,29 +981,38 @@ begin
     Strings.Add('');
     Strings.Add('uses');
     if AUnitName = 'wayland_protocol' then
-      lUses := '  ctypes, wayland_util, wayland_client_core'
+      lUses := '  Classes, Sysutils, ctypes, wayland_util, wayland_client_core'
     else
-      lUses := '  ctypes, wayland_util, wayland_client_core, wayland_protocol';
+      lUses := '  Classes, Sysutils, ctypes, wayland_util, wayland_client_core, wayland_protocol';
     Strings.Add(lUses +';');
     Strings.Add('');
     Strings.Add('');
     Strings.Add('type');
     Strings.AddStrings(Sections[sTypes].Text);
     Strings.Add('');
+    Strings.AddStrings(Sections[sClassForward].Text);
+    Strings.Add('');
     Strings.AddStrings(Sections[sListenerDecl].Text);
+    Strings.Add('');
+    Strings.AddStrings(Sections[sClasses].Text);
+    Strings.Add('');
     Strings.Add('');
     Strings.AddStrings(Sections[sFuncs].Text);
     Strings.Add('');
     Strings.Add('');
+
     Strings.Add('var');
     Strings.AddStrings(Sections[sVars].Text);
     Strings.Add('');
     Strings.Add('');
     Strings.Add('implementation');
     Strings.Add('');
-    Strings.Add('const');
-    Strings.AddStrings(Sections[sPrivateConst].Text);
-    Strings.Add('');
+    if Sections[sPrivateConst].Count > 0 then
+    begin
+      Strings.Add('const');
+      Strings.AddStrings(Sections[sPrivateConst].Text);
+      Strings.Add('');
+    end;
     if Sections[sPrivateVar].Count > 0 then
     begin
       Strings.Add('var');
@@ -732,6 +1020,11 @@ begin
       Strings.Add('');
       Strings.Add('');
     end;
+
+    Strings.AddStrings(Sections[sClassImpl].Text);
+    Strings.Add('');
+    Strings.Add('');
+
 
     Strings.AddStrings(Sections[sImplementation].Text);
     Strings.AddStrings(Sections[sListenerImpl].Text);

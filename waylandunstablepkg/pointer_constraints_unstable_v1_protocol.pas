@@ -6,16 +6,13 @@ unit pointer_constraints_unstable_v1_protocol;
 interface
 
 uses
-  ctypes, wayland_util, wayland_client_core, wayland_protocol;
+  Classes, Sysutils, ctypes, wayland_util, wayland_client_core, wayland_protocol;
 
 
 type
-  Pzwp_pointer_constraints_v1 = ^Tzwp_pointer_constraints_v1;
-  Tzwp_pointer_constraints_v1 = record end;
-  Pzwp_locked_pointer_v1 = ^Tzwp_locked_pointer_v1;
-  Tzwp_locked_pointer_v1 = record end;
-  Pzwp_confined_pointer_v1 = ^Tzwp_confined_pointer_v1;
-  Tzwp_confined_pointer_v1 = record end;
+  Pzwp_pointer_constraints_v1 = Pointer;
+  Pzwp_locked_pointer_v1 = Pointer;
+  Pzwp_confined_pointer_v1 = Pointer;
 const
   ZWP_POINTER_CONSTRAINTS_V1_ERROR_ALREADY_CONSTRAINED = 1; // pointer constraint already requested on that surface
   ZWP_POINTER_CONSTRAINTS_V1_LIFETIME_ONESHOT = 1; // 
@@ -28,59 +25,78 @@ type
 
   Pzwp_locked_pointer_v1_listener = ^Tzwp_locked_pointer_v1_listener;
   Tzwp_locked_pointer_v1_listener = record
-    locked : procedure(data: Pointer; zwp_locked_pointer_v1: Pzwp_locked_pointer_v1); cdecl;
-    unlocked : procedure(data: Pointer; zwp_locked_pointer_v1: Pzwp_locked_pointer_v1); cdecl;
+    locked : procedure(data: Pointer; AZwpLockedPointerV1: Pzwp_locked_pointer_v1); cdecl;
+    unlocked : procedure(data: Pointer; AZwpLockedPointerV1: Pzwp_locked_pointer_v1); cdecl;
   end;
 
   Pzwp_confined_pointer_v1_listener = ^Tzwp_confined_pointer_v1_listener;
   Tzwp_confined_pointer_v1_listener = record
-    confined : procedure(data: Pointer; zwp_confined_pointer_v1: Pzwp_confined_pointer_v1); cdecl;
-    unconfined : procedure(data: Pointer; zwp_confined_pointer_v1: Pzwp_confined_pointer_v1); cdecl;
+    confined : procedure(data: Pointer; AZwpConfinedPointerV1: Pzwp_confined_pointer_v1); cdecl;
+    unconfined : procedure(data: Pointer; AZwpConfinedPointerV1: Pzwp_confined_pointer_v1); cdecl;
   end;
 
 
 
-  Izwp_pointer_constraints_v1Listener = interface
-  ['Izwp_pointer_constraints_v1Listener']
+  TZwpPointerConstraintsV1 = class;
+  TZwpLockedPointerV1 = class;
+  TZwpConfinedPointerV1 = class;
+
+
+  IZwpPointerConstraintsV1Listener = interface
+  ['IZwpPointerConstraintsV1Listener']
   end;
 
-  Izwp_locked_pointer_v1Listener = interface
-  ['Izwp_locked_pointer_v1Listener']
-    procedure zwp_locked_pointer_v1_locked(zwp_locked_pointer_v1: Pzwp_locked_pointer_v1);
-    procedure zwp_locked_pointer_v1_unlocked(zwp_locked_pointer_v1: Pzwp_locked_pointer_v1);
+  IZwpLockedPointerV1Listener = interface
+  ['IZwpLockedPointerV1Listener']
+    procedure zwp_locked_pointer_v1_locked(AZwpLockedPointerV1: TZwpLockedPointerV1);
+    procedure zwp_locked_pointer_v1_unlocked(AZwpLockedPointerV1: TZwpLockedPointerV1);
   end;
 
-  Izwp_confined_pointer_v1Listener = interface
-  ['Izwp_confined_pointer_v1Listener']
-    procedure zwp_confined_pointer_v1_confined(zwp_confined_pointer_v1: Pzwp_confined_pointer_v1);
-    procedure zwp_confined_pointer_v1_unconfined(zwp_confined_pointer_v1: Pzwp_confined_pointer_v1);
+  IZwpConfinedPointerV1Listener = interface
+  ['IZwpConfinedPointerV1Listener']
+    procedure zwp_confined_pointer_v1_confined(AZwpConfinedPointerV1: TZwpConfinedPointerV1);
+    procedure zwp_confined_pointer_v1_unconfined(AZwpConfinedPointerV1: TZwpConfinedPointerV1);
   end;
 
 
 
-procedure zwp_pointer_constraints_v1_destroy(zwp_pointer_constraints_v1: Pzwp_pointer_constraints_v1);
-function  zwp_pointer_constraints_v1_lock_pointer(zwp_pointer_constraints_v1: Pzwp_pointer_constraints_v1; surface: Pwl_surface; pointer: Pwl_pointer; region: Pwl_region; lifetime: cuint): Pzwp_locked_pointer_v1;
-function  zwp_pointer_constraints_v1_confine_pointer(zwp_pointer_constraints_v1: Pzwp_pointer_constraints_v1; surface: Pwl_surface; pointer: Pwl_pointer; region: Pwl_region; lifetime: cuint): Pzwp_confined_pointer_v1;
-function  zwp_pointer_constraints_v1_add_listener(zwp_pointer_constraints_v1: Pzwp_pointer_constraints_v1; listener: Pzwp_pointer_constraints_v1_listener; data: Pointer): cint;
-procedure  zwp_pointer_constraints_v1_add_listener(zwp_pointer_constraints_v1: Pzwp_pointer_constraints_v1; AIntf: Izwp_pointer_constraints_v1Listener);
-procedure zwp_pointer_constraints_v1_set_user_data(zwp_pointer_constraints_v1: Pzwp_pointer_constraints_v1; user_data: Pointer);
-function  zwp_pointer_constraints_v1_get_user_data(zwp_pointer_constraints_v1: Pzwp_pointer_constraints_v1): Pointer;
-function  zwp_pointer_constraints_v1_get_version(zwp_pointer_constraints_v1: Pzwp_pointer_constraints_v1): cuint32;
-procedure zwp_locked_pointer_v1_destroy(zwp_locked_pointer_v1: Pzwp_locked_pointer_v1);
-procedure zwp_locked_pointer_v1_set_cursor_position_hint(zwp_locked_pointer_v1: Pzwp_locked_pointer_v1; surface_x: cint32; surface_y: cint32);
-procedure zwp_locked_pointer_v1_set_region(zwp_locked_pointer_v1: Pzwp_locked_pointer_v1; region: Pwl_region);
-function  zwp_locked_pointer_v1_add_listener(zwp_locked_pointer_v1: Pzwp_locked_pointer_v1; listener: Pzwp_locked_pointer_v1_listener; data: Pointer): cint;
-procedure  zwp_locked_pointer_v1_add_listener(zwp_locked_pointer_v1: Pzwp_locked_pointer_v1; AIntf: Izwp_locked_pointer_v1Listener);
-procedure zwp_locked_pointer_v1_set_user_data(zwp_locked_pointer_v1: Pzwp_locked_pointer_v1; user_data: Pointer);
-function  zwp_locked_pointer_v1_get_user_data(zwp_locked_pointer_v1: Pzwp_locked_pointer_v1): Pointer;
-function  zwp_locked_pointer_v1_get_version(zwp_locked_pointer_v1: Pzwp_locked_pointer_v1): cuint32;
-procedure zwp_confined_pointer_v1_destroy(zwp_confined_pointer_v1: Pzwp_confined_pointer_v1);
-procedure zwp_confined_pointer_v1_set_region(zwp_confined_pointer_v1: Pzwp_confined_pointer_v1; region: Pwl_region);
-function  zwp_confined_pointer_v1_add_listener(zwp_confined_pointer_v1: Pzwp_confined_pointer_v1; listener: Pzwp_confined_pointer_v1_listener; data: Pointer): cint;
-procedure  zwp_confined_pointer_v1_add_listener(zwp_confined_pointer_v1: Pzwp_confined_pointer_v1; AIntf: Izwp_confined_pointer_v1Listener);
-procedure zwp_confined_pointer_v1_set_user_data(zwp_confined_pointer_v1: Pzwp_confined_pointer_v1; user_data: Pointer);
-function  zwp_confined_pointer_v1_get_user_data(zwp_confined_pointer_v1: Pzwp_confined_pointer_v1): Pointer;
-function  zwp_confined_pointer_v1_get_version(zwp_confined_pointer_v1: Pzwp_confined_pointer_v1): cuint32;
+
+  TZwpPointerConstraintsV1 = class(TWLProxyObject)
+  private
+    const _DESTROY = 0;
+    const _LOCK_POINTER = 1;
+    const _CONFINE_POINTER = 2;
+  public
+    destructor Destroy; override;
+    function LockPointer(ASurface: TWlSurface; APointer: TWlPointer; ARegion: TWlRegion; ALifetime: DWord; AProxyClass: TWLProxyObjectClass = nil {TZwpLockedPointerV1}): TZwpLockedPointerV1;
+    function ConfinePointer(ASurface: TWlSurface; APointer: TWlPointer; ARegion: TWlRegion; ALifetime: DWord; AProxyClass: TWLProxyObjectClass = nil {TZwpConfinedPointerV1}): TZwpConfinedPointerV1;
+    function AddListener(AIntf: IZwpPointerConstraintsV1Listener): LongInt;
+  end;
+
+  TZwpLockedPointerV1 = class(TWLProxyObject)
+  private
+    const _DESTROY = 0;
+    const _SET_CURSOR_POSITION_HINT = 1;
+    const _SET_REGION = 2;
+  public
+    destructor Destroy; override;
+    procedure SetCursorPositionHint(ASurfaceX: Longint{24.8}; ASurfaceY: Longint{24.8});
+    procedure SetRegion(ARegion: TWlRegion);
+    function AddListener(AIntf: IZwpLockedPointerV1Listener): LongInt;
+  end;
+
+  TZwpConfinedPointerV1 = class(TWLProxyObject)
+  private
+    const _DESTROY = 0;
+    const _SET_REGION = 1;
+  public
+    destructor Destroy; override;
+    procedure SetRegion(ARegion: TWlRegion);
+    function AddListener(AIntf: IZwpConfinedPointerV1Listener): LongInt;
+  end;
+
+
+
 
 
 
@@ -93,17 +109,6 @@ var
 
 implementation
 
-const
-_ZWP_POINTER_CONSTRAINTS_V1_DESTROY = 0;
-_ZWP_POINTER_CONSTRAINTS_V1_LOCK_POINTER = 1;
-_ZWP_POINTER_CONSTRAINTS_V1_CONFINE_POINTER = 2;
-_ZWP_LOCKED_POINTER_V1_DESTROY = 0;
-_ZWP_LOCKED_POINTER_V1_SET_CURSOR_POSITION_HINT = 1;
-_ZWP_LOCKED_POINTER_V1_SET_REGION = 2;
-_ZWP_CONFINED_POINTER_V1_DESTROY = 0;
-_ZWP_CONFINED_POINTER_V1_SET_REGION = 1;
-
-
 var
   vIntf_zwp_pointer_constraints_v1_Listener: Tzwp_pointer_constraints_v1_listener;
   vIntf_zwp_locked_pointer_v1_Listener: Tzwp_locked_pointer_v1_listener;
@@ -111,158 +116,118 @@ var
 
 
 
-procedure zwp_pointer_constraints_v1_destroy(zwp_pointer_constraints_v1: Pzwp_pointer_constraints_v1);
+destructor TZwpPointerConstraintsV1.Destroy;
 begin
-  wl_proxy_marshal(Pwl_proxy(zwp_pointer_constraints_v1), _ZWP_POINTER_CONSTRAINTS_V1_DESTROY);
-  wl_proxy_destroy(Pwl_proxy(zwp_pointer_constraints_v1));
+  wl_proxy_marshal(FProxy, _DESTROY);
+  inherited Destroy;
 end;
 
-function  zwp_pointer_constraints_v1_lock_pointer(zwp_pointer_constraints_v1: Pzwp_pointer_constraints_v1; surface: Pwl_surface; pointer: Pwl_pointer; region: Pwl_region; lifetime: cuint): Pzwp_locked_pointer_v1;
+function TZwpPointerConstraintsV1.LockPointer(ASurface: TWlSurface; APointer: TWlPointer; ARegion: TWlRegion; ALifetime: DWord; AProxyClass: TWLProxyObjectClass = nil {TZwpLockedPointerV1}): TZwpLockedPointerV1;
 var
   id: Pwl_proxy;
 begin
-  id := wl_proxy_marshal_constructor(Pwl_proxy(zwp_pointer_constraints_v1),
-      _ZWP_POINTER_CONSTRAINTS_V1_LOCK_POINTER, @zwp_locked_pointer_v1_interface, nil, surface, pointer, region, lifetime);
-  Result := Pzwp_locked_pointer_v1(id);
+  id := wl_proxy_marshal_constructor(FProxy,
+      _LOCK_POINTER, @zwp_locked_pointer_v1_interface, nil, ASurface.Proxy, APointer.Proxy, ARegion.Proxy, ALifetime);
+  if AProxyClass = nil then
+    AProxyClass := TZwpLockedPointerV1;
+  Result := TZwpLockedPointerV1(AProxyClass.Create(id));
+  if not AProxyClass.InheritsFrom(TZwpLockedPointerV1) then
+    Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TZwpLockedPointerV1]);
 end;
 
-function  zwp_pointer_constraints_v1_confine_pointer(zwp_pointer_constraints_v1: Pzwp_pointer_constraints_v1; surface: Pwl_surface; pointer: Pwl_pointer; region: Pwl_region; lifetime: cuint): Pzwp_confined_pointer_v1;
+function TZwpPointerConstraintsV1.ConfinePointer(ASurface: TWlSurface; APointer: TWlPointer; ARegion: TWlRegion; ALifetime: DWord; AProxyClass: TWLProxyObjectClass = nil {TZwpConfinedPointerV1}): TZwpConfinedPointerV1;
 var
   id: Pwl_proxy;
 begin
-  id := wl_proxy_marshal_constructor(Pwl_proxy(zwp_pointer_constraints_v1),
-      _ZWP_POINTER_CONSTRAINTS_V1_CONFINE_POINTER, @zwp_confined_pointer_v1_interface, nil, surface, pointer, region, lifetime);
-  Result := Pzwp_confined_pointer_v1(id);
+  id := wl_proxy_marshal_constructor(FProxy,
+      _CONFINE_POINTER, @zwp_confined_pointer_v1_interface, nil, ASurface.Proxy, APointer.Proxy, ARegion.Proxy, ALifetime);
+  if AProxyClass = nil then
+    AProxyClass := TZwpConfinedPointerV1;
+  Result := TZwpConfinedPointerV1(AProxyClass.Create(id));
+  if not AProxyClass.InheritsFrom(TZwpConfinedPointerV1) then
+    Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TZwpConfinedPointerV1]);
 end;
 
-function  zwp_pointer_constraints_v1_add_listener(zwp_pointer_constraints_v1: Pzwp_pointer_constraints_v1; listener: Pzwp_pointer_constraints_v1_listener; data: Pointer): cint;
+function TZwpPointerConstraintsV1.AddListener(AIntf: IZwpPointerConstraintsV1Listener): LongInt;
 begin
-  Result := wl_proxy_add_listener(Pwl_proxy(zwp_pointer_constraints_v1), listener, data);
+  FUserDataRec.ListenerUserData := Pointer(AIntf);
+  Result := wl_proxy_add_listener(FProxy, @vIntf_zwp_pointer_constraints_v1_Listener, @FUserDataRec);
+end;
+destructor TZwpLockedPointerV1.Destroy;
+begin
+  wl_proxy_marshal(FProxy, _DESTROY);
+  inherited Destroy;
 end;
 
-procedure  zwp_pointer_constraints_v1_add_listener(zwp_pointer_constraints_v1: Pzwp_pointer_constraints_v1; AIntf: Izwp_pointer_constraints_v1Listener);
+procedure TZwpLockedPointerV1.SetCursorPositionHint(ASurfaceX: Longint{24.8}; ASurfaceY: Longint{24.8});
 begin
-  zwp_pointer_constraints_v1_add_listener(zwp_pointer_constraints_v1, @vIntf_zwp_pointer_constraints_v1_Listener, AIntf);
+  wl_proxy_marshal(FProxy, _SET_CURSOR_POSITION_HINT, ASurfaceX, ASurfaceY);
 end;
 
-procedure zwp_pointer_constraints_v1_set_user_data(zwp_pointer_constraints_v1: Pzwp_pointer_constraints_v1; user_data: Pointer);
+procedure TZwpLockedPointerV1.SetRegion(ARegion: TWlRegion);
 begin
-  wl_proxy_set_user_data(Pwl_proxy(zwp_pointer_constraints_v1), user_data);
+  wl_proxy_marshal(FProxy, _SET_REGION, ARegion.Proxy);
 end;
 
-function  zwp_pointer_constraints_v1_get_user_data(zwp_pointer_constraints_v1: Pzwp_pointer_constraints_v1): Pointer;
+function TZwpLockedPointerV1.AddListener(AIntf: IZwpLockedPointerV1Listener): LongInt;
 begin
-  Result := wl_proxy_get_user_data(Pwl_proxy(zwp_pointer_constraints_v1));
+  FUserDataRec.ListenerUserData := Pointer(AIntf);
+  Result := wl_proxy_add_listener(FProxy, @vIntf_zwp_locked_pointer_v1_Listener, @FUserDataRec);
+end;
+destructor TZwpConfinedPointerV1.Destroy;
+begin
+  wl_proxy_marshal(FProxy, _DESTROY);
+  inherited Destroy;
 end;
 
-function  zwp_pointer_constraints_v1_get_version(zwp_pointer_constraints_v1: Pzwp_pointer_constraints_v1): cuint32;
+procedure TZwpConfinedPointerV1.SetRegion(ARegion: TWlRegion);
 begin
-  Result := wl_proxy_get_version(Pwl_proxy(zwp_pointer_constraints_v1));
+  wl_proxy_marshal(FProxy, _SET_REGION, ARegion.Proxy);
 end;
 
-procedure zwp_locked_pointer_v1_destroy(zwp_locked_pointer_v1: Pzwp_locked_pointer_v1);
+function TZwpConfinedPointerV1.AddListener(AIntf: IZwpConfinedPointerV1Listener): LongInt;
 begin
-  wl_proxy_marshal(Pwl_proxy(zwp_locked_pointer_v1), _ZWP_LOCKED_POINTER_V1_DESTROY);
-  wl_proxy_destroy(Pwl_proxy(zwp_locked_pointer_v1));
-end;
-
-procedure zwp_locked_pointer_v1_set_cursor_position_hint(zwp_locked_pointer_v1: Pzwp_locked_pointer_v1; surface_x: cint32; surface_y: cint32);
-begin
-  wl_proxy_marshal(Pwl_proxy(zwp_locked_pointer_v1),
-      _ZWP_LOCKED_POINTER_V1_SET_CURSOR_POSITION_HINT, surface_x, surface_y);
-end;
-
-procedure zwp_locked_pointer_v1_set_region(zwp_locked_pointer_v1: Pzwp_locked_pointer_v1; region: Pwl_region);
-begin
-  wl_proxy_marshal(Pwl_proxy(zwp_locked_pointer_v1),
-      _ZWP_LOCKED_POINTER_V1_SET_REGION, region);
-end;
-
-function  zwp_locked_pointer_v1_add_listener(zwp_locked_pointer_v1: Pzwp_locked_pointer_v1; listener: Pzwp_locked_pointer_v1_listener; data: Pointer): cint;
-begin
-  Result := wl_proxy_add_listener(Pwl_proxy(zwp_locked_pointer_v1), listener, data);
-end;
-
-procedure  zwp_locked_pointer_v1_add_listener(zwp_locked_pointer_v1: Pzwp_locked_pointer_v1; AIntf: Izwp_locked_pointer_v1Listener);
-begin
-  zwp_locked_pointer_v1_add_listener(zwp_locked_pointer_v1, @vIntf_zwp_locked_pointer_v1_Listener, AIntf);
-end;
-
-procedure zwp_locked_pointer_v1_set_user_data(zwp_locked_pointer_v1: Pzwp_locked_pointer_v1; user_data: Pointer);
-begin
-  wl_proxy_set_user_data(Pwl_proxy(zwp_locked_pointer_v1), user_data);
-end;
-
-function  zwp_locked_pointer_v1_get_user_data(zwp_locked_pointer_v1: Pzwp_locked_pointer_v1): Pointer;
-begin
-  Result := wl_proxy_get_user_data(Pwl_proxy(zwp_locked_pointer_v1));
-end;
-
-function  zwp_locked_pointer_v1_get_version(zwp_locked_pointer_v1: Pzwp_locked_pointer_v1): cuint32;
-begin
-  Result := wl_proxy_get_version(Pwl_proxy(zwp_locked_pointer_v1));
-end;
-
-procedure zwp_confined_pointer_v1_destroy(zwp_confined_pointer_v1: Pzwp_confined_pointer_v1);
-begin
-  wl_proxy_marshal(Pwl_proxy(zwp_confined_pointer_v1), _ZWP_CONFINED_POINTER_V1_DESTROY);
-  wl_proxy_destroy(Pwl_proxy(zwp_confined_pointer_v1));
-end;
-
-procedure zwp_confined_pointer_v1_set_region(zwp_confined_pointer_v1: Pzwp_confined_pointer_v1; region: Pwl_region);
-begin
-  wl_proxy_marshal(Pwl_proxy(zwp_confined_pointer_v1),
-      _ZWP_CONFINED_POINTER_V1_SET_REGION, region);
-end;
-
-function  zwp_confined_pointer_v1_add_listener(zwp_confined_pointer_v1: Pzwp_confined_pointer_v1; listener: Pzwp_confined_pointer_v1_listener; data: Pointer): cint;
-begin
-  Result := wl_proxy_add_listener(Pwl_proxy(zwp_confined_pointer_v1), listener, data);
-end;
-
-procedure  zwp_confined_pointer_v1_add_listener(zwp_confined_pointer_v1: Pzwp_confined_pointer_v1; AIntf: Izwp_confined_pointer_v1Listener);
-begin
-  zwp_confined_pointer_v1_add_listener(zwp_confined_pointer_v1, @vIntf_zwp_confined_pointer_v1_Listener, AIntf);
-end;
-
-procedure zwp_confined_pointer_v1_set_user_data(zwp_confined_pointer_v1: Pzwp_confined_pointer_v1; user_data: Pointer);
-begin
-  wl_proxy_set_user_data(Pwl_proxy(zwp_confined_pointer_v1), user_data);
-end;
-
-function  zwp_confined_pointer_v1_get_user_data(zwp_confined_pointer_v1: Pzwp_confined_pointer_v1): Pointer;
-begin
-  Result := wl_proxy_get_user_data(Pwl_proxy(zwp_confined_pointer_v1));
-end;
-
-function  zwp_confined_pointer_v1_get_version(zwp_confined_pointer_v1: Pzwp_confined_pointer_v1): cuint32;
-begin
-  Result := wl_proxy_get_version(Pwl_proxy(zwp_confined_pointer_v1));
+  FUserDataRec.ListenerUserData := Pointer(AIntf);
+  Result := wl_proxy_add_listener(FProxy, @vIntf_zwp_confined_pointer_v1_Listener, @FUserDataRec);
 end;
 
 
-procedure zwp_locked_pointer_v1_locked_Intf(AIntf: Izwp_locked_pointer_v1Listener; zwp_locked_pointer_v1: Pzwp_locked_pointer_v1); cdecl;
+
+
+procedure zwp_locked_pointer_v1_locked_Intf(AData: PWLUserData; Azwp_locked_pointer_v1: Pzwp_locked_pointer_v1); cdecl;
+var
+  AIntf: IZwpLockedPointerV1Listener;
 begin
-  WriteLn('zwp_locked_pointer_v1.locked');
-  AIntf.zwp_locked_pointer_v1_locked(zwp_locked_pointer_v1);
+  if AData = nil then Exit;
+  AIntf := IZwpLockedPointerV1Listener(AData^.ListenerUserData);
+  AIntf.zwp_locked_pointer_v1_locked(TZwpLockedPointerV1(AData^.PascalObject));
 end;
 
-procedure zwp_locked_pointer_v1_unlocked_Intf(AIntf: Izwp_locked_pointer_v1Listener; zwp_locked_pointer_v1: Pzwp_locked_pointer_v1); cdecl;
+procedure zwp_locked_pointer_v1_unlocked_Intf(AData: PWLUserData; Azwp_locked_pointer_v1: Pzwp_locked_pointer_v1); cdecl;
+var
+  AIntf: IZwpLockedPointerV1Listener;
 begin
-  WriteLn('zwp_locked_pointer_v1.unlocked');
-  AIntf.zwp_locked_pointer_v1_unlocked(zwp_locked_pointer_v1);
+  if AData = nil then Exit;
+  AIntf := IZwpLockedPointerV1Listener(AData^.ListenerUserData);
+  AIntf.zwp_locked_pointer_v1_unlocked(TZwpLockedPointerV1(AData^.PascalObject));
 end;
 
-procedure zwp_confined_pointer_v1_confined_Intf(AIntf: Izwp_confined_pointer_v1Listener; zwp_confined_pointer_v1: Pzwp_confined_pointer_v1); cdecl;
+procedure zwp_confined_pointer_v1_confined_Intf(AData: PWLUserData; Azwp_confined_pointer_v1: Pzwp_confined_pointer_v1); cdecl;
+var
+  AIntf: IZwpConfinedPointerV1Listener;
 begin
-  WriteLn('zwp_confined_pointer_v1.confined');
-  AIntf.zwp_confined_pointer_v1_confined(zwp_confined_pointer_v1);
+  if AData = nil then Exit;
+  AIntf := IZwpConfinedPointerV1Listener(AData^.ListenerUserData);
+  AIntf.zwp_confined_pointer_v1_confined(TZwpConfinedPointerV1(AData^.PascalObject));
 end;
 
-procedure zwp_confined_pointer_v1_unconfined_Intf(AIntf: Izwp_confined_pointer_v1Listener; zwp_confined_pointer_v1: Pzwp_confined_pointer_v1); cdecl;
+procedure zwp_confined_pointer_v1_unconfined_Intf(AData: PWLUserData; Azwp_confined_pointer_v1: Pzwp_confined_pointer_v1); cdecl;
+var
+  AIntf: IZwpConfinedPointerV1Listener;
 begin
-  WriteLn('zwp_confined_pointer_v1.unconfined');
-  AIntf.zwp_confined_pointer_v1_unconfined(zwp_confined_pointer_v1);
+  if AData = nil then Exit;
+  AIntf := IZwpConfinedPointerV1Listener(AData^.ListenerUserData);
+  AIntf.zwp_confined_pointer_v1_unconfined(TZwpConfinedPointerV1(AData^.PascalObject));
 end;
 
 

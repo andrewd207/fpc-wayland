@@ -6,16 +6,13 @@ unit xdg_shell_unstable_v5_protocol;
 interface
 
 uses
-  ctypes, wayland_util, wayland_client_core, wayland_protocol;
+  Classes, Sysutils, ctypes, wayland_util, wayland_client_core, wayland_protocol;
 
 
 type
-  Pxdg_shell = ^Txdg_shell;
-  Txdg_shell = record end;
-  Pxdg_surface = ^Txdg_surface;
-  Txdg_surface = record end;
-  Pxdg_popup = ^Txdg_popup;
-  Txdg_popup = record end;
+  Pxdg_shell = Pointer;
+  Pxdg_surface = Pointer;
+  Pxdg_popup = Pointer;
 const
   XDG_SHELL_VERSION_CURRENT = 5; // Always the latest version
   XDG_SHELL_ERROR_ROLE = 0; // given wl_surface has another role
@@ -26,7 +23,7 @@ const
 type
   Pxdg_shell_listener = ^Txdg_shell_listener;
   Txdg_shell_listener = record
-    ping : procedure(data: Pointer; xdg_shell: Pxdg_shell; serial: cuint); cdecl;
+    ping : procedure(data: Pointer; AXdgShell: Pxdg_shell; ASerial: DWord); cdecl;
   end;
 
 const
@@ -47,70 +44,101 @@ const
 type
   Pxdg_surface_listener = ^Txdg_surface_listener;
   Txdg_surface_listener = record
-    configure : procedure(data: Pointer; xdg_surface: Pxdg_surface; width: cint; height: cint; states: Pwl_array; serial: cuint); cdecl;
-    close : procedure(data: Pointer; xdg_surface: Pxdg_surface); cdecl;
+    configure : procedure(data: Pointer; AXdgSurface: Pxdg_surface; AWidth: LongInt; AHeight: LongInt; AStates: Pwl_array; ASerial: DWord); cdecl;
+    close : procedure(data: Pointer; AXdgSurface: Pxdg_surface); cdecl;
   end;
 
   Pxdg_popup_listener = ^Txdg_popup_listener;
   Txdg_popup_listener = record
-    popup_done : procedure(data: Pointer; xdg_popup: Pxdg_popup); cdecl;
+    popup_done : procedure(data: Pointer; AXdgPopup: Pxdg_popup); cdecl;
   end;
 
 
 
-  Ixdg_shellListener = interface
-  ['Ixdg_shellListener']
-    procedure xdg_shell_ping(xdg_shell: Pxdg_shell; serial: cuint);
+  TXdgShell = class;
+  TXdgSurface = class;
+  TXdgPopup = class;
+
+
+  IXdgShellListener = interface
+  ['IXdgShellListener']
+    procedure xdg_shell_ping(AXdgShell: TXdgShell; ASerial: DWord);
   end;
 
-  Ixdg_surfaceListener = interface
-  ['Ixdg_surfaceListener']
-    procedure xdg_surface_configure(xdg_surface: Pxdg_surface; width: cint; height: cint; states: Pwl_array; serial: cuint);
-    procedure xdg_surface_close(xdg_surface: Pxdg_surface);
+  IXdgSurfaceListener = interface
+  ['IXdgSurfaceListener']
+    procedure xdg_surface_configure(AXdgSurface: TXdgSurface; AWidth: LongInt; AHeight: LongInt; AStates: Pwl_array; ASerial: DWord);
+    procedure xdg_surface_close(AXdgSurface: TXdgSurface);
   end;
 
-  Ixdg_popupListener = interface
-  ['Ixdg_popupListener']
-    procedure xdg_popup_popup_done(xdg_popup: Pxdg_popup);
+  IXdgPopupListener = interface
+  ['IXdgPopupListener']
+    procedure xdg_popup_popup_done(AXdgPopup: TXdgPopup);
   end;
 
 
 
-procedure xdg_shell_destroy(xdg_shell: Pxdg_shell);
-procedure xdg_shell_use_unstable_version(xdg_shell: Pxdg_shell; version: cint);
-function  xdg_shell_get_xdg_surface(xdg_shell: Pxdg_shell; surface: Pwl_surface): Pxdg_surface;
-function  xdg_shell_get_xdg_popup(xdg_shell: Pxdg_shell; surface: Pwl_surface; parent: Pwl_surface; seat: Pwl_seat; serial: cuint; x: cint; y: cint): Pxdg_popup;
-procedure xdg_shell_pong(xdg_shell: Pxdg_shell; serial: cuint);
-function  xdg_shell_add_listener(xdg_shell: Pxdg_shell; listener: Pxdg_shell_listener; data: Pointer): cint;
-procedure  xdg_shell_add_listener(xdg_shell: Pxdg_shell; AIntf: Ixdg_shellListener);
-procedure xdg_shell_set_user_data(xdg_shell: Pxdg_shell; user_data: Pointer);
-function  xdg_shell_get_user_data(xdg_shell: Pxdg_shell): Pointer;
-function  xdg_shell_get_version(xdg_shell: Pxdg_shell): cuint32;
-procedure xdg_surface_destroy(xdg_surface: Pxdg_surface);
-procedure xdg_surface_set_parent(xdg_surface: Pxdg_surface; parent: Pxdg_surface);
-procedure xdg_surface_set_title(xdg_surface: Pxdg_surface; title: pchar);
-procedure xdg_surface_set_app_id(xdg_surface: Pxdg_surface; app_id: pchar);
-procedure xdg_surface_show_window_menu(xdg_surface: Pxdg_surface; seat: Pwl_seat; serial: cuint; x: cint; y: cint);
-procedure xdg_surface_move(xdg_surface: Pxdg_surface; seat: Pwl_seat; serial: cuint);
-procedure xdg_surface_resize(xdg_surface: Pxdg_surface; seat: Pwl_seat; serial: cuint; edges: cuint);
-procedure xdg_surface_ack_configure(xdg_surface: Pxdg_surface; serial: cuint);
-procedure xdg_surface_set_window_geometry(xdg_surface: Pxdg_surface; x: cint; y: cint; width: cint; height: cint);
-procedure xdg_surface_set_maximized(xdg_surface: Pxdg_surface);
-procedure xdg_surface_unset_maximized(xdg_surface: Pxdg_surface);
-procedure xdg_surface_set_fullscreen(xdg_surface: Pxdg_surface; output: Pwl_output);
-procedure xdg_surface_unset_fullscreen(xdg_surface: Pxdg_surface);
-procedure xdg_surface_set_minimized(xdg_surface: Pxdg_surface);
-function  xdg_surface_add_listener(xdg_surface: Pxdg_surface; listener: Pxdg_surface_listener; data: Pointer): cint;
-procedure  xdg_surface_add_listener(xdg_surface: Pxdg_surface; AIntf: Ixdg_surfaceListener);
-procedure xdg_surface_set_user_data(xdg_surface: Pxdg_surface; user_data: Pointer);
-function  xdg_surface_get_user_data(xdg_surface: Pxdg_surface): Pointer;
-function  xdg_surface_get_version(xdg_surface: Pxdg_surface): cuint32;
-procedure xdg_popup_destroy(xdg_popup: Pxdg_popup);
-function  xdg_popup_add_listener(xdg_popup: Pxdg_popup; listener: Pxdg_popup_listener; data: Pointer): cint;
-procedure  xdg_popup_add_listener(xdg_popup: Pxdg_popup; AIntf: Ixdg_popupListener);
-procedure xdg_popup_set_user_data(xdg_popup: Pxdg_popup; user_data: Pointer);
-function  xdg_popup_get_user_data(xdg_popup: Pxdg_popup): Pointer;
-function  xdg_popup_get_version(xdg_popup: Pxdg_popup): cuint32;
+
+  TXdgShell = class(TWLProxyObject)
+  private
+    const _DESTROY = 0;
+    const _USE_UNSTABLE_VERSION = 1;
+    const _GET_XDG_SURFACE = 2;
+    const _GET_XDG_POPUP = 3;
+    const _PONG = 4;
+  public
+    destructor Destroy; override;
+    procedure UseUnstableVersion(AVersion: LongInt);
+    function GetXdgSurface(ASurface: TWlSurface; AProxyClass: TWLProxyObjectClass = nil {TXdgSurface}): TXdgSurface;
+    function GetXdgPopup(ASurface: TWlSurface; AParent: TWlSurface; ASeat: TWlSeat; ASerial: DWord; AX: LongInt; AY: LongInt; AProxyClass: TWLProxyObjectClass = nil {TXdgPopup}): TXdgPopup;
+    procedure Pong(ASerial: DWord);
+    function AddListener(AIntf: IXdgShellListener): LongInt;
+  end;
+
+  TXdgSurface = class(TWLProxyObject)
+  private
+    const _DESTROY = 0;
+    const _SET_PARENT = 1;
+    const _SET_TITLE = 2;
+    const _SET_APP_ID = 3;
+    const _SHOW_WINDOW_MENU = 4;
+    const _MOVE = 5;
+    const _RESIZE = 6;
+    const _ACK_CONFIGURE = 7;
+    const _SET_WINDOW_GEOMETRY = 8;
+    const _SET_MAXIMIZED = 9;
+    const _UNSET_MAXIMIZED = 10;
+    const _SET_FULLSCREEN = 11;
+    const _UNSET_FULLSCREEN = 12;
+    const _SET_MINIMIZED = 13;
+  public
+    destructor Destroy; override;
+    procedure SetParent(AParent: TXdgSurface);
+    procedure SetTitle(ATitle: String);
+    procedure SetAppId(AAppId: String);
+    procedure ShowWindowMenu(ASeat: TWlSeat; ASerial: DWord; AX: LongInt; AY: LongInt);
+    procedure Move(ASeat: TWlSeat; ASerial: DWord);
+    procedure Resize(ASeat: TWlSeat; ASerial: DWord; AEdges: DWord);
+    procedure AckConfigure(ASerial: DWord);
+    procedure SetWindowGeometry(AX: LongInt; AY: LongInt; AWidth: LongInt; AHeight: LongInt);
+    procedure SetMaximized;
+    procedure UnsetMaximized;
+    procedure SetFullscreen(AOutput: TWlOutput);
+    procedure UnsetFullscreen;
+    procedure SetMinimized;
+    function AddListener(AIntf: IXdgSurfaceListener): LongInt;
+  end;
+
+  TXdgPopup = class(TWLProxyObject)
+  private
+    const _DESTROY = 0;
+  public
+    destructor Destroy; override;
+    function AddListener(AIntf: IXdgPopupListener): LongInt;
+  end;
+
+
+
 
 
 
@@ -123,29 +151,6 @@ var
 
 implementation
 
-const
-_XDG_SHELL_DESTROY = 0;
-_XDG_SHELL_USE_UNSTABLE_VERSION = 1;
-_XDG_SHELL_GET_XDG_SURFACE = 2;
-_XDG_SHELL_GET_XDG_POPUP = 3;
-_XDG_SHELL_PONG = 4;
-_XDG_SURFACE_DESTROY = 0;
-_XDG_SURFACE_SET_PARENT = 1;
-_XDG_SURFACE_SET_TITLE = 2;
-_XDG_SURFACE_SET_APP_ID = 3;
-_XDG_SURFACE_SHOW_WINDOW_MENU = 4;
-_XDG_SURFACE_MOVE = 5;
-_XDG_SURFACE_RESIZE = 6;
-_XDG_SURFACE_ACK_CONFIGURE = 7;
-_XDG_SURFACE_SET_WINDOW_GEOMETRY = 8;
-_XDG_SURFACE_SET_MAXIMIZED = 9;
-_XDG_SURFACE_UNSET_MAXIMIZED = 10;
-_XDG_SURFACE_SET_FULLSCREEN = 11;
-_XDG_SURFACE_UNSET_FULLSCREEN = 12;
-_XDG_SURFACE_SET_MINIMIZED = 13;
-_XDG_POPUP_DESTROY = 0;
-
-
 var
   vIntf_xdg_shell_Listener: Txdg_shell_listener;
   vIntf_xdg_surface_Listener: Txdg_surface_listener;
@@ -153,230 +158,178 @@ var
 
 
 
-procedure xdg_shell_destroy(xdg_shell: Pxdg_shell);
+destructor TXdgShell.Destroy;
 begin
-  wl_proxy_marshal(Pwl_proxy(xdg_shell), _XDG_SHELL_DESTROY);
-  wl_proxy_destroy(Pwl_proxy(xdg_shell));
+  wl_proxy_marshal(FProxy, _DESTROY);
+  inherited Destroy;
 end;
 
-procedure xdg_shell_use_unstable_version(xdg_shell: Pxdg_shell; version: cint);
+procedure TXdgShell.UseUnstableVersion(AVersion: LongInt);
 begin
-  wl_proxy_marshal(Pwl_proxy(xdg_shell),
-      _XDG_SHELL_USE_UNSTABLE_VERSION, version);
+  wl_proxy_marshal(FProxy, _USE_UNSTABLE_VERSION, AVersion);
 end;
 
-function  xdg_shell_get_xdg_surface(xdg_shell: Pxdg_shell; surface: Pwl_surface): Pxdg_surface;
+function TXdgShell.GetXdgSurface(ASurface: TWlSurface; AProxyClass: TWLProxyObjectClass = nil {TXdgSurface}): TXdgSurface;
 var
   id: Pwl_proxy;
 begin
-  id := wl_proxy_marshal_constructor(Pwl_proxy(xdg_shell),
-      _XDG_SHELL_GET_XDG_SURFACE, @xdg_surface_interface, nil, surface);
-  Result := Pxdg_surface(id);
+  id := wl_proxy_marshal_constructor(FProxy,
+      _GET_XDG_SURFACE, @xdg_surface_interface, nil, ASurface.Proxy);
+  if AProxyClass = nil then
+    AProxyClass := TXdgSurface;
+  Result := TXdgSurface(AProxyClass.Create(id));
+  if not AProxyClass.InheritsFrom(TXdgSurface) then
+    Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TXdgSurface]);
 end;
 
-function  xdg_shell_get_xdg_popup(xdg_shell: Pxdg_shell; surface: Pwl_surface; parent: Pwl_surface; seat: Pwl_seat; serial: cuint; x: cint; y: cint): Pxdg_popup;
+function TXdgShell.GetXdgPopup(ASurface: TWlSurface; AParent: TWlSurface; ASeat: TWlSeat; ASerial: DWord; AX: LongInt; AY: LongInt; AProxyClass: TWLProxyObjectClass = nil {TXdgPopup}): TXdgPopup;
 var
   id: Pwl_proxy;
 begin
-  id := wl_proxy_marshal_constructor(Pwl_proxy(xdg_shell),
-      _XDG_SHELL_GET_XDG_POPUP, @xdg_popup_interface, nil, surface, parent, seat, serial, x, y);
-  Result := Pxdg_popup(id);
+  id := wl_proxy_marshal_constructor(FProxy,
+      _GET_XDG_POPUP, @xdg_popup_interface, nil, ASurface.Proxy, AParent.Proxy, ASeat.Proxy, ASerial, AX, AY);
+  if AProxyClass = nil then
+    AProxyClass := TXdgPopup;
+  Result := TXdgPopup(AProxyClass.Create(id));
+  if not AProxyClass.InheritsFrom(TXdgPopup) then
+    Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TXdgPopup]);
 end;
 
-procedure xdg_shell_pong(xdg_shell: Pxdg_shell; serial: cuint);
+procedure TXdgShell.Pong(ASerial: DWord);
 begin
-  wl_proxy_marshal(Pwl_proxy(xdg_shell),
-      _XDG_SHELL_PONG, serial);
+  wl_proxy_marshal(FProxy, _PONG, ASerial);
 end;
 
-function  xdg_shell_add_listener(xdg_shell: Pxdg_shell; listener: Pxdg_shell_listener; data: Pointer): cint;
+function TXdgShell.AddListener(AIntf: IXdgShellListener): LongInt;
 begin
-  Result := wl_proxy_add_listener(Pwl_proxy(xdg_shell), listener, data);
+  FUserDataRec.ListenerUserData := Pointer(AIntf);
+  Result := wl_proxy_add_listener(FProxy, @vIntf_xdg_shell_Listener, @FUserDataRec);
+end;
+destructor TXdgSurface.Destroy;
+begin
+  wl_proxy_marshal(FProxy, _DESTROY);
+  inherited Destroy;
 end;
 
-procedure  xdg_shell_add_listener(xdg_shell: Pxdg_shell; AIntf: Ixdg_shellListener);
+procedure TXdgSurface.SetParent(AParent: TXdgSurface);
 begin
-  xdg_shell_add_listener(xdg_shell, @vIntf_xdg_shell_Listener, AIntf);
+  wl_proxy_marshal(FProxy, _SET_PARENT, AParent.Proxy);
 end;
 
-procedure xdg_shell_set_user_data(xdg_shell: Pxdg_shell; user_data: Pointer);
+procedure TXdgSurface.SetTitle(ATitle: String);
 begin
-  wl_proxy_set_user_data(Pwl_proxy(xdg_shell), user_data);
+  wl_proxy_marshal(FProxy, _SET_TITLE, PChar(ATitle));
 end;
 
-function  xdg_shell_get_user_data(xdg_shell: Pxdg_shell): Pointer;
+procedure TXdgSurface.SetAppId(AAppId: String);
 begin
-  Result := wl_proxy_get_user_data(Pwl_proxy(xdg_shell));
+  wl_proxy_marshal(FProxy, _SET_APP_ID, PChar(AAppId));
 end;
 
-function  xdg_shell_get_version(xdg_shell: Pxdg_shell): cuint32;
+procedure TXdgSurface.ShowWindowMenu(ASeat: TWlSeat; ASerial: DWord; AX: LongInt; AY: LongInt);
 begin
-  Result := wl_proxy_get_version(Pwl_proxy(xdg_shell));
+  wl_proxy_marshal(FProxy, _SHOW_WINDOW_MENU, ASeat.Proxy, ASerial, AX, AY);
 end;
 
-procedure xdg_surface_destroy(xdg_surface: Pxdg_surface);
+procedure TXdgSurface.Move(ASeat: TWlSeat; ASerial: DWord);
 begin
-  wl_proxy_marshal(Pwl_proxy(xdg_surface), _XDG_SURFACE_DESTROY);
-  wl_proxy_destroy(Pwl_proxy(xdg_surface));
+  wl_proxy_marshal(FProxy, _MOVE, ASeat.Proxy, ASerial);
 end;
 
-procedure xdg_surface_set_parent(xdg_surface: Pxdg_surface; parent: Pxdg_surface);
+procedure TXdgSurface.Resize(ASeat: TWlSeat; ASerial: DWord; AEdges: DWord);
 begin
-  wl_proxy_marshal(Pwl_proxy(xdg_surface),
-      _XDG_SURFACE_SET_PARENT, parent);
+  wl_proxy_marshal(FProxy, _RESIZE, ASeat.Proxy, ASerial, AEdges);
 end;
 
-procedure xdg_surface_set_title(xdg_surface: Pxdg_surface; title: pchar);
+procedure TXdgSurface.AckConfigure(ASerial: DWord);
 begin
-  wl_proxy_marshal(Pwl_proxy(xdg_surface),
-      _XDG_SURFACE_SET_TITLE, title);
+  wl_proxy_marshal(FProxy, _ACK_CONFIGURE, ASerial);
 end;
 
-procedure xdg_surface_set_app_id(xdg_surface: Pxdg_surface; app_id: pchar);
+procedure TXdgSurface.SetWindowGeometry(AX: LongInt; AY: LongInt; AWidth: LongInt; AHeight: LongInt);
 begin
-  wl_proxy_marshal(Pwl_proxy(xdg_surface),
-      _XDG_SURFACE_SET_APP_ID, app_id);
+  wl_proxy_marshal(FProxy, _SET_WINDOW_GEOMETRY, AX, AY, AWidth, AHeight);
 end;
 
-procedure xdg_surface_show_window_menu(xdg_surface: Pxdg_surface; seat: Pwl_seat; serial: cuint; x: cint; y: cint);
+procedure TXdgSurface.SetMaximized;
 begin
-  wl_proxy_marshal(Pwl_proxy(xdg_surface),
-      _XDG_SURFACE_SHOW_WINDOW_MENU, seat, serial, x, y);
+  wl_proxy_marshal(FProxy, _SET_MAXIMIZED);
 end;
 
-procedure xdg_surface_move(xdg_surface: Pxdg_surface; seat: Pwl_seat; serial: cuint);
+procedure TXdgSurface.UnsetMaximized;
 begin
-  wl_proxy_marshal(Pwl_proxy(xdg_surface),
-      _XDG_SURFACE_MOVE, seat, serial);
+  wl_proxy_marshal(FProxy, _UNSET_MAXIMIZED);
 end;
 
-procedure xdg_surface_resize(xdg_surface: Pxdg_surface; seat: Pwl_seat; serial: cuint; edges: cuint);
+procedure TXdgSurface.SetFullscreen(AOutput: TWlOutput);
 begin
-  wl_proxy_marshal(Pwl_proxy(xdg_surface),
-      _XDG_SURFACE_RESIZE, seat, serial, edges);
+  wl_proxy_marshal(FProxy, _SET_FULLSCREEN, AOutput.Proxy);
 end;
 
-procedure xdg_surface_ack_configure(xdg_surface: Pxdg_surface; serial: cuint);
+procedure TXdgSurface.UnsetFullscreen;
 begin
-  wl_proxy_marshal(Pwl_proxy(xdg_surface),
-      _XDG_SURFACE_ACK_CONFIGURE, serial);
+  wl_proxy_marshal(FProxy, _UNSET_FULLSCREEN);
 end;
 
-procedure xdg_surface_set_window_geometry(xdg_surface: Pxdg_surface; x: cint; y: cint; width: cint; height: cint);
+procedure TXdgSurface.SetMinimized;
 begin
-  wl_proxy_marshal(Pwl_proxy(xdg_surface),
-      _XDG_SURFACE_SET_WINDOW_GEOMETRY, x, y, width, height);
+  wl_proxy_marshal(FProxy, _SET_MINIMIZED);
 end;
 
-procedure xdg_surface_set_maximized(xdg_surface: Pxdg_surface);
+function TXdgSurface.AddListener(AIntf: IXdgSurfaceListener): LongInt;
 begin
-  wl_proxy_marshal(Pwl_proxy(xdg_surface),
-      _XDG_SURFACE_SET_MAXIMIZED);
+  FUserDataRec.ListenerUserData := Pointer(AIntf);
+  Result := wl_proxy_add_listener(FProxy, @vIntf_xdg_surface_Listener, @FUserDataRec);
+end;
+destructor TXdgPopup.Destroy;
+begin
+  wl_proxy_marshal(FProxy, _DESTROY);
+  inherited Destroy;
 end;
 
-procedure xdg_surface_unset_maximized(xdg_surface: Pxdg_surface);
+function TXdgPopup.AddListener(AIntf: IXdgPopupListener): LongInt;
 begin
-  wl_proxy_marshal(Pwl_proxy(xdg_surface),
-      _XDG_SURFACE_UNSET_MAXIMIZED);
-end;
-
-procedure xdg_surface_set_fullscreen(xdg_surface: Pxdg_surface; output: Pwl_output);
-begin
-  wl_proxy_marshal(Pwl_proxy(xdg_surface),
-      _XDG_SURFACE_SET_FULLSCREEN, output);
-end;
-
-procedure xdg_surface_unset_fullscreen(xdg_surface: Pxdg_surface);
-begin
-  wl_proxy_marshal(Pwl_proxy(xdg_surface),
-      _XDG_SURFACE_UNSET_FULLSCREEN);
-end;
-
-procedure xdg_surface_set_minimized(xdg_surface: Pxdg_surface);
-begin
-  wl_proxy_marshal(Pwl_proxy(xdg_surface),
-      _XDG_SURFACE_SET_MINIMIZED);
-end;
-
-function  xdg_surface_add_listener(xdg_surface: Pxdg_surface; listener: Pxdg_surface_listener; data: Pointer): cint;
-begin
-  Result := wl_proxy_add_listener(Pwl_proxy(xdg_surface), listener, data);
-end;
-
-procedure  xdg_surface_add_listener(xdg_surface: Pxdg_surface; AIntf: Ixdg_surfaceListener);
-begin
-  xdg_surface_add_listener(xdg_surface, @vIntf_xdg_surface_Listener, AIntf);
-end;
-
-procedure xdg_surface_set_user_data(xdg_surface: Pxdg_surface; user_data: Pointer);
-begin
-  wl_proxy_set_user_data(Pwl_proxy(xdg_surface), user_data);
-end;
-
-function  xdg_surface_get_user_data(xdg_surface: Pxdg_surface): Pointer;
-begin
-  Result := wl_proxy_get_user_data(Pwl_proxy(xdg_surface));
-end;
-
-function  xdg_surface_get_version(xdg_surface: Pxdg_surface): cuint32;
-begin
-  Result := wl_proxy_get_version(Pwl_proxy(xdg_surface));
-end;
-
-procedure xdg_popup_destroy(xdg_popup: Pxdg_popup);
-begin
-  wl_proxy_marshal(Pwl_proxy(xdg_popup), _XDG_POPUP_DESTROY);
-  wl_proxy_destroy(Pwl_proxy(xdg_popup));
-end;
-
-function  xdg_popup_add_listener(xdg_popup: Pxdg_popup; listener: Pxdg_popup_listener; data: Pointer): cint;
-begin
-  Result := wl_proxy_add_listener(Pwl_proxy(xdg_popup), listener, data);
-end;
-
-procedure  xdg_popup_add_listener(xdg_popup: Pxdg_popup; AIntf: Ixdg_popupListener);
-begin
-  xdg_popup_add_listener(xdg_popup, @vIntf_xdg_popup_Listener, AIntf);
-end;
-
-procedure xdg_popup_set_user_data(xdg_popup: Pxdg_popup; user_data: Pointer);
-begin
-  wl_proxy_set_user_data(Pwl_proxy(xdg_popup), user_data);
-end;
-
-function  xdg_popup_get_user_data(xdg_popup: Pxdg_popup): Pointer;
-begin
-  Result := wl_proxy_get_user_data(Pwl_proxy(xdg_popup));
-end;
-
-function  xdg_popup_get_version(xdg_popup: Pxdg_popup): cuint32;
-begin
-  Result := wl_proxy_get_version(Pwl_proxy(xdg_popup));
+  FUserDataRec.ListenerUserData := Pointer(AIntf);
+  Result := wl_proxy_add_listener(FProxy, @vIntf_xdg_popup_Listener, @FUserDataRec);
 end;
 
 
-procedure xdg_shell_ping_Intf(AIntf: Ixdg_shellListener; xdg_shell: Pxdg_shell; serial: cuint); cdecl;
+
+
+procedure xdg_shell_ping_Intf(AData: PWLUserData; Axdg_shell: Pxdg_shell; ASerial: DWord); cdecl;
+var
+  AIntf: IXdgShellListener;
 begin
-  WriteLn('xdg_shell.ping');
-  AIntf.xdg_shell_ping(xdg_shell, serial);
+  if AData = nil then Exit;
+  AIntf := IXdgShellListener(AData^.ListenerUserData);
+  AIntf.xdg_shell_ping(TXdgShell(AData^.PascalObject), ASerial);
 end;
 
-procedure xdg_surface_configure_Intf(AIntf: Ixdg_surfaceListener; xdg_surface: Pxdg_surface; width: cint; height: cint; states: Pwl_array; serial: cuint); cdecl;
+procedure xdg_surface_configure_Intf(AData: PWLUserData; Axdg_surface: Pxdg_surface; AWidth: LongInt; AHeight: LongInt; AStates: Pwl_array; ASerial: DWord); cdecl;
+var
+  AIntf: IXdgSurfaceListener;
 begin
-  WriteLn('xdg_surface.configure');
-  AIntf.xdg_surface_configure(xdg_surface, width, height, states, serial);
+  if AData = nil then Exit;
+  AIntf := IXdgSurfaceListener(AData^.ListenerUserData);
+  AIntf.xdg_surface_configure(TXdgSurface(AData^.PascalObject), AWidth, AHeight, AStates, ASerial);
 end;
 
-procedure xdg_surface_close_Intf(AIntf: Ixdg_surfaceListener; xdg_surface: Pxdg_surface); cdecl;
+procedure xdg_surface_close_Intf(AData: PWLUserData; Axdg_surface: Pxdg_surface); cdecl;
+var
+  AIntf: IXdgSurfaceListener;
 begin
-  WriteLn('xdg_surface.close');
-  AIntf.xdg_surface_close(xdg_surface);
+  if AData = nil then Exit;
+  AIntf := IXdgSurfaceListener(AData^.ListenerUserData);
+  AIntf.xdg_surface_close(TXdgSurface(AData^.PascalObject));
 end;
 
-procedure xdg_popup_popup_done_Intf(AIntf: Ixdg_popupListener; xdg_popup: Pxdg_popup); cdecl;
+procedure xdg_popup_popup_done_Intf(AData: PWLUserData; Axdg_popup: Pxdg_popup); cdecl;
+var
+  AIntf: IXdgPopupListener;
 begin
-  WriteLn('xdg_popup.popup_done');
-  AIntf.xdg_popup_popup_done(xdg_popup);
+  if AData = nil then Exit;
+  AIntf := IXdgPopupListener(AData^.ListenerUserData);
+  AIntf.xdg_popup_popup_done(TXdgPopup(AData^.PascalObject));
 end;
 
 

@@ -6,14 +6,12 @@ unit keyboard_shortcuts_inhibit_unstable_v1_protocol;
 interface
 
 uses
-  ctypes, wayland_util, wayland_client_core, wayland_protocol;
+  Classes, Sysutils, ctypes, wayland_util, wayland_client_core, wayland_protocol;
 
 
 type
-  Pzwp_keyboard_shortcuts_inhibit_manager_v1 = ^Tzwp_keyboard_shortcuts_inhibit_manager_v1;
-  Tzwp_keyboard_shortcuts_inhibit_manager_v1 = record end;
-  Pzwp_keyboard_shortcuts_inhibitor_v1 = ^Tzwp_keyboard_shortcuts_inhibitor_v1;
-  Tzwp_keyboard_shortcuts_inhibitor_v1 = record end;
+  Pzwp_keyboard_shortcuts_inhibit_manager_v1 = Pointer;
+  Pzwp_keyboard_shortcuts_inhibitor_v1 = Pointer;
 const
   ZWP_KEYBOARD_SHORTCUTS_INHIBIT_MANAGER_V1_ERROR_ALREADY_INHIBITED = 0; // the shortcuts are already inhibited for this surface
 
@@ -24,37 +22,49 @@ type
 
   Pzwp_keyboard_shortcuts_inhibitor_v1_listener = ^Tzwp_keyboard_shortcuts_inhibitor_v1_listener;
   Tzwp_keyboard_shortcuts_inhibitor_v1_listener = record
-    active : procedure(data: Pointer; zwp_keyboard_shortcuts_inhibitor_v1: Pzwp_keyboard_shortcuts_inhibitor_v1); cdecl;
-    inactive : procedure(data: Pointer; zwp_keyboard_shortcuts_inhibitor_v1: Pzwp_keyboard_shortcuts_inhibitor_v1); cdecl;
+    active : procedure(data: Pointer; AZwpKeyboardShortcutsInhibitorV1: Pzwp_keyboard_shortcuts_inhibitor_v1); cdecl;
+    inactive : procedure(data: Pointer; AZwpKeyboardShortcutsInhibitorV1: Pzwp_keyboard_shortcuts_inhibitor_v1); cdecl;
   end;
 
 
 
-  Izwp_keyboard_shortcuts_inhibit_manager_v1Listener = interface
-  ['Izwp_keyboard_shortcuts_inhibit_manager_v1Listener']
+  TZwpKeyboardShortcutsInhibitManagerV1 = class;
+  TZwpKeyboardShortcutsInhibitorV1 = class;
+
+
+  IZwpKeyboardShortcutsInhibitManagerV1Listener = interface
+  ['IZwpKeyboardShortcutsInhibitManagerV1Listener']
   end;
 
-  Izwp_keyboard_shortcuts_inhibitor_v1Listener = interface
-  ['Izwp_keyboard_shortcuts_inhibitor_v1Listener']
-    procedure zwp_keyboard_shortcuts_inhibitor_v1_active(zwp_keyboard_shortcuts_inhibitor_v1: Pzwp_keyboard_shortcuts_inhibitor_v1);
-    procedure zwp_keyboard_shortcuts_inhibitor_v1_inactive(zwp_keyboard_shortcuts_inhibitor_v1: Pzwp_keyboard_shortcuts_inhibitor_v1);
+  IZwpKeyboardShortcutsInhibitorV1Listener = interface
+  ['IZwpKeyboardShortcutsInhibitorV1Listener']
+    procedure zwp_keyboard_shortcuts_inhibitor_v1_active(AZwpKeyboardShortcutsInhibitorV1: TZwpKeyboardShortcutsInhibitorV1);
+    procedure zwp_keyboard_shortcuts_inhibitor_v1_inactive(AZwpKeyboardShortcutsInhibitorV1: TZwpKeyboardShortcutsInhibitorV1);
   end;
 
 
 
-procedure zwp_keyboard_shortcuts_inhibit_manager_v1_destroy(zwp_keyboard_shortcuts_inhibit_manager_v1: Pzwp_keyboard_shortcuts_inhibit_manager_v1);
-function  zwp_keyboard_shortcuts_inhibit_manager_v1_inhibit_shortcuts(zwp_keyboard_shortcuts_inhibit_manager_v1: Pzwp_keyboard_shortcuts_inhibit_manager_v1; surface: Pwl_surface; seat: Pwl_seat): Pzwp_keyboard_shortcuts_inhibitor_v1;
-function  zwp_keyboard_shortcuts_inhibit_manager_v1_add_listener(zwp_keyboard_shortcuts_inhibit_manager_v1: Pzwp_keyboard_shortcuts_inhibit_manager_v1; listener: Pzwp_keyboard_shortcuts_inhibit_manager_v1_listener; data: Pointer): cint;
-procedure  zwp_keyboard_shortcuts_inhibit_manager_v1_add_listener(zwp_keyboard_shortcuts_inhibit_manager_v1: Pzwp_keyboard_shortcuts_inhibit_manager_v1; AIntf: Izwp_keyboard_shortcuts_inhibit_manager_v1Listener);
-procedure zwp_keyboard_shortcuts_inhibit_manager_v1_set_user_data(zwp_keyboard_shortcuts_inhibit_manager_v1: Pzwp_keyboard_shortcuts_inhibit_manager_v1; user_data: Pointer);
-function  zwp_keyboard_shortcuts_inhibit_manager_v1_get_user_data(zwp_keyboard_shortcuts_inhibit_manager_v1: Pzwp_keyboard_shortcuts_inhibit_manager_v1): Pointer;
-function  zwp_keyboard_shortcuts_inhibit_manager_v1_get_version(zwp_keyboard_shortcuts_inhibit_manager_v1: Pzwp_keyboard_shortcuts_inhibit_manager_v1): cuint32;
-procedure zwp_keyboard_shortcuts_inhibitor_v1_destroy(zwp_keyboard_shortcuts_inhibitor_v1: Pzwp_keyboard_shortcuts_inhibitor_v1);
-function  zwp_keyboard_shortcuts_inhibitor_v1_add_listener(zwp_keyboard_shortcuts_inhibitor_v1: Pzwp_keyboard_shortcuts_inhibitor_v1; listener: Pzwp_keyboard_shortcuts_inhibitor_v1_listener; data: Pointer): cint;
-procedure  zwp_keyboard_shortcuts_inhibitor_v1_add_listener(zwp_keyboard_shortcuts_inhibitor_v1: Pzwp_keyboard_shortcuts_inhibitor_v1; AIntf: Izwp_keyboard_shortcuts_inhibitor_v1Listener);
-procedure zwp_keyboard_shortcuts_inhibitor_v1_set_user_data(zwp_keyboard_shortcuts_inhibitor_v1: Pzwp_keyboard_shortcuts_inhibitor_v1; user_data: Pointer);
-function  zwp_keyboard_shortcuts_inhibitor_v1_get_user_data(zwp_keyboard_shortcuts_inhibitor_v1: Pzwp_keyboard_shortcuts_inhibitor_v1): Pointer;
-function  zwp_keyboard_shortcuts_inhibitor_v1_get_version(zwp_keyboard_shortcuts_inhibitor_v1: Pzwp_keyboard_shortcuts_inhibitor_v1): cuint32;
+
+  TZwpKeyboardShortcutsInhibitManagerV1 = class(TWLProxyObject)
+  private
+    const _DESTROY = 0;
+    const _INHIBIT_SHORTCUTS = 1;
+  public
+    destructor Destroy; override;
+    function InhibitShortcuts(ASurface: TWlSurface; ASeat: TWlSeat; AProxyClass: TWLProxyObjectClass = nil {TZwpKeyboardShortcutsInhibitorV1}): TZwpKeyboardShortcutsInhibitorV1;
+    function AddListener(AIntf: IZwpKeyboardShortcutsInhibitManagerV1Listener): LongInt;
+  end;
+
+  TZwpKeyboardShortcutsInhibitorV1 = class(TWLProxyObject)
+  private
+    const _DESTROY = 0;
+  public
+    destructor Destroy; override;
+    function AddListener(AIntf: IZwpKeyboardShortcutsInhibitorV1Listener): LongInt;
+  end;
+
+
+
 
 
 
@@ -66,100 +76,67 @@ var
 
 implementation
 
-const
-_ZWP_KEYBOARD_SHORTCUTS_INHIBIT_MANAGER_V1_DESTROY = 0;
-_ZWP_KEYBOARD_SHORTCUTS_INHIBIT_MANAGER_V1_INHIBIT_SHORTCUTS = 1;
-_ZWP_KEYBOARD_SHORTCUTS_INHIBITOR_V1_DESTROY = 0;
-
-
 var
   vIntf_zwp_keyboard_shortcuts_inhibit_manager_v1_Listener: Tzwp_keyboard_shortcuts_inhibit_manager_v1_listener;
   vIntf_zwp_keyboard_shortcuts_inhibitor_v1_Listener: Tzwp_keyboard_shortcuts_inhibitor_v1_listener;
 
 
 
-procedure zwp_keyboard_shortcuts_inhibit_manager_v1_destroy(zwp_keyboard_shortcuts_inhibit_manager_v1: Pzwp_keyboard_shortcuts_inhibit_manager_v1);
+destructor TZwpKeyboardShortcutsInhibitManagerV1.Destroy;
 begin
-  wl_proxy_marshal(Pwl_proxy(zwp_keyboard_shortcuts_inhibit_manager_v1), _ZWP_KEYBOARD_SHORTCUTS_INHIBIT_MANAGER_V1_DESTROY);
-  wl_proxy_destroy(Pwl_proxy(zwp_keyboard_shortcuts_inhibit_manager_v1));
+  wl_proxy_marshal(FProxy, _DESTROY);
+  inherited Destroy;
 end;
 
-function  zwp_keyboard_shortcuts_inhibit_manager_v1_inhibit_shortcuts(zwp_keyboard_shortcuts_inhibit_manager_v1: Pzwp_keyboard_shortcuts_inhibit_manager_v1; surface: Pwl_surface; seat: Pwl_seat): Pzwp_keyboard_shortcuts_inhibitor_v1;
+function TZwpKeyboardShortcutsInhibitManagerV1.InhibitShortcuts(ASurface: TWlSurface; ASeat: TWlSeat; AProxyClass: TWLProxyObjectClass = nil {TZwpKeyboardShortcutsInhibitorV1}): TZwpKeyboardShortcutsInhibitorV1;
 var
   id: Pwl_proxy;
 begin
-  id := wl_proxy_marshal_constructor(Pwl_proxy(zwp_keyboard_shortcuts_inhibit_manager_v1),
-      _ZWP_KEYBOARD_SHORTCUTS_INHIBIT_MANAGER_V1_INHIBIT_SHORTCUTS, @zwp_keyboard_shortcuts_inhibitor_v1_interface, nil, surface, seat);
-  Result := Pzwp_keyboard_shortcuts_inhibitor_v1(id);
+  id := wl_proxy_marshal_constructor(FProxy,
+      _INHIBIT_SHORTCUTS, @zwp_keyboard_shortcuts_inhibitor_v1_interface, nil, ASurface.Proxy, ASeat.Proxy);
+  if AProxyClass = nil then
+    AProxyClass := TZwpKeyboardShortcutsInhibitorV1;
+  Result := TZwpKeyboardShortcutsInhibitorV1(AProxyClass.Create(id));
+  if not AProxyClass.InheritsFrom(TZwpKeyboardShortcutsInhibitorV1) then
+    Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TZwpKeyboardShortcutsInhibitorV1]);
 end;
 
-function  zwp_keyboard_shortcuts_inhibit_manager_v1_add_listener(zwp_keyboard_shortcuts_inhibit_manager_v1: Pzwp_keyboard_shortcuts_inhibit_manager_v1; listener: Pzwp_keyboard_shortcuts_inhibit_manager_v1_listener; data: Pointer): cint;
+function TZwpKeyboardShortcutsInhibitManagerV1.AddListener(AIntf: IZwpKeyboardShortcutsInhibitManagerV1Listener): LongInt;
 begin
-  Result := wl_proxy_add_listener(Pwl_proxy(zwp_keyboard_shortcuts_inhibit_manager_v1), listener, data);
+  FUserDataRec.ListenerUserData := Pointer(AIntf);
+  Result := wl_proxy_add_listener(FProxy, @vIntf_zwp_keyboard_shortcuts_inhibit_manager_v1_Listener, @FUserDataRec);
+end;
+destructor TZwpKeyboardShortcutsInhibitorV1.Destroy;
+begin
+  wl_proxy_marshal(FProxy, _DESTROY);
+  inherited Destroy;
 end;
 
-procedure  zwp_keyboard_shortcuts_inhibit_manager_v1_add_listener(zwp_keyboard_shortcuts_inhibit_manager_v1: Pzwp_keyboard_shortcuts_inhibit_manager_v1; AIntf: Izwp_keyboard_shortcuts_inhibit_manager_v1Listener);
+function TZwpKeyboardShortcutsInhibitorV1.AddListener(AIntf: IZwpKeyboardShortcutsInhibitorV1Listener): LongInt;
 begin
-  zwp_keyboard_shortcuts_inhibit_manager_v1_add_listener(zwp_keyboard_shortcuts_inhibit_manager_v1, @vIntf_zwp_keyboard_shortcuts_inhibit_manager_v1_Listener, AIntf);
-end;
-
-procedure zwp_keyboard_shortcuts_inhibit_manager_v1_set_user_data(zwp_keyboard_shortcuts_inhibit_manager_v1: Pzwp_keyboard_shortcuts_inhibit_manager_v1; user_data: Pointer);
-begin
-  wl_proxy_set_user_data(Pwl_proxy(zwp_keyboard_shortcuts_inhibit_manager_v1), user_data);
-end;
-
-function  zwp_keyboard_shortcuts_inhibit_manager_v1_get_user_data(zwp_keyboard_shortcuts_inhibit_manager_v1: Pzwp_keyboard_shortcuts_inhibit_manager_v1): Pointer;
-begin
-  Result := wl_proxy_get_user_data(Pwl_proxy(zwp_keyboard_shortcuts_inhibit_manager_v1));
-end;
-
-function  zwp_keyboard_shortcuts_inhibit_manager_v1_get_version(zwp_keyboard_shortcuts_inhibit_manager_v1: Pzwp_keyboard_shortcuts_inhibit_manager_v1): cuint32;
-begin
-  Result := wl_proxy_get_version(Pwl_proxy(zwp_keyboard_shortcuts_inhibit_manager_v1));
-end;
-
-procedure zwp_keyboard_shortcuts_inhibitor_v1_destroy(zwp_keyboard_shortcuts_inhibitor_v1: Pzwp_keyboard_shortcuts_inhibitor_v1);
-begin
-  wl_proxy_marshal(Pwl_proxy(zwp_keyboard_shortcuts_inhibitor_v1), _ZWP_KEYBOARD_SHORTCUTS_INHIBITOR_V1_DESTROY);
-  wl_proxy_destroy(Pwl_proxy(zwp_keyboard_shortcuts_inhibitor_v1));
-end;
-
-function  zwp_keyboard_shortcuts_inhibitor_v1_add_listener(zwp_keyboard_shortcuts_inhibitor_v1: Pzwp_keyboard_shortcuts_inhibitor_v1; listener: Pzwp_keyboard_shortcuts_inhibitor_v1_listener; data: Pointer): cint;
-begin
-  Result := wl_proxy_add_listener(Pwl_proxy(zwp_keyboard_shortcuts_inhibitor_v1), listener, data);
-end;
-
-procedure  zwp_keyboard_shortcuts_inhibitor_v1_add_listener(zwp_keyboard_shortcuts_inhibitor_v1: Pzwp_keyboard_shortcuts_inhibitor_v1; AIntf: Izwp_keyboard_shortcuts_inhibitor_v1Listener);
-begin
-  zwp_keyboard_shortcuts_inhibitor_v1_add_listener(zwp_keyboard_shortcuts_inhibitor_v1, @vIntf_zwp_keyboard_shortcuts_inhibitor_v1_Listener, AIntf);
-end;
-
-procedure zwp_keyboard_shortcuts_inhibitor_v1_set_user_data(zwp_keyboard_shortcuts_inhibitor_v1: Pzwp_keyboard_shortcuts_inhibitor_v1; user_data: Pointer);
-begin
-  wl_proxy_set_user_data(Pwl_proxy(zwp_keyboard_shortcuts_inhibitor_v1), user_data);
-end;
-
-function  zwp_keyboard_shortcuts_inhibitor_v1_get_user_data(zwp_keyboard_shortcuts_inhibitor_v1: Pzwp_keyboard_shortcuts_inhibitor_v1): Pointer;
-begin
-  Result := wl_proxy_get_user_data(Pwl_proxy(zwp_keyboard_shortcuts_inhibitor_v1));
-end;
-
-function  zwp_keyboard_shortcuts_inhibitor_v1_get_version(zwp_keyboard_shortcuts_inhibitor_v1: Pzwp_keyboard_shortcuts_inhibitor_v1): cuint32;
-begin
-  Result := wl_proxy_get_version(Pwl_proxy(zwp_keyboard_shortcuts_inhibitor_v1));
+  FUserDataRec.ListenerUserData := Pointer(AIntf);
+  Result := wl_proxy_add_listener(FProxy, @vIntf_zwp_keyboard_shortcuts_inhibitor_v1_Listener, @FUserDataRec);
 end;
 
 
-procedure zwp_keyboard_shortcuts_inhibitor_v1_active_Intf(AIntf: Izwp_keyboard_shortcuts_inhibitor_v1Listener; zwp_keyboard_shortcuts_inhibitor_v1: Pzwp_keyboard_shortcuts_inhibitor_v1); cdecl;
+
+
+procedure zwp_keyboard_shortcuts_inhibitor_v1_active_Intf(AData: PWLUserData; Azwp_keyboard_shortcuts_inhibitor_v1: Pzwp_keyboard_shortcuts_inhibitor_v1); cdecl;
+var
+  AIntf: IZwpKeyboardShortcutsInhibitorV1Listener;
 begin
-  WriteLn('zwp_keyboard_shortcuts_inhibitor_v1.active');
-  AIntf.zwp_keyboard_shortcuts_inhibitor_v1_active(zwp_keyboard_shortcuts_inhibitor_v1);
+  if AData = nil then Exit;
+  AIntf := IZwpKeyboardShortcutsInhibitorV1Listener(AData^.ListenerUserData);
+  AIntf.zwp_keyboard_shortcuts_inhibitor_v1_active(TZwpKeyboardShortcutsInhibitorV1(AData^.PascalObject));
 end;
 
-procedure zwp_keyboard_shortcuts_inhibitor_v1_inactive_Intf(AIntf: Izwp_keyboard_shortcuts_inhibitor_v1Listener; zwp_keyboard_shortcuts_inhibitor_v1: Pzwp_keyboard_shortcuts_inhibitor_v1); cdecl;
+procedure zwp_keyboard_shortcuts_inhibitor_v1_inactive_Intf(AData: PWLUserData; Azwp_keyboard_shortcuts_inhibitor_v1: Pzwp_keyboard_shortcuts_inhibitor_v1); cdecl;
+var
+  AIntf: IZwpKeyboardShortcutsInhibitorV1Listener;
 begin
-  WriteLn('zwp_keyboard_shortcuts_inhibitor_v1.inactive');
-  AIntf.zwp_keyboard_shortcuts_inhibitor_v1_inactive(zwp_keyboard_shortcuts_inhibitor_v1);
+  if AData = nil then Exit;
+  AIntf := IZwpKeyboardShortcutsInhibitorV1Listener(AData^.ListenerUserData);
+  AIntf.zwp_keyboard_shortcuts_inhibitor_v1_inactive(TZwpKeyboardShortcutsInhibitorV1(AData^.PascalObject));
 end;
 
 

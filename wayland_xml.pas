@@ -174,6 +174,7 @@ type
 
   TArg = class(TBaseNode)
   private
+    FNeedsWrapper: Boolean;
     function GetAllowNull: String;
     function GetEnum: String;
     function GetInterface: String;
@@ -184,6 +185,8 @@ type
     procedure SetInterface(AValue: String);
     procedure SetSummary(AValue: String);
     procedure SetType(AValue: String);
+  public
+    property NeedsWrapper: Boolean read FNeedsWrapper write FNeedsWrapper; // used and set by binding creator
   published
     property Name;
     property &Type: String read GetType write SetType;

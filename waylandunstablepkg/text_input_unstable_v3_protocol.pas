@@ -6,14 +6,12 @@ unit text_input_unstable_v3_protocol;
 interface
 
 uses
-  ctypes, wayland_util, wayland_client_core, wayland_protocol;
+  Classes, Sysutils, ctypes, wayland_util, wayland_client_core, wayland_protocol;
 
 
 type
-  Pzwp_text_input_v3 = ^Tzwp_text_input_v3;
-  Tzwp_text_input_v3 = record end;
-  Pzwp_text_input_manager_v3 = ^Tzwp_text_input_manager_v3;
-  Tzwp_text_input_manager_v3 = record end;
+  Pzwp_text_input_v3 = Pointer;
+  Pzwp_text_input_manager_v3 = Pointer;
 const
   ZWP_TEXT_INPUT_V3_CHANGE_CAUSE_INPUT_METHOD = 0; // input method caused the change
   ZWP_TEXT_INPUT_V3_CHANGE_CAUSE_OTHER = 1; // something else than the input method caused the change
@@ -46,12 +44,12 @@ const
 type
   Pzwp_text_input_v3_listener = ^Tzwp_text_input_v3_listener;
   Tzwp_text_input_v3_listener = record
-    enter : procedure(data: Pointer; zwp_text_input_v3: Pzwp_text_input_v3; surface: Pwl_surface); cdecl;
-    leave : procedure(data: Pointer; zwp_text_input_v3: Pzwp_text_input_v3; surface: Pwl_surface); cdecl;
-    preedit_string : procedure(data: Pointer; zwp_text_input_v3: Pzwp_text_input_v3; text: pchar; cursor_begin: cint; cursor_end: cint); cdecl;
-    commit_string : procedure(data: Pointer; zwp_text_input_v3: Pzwp_text_input_v3; text: pchar); cdecl;
-    delete_surrounding_text : procedure(data: Pointer; zwp_text_input_v3: Pzwp_text_input_v3; before_length: cuint; after_length: cuint); cdecl;
-    done : procedure(data: Pointer; zwp_text_input_v3: Pzwp_text_input_v3; serial: cuint); cdecl;
+    enter : procedure(data: Pointer; AZwpTextInputV3: Pzwp_text_input_v3; ASurface: Pwl_surface); cdecl;
+    leave : procedure(data: Pointer; AZwpTextInputV3: Pzwp_text_input_v3; ASurface: Pwl_surface); cdecl;
+    preedit_string : procedure(data: Pointer; AZwpTextInputV3: Pzwp_text_input_v3; AText: Pchar; ACursorBegin: LongInt; ACursorEnd: LongInt); cdecl;
+    commit_string : procedure(data: Pointer; AZwpTextInputV3: Pzwp_text_input_v3; AText: Pchar); cdecl;
+    delete_surrounding_text : procedure(data: Pointer; AZwpTextInputV3: Pzwp_text_input_v3; ABeforeLength: DWord; AAfterLength: DWord); cdecl;
+    done : procedure(data: Pointer; AZwpTextInputV3: Pzwp_text_input_v3; ASerial: DWord); cdecl;
   end;
 
   Pzwp_text_input_manager_v3_listener = ^Tzwp_text_input_manager_v3_listener;
@@ -60,42 +58,61 @@ type
 
 
 
-  Izwp_text_input_v3Listener = interface
-  ['Izwp_text_input_v3Listener']
-    procedure zwp_text_input_v3_enter(zwp_text_input_v3: Pzwp_text_input_v3; surface: Pwl_surface);
-    procedure zwp_text_input_v3_leave(zwp_text_input_v3: Pzwp_text_input_v3; surface: Pwl_surface);
-    procedure zwp_text_input_v3_preedit_string(zwp_text_input_v3: Pzwp_text_input_v3; text: pchar; cursor_begin: cint; cursor_end: cint);
-    procedure zwp_text_input_v3_commit_string(zwp_text_input_v3: Pzwp_text_input_v3; text: pchar);
-    procedure zwp_text_input_v3_delete_surrounding_text(zwp_text_input_v3: Pzwp_text_input_v3; before_length: cuint; after_length: cuint);
-    procedure zwp_text_input_v3_done(zwp_text_input_v3: Pzwp_text_input_v3; serial: cuint);
+  TZwpTextInputV3 = class;
+  TZwpTextInputManagerV3 = class;
+
+
+  IZwpTextInputV3Listener = interface
+  ['IZwpTextInputV3Listener']
+    procedure zwp_text_input_v3_enter(AZwpTextInputV3: TZwpTextInputV3; ASurface: TWlSurface);
+    procedure zwp_text_input_v3_leave(AZwpTextInputV3: TZwpTextInputV3; ASurface: TWlSurface);
+    procedure zwp_text_input_v3_preedit_string(AZwpTextInputV3: TZwpTextInputV3; AText: String; ACursorBegin: LongInt; ACursorEnd: LongInt);
+    procedure zwp_text_input_v3_commit_string(AZwpTextInputV3: TZwpTextInputV3; AText: String);
+    procedure zwp_text_input_v3_delete_surrounding_text(AZwpTextInputV3: TZwpTextInputV3; ABeforeLength: DWord; AAfterLength: DWord);
+    procedure zwp_text_input_v3_done(AZwpTextInputV3: TZwpTextInputV3; ASerial: DWord);
   end;
 
-  Izwp_text_input_manager_v3Listener = interface
-  ['Izwp_text_input_manager_v3Listener']
+  IZwpTextInputManagerV3Listener = interface
+  ['IZwpTextInputManagerV3Listener']
   end;
 
 
 
-procedure zwp_text_input_v3_destroy(zwp_text_input_v3: Pzwp_text_input_v3);
-procedure zwp_text_input_v3_enable(zwp_text_input_v3: Pzwp_text_input_v3);
-procedure zwp_text_input_v3_disable(zwp_text_input_v3: Pzwp_text_input_v3);
-procedure zwp_text_input_v3_set_surrounding_text(zwp_text_input_v3: Pzwp_text_input_v3; text: pchar; cursor: cint; anchor: cint);
-procedure zwp_text_input_v3_set_text_change_cause(zwp_text_input_v3: Pzwp_text_input_v3; cause: cuint);
-procedure zwp_text_input_v3_set_content_type(zwp_text_input_v3: Pzwp_text_input_v3; hint: cuint; purpose: cuint);
-procedure zwp_text_input_v3_set_cursor_rectangle(zwp_text_input_v3: Pzwp_text_input_v3; x: cint; y: cint; width: cint; height: cint);
-procedure zwp_text_input_v3_commit(zwp_text_input_v3: Pzwp_text_input_v3);
-function  zwp_text_input_v3_add_listener(zwp_text_input_v3: Pzwp_text_input_v3; listener: Pzwp_text_input_v3_listener; data: Pointer): cint;
-procedure  zwp_text_input_v3_add_listener(zwp_text_input_v3: Pzwp_text_input_v3; AIntf: Izwp_text_input_v3Listener);
-procedure zwp_text_input_v3_set_user_data(zwp_text_input_v3: Pzwp_text_input_v3; user_data: Pointer);
-function  zwp_text_input_v3_get_user_data(zwp_text_input_v3: Pzwp_text_input_v3): Pointer;
-function  zwp_text_input_v3_get_version(zwp_text_input_v3: Pzwp_text_input_v3): cuint32;
-procedure zwp_text_input_manager_v3_destroy(zwp_text_input_manager_v3: Pzwp_text_input_manager_v3);
-function  zwp_text_input_manager_v3_get_text_input(zwp_text_input_manager_v3: Pzwp_text_input_manager_v3; seat: Pwl_seat): Pzwp_text_input_v3;
-function  zwp_text_input_manager_v3_add_listener(zwp_text_input_manager_v3: Pzwp_text_input_manager_v3; listener: Pzwp_text_input_manager_v3_listener; data: Pointer): cint;
-procedure  zwp_text_input_manager_v3_add_listener(zwp_text_input_manager_v3: Pzwp_text_input_manager_v3; AIntf: Izwp_text_input_manager_v3Listener);
-procedure zwp_text_input_manager_v3_set_user_data(zwp_text_input_manager_v3: Pzwp_text_input_manager_v3; user_data: Pointer);
-function  zwp_text_input_manager_v3_get_user_data(zwp_text_input_manager_v3: Pzwp_text_input_manager_v3): Pointer;
-function  zwp_text_input_manager_v3_get_version(zwp_text_input_manager_v3: Pzwp_text_input_manager_v3): cuint32;
+
+  TZwpTextInputV3 = class(TWLProxyObject)
+  private
+    const _DESTROY = 0;
+    const _ENABLE = 1;
+    const _DISABLE = 2;
+    const _SET_SURROUNDING_TEXT = 3;
+    const _SET_TEXT_CHANGE_CAUSE = 4;
+    const _SET_CONTENT_TYPE = 5;
+    const _SET_CURSOR_RECTANGLE = 6;
+    const _COMMIT = 7;
+  public
+    destructor Destroy; override;
+    procedure Enable;
+    procedure Disable;
+    procedure SetSurroundingText(AText: String; ACursor: LongInt; AAnchor: LongInt);
+    procedure SetTextChangeCause(ACause: DWord);
+    procedure SetContentType(AHint: DWord; APurpose: DWord);
+    procedure SetCursorRectangle(AX: LongInt; AY: LongInt; AWidth: LongInt; AHeight: LongInt);
+    procedure Commit;
+    function AddListener(AIntf: IZwpTextInputV3Listener): LongInt;
+  end;
+
+  TZwpTextInputManagerV3 = class(TWLProxyObject)
+  private
+    const _DESTROY = 0;
+    const _GET_TEXT_INPUT = 1;
+  public
+    destructor Destroy; override;
+    function GetTextInput(ASeat: TWlSeat; AProxyClass: TWLProxyObjectClass = nil {TZwpTextInputV3}): TZwpTextInputV3;
+    function AddListener(AIntf: IZwpTextInputManagerV3Listener): LongInt;
+  end;
+
+
+
 
 
 
@@ -107,173 +124,138 @@ var
 
 implementation
 
-const
-_ZWP_TEXT_INPUT_V3_DESTROY = 0;
-_ZWP_TEXT_INPUT_V3_ENABLE = 1;
-_ZWP_TEXT_INPUT_V3_DISABLE = 2;
-_ZWP_TEXT_INPUT_V3_SET_SURROUNDING_TEXT = 3;
-_ZWP_TEXT_INPUT_V3_SET_TEXT_CHANGE_CAUSE = 4;
-_ZWP_TEXT_INPUT_V3_SET_CONTENT_TYPE = 5;
-_ZWP_TEXT_INPUT_V3_SET_CURSOR_RECTANGLE = 6;
-_ZWP_TEXT_INPUT_V3_COMMIT = 7;
-_ZWP_TEXT_INPUT_MANAGER_V3_DESTROY = 0;
-_ZWP_TEXT_INPUT_MANAGER_V3_GET_TEXT_INPUT = 1;
-
-
 var
   vIntf_zwp_text_input_v3_Listener: Tzwp_text_input_v3_listener;
   vIntf_zwp_text_input_manager_v3_Listener: Tzwp_text_input_manager_v3_listener;
 
 
 
-procedure zwp_text_input_v3_destroy(zwp_text_input_v3: Pzwp_text_input_v3);
+destructor TZwpTextInputV3.Destroy;
 begin
-  wl_proxy_marshal(Pwl_proxy(zwp_text_input_v3), _ZWP_TEXT_INPUT_V3_DESTROY);
-  wl_proxy_destroy(Pwl_proxy(zwp_text_input_v3));
+  wl_proxy_marshal(FProxy, _DESTROY);
+  inherited Destroy;
 end;
 
-procedure zwp_text_input_v3_enable(zwp_text_input_v3: Pzwp_text_input_v3);
+procedure TZwpTextInputV3.Enable;
 begin
-  wl_proxy_marshal(Pwl_proxy(zwp_text_input_v3),
-      _ZWP_TEXT_INPUT_V3_ENABLE);
+  wl_proxy_marshal(FProxy, _ENABLE);
 end;
 
-procedure zwp_text_input_v3_disable(zwp_text_input_v3: Pzwp_text_input_v3);
+procedure TZwpTextInputV3.Disable;
 begin
-  wl_proxy_marshal(Pwl_proxy(zwp_text_input_v3),
-      _ZWP_TEXT_INPUT_V3_DISABLE);
+  wl_proxy_marshal(FProxy, _DISABLE);
 end;
 
-procedure zwp_text_input_v3_set_surrounding_text(zwp_text_input_v3: Pzwp_text_input_v3; text: pchar; cursor: cint; anchor: cint);
+procedure TZwpTextInputV3.SetSurroundingText(AText: String; ACursor: LongInt; AAnchor: LongInt);
 begin
-  wl_proxy_marshal(Pwl_proxy(zwp_text_input_v3),
-      _ZWP_TEXT_INPUT_V3_SET_SURROUNDING_TEXT, text, cursor, anchor);
+  wl_proxy_marshal(FProxy, _SET_SURROUNDING_TEXT, PChar(AText), ACursor, AAnchor);
 end;
 
-procedure zwp_text_input_v3_set_text_change_cause(zwp_text_input_v3: Pzwp_text_input_v3; cause: cuint);
+procedure TZwpTextInputV3.SetTextChangeCause(ACause: DWord);
 begin
-  wl_proxy_marshal(Pwl_proxy(zwp_text_input_v3),
-      _ZWP_TEXT_INPUT_V3_SET_TEXT_CHANGE_CAUSE, cause);
+  wl_proxy_marshal(FProxy, _SET_TEXT_CHANGE_CAUSE, ACause);
 end;
 
-procedure zwp_text_input_v3_set_content_type(zwp_text_input_v3: Pzwp_text_input_v3; hint: cuint; purpose: cuint);
+procedure TZwpTextInputV3.SetContentType(AHint: DWord; APurpose: DWord);
 begin
-  wl_proxy_marshal(Pwl_proxy(zwp_text_input_v3),
-      _ZWP_TEXT_INPUT_V3_SET_CONTENT_TYPE, hint, purpose);
+  wl_proxy_marshal(FProxy, _SET_CONTENT_TYPE, AHint, APurpose);
 end;
 
-procedure zwp_text_input_v3_set_cursor_rectangle(zwp_text_input_v3: Pzwp_text_input_v3; x: cint; y: cint; width: cint; height: cint);
+procedure TZwpTextInputV3.SetCursorRectangle(AX: LongInt; AY: LongInt; AWidth: LongInt; AHeight: LongInt);
 begin
-  wl_proxy_marshal(Pwl_proxy(zwp_text_input_v3),
-      _ZWP_TEXT_INPUT_V3_SET_CURSOR_RECTANGLE, x, y, width, height);
+  wl_proxy_marshal(FProxy, _SET_CURSOR_RECTANGLE, AX, AY, AWidth, AHeight);
 end;
 
-procedure zwp_text_input_v3_commit(zwp_text_input_v3: Pzwp_text_input_v3);
+procedure TZwpTextInputV3.Commit;
 begin
-  wl_proxy_marshal(Pwl_proxy(zwp_text_input_v3),
-      _ZWP_TEXT_INPUT_V3_COMMIT);
+  wl_proxy_marshal(FProxy, _COMMIT);
 end;
 
-function  zwp_text_input_v3_add_listener(zwp_text_input_v3: Pzwp_text_input_v3; listener: Pzwp_text_input_v3_listener; data: Pointer): cint;
+function TZwpTextInputV3.AddListener(AIntf: IZwpTextInputV3Listener): LongInt;
 begin
-  Result := wl_proxy_add_listener(Pwl_proxy(zwp_text_input_v3), listener, data);
+  FUserDataRec.ListenerUserData := Pointer(AIntf);
+  Result := wl_proxy_add_listener(FProxy, @vIntf_zwp_text_input_v3_Listener, @FUserDataRec);
+end;
+destructor TZwpTextInputManagerV3.Destroy;
+begin
+  wl_proxy_marshal(FProxy, _DESTROY);
+  inherited Destroy;
 end;
 
-procedure  zwp_text_input_v3_add_listener(zwp_text_input_v3: Pzwp_text_input_v3; AIntf: Izwp_text_input_v3Listener);
-begin
-  zwp_text_input_v3_add_listener(zwp_text_input_v3, @vIntf_zwp_text_input_v3_Listener, AIntf);
-end;
-
-procedure zwp_text_input_v3_set_user_data(zwp_text_input_v3: Pzwp_text_input_v3; user_data: Pointer);
-begin
-  wl_proxy_set_user_data(Pwl_proxy(zwp_text_input_v3), user_data);
-end;
-
-function  zwp_text_input_v3_get_user_data(zwp_text_input_v3: Pzwp_text_input_v3): Pointer;
-begin
-  Result := wl_proxy_get_user_data(Pwl_proxy(zwp_text_input_v3));
-end;
-
-function  zwp_text_input_v3_get_version(zwp_text_input_v3: Pzwp_text_input_v3): cuint32;
-begin
-  Result := wl_proxy_get_version(Pwl_proxy(zwp_text_input_v3));
-end;
-
-procedure zwp_text_input_manager_v3_destroy(zwp_text_input_manager_v3: Pzwp_text_input_manager_v3);
-begin
-  wl_proxy_marshal(Pwl_proxy(zwp_text_input_manager_v3), _ZWP_TEXT_INPUT_MANAGER_V3_DESTROY);
-  wl_proxy_destroy(Pwl_proxy(zwp_text_input_manager_v3));
-end;
-
-function  zwp_text_input_manager_v3_get_text_input(zwp_text_input_manager_v3: Pzwp_text_input_manager_v3; seat: Pwl_seat): Pzwp_text_input_v3;
+function TZwpTextInputManagerV3.GetTextInput(ASeat: TWlSeat; AProxyClass: TWLProxyObjectClass = nil {TZwpTextInputV3}): TZwpTextInputV3;
 var
   id: Pwl_proxy;
 begin
-  id := wl_proxy_marshal_constructor(Pwl_proxy(zwp_text_input_manager_v3),
-      _ZWP_TEXT_INPUT_MANAGER_V3_GET_TEXT_INPUT, @zwp_text_input_v3_interface, nil, seat);
-  Result := Pzwp_text_input_v3(id);
+  id := wl_proxy_marshal_constructor(FProxy,
+      _GET_TEXT_INPUT, @zwp_text_input_v3_interface, nil, ASeat.Proxy);
+  if AProxyClass = nil then
+    AProxyClass := TZwpTextInputV3;
+  Result := TZwpTextInputV3(AProxyClass.Create(id));
+  if not AProxyClass.InheritsFrom(TZwpTextInputV3) then
+    Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TZwpTextInputV3]);
 end;
 
-function  zwp_text_input_manager_v3_add_listener(zwp_text_input_manager_v3: Pzwp_text_input_manager_v3; listener: Pzwp_text_input_manager_v3_listener; data: Pointer): cint;
+function TZwpTextInputManagerV3.AddListener(AIntf: IZwpTextInputManagerV3Listener): LongInt;
 begin
-  Result := wl_proxy_add_listener(Pwl_proxy(zwp_text_input_manager_v3), listener, data);
-end;
-
-procedure  zwp_text_input_manager_v3_add_listener(zwp_text_input_manager_v3: Pzwp_text_input_manager_v3; AIntf: Izwp_text_input_manager_v3Listener);
-begin
-  zwp_text_input_manager_v3_add_listener(zwp_text_input_manager_v3, @vIntf_zwp_text_input_manager_v3_Listener, AIntf);
-end;
-
-procedure zwp_text_input_manager_v3_set_user_data(zwp_text_input_manager_v3: Pzwp_text_input_manager_v3; user_data: Pointer);
-begin
-  wl_proxy_set_user_data(Pwl_proxy(zwp_text_input_manager_v3), user_data);
-end;
-
-function  zwp_text_input_manager_v3_get_user_data(zwp_text_input_manager_v3: Pzwp_text_input_manager_v3): Pointer;
-begin
-  Result := wl_proxy_get_user_data(Pwl_proxy(zwp_text_input_manager_v3));
-end;
-
-function  zwp_text_input_manager_v3_get_version(zwp_text_input_manager_v3: Pzwp_text_input_manager_v3): cuint32;
-begin
-  Result := wl_proxy_get_version(Pwl_proxy(zwp_text_input_manager_v3));
+  FUserDataRec.ListenerUserData := Pointer(AIntf);
+  Result := wl_proxy_add_listener(FProxy, @vIntf_zwp_text_input_manager_v3_Listener, @FUserDataRec);
 end;
 
 
-procedure zwp_text_input_v3_enter_Intf(AIntf: Izwp_text_input_v3Listener; zwp_text_input_v3: Pzwp_text_input_v3; surface: Pwl_surface); cdecl;
+
+
+procedure zwp_text_input_v3_enter_Intf(AData: PWLUserData; Azwp_text_input_v3: Pzwp_text_input_v3; ASurface: Pwl_surface); cdecl;
+var
+  AIntf: IZwpTextInputV3Listener;
 begin
-  WriteLn('zwp_text_input_v3.enter');
-  AIntf.zwp_text_input_v3_enter(zwp_text_input_v3, surface);
+  if AData = nil then Exit;
+  AIntf := IZwpTextInputV3Listener(AData^.ListenerUserData);
+  AIntf.zwp_text_input_v3_enter(TZwpTextInputV3(AData^.PascalObject),  TWlSurface(TWLProxyObject.WLToObj(ASurface)));
 end;
 
-procedure zwp_text_input_v3_leave_Intf(AIntf: Izwp_text_input_v3Listener; zwp_text_input_v3: Pzwp_text_input_v3; surface: Pwl_surface); cdecl;
+procedure zwp_text_input_v3_leave_Intf(AData: PWLUserData; Azwp_text_input_v3: Pzwp_text_input_v3; ASurface: Pwl_surface); cdecl;
+var
+  AIntf: IZwpTextInputV3Listener;
 begin
-  WriteLn('zwp_text_input_v3.leave');
-  AIntf.zwp_text_input_v3_leave(zwp_text_input_v3, surface);
+  if AData = nil then Exit;
+  AIntf := IZwpTextInputV3Listener(AData^.ListenerUserData);
+  AIntf.zwp_text_input_v3_leave(TZwpTextInputV3(AData^.PascalObject),  TWlSurface(TWLProxyObject.WLToObj(ASurface)));
 end;
 
-procedure zwp_text_input_v3_preedit_string_Intf(AIntf: Izwp_text_input_v3Listener; zwp_text_input_v3: Pzwp_text_input_v3; text: pchar; cursor_begin: cint; cursor_end: cint); cdecl;
+procedure zwp_text_input_v3_preedit_string_Intf(AData: PWLUserData; Azwp_text_input_v3: Pzwp_text_input_v3; AText: Pchar; ACursorBegin: LongInt; ACursorEnd: LongInt); cdecl;
+var
+  AIntf: IZwpTextInputV3Listener;
 begin
-  WriteLn('zwp_text_input_v3.preedit_string');
-  AIntf.zwp_text_input_v3_preedit_string(zwp_text_input_v3, text, cursor_begin, cursor_end);
+  if AData = nil then Exit;
+  AIntf := IZwpTextInputV3Listener(AData^.ListenerUserData);
+  AIntf.zwp_text_input_v3_preedit_string(TZwpTextInputV3(AData^.PascalObject), AText, ACursorBegin, ACursorEnd);
 end;
 
-procedure zwp_text_input_v3_commit_string_Intf(AIntf: Izwp_text_input_v3Listener; zwp_text_input_v3: Pzwp_text_input_v3; text: pchar); cdecl;
+procedure zwp_text_input_v3_commit_string_Intf(AData: PWLUserData; Azwp_text_input_v3: Pzwp_text_input_v3; AText: Pchar); cdecl;
+var
+  AIntf: IZwpTextInputV3Listener;
 begin
-  WriteLn('zwp_text_input_v3.commit_string');
-  AIntf.zwp_text_input_v3_commit_string(zwp_text_input_v3, text);
+  if AData = nil then Exit;
+  AIntf := IZwpTextInputV3Listener(AData^.ListenerUserData);
+  AIntf.zwp_text_input_v3_commit_string(TZwpTextInputV3(AData^.PascalObject), AText);
 end;
 
-procedure zwp_text_input_v3_delete_surrounding_text_Intf(AIntf: Izwp_text_input_v3Listener; zwp_text_input_v3: Pzwp_text_input_v3; before_length: cuint; after_length: cuint); cdecl;
+procedure zwp_text_input_v3_delete_surrounding_text_Intf(AData: PWLUserData; Azwp_text_input_v3: Pzwp_text_input_v3; ABeforeLength: DWord; AAfterLength: DWord); cdecl;
+var
+  AIntf: IZwpTextInputV3Listener;
 begin
-  WriteLn('zwp_text_input_v3.delete_surrounding_text');
-  AIntf.zwp_text_input_v3_delete_surrounding_text(zwp_text_input_v3, before_length, after_length);
+  if AData = nil then Exit;
+  AIntf := IZwpTextInputV3Listener(AData^.ListenerUserData);
+  AIntf.zwp_text_input_v3_delete_surrounding_text(TZwpTextInputV3(AData^.PascalObject), ABeforeLength, AAfterLength);
 end;
 
-procedure zwp_text_input_v3_done_Intf(AIntf: Izwp_text_input_v3Listener; zwp_text_input_v3: Pzwp_text_input_v3; serial: cuint); cdecl;
+procedure zwp_text_input_v3_done_Intf(AData: PWLUserData; Azwp_text_input_v3: Pzwp_text_input_v3; ASerial: DWord); cdecl;
+var
+  AIntf: IZwpTextInputV3Listener;
 begin
-  WriteLn('zwp_text_input_v3.done');
-  AIntf.zwp_text_input_v3_done(zwp_text_input_v3, serial);
+  if AData = nil then Exit;
+  AIntf := IZwpTextInputV3Listener(AData^.ListenerUserData);
+  AIntf.zwp_text_input_v3_done(TZwpTextInputV3(AData^.PascalObject), ASerial);
 end;
 
 

@@ -33,13 +33,94 @@ unit wayland_client_core;
 interface
 
 uses
-  Classes, SysUtils, wayland_util, ctypes;
+  Classes, SysUtils, unixtype, wayland_util, ctypes;
 
 type
   Pwl_display = pointer; //^Twl_display;
   Pwl_event_queue = pointer ;//^Twl_event_queue;
   Pwl_proxy = pointer; //^Twl_proxy;
   Pwl_proxy_wrapper = pointer;//^Twl_proxy_wrapper;
+
+  { TWLProxyObject }
+
+  TWLProxyObject = class;
+
+  PWLUserData = ^TWLUserData;
+  TWLUserData = record
+    ListenerUserData: Pointer; //wl_xxx_set_userdata and add listener share this.
+    PascalObject: TWLProxyObject; { private }
+    UserData: Pointer;
+  end;
+
+  TWLProxyObjectClass = class of TWLProxyObject;
+  TWLProxyObject = class
+  private
+    FOwnsProxy: Boolean;
+    function GetUserData: Pointer;
+    procedure SetUserData(AValue: Pointer);
+  protected
+    FProxy: Pwl_proxy;
+    FUserDataRec: TWLUserData;
+  public
+    class function WLToObj(AProxy: Pwl_proxy): TWLProxyObject;
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); virtual;
+    destructor  Destroy; override;
+    function GetVersion: LongInt;
+    property Proxy: Pwl_proxy read FProxy;
+    property UserData: Pointer read GetUserData write SetUserData;
+    property OwnsProxy: Boolean read FOwnsProxy write FOwnsProxy;
+  end;
+
+  { TWLDisplayBase }
+
+  TWLDisplayBase = class(TWLProxyObject)
+    class function  Connect(AName: String; AClass: TWLProxyObjectClass=nil{TWLDisplay}): TWLDisplayBase;
+    class function  ConnectToFd(AFd: LongInt; AClass: TWLProxyObjectClass=nil{TWLDisplay}): TWLDisplayBase;
+    procedure Disconnect;
+    function  GetFd:LongInt;
+    function  Dispatch: LongInt;
+    function  DispatchQueue(AQueue: Pwl_event_queue): LongInt;
+    function  DispatchQueuePending(AQueue: Pwl_event_queue): LongInt;
+    function  DispatchPending: LongInt;
+    function  GetError: LongInt;
+    function  GetProtocolError(AInterface: PPwl_interface; AId: PLongWord): LongWord;
+    function  Flush: LongInt;
+    function  RoundtripQueue(AQueue: Pwl_event_queue): LongInt;
+    function  Roundtrip: LongInt;
+    function  CreateQueue: Pwl_event_queue;
+    function  PrepareReadQueue(AQueue: Pwl_event_queue): LongInt;
+    function  PrepareRead: LongInt;
+    procedure CancelRead;
+    function  ReadEvents:LongInt;
+    destructor Destroy; override;
+  end;
+
+  TWLShmBase = class;
+
+  { TWLShmPoolBase }
+
+  TWLShmPoolBase = class(TWLProxyObject)
+  private
+    FData: Pointer;
+    FFd: LongInt;
+    FSize: LongWord;
+    FShm: TWLShmBase;
+    procedure SetParams(AFd: LongInt; AData: Pointer; ASize: LongWord; AShm: TWLShmBase);
+  public
+    function   Data(AOffset: Integer): Pointer;
+    procedure  Reallocate(ANewSize: LongWord);
+    destructor Destroy; override;
+    property   Allocated: LongWord read FSize;
+  end;
+
+  { TWLShmBase }
+
+  TWLShmBase = class(TWLProxyObject)
+  protected
+  public
+    function CreatePool(ASize: LongWord; AClass: TWLProxyObjectClass=nil{TWlShmPool}): TWLShmPoolBase;
+  end;
 
   { Twl_event_queue }
 
@@ -90,8 +171,265 @@ function  wl_display_read_events(display :Pwl_display): cint; cdecl; external;
 procedure wl_log_set_handler_client(handler: wl_log_func_t); cdecl; external;
 
 implementation
+uses
+  wayland_protocol, wayland_shared_buffer, BaseUnix, syscall;
+
+function mkstemp(filename: PChar):longint;cdecl;external 'libc' name 'mkstemp';
+function mkostemp(filename: PChar; flags: LongInt):longint;cdecl;external 'libc' name 'mkostemp';
+
+{ TWLShmPoolBase }
+
+procedure TWLShmPoolBase.SetParams(AFd: LongInt; AData: Pointer;
+  ASize: LongWord; AShm: TWLShmBase);
+begin
+  Ffd := AFd;
+  FData:=AData;
+  FSize:=ASize;
+  FShm := AShm;
+end;
+
+function TWLShmPoolBase.Data(AOffset: Integer): Pointer;
+begin
+  Result := FData+AOffset;
+end;
+
+procedure TWLShmPoolBase.Reallocate(ANewSize: LongWord);
+const
+  MREMAP_MAYMOVE = 1;
+begin
+  if ANewSize <= FSize then
+    Exit;
+  FpFtruncate(FFd, ANewSize);
+  FData := Pointer(Do_SysCall(syscall_nr_mremap, TSysParam(FData), TSysParam(FSize), TSysParam(ANewSize), TsysParam(MREMAP_MAYMOVE)));
+  TWlShmPool(Self).Resize(ANewSize);
+  FSize:=ANewSize;
+end;
+
+destructor TWLShmPoolBase.Destroy;
+begin
+  inherited Destroy;
+  FpClose(FFd);
+end;
 
 
+{ TWLShmBase }
+
+function CreateAnonymousFile(ASize: PtrUint): cint; {fd}
+const
+  O_CLOEXEC = $80000;
+var
+  lName: String;
+  flags: cint;
+begin
+  lName := GetEnvironmentVariable('XDG_RUNTIME_DIR') + '/weston-shared-XXXXXX';
+
+  Result := mkostemp(PChar(lName), O_CLOEXEC);
+  FpUnlink(lName);
+
+  if (FpFtruncate(Result, ASize) < 0) then
+  begin
+    FpClose(Result);
+    Result := -1;
+  end;
+end;
+
+function TWLShmBase.CreatePool(ASize: LongWord; AClass: TWLProxyObjectClass): TWLShmPoolBase;
+var
+  fd: LongInt;
+  data: Pointer;
+begin
+  Result := nil;
+  fd := CreateAnonymousFile(ASize);
+  if fd < 0 then
+    Exit;
+
+  data := Fpmmap(nil, ASize, PROT_READ or PROT_WRITE, MAP_SHARED, fd, 0);
+  if data = MAP_FAILED then
+  begin
+    ASize := errno;
+    fpclose(fd);
+    Exit;
+  end;
+
+  if AClass = nil then
+    AClass := TWlShmPool;
+
+  Result := TWlShm(Self).CreatePool(fd, Asize, AClass);
+  Result.SetParams(fd, data, ASize, Self);
+
+end;
+
+{ TWLDisplayBase }
+
+class function TWLDisplayBase.Connect(AName: String; AClass: TWLProxyObjectClass
+  ): TWLDisplayBase;
+var
+  lDisplay: wayland_client_core.Pwl_display;
+  lName: PChar;
+begin
+  Result := nil;
+
+  if AClass = nil then
+    AClass:=TWlDisplay;
+
+  if AName = '' then
+    lName:=nil
+  else
+    lName := PChar(AName);
+
+  lDisplay := wl_display_connect(lName);
+  if lDisplay <> nil then
+  begin
+    Result := TWLDisplayBase(AClass.Create(lDisplay));
+  end;
+end;
+
+class function TWLDisplayBase.ConnectToFd(AFd: LongInt; AClass: TWLProxyObjectClass): TWLDisplayBase;
+var
+  lDisplay: wayland_client_core.Pwl_display;
+begin
+  if AClass = nil then
+    AClass:=TWlDisplay;
+  Result := nil;
+  lDisplay := wl_display_connect_to_fd(AFd);
+  if lDisplay <> nil then
+  begin
+    Result := TWLDisplayBase(AClass.Create(lDisplay));
+  end;
+end;
+
+procedure TWLDisplayBase.Disconnect;
+begin
+  if Assigned(FProxy) then
+    wl_display_disconnect(FProxy);
+  FProxy:=nil;
+end;
+
+function TWLDisplayBase.GetFd: LongInt;
+begin
+  Result := wl_display_get_fd(FProxy);
+end;
+
+function TWLDisplayBase.Dispatch: LongInt;
+begin
+  Result := wl_display_dispatch(FProxy);
+end;
+
+function TWLDisplayBase.DispatchQueue(AQueue: Pwl_event_queue): LongInt;
+begin
+  Result := wl_display_dispatch_queue(FProxy, AQueue);
+end;
+
+function TWLDisplayBase.DispatchQueuePending(AQueue: Pwl_event_queue): LongInt;
+begin
+  Result := wl_display_dispatch_queue_pending(FProxy, AQueue);
+end;
+
+function TWLDisplayBase.DispatchPending: LongInt;
+begin
+  Result := wl_display_dispatch_pending(FProxy);
+end;
+
+function TWLDisplayBase.GetError: LongInt;
+begin
+  Result := wl_display_get_error(FProxy);
+end;
+
+function TWLDisplayBase.GetProtocolError(AInterface: PPwl_interface;
+  AId: PLongWord): LongWord;
+begin
+  Result := wl_display_get_protocol_error(FProxy, AInterface, AId);
+
+end;
+
+function TWLDisplayBase.Flush: LongInt;
+begin
+  Result := wl_display_flush(FProxy);
+
+end;
+
+function TWLDisplayBase.RoundtripQueue(AQueue: Pwl_event_queue): LongInt;
+begin
+  Result := wl_display_roundtrip_queue(FProxy, AQueue);
+end;
+
+function TWLDisplayBase.Roundtrip: LongInt;
+begin
+  Result := wl_display_roundtrip(FProxy);
+end;
+
+function TWLDisplayBase.CreateQueue: Pwl_event_queue;
+begin
+  Result := wl_display_create_queue(FProxy);
+end;
+
+function TWLDisplayBase.PrepareReadQueue(AQueue: Pwl_event_queue): LongInt;
+begin
+  Result := wl_display_prepare_read_queue(FProxy, AQueue);
+end;
+
+function TWLDisplayBase.PrepareRead: LongInt;
+begin
+  Result := wl_display_prepare_read(FProxy);
+end;
+
+procedure TWLDisplayBase.CancelRead;
+begin
+  wl_display_cancel_read(FProxy);
+
+end;
+
+function TWLDisplayBase.ReadEvents: LongInt;
+begin
+  Result := wl_display_read_events(FProxy);
+end;
+
+destructor TWLDisplayBase.Destroy;
+begin
+  Disconnect;
+  //inherited Destroy;
+end;
+
+
+
+{ TWLProxyObject }
+
+function TWLProxyObject.GetUserData: Pointer;
+begin
+  Result := FUserDataRec.UserData;
+end;
+
+procedure TWLProxyObject.SetUserData(AValue: Pointer);
+begin
+  if FUserDataRec.UserData=AValue then Exit;
+  FUserDataRec.UserData:=AValue;
+end;
+
+class function TWLProxyObject.WLToObj(AProxy: Pwl_proxy): TWLProxyObject;
+var
+  lData: PWLUserData;
+begin
+  lData := wl_proxy_get_user_data(AProxy);
+  Result := lData^.PascalObject;
+end;
+
+constructor TWLProxyObject.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean);
+begin
+  FUserDataRec.PascalObject := Self;
+  FProxy:=AProxy;
+end;
+
+destructor TWLProxyObject.Destroy;
+begin
+  inherited Destroy;
+  if Assigned(FProxy) and FOwnsProxy then
+    wl_proxy_destroy(FProxy);
+end;
+
+function TWLProxyObject.GetVersion: LongInt;
+begin
+  Result := wl_proxy_get_version(FProxy);
+end;
 
 end.
 

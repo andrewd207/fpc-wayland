@@ -6,14 +6,12 @@ unit fullscreen_shell_unstable_v1_protocol;
 interface
 
 uses
-  ctypes, wayland_util, wayland_client_core, wayland_protocol;
+  Classes, Sysutils, ctypes, wayland_util, wayland_client_core, wayland_protocol;
 
 
 type
-  Pzwp_fullscreen_shell_v1 = ^Tzwp_fullscreen_shell_v1;
-  Tzwp_fullscreen_shell_v1 = record end;
-  Pzwp_fullscreen_shell_mode_feedback_v1 = ^Tzwp_fullscreen_shell_mode_feedback_v1;
-  Tzwp_fullscreen_shell_mode_feedback_v1 = record end;
+  Pzwp_fullscreen_shell_v1 = Pointer;
+  Pzwp_fullscreen_shell_mode_feedback_v1 = Pointer;
 const
   ZWP_FULLSCREEN_SHELL_V1_CAPABILITY_ARBITRARY_MODES = 1; // compositor is capable of almost any output mode
   ZWP_FULLSCREEN_SHELL_V1_CAPABILITY_CURSOR_PLANE = 2; // compositor has a separate cursor plane
@@ -27,46 +25,55 @@ const
 type
   Pzwp_fullscreen_shell_v1_listener = ^Tzwp_fullscreen_shell_v1_listener;
   Tzwp_fullscreen_shell_v1_listener = record
-    capability : procedure(data: Pointer; zwp_fullscreen_shell_v1: Pzwp_fullscreen_shell_v1; capability: cuint); cdecl;
+    capability : procedure(data: Pointer; AZwpFullscreenShellV1: Pzwp_fullscreen_shell_v1; ACapability: DWord); cdecl;
   end;
 
   Pzwp_fullscreen_shell_mode_feedback_v1_listener = ^Tzwp_fullscreen_shell_mode_feedback_v1_listener;
   Tzwp_fullscreen_shell_mode_feedback_v1_listener = record
-    mode_successful : procedure(data: Pointer; zwp_fullscreen_shell_mode_feedback_v1: Pzwp_fullscreen_shell_mode_feedback_v1); cdecl;
-    mode_failed : procedure(data: Pointer; zwp_fullscreen_shell_mode_feedback_v1: Pzwp_fullscreen_shell_mode_feedback_v1); cdecl;
-    present_cancelled : procedure(data: Pointer; zwp_fullscreen_shell_mode_feedback_v1: Pzwp_fullscreen_shell_mode_feedback_v1); cdecl;
+    mode_successful : procedure(data: Pointer; AZwpFullscreenShellModeFeedbackV1: Pzwp_fullscreen_shell_mode_feedback_v1); cdecl;
+    mode_failed : procedure(data: Pointer; AZwpFullscreenShellModeFeedbackV1: Pzwp_fullscreen_shell_mode_feedback_v1); cdecl;
+    present_cancelled : procedure(data: Pointer; AZwpFullscreenShellModeFeedbackV1: Pzwp_fullscreen_shell_mode_feedback_v1); cdecl;
   end;
 
 
 
-  Izwp_fullscreen_shell_v1Listener = interface
-  ['Izwp_fullscreen_shell_v1Listener']
-    procedure zwp_fullscreen_shell_v1_capability(zwp_fullscreen_shell_v1: Pzwp_fullscreen_shell_v1; capability: cuint);
+  TZwpFullscreenShellV1 = class;
+  TZwpFullscreenShellModeFeedbackV1 = class;
+
+
+  IZwpFullscreenShellV1Listener = interface
+  ['IZwpFullscreenShellV1Listener']
+    procedure zwp_fullscreen_shell_v1_capability(AZwpFullscreenShellV1: TZwpFullscreenShellV1; ACapability: DWord);
   end;
 
-  Izwp_fullscreen_shell_mode_feedback_v1Listener = interface
-  ['Izwp_fullscreen_shell_mode_feedback_v1Listener']
-    procedure zwp_fullscreen_shell_mode_feedback_v1_mode_successful(zwp_fullscreen_shell_mode_feedback_v1: Pzwp_fullscreen_shell_mode_feedback_v1);
-    procedure zwp_fullscreen_shell_mode_feedback_v1_mode_failed(zwp_fullscreen_shell_mode_feedback_v1: Pzwp_fullscreen_shell_mode_feedback_v1);
-    procedure zwp_fullscreen_shell_mode_feedback_v1_present_cancelled(zwp_fullscreen_shell_mode_feedback_v1: Pzwp_fullscreen_shell_mode_feedback_v1);
+  IZwpFullscreenShellModeFeedbackV1Listener = interface
+  ['IZwpFullscreenShellModeFeedbackV1Listener']
+    procedure zwp_fullscreen_shell_mode_feedback_v1_mode_successful(AZwpFullscreenShellModeFeedbackV1: TZwpFullscreenShellModeFeedbackV1);
+    procedure zwp_fullscreen_shell_mode_feedback_v1_mode_failed(AZwpFullscreenShellModeFeedbackV1: TZwpFullscreenShellModeFeedbackV1);
+    procedure zwp_fullscreen_shell_mode_feedback_v1_present_cancelled(AZwpFullscreenShellModeFeedbackV1: TZwpFullscreenShellModeFeedbackV1);
   end;
 
 
 
-procedure zwp_fullscreen_shell_v1_release(zwp_fullscreen_shell_v1: Pzwp_fullscreen_shell_v1);
-procedure zwp_fullscreen_shell_v1_present_surface(zwp_fullscreen_shell_v1: Pzwp_fullscreen_shell_v1; surface: Pwl_surface; method: cuint; output: Pwl_output);
-function  zwp_fullscreen_shell_v1_present_surface_for_mode(zwp_fullscreen_shell_v1: Pzwp_fullscreen_shell_v1; surface: Pwl_surface; output: Pwl_output; framerate: cint): Pzwp_fullscreen_shell_mode_feedback_v1;
-function  zwp_fullscreen_shell_v1_add_listener(zwp_fullscreen_shell_v1: Pzwp_fullscreen_shell_v1; listener: Pzwp_fullscreen_shell_v1_listener; data: Pointer): cint;
-procedure  zwp_fullscreen_shell_v1_add_listener(zwp_fullscreen_shell_v1: Pzwp_fullscreen_shell_v1; AIntf: Izwp_fullscreen_shell_v1Listener);
-procedure zwp_fullscreen_shell_v1_set_user_data(zwp_fullscreen_shell_v1: Pzwp_fullscreen_shell_v1; user_data: Pointer);
-function  zwp_fullscreen_shell_v1_get_user_data(zwp_fullscreen_shell_v1: Pzwp_fullscreen_shell_v1): Pointer;
-function  zwp_fullscreen_shell_v1_get_version(zwp_fullscreen_shell_v1: Pzwp_fullscreen_shell_v1): cuint32;
-function  zwp_fullscreen_shell_mode_feedback_v1_add_listener(zwp_fullscreen_shell_mode_feedback_v1: Pzwp_fullscreen_shell_mode_feedback_v1; listener: Pzwp_fullscreen_shell_mode_feedback_v1_listener; data: Pointer): cint;
-procedure  zwp_fullscreen_shell_mode_feedback_v1_add_listener(zwp_fullscreen_shell_mode_feedback_v1: Pzwp_fullscreen_shell_mode_feedback_v1; AIntf: Izwp_fullscreen_shell_mode_feedback_v1Listener);
-procedure zwp_fullscreen_shell_mode_feedback_v1_set_user_data(zwp_fullscreen_shell_mode_feedback_v1: Pzwp_fullscreen_shell_mode_feedback_v1; user_data: Pointer);
-function  zwp_fullscreen_shell_mode_feedback_v1_get_user_data(zwp_fullscreen_shell_mode_feedback_v1: Pzwp_fullscreen_shell_mode_feedback_v1): Pointer;
-function  zwp_fullscreen_shell_mode_feedback_v1_get_version(zwp_fullscreen_shell_mode_feedback_v1: Pzwp_fullscreen_shell_mode_feedback_v1): cuint32;
-procedure zwp_fullscreen_shell_mode_feedback_v1_destroy(zwp_fullscreen_shell_mode_feedback_v1: Pzwp_fullscreen_shell_mode_feedback_v1);
+
+  TZwpFullscreenShellV1 = class(TWLProxyObject)
+  private
+    const _RELEASE = 0;
+    const _PRESENT_SURFACE = 1;
+    const _PRESENT_SURFACE_FOR_MODE = 2;
+  public
+    destructor Destroy; override;
+    procedure PresentSurface(ASurface: TWlSurface; AMethod: DWord; AOutput: TWlOutput);
+    function PresentSurfaceForMode(ASurface: TWlSurface; AOutput: TWlOutput; AFramerate: LongInt; AProxyClass: TWLProxyObjectClass = nil {TZwpFullscreenShellModeFeedbackV1}): TZwpFullscreenShellModeFeedbackV1;
+    function AddListener(AIntf: IZwpFullscreenShellV1Listener): LongInt;
+  end;
+
+  TZwpFullscreenShellModeFeedbackV1 = class(TWLProxyObject)
+    function AddListener(AIntf: IZwpFullscreenShellModeFeedbackV1Listener): LongInt;
+  end;
+
+
+
 
 
 
@@ -78,117 +85,84 @@ var
 
 implementation
 
-const
-_ZWP_FULLSCREEN_SHELL_V1_RELEASE = 0;
-_ZWP_FULLSCREEN_SHELL_V1_PRESENT_SURFACE = 1;
-_ZWP_FULLSCREEN_SHELL_V1_PRESENT_SURFACE_FOR_MODE = 2;
-
-
 var
   vIntf_zwp_fullscreen_shell_v1_Listener: Tzwp_fullscreen_shell_v1_listener;
   vIntf_zwp_fullscreen_shell_mode_feedback_v1_Listener: Tzwp_fullscreen_shell_mode_feedback_v1_listener;
 
 
 
-procedure zwp_fullscreen_shell_v1_release(zwp_fullscreen_shell_v1: Pzwp_fullscreen_shell_v1);
+destructor TZwpFullscreenShellV1.Destroy;
 begin
-  wl_proxy_marshal(Pwl_proxy(zwp_fullscreen_shell_v1), _ZWP_FULLSCREEN_SHELL_V1_RELEASE);
-  wl_proxy_destroy(Pwl_proxy(zwp_fullscreen_shell_v1));
+  wl_proxy_marshal(FProxy, _RELEASE);
+  inherited Destroy;
 end;
 
-procedure zwp_fullscreen_shell_v1_present_surface(zwp_fullscreen_shell_v1: Pzwp_fullscreen_shell_v1; surface: Pwl_surface; method: cuint; output: Pwl_output);
+procedure TZwpFullscreenShellV1.PresentSurface(ASurface: TWlSurface; AMethod: DWord; AOutput: TWlOutput);
 begin
-  wl_proxy_marshal(Pwl_proxy(zwp_fullscreen_shell_v1),
-      _ZWP_FULLSCREEN_SHELL_V1_PRESENT_SURFACE, surface, method, output);
+  wl_proxy_marshal(FProxy, _PRESENT_SURFACE, ASurface.Proxy, AMethod, AOutput.Proxy);
 end;
 
-function  zwp_fullscreen_shell_v1_present_surface_for_mode(zwp_fullscreen_shell_v1: Pzwp_fullscreen_shell_v1; surface: Pwl_surface; output: Pwl_output; framerate: cint): Pzwp_fullscreen_shell_mode_feedback_v1;
+function TZwpFullscreenShellV1.PresentSurfaceForMode(ASurface: TWlSurface; AOutput: TWlOutput; AFramerate: LongInt; AProxyClass: TWLProxyObjectClass = nil {TZwpFullscreenShellModeFeedbackV1}): TZwpFullscreenShellModeFeedbackV1;
 var
   feedback: Pwl_proxy;
 begin
-  feedback := wl_proxy_marshal_constructor(Pwl_proxy(zwp_fullscreen_shell_v1),
-      _ZWP_FULLSCREEN_SHELL_V1_PRESENT_SURFACE_FOR_MODE, @zwp_fullscreen_shell_mode_feedback_v1_interface, nil, surface, output, framerate);
-  Result := Pzwp_fullscreen_shell_mode_feedback_v1(feedback);
+  feedback := wl_proxy_marshal_constructor(FProxy,
+      _PRESENT_SURFACE_FOR_MODE, @zwp_fullscreen_shell_mode_feedback_v1_interface, nil, ASurface.Proxy, AOutput.Proxy, AFramerate);
+  if AProxyClass = nil then
+    AProxyClass := TZwpFullscreenShellModeFeedbackV1;
+  Result := TZwpFullscreenShellModeFeedbackV1(AProxyClass.Create(feedback));
+  if not AProxyClass.InheritsFrom(TZwpFullscreenShellModeFeedbackV1) then
+    Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TZwpFullscreenShellModeFeedbackV1]);
 end;
 
-function  zwp_fullscreen_shell_v1_add_listener(zwp_fullscreen_shell_v1: Pzwp_fullscreen_shell_v1; listener: Pzwp_fullscreen_shell_v1_listener; data: Pointer): cint;
+function TZwpFullscreenShellV1.AddListener(AIntf: IZwpFullscreenShellV1Listener): LongInt;
 begin
-  Result := wl_proxy_add_listener(Pwl_proxy(zwp_fullscreen_shell_v1), listener, data);
+  FUserDataRec.ListenerUserData := Pointer(AIntf);
+  Result := wl_proxy_add_listener(FProxy, @vIntf_zwp_fullscreen_shell_v1_Listener, @FUserDataRec);
 end;
-
-procedure  zwp_fullscreen_shell_v1_add_listener(zwp_fullscreen_shell_v1: Pzwp_fullscreen_shell_v1; AIntf: Izwp_fullscreen_shell_v1Listener);
+function TZwpFullscreenShellModeFeedbackV1.AddListener(AIntf: IZwpFullscreenShellModeFeedbackV1Listener): LongInt;
 begin
-  zwp_fullscreen_shell_v1_add_listener(zwp_fullscreen_shell_v1, @vIntf_zwp_fullscreen_shell_v1_Listener, AIntf);
-end;
-
-procedure zwp_fullscreen_shell_v1_set_user_data(zwp_fullscreen_shell_v1: Pzwp_fullscreen_shell_v1; user_data: Pointer);
-begin
-  wl_proxy_set_user_data(Pwl_proxy(zwp_fullscreen_shell_v1), user_data);
-end;
-
-function  zwp_fullscreen_shell_v1_get_user_data(zwp_fullscreen_shell_v1: Pzwp_fullscreen_shell_v1): Pointer;
-begin
-  Result := wl_proxy_get_user_data(Pwl_proxy(zwp_fullscreen_shell_v1));
-end;
-
-function  zwp_fullscreen_shell_v1_get_version(zwp_fullscreen_shell_v1: Pzwp_fullscreen_shell_v1): cuint32;
-begin
-  Result := wl_proxy_get_version(Pwl_proxy(zwp_fullscreen_shell_v1));
-end;
-
-function  zwp_fullscreen_shell_mode_feedback_v1_add_listener(zwp_fullscreen_shell_mode_feedback_v1: Pzwp_fullscreen_shell_mode_feedback_v1; listener: Pzwp_fullscreen_shell_mode_feedback_v1_listener; data: Pointer): cint;
-begin
-  Result := wl_proxy_add_listener(Pwl_proxy(zwp_fullscreen_shell_mode_feedback_v1), listener, data);
-end;
-
-procedure  zwp_fullscreen_shell_mode_feedback_v1_add_listener(zwp_fullscreen_shell_mode_feedback_v1: Pzwp_fullscreen_shell_mode_feedback_v1; AIntf: Izwp_fullscreen_shell_mode_feedback_v1Listener);
-begin
-  zwp_fullscreen_shell_mode_feedback_v1_add_listener(zwp_fullscreen_shell_mode_feedback_v1, @vIntf_zwp_fullscreen_shell_mode_feedback_v1_Listener, AIntf);
-end;
-
-procedure zwp_fullscreen_shell_mode_feedback_v1_set_user_data(zwp_fullscreen_shell_mode_feedback_v1: Pzwp_fullscreen_shell_mode_feedback_v1; user_data: Pointer);
-begin
-  wl_proxy_set_user_data(Pwl_proxy(zwp_fullscreen_shell_mode_feedback_v1), user_data);
-end;
-
-function  zwp_fullscreen_shell_mode_feedback_v1_get_user_data(zwp_fullscreen_shell_mode_feedback_v1: Pzwp_fullscreen_shell_mode_feedback_v1): Pointer;
-begin
-  Result := wl_proxy_get_user_data(Pwl_proxy(zwp_fullscreen_shell_mode_feedback_v1));
-end;
-
-function  zwp_fullscreen_shell_mode_feedback_v1_get_version(zwp_fullscreen_shell_mode_feedback_v1: Pzwp_fullscreen_shell_mode_feedback_v1): cuint32;
-begin
-  Result := wl_proxy_get_version(Pwl_proxy(zwp_fullscreen_shell_mode_feedback_v1));
-end;
-
-procedure zwp_fullscreen_shell_mode_feedback_v1_destroy(zwp_fullscreen_shell_mode_feedback_v1: Pzwp_fullscreen_shell_mode_feedback_v1);
-begin
-  wl_proxy_destroy(Pwl_proxy(zwp_fullscreen_shell_mode_feedback_v1));
+  FUserDataRec.ListenerUserData := Pointer(AIntf);
+  Result := wl_proxy_add_listener(FProxy, @vIntf_zwp_fullscreen_shell_mode_feedback_v1_Listener, @FUserDataRec);
 end;
 
 
-procedure zwp_fullscreen_shell_v1_capability_Intf(AIntf: Izwp_fullscreen_shell_v1Listener; zwp_fullscreen_shell_v1: Pzwp_fullscreen_shell_v1; capability: cuint); cdecl;
+
+
+procedure zwp_fullscreen_shell_v1_capability_Intf(AData: PWLUserData; Azwp_fullscreen_shell_v1: Pzwp_fullscreen_shell_v1; ACapability: DWord); cdecl;
+var
+  AIntf: IZwpFullscreenShellV1Listener;
 begin
-  WriteLn('zwp_fullscreen_shell_v1.capability');
-  AIntf.zwp_fullscreen_shell_v1_capability(zwp_fullscreen_shell_v1, capability);
+  if AData = nil then Exit;
+  AIntf := IZwpFullscreenShellV1Listener(AData^.ListenerUserData);
+  AIntf.zwp_fullscreen_shell_v1_capability(TZwpFullscreenShellV1(AData^.PascalObject), ACapability);
 end;
 
-procedure zwp_fullscreen_shell_mode_feedback_v1_mode_successful_Intf(AIntf: Izwp_fullscreen_shell_mode_feedback_v1Listener; zwp_fullscreen_shell_mode_feedback_v1: Pzwp_fullscreen_shell_mode_feedback_v1); cdecl;
+procedure zwp_fullscreen_shell_mode_feedback_v1_mode_successful_Intf(AData: PWLUserData; Azwp_fullscreen_shell_mode_feedback_v1: Pzwp_fullscreen_shell_mode_feedback_v1); cdecl;
+var
+  AIntf: IZwpFullscreenShellModeFeedbackV1Listener;
 begin
-  WriteLn('zwp_fullscreen_shell_mode_feedback_v1.mode_successful');
-  AIntf.zwp_fullscreen_shell_mode_feedback_v1_mode_successful(zwp_fullscreen_shell_mode_feedback_v1);
+  if AData = nil then Exit;
+  AIntf := IZwpFullscreenShellModeFeedbackV1Listener(AData^.ListenerUserData);
+  AIntf.zwp_fullscreen_shell_mode_feedback_v1_mode_successful(TZwpFullscreenShellModeFeedbackV1(AData^.PascalObject));
 end;
 
-procedure zwp_fullscreen_shell_mode_feedback_v1_mode_failed_Intf(AIntf: Izwp_fullscreen_shell_mode_feedback_v1Listener; zwp_fullscreen_shell_mode_feedback_v1: Pzwp_fullscreen_shell_mode_feedback_v1); cdecl;
+procedure zwp_fullscreen_shell_mode_feedback_v1_mode_failed_Intf(AData: PWLUserData; Azwp_fullscreen_shell_mode_feedback_v1: Pzwp_fullscreen_shell_mode_feedback_v1); cdecl;
+var
+  AIntf: IZwpFullscreenShellModeFeedbackV1Listener;
 begin
-  WriteLn('zwp_fullscreen_shell_mode_feedback_v1.mode_failed');
-  AIntf.zwp_fullscreen_shell_mode_feedback_v1_mode_failed(zwp_fullscreen_shell_mode_feedback_v1);
+  if AData = nil then Exit;
+  AIntf := IZwpFullscreenShellModeFeedbackV1Listener(AData^.ListenerUserData);
+  AIntf.zwp_fullscreen_shell_mode_feedback_v1_mode_failed(TZwpFullscreenShellModeFeedbackV1(AData^.PascalObject));
 end;
 
-procedure zwp_fullscreen_shell_mode_feedback_v1_present_cancelled_Intf(AIntf: Izwp_fullscreen_shell_mode_feedback_v1Listener; zwp_fullscreen_shell_mode_feedback_v1: Pzwp_fullscreen_shell_mode_feedback_v1); cdecl;
+procedure zwp_fullscreen_shell_mode_feedback_v1_present_cancelled_Intf(AData: PWLUserData; Azwp_fullscreen_shell_mode_feedback_v1: Pzwp_fullscreen_shell_mode_feedback_v1); cdecl;
+var
+  AIntf: IZwpFullscreenShellModeFeedbackV1Listener;
 begin
-  WriteLn('zwp_fullscreen_shell_mode_feedback_v1.present_cancelled');
-  AIntf.zwp_fullscreen_shell_mode_feedback_v1_present_cancelled(zwp_fullscreen_shell_mode_feedback_v1);
+  if AData = nil then Exit;
+  AIntf := IZwpFullscreenShellModeFeedbackV1Listener(AData^.ListenerUserData);
+  AIntf.zwp_fullscreen_shell_mode_feedback_v1_present_cancelled(TZwpFullscreenShellModeFeedbackV1(AData^.PascalObject));
 end;
 
 

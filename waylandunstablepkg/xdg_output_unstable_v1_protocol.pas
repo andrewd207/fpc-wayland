@@ -6,57 +6,67 @@ unit xdg_output_unstable_v1_protocol;
 interface
 
 uses
-  ctypes, wayland_util, wayland_client_core, wayland_protocol;
+  Classes, Sysutils, ctypes, wayland_util, wayland_client_core, wayland_protocol;
 
 
 type
-  Pzxdg_output_manager_v1 = ^Tzxdg_output_manager_v1;
-  Tzxdg_output_manager_v1 = record end;
-  Pzxdg_output_v1 = ^Tzxdg_output_v1;
-  Tzxdg_output_v1 = record end;
+  Pzxdg_output_manager_v1 = Pointer;
+  Pzxdg_output_v1 = Pointer;
   Pzxdg_output_manager_v1_listener = ^Tzxdg_output_manager_v1_listener;
   Tzxdg_output_manager_v1_listener = record
   end;
 
   Pzxdg_output_v1_listener = ^Tzxdg_output_v1_listener;
   Tzxdg_output_v1_listener = record
-    logical_position : procedure(data: Pointer; zxdg_output_v1: Pzxdg_output_v1; x: cint; y: cint); cdecl;
-    logical_size : procedure(data: Pointer; zxdg_output_v1: Pzxdg_output_v1; width: cint; height: cint); cdecl;
-    done : procedure(data: Pointer; zxdg_output_v1: Pzxdg_output_v1); cdecl;
-    name : procedure(data: Pointer; zxdg_output_v1: Pzxdg_output_v1; name: pchar); cdecl;
-    description : procedure(data: Pointer; zxdg_output_v1: Pzxdg_output_v1; description: pchar); cdecl;
+    logical_position : procedure(data: Pointer; AZxdgOutputV1: Pzxdg_output_v1; AX: LongInt; AY: LongInt); cdecl;
+    logical_size : procedure(data: Pointer; AZxdgOutputV1: Pzxdg_output_v1; AWidth: LongInt; AHeight: LongInt); cdecl;
+    done : procedure(data: Pointer; AZxdgOutputV1: Pzxdg_output_v1); cdecl;
+    name : procedure(data: Pointer; AZxdgOutputV1: Pzxdg_output_v1; AName: Pchar); cdecl;
+    description : procedure(data: Pointer; AZxdgOutputV1: Pzxdg_output_v1; ADescription: Pchar); cdecl;
   end;
 
 
 
-  Izxdg_output_manager_v1Listener = interface
-  ['Izxdg_output_manager_v1Listener']
+  TZxdgOutputManagerV1 = class;
+  TZxdgOutputV1 = class;
+
+
+  IZxdgOutputManagerV1Listener = interface
+  ['IZxdgOutputManagerV1Listener']
   end;
 
-  Izxdg_output_v1Listener = interface
-  ['Izxdg_output_v1Listener']
-    procedure zxdg_output_v1_logical_position(zxdg_output_v1: Pzxdg_output_v1; x: cint; y: cint);
-    procedure zxdg_output_v1_logical_size(zxdg_output_v1: Pzxdg_output_v1; width: cint; height: cint);
-    procedure zxdg_output_v1_done(zxdg_output_v1: Pzxdg_output_v1);
-    procedure zxdg_output_v1_name(zxdg_output_v1: Pzxdg_output_v1; name: pchar);
-    procedure zxdg_output_v1_description(zxdg_output_v1: Pzxdg_output_v1; description: pchar);
+  IZxdgOutputV1Listener = interface
+  ['IZxdgOutputV1Listener']
+    procedure zxdg_output_v1_logical_position(AZxdgOutputV1: TZxdgOutputV1; AX: LongInt; AY: LongInt);
+    procedure zxdg_output_v1_logical_size(AZxdgOutputV1: TZxdgOutputV1; AWidth: LongInt; AHeight: LongInt);
+    procedure zxdg_output_v1_done(AZxdgOutputV1: TZxdgOutputV1);
+    procedure zxdg_output_v1_name(AZxdgOutputV1: TZxdgOutputV1; AName: String);
+    procedure zxdg_output_v1_description(AZxdgOutputV1: TZxdgOutputV1; ADescription: String);
   end;
 
 
 
-procedure zxdg_output_manager_v1_destroy(zxdg_output_manager_v1: Pzxdg_output_manager_v1);
-function  zxdg_output_manager_v1_get_xdg_output(zxdg_output_manager_v1: Pzxdg_output_manager_v1; output: Pwl_output): Pzxdg_output_v1;
-function  zxdg_output_manager_v1_add_listener(zxdg_output_manager_v1: Pzxdg_output_manager_v1; listener: Pzxdg_output_manager_v1_listener; data: Pointer): cint;
-procedure  zxdg_output_manager_v1_add_listener(zxdg_output_manager_v1: Pzxdg_output_manager_v1; AIntf: Izxdg_output_manager_v1Listener);
-procedure zxdg_output_manager_v1_set_user_data(zxdg_output_manager_v1: Pzxdg_output_manager_v1; user_data: Pointer);
-function  zxdg_output_manager_v1_get_user_data(zxdg_output_manager_v1: Pzxdg_output_manager_v1): Pointer;
-function  zxdg_output_manager_v1_get_version(zxdg_output_manager_v1: Pzxdg_output_manager_v1): cuint32;
-procedure zxdg_output_v1_destroy(zxdg_output_v1: Pzxdg_output_v1);
-function  zxdg_output_v1_add_listener(zxdg_output_v1: Pzxdg_output_v1; listener: Pzxdg_output_v1_listener; data: Pointer): cint;
-procedure  zxdg_output_v1_add_listener(zxdg_output_v1: Pzxdg_output_v1; AIntf: Izxdg_output_v1Listener);
-procedure zxdg_output_v1_set_user_data(zxdg_output_v1: Pzxdg_output_v1; user_data: Pointer);
-function  zxdg_output_v1_get_user_data(zxdg_output_v1: Pzxdg_output_v1): Pointer;
-function  zxdg_output_v1_get_version(zxdg_output_v1: Pzxdg_output_v1): cuint32;
+
+  TZxdgOutputManagerV1 = class(TWLProxyObject)
+  private
+    const _DESTROY = 0;
+    const _GET_XDG_OUTPUT = 1;
+  public
+    destructor Destroy; override;
+    function GetXdgOutput(AOutput: TWlOutput; AProxyClass: TWLProxyObjectClass = nil {TZxdgOutputV1}): TZxdgOutputV1;
+    function AddListener(AIntf: IZxdgOutputManagerV1Listener): LongInt;
+  end;
+
+  TZxdgOutputV1 = class(TWLProxyObject)
+  private
+    const _DESTROY = 0;
+  public
+    destructor Destroy; override;
+    function AddListener(AIntf: IZxdgOutputV1Listener): LongInt;
+  end;
+
+
+
 
 
 
@@ -68,118 +78,94 @@ var
 
 implementation
 
-const
-_ZXDG_OUTPUT_MANAGER_V1_DESTROY = 0;
-_ZXDG_OUTPUT_MANAGER_V1_GET_XDG_OUTPUT = 1;
-_ZXDG_OUTPUT_V1_DESTROY = 0;
-
-
 var
   vIntf_zxdg_output_manager_v1_Listener: Tzxdg_output_manager_v1_listener;
   vIntf_zxdg_output_v1_Listener: Tzxdg_output_v1_listener;
 
 
 
-procedure zxdg_output_manager_v1_destroy(zxdg_output_manager_v1: Pzxdg_output_manager_v1);
+destructor TZxdgOutputManagerV1.Destroy;
 begin
-  wl_proxy_marshal(Pwl_proxy(zxdg_output_manager_v1), _ZXDG_OUTPUT_MANAGER_V1_DESTROY);
-  wl_proxy_destroy(Pwl_proxy(zxdg_output_manager_v1));
+  wl_proxy_marshal(FProxy, _DESTROY);
+  inherited Destroy;
 end;
 
-function  zxdg_output_manager_v1_get_xdg_output(zxdg_output_manager_v1: Pzxdg_output_manager_v1; output: Pwl_output): Pzxdg_output_v1;
+function TZxdgOutputManagerV1.GetXdgOutput(AOutput: TWlOutput; AProxyClass: TWLProxyObjectClass = nil {TZxdgOutputV1}): TZxdgOutputV1;
 var
   id: Pwl_proxy;
 begin
-  id := wl_proxy_marshal_constructor(Pwl_proxy(zxdg_output_manager_v1),
-      _ZXDG_OUTPUT_MANAGER_V1_GET_XDG_OUTPUT, @zxdg_output_v1_interface, nil, output);
-  Result := Pzxdg_output_v1(id);
+  id := wl_proxy_marshal_constructor(FProxy,
+      _GET_XDG_OUTPUT, @zxdg_output_v1_interface, nil, AOutput.Proxy);
+  if AProxyClass = nil then
+    AProxyClass := TZxdgOutputV1;
+  Result := TZxdgOutputV1(AProxyClass.Create(id));
+  if not AProxyClass.InheritsFrom(TZxdgOutputV1) then
+    Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TZxdgOutputV1]);
 end;
 
-function  zxdg_output_manager_v1_add_listener(zxdg_output_manager_v1: Pzxdg_output_manager_v1; listener: Pzxdg_output_manager_v1_listener; data: Pointer): cint;
+function TZxdgOutputManagerV1.AddListener(AIntf: IZxdgOutputManagerV1Listener): LongInt;
 begin
-  Result := wl_proxy_add_listener(Pwl_proxy(zxdg_output_manager_v1), listener, data);
+  FUserDataRec.ListenerUserData := Pointer(AIntf);
+  Result := wl_proxy_add_listener(FProxy, @vIntf_zxdg_output_manager_v1_Listener, @FUserDataRec);
+end;
+destructor TZxdgOutputV1.Destroy;
+begin
+  wl_proxy_marshal(FProxy, _DESTROY);
+  inherited Destroy;
 end;
 
-procedure  zxdg_output_manager_v1_add_listener(zxdg_output_manager_v1: Pzxdg_output_manager_v1; AIntf: Izxdg_output_manager_v1Listener);
+function TZxdgOutputV1.AddListener(AIntf: IZxdgOutputV1Listener): LongInt;
 begin
-  zxdg_output_manager_v1_add_listener(zxdg_output_manager_v1, @vIntf_zxdg_output_manager_v1_Listener, AIntf);
-end;
-
-procedure zxdg_output_manager_v1_set_user_data(zxdg_output_manager_v1: Pzxdg_output_manager_v1; user_data: Pointer);
-begin
-  wl_proxy_set_user_data(Pwl_proxy(zxdg_output_manager_v1), user_data);
-end;
-
-function  zxdg_output_manager_v1_get_user_data(zxdg_output_manager_v1: Pzxdg_output_manager_v1): Pointer;
-begin
-  Result := wl_proxy_get_user_data(Pwl_proxy(zxdg_output_manager_v1));
-end;
-
-function  zxdg_output_manager_v1_get_version(zxdg_output_manager_v1: Pzxdg_output_manager_v1): cuint32;
-begin
-  Result := wl_proxy_get_version(Pwl_proxy(zxdg_output_manager_v1));
-end;
-
-procedure zxdg_output_v1_destroy(zxdg_output_v1: Pzxdg_output_v1);
-begin
-  wl_proxy_marshal(Pwl_proxy(zxdg_output_v1), _ZXDG_OUTPUT_V1_DESTROY);
-  wl_proxy_destroy(Pwl_proxy(zxdg_output_v1));
-end;
-
-function  zxdg_output_v1_add_listener(zxdg_output_v1: Pzxdg_output_v1; listener: Pzxdg_output_v1_listener; data: Pointer): cint;
-begin
-  Result := wl_proxy_add_listener(Pwl_proxy(zxdg_output_v1), listener, data);
-end;
-
-procedure  zxdg_output_v1_add_listener(zxdg_output_v1: Pzxdg_output_v1; AIntf: Izxdg_output_v1Listener);
-begin
-  zxdg_output_v1_add_listener(zxdg_output_v1, @vIntf_zxdg_output_v1_Listener, AIntf);
-end;
-
-procedure zxdg_output_v1_set_user_data(zxdg_output_v1: Pzxdg_output_v1; user_data: Pointer);
-begin
-  wl_proxy_set_user_data(Pwl_proxy(zxdg_output_v1), user_data);
-end;
-
-function  zxdg_output_v1_get_user_data(zxdg_output_v1: Pzxdg_output_v1): Pointer;
-begin
-  Result := wl_proxy_get_user_data(Pwl_proxy(zxdg_output_v1));
-end;
-
-function  zxdg_output_v1_get_version(zxdg_output_v1: Pzxdg_output_v1): cuint32;
-begin
-  Result := wl_proxy_get_version(Pwl_proxy(zxdg_output_v1));
+  FUserDataRec.ListenerUserData := Pointer(AIntf);
+  Result := wl_proxy_add_listener(FProxy, @vIntf_zxdg_output_v1_Listener, @FUserDataRec);
 end;
 
 
-procedure zxdg_output_v1_logical_position_Intf(AIntf: Izxdg_output_v1Listener; zxdg_output_v1: Pzxdg_output_v1; x: cint; y: cint); cdecl;
+
+
+procedure zxdg_output_v1_logical_position_Intf(AData: PWLUserData; Azxdg_output_v1: Pzxdg_output_v1; AX: LongInt; AY: LongInt); cdecl;
+var
+  AIntf: IZxdgOutputV1Listener;
 begin
-  WriteLn('zxdg_output_v1.logical_position');
-  AIntf.zxdg_output_v1_logical_position(zxdg_output_v1, x, y);
+  if AData = nil then Exit;
+  AIntf := IZxdgOutputV1Listener(AData^.ListenerUserData);
+  AIntf.zxdg_output_v1_logical_position(TZxdgOutputV1(AData^.PascalObject), AX, AY);
 end;
 
-procedure zxdg_output_v1_logical_size_Intf(AIntf: Izxdg_output_v1Listener; zxdg_output_v1: Pzxdg_output_v1; width: cint; height: cint); cdecl;
+procedure zxdg_output_v1_logical_size_Intf(AData: PWLUserData; Azxdg_output_v1: Pzxdg_output_v1; AWidth: LongInt; AHeight: LongInt); cdecl;
+var
+  AIntf: IZxdgOutputV1Listener;
 begin
-  WriteLn('zxdg_output_v1.logical_size');
-  AIntf.zxdg_output_v1_logical_size(zxdg_output_v1, width, height);
+  if AData = nil then Exit;
+  AIntf := IZxdgOutputV1Listener(AData^.ListenerUserData);
+  AIntf.zxdg_output_v1_logical_size(TZxdgOutputV1(AData^.PascalObject), AWidth, AHeight);
 end;
 
-procedure zxdg_output_v1_done_Intf(AIntf: Izxdg_output_v1Listener; zxdg_output_v1: Pzxdg_output_v1); cdecl;
+procedure zxdg_output_v1_done_Intf(AData: PWLUserData; Azxdg_output_v1: Pzxdg_output_v1); cdecl;
+var
+  AIntf: IZxdgOutputV1Listener;
 begin
-  WriteLn('zxdg_output_v1.done');
-  AIntf.zxdg_output_v1_done(zxdg_output_v1);
+  if AData = nil then Exit;
+  AIntf := IZxdgOutputV1Listener(AData^.ListenerUserData);
+  AIntf.zxdg_output_v1_done(TZxdgOutputV1(AData^.PascalObject));
 end;
 
-procedure zxdg_output_v1_name_Intf(AIntf: Izxdg_output_v1Listener; zxdg_output_v1: Pzxdg_output_v1; name: pchar); cdecl;
+procedure zxdg_output_v1_name_Intf(AData: PWLUserData; Azxdg_output_v1: Pzxdg_output_v1; AName: Pchar); cdecl;
+var
+  AIntf: IZxdgOutputV1Listener;
 begin
-  WriteLn('zxdg_output_v1.name');
-  AIntf.zxdg_output_v1_name(zxdg_output_v1, name);
+  if AData = nil then Exit;
+  AIntf := IZxdgOutputV1Listener(AData^.ListenerUserData);
+  AIntf.zxdg_output_v1_name(TZxdgOutputV1(AData^.PascalObject), AName);
 end;
 
-procedure zxdg_output_v1_description_Intf(AIntf: Izxdg_output_v1Listener; zxdg_output_v1: Pzxdg_output_v1; description: pchar); cdecl;
+procedure zxdg_output_v1_description_Intf(AData: PWLUserData; Azxdg_output_v1: Pzxdg_output_v1; ADescription: Pchar); cdecl;
+var
+  AIntf: IZxdgOutputV1Listener;
 begin
-  WriteLn('zxdg_output_v1.description');
-  AIntf.zxdg_output_v1_description(zxdg_output_v1, description);
+  if AData = nil then Exit;
+  AIntf := IZxdgOutputV1Listener(AData^.ListenerUserData);
+  AIntf.zxdg_output_v1_description(TZxdgOutputV1(AData^.PascalObject), ADescription);
 end;
 
 

@@ -6,14 +6,12 @@ unit presentation_time_protocol;
 interface
 
 uses
-  ctypes, wayland_util, wayland_client_core, wayland_protocol;
+  Classes, Sysutils, ctypes, wayland_util, wayland_client_core, wayland_protocol;
 
 
 type
-  Pwp_presentation = ^Twp_presentation;
-  Twp_presentation = record end;
-  Pwp_presentation_feedback = ^Twp_presentation_feedback;
-  Twp_presentation_feedback = record end;
+  Pwp_presentation = Pointer;
+  Pwp_presentation_feedback = Pointer;
 const
   WP_PRESENTATION_ERROR_INVALID_TIMESTAMP = 0; // invalid value in tv_nsec
   WP_PRESENTATION_ERROR_INVALID_FLAG = 1; // invalid flag
@@ -21,7 +19,7 @@ const
 type
   Pwp_presentation_listener = ^Twp_presentation_listener;
   Twp_presentation_listener = record
-    clock_id : procedure(data: Pointer; wp_presentation: Pwp_presentation; clk_id: cuint); cdecl;
+    clock_id : procedure(data: Pointer; AWpPresentation: Pwp_presentation; AClkId: DWord); cdecl;
   end;
 
 const
@@ -33,40 +31,48 @@ const
 type
   Pwp_presentation_feedback_listener = ^Twp_presentation_feedback_listener;
   Twp_presentation_feedback_listener = record
-    sync_output : procedure(data: Pointer; wp_presentation_feedback: Pwp_presentation_feedback; output: Pwl_output); cdecl;
-    presented : procedure(data: Pointer; wp_presentation_feedback: Pwp_presentation_feedback; tv_sec_hi: cuint; tv_sec_lo: cuint; tv_nsec: cuint; refresh: cuint; seq_hi: cuint; seq_lo: cuint; flags: cuint); cdecl;
-    discarded : procedure(data: Pointer; wp_presentation_feedback: Pwp_presentation_feedback); cdecl;
+    sync_output : procedure(data: Pointer; AWpPresentationFeedback: Pwp_presentation_feedback; AOutput: Pwl_output); cdecl;
+    presented : procedure(data: Pointer; AWpPresentationFeedback: Pwp_presentation_feedback; ATvSecHi: DWord; ATvSecLo: DWord; ATvNsec: DWord; ARefresh: DWord; ASeqHi: DWord; ASeqLo: DWord; AFlags: DWord); cdecl;
+    discarded : procedure(data: Pointer; AWpPresentationFeedback: Pwp_presentation_feedback); cdecl;
   end;
 
 
 
-  Iwp_presentationListener = interface
-  ['Iwp_presentationListener']
-    procedure wp_presentation_clock_id(wp_presentation: Pwp_presentation; clk_id: cuint);
+  TWpPresentation = class;
+  TWpPresentationFeedback = class;
+
+
+  IWpPresentationListener = interface
+  ['IWpPresentationListener']
+    procedure wp_presentation_clock_id(AWpPresentation: TWpPresentation; AClkId: DWord);
   end;
 
-  Iwp_presentation_feedbackListener = interface
-  ['Iwp_presentation_feedbackListener']
-    procedure wp_presentation_feedback_sync_output(wp_presentation_feedback: Pwp_presentation_feedback; output: Pwl_output);
-    procedure wp_presentation_feedback_presented(wp_presentation_feedback: Pwp_presentation_feedback; tv_sec_hi: cuint; tv_sec_lo: cuint; tv_nsec: cuint; refresh: cuint; seq_hi: cuint; seq_lo: cuint; flags: cuint);
-    procedure wp_presentation_feedback_discarded(wp_presentation_feedback: Pwp_presentation_feedback);
+  IWpPresentationFeedbackListener = interface
+  ['IWpPresentationFeedbackListener']
+    procedure wp_presentation_feedback_sync_output(AWpPresentationFeedback: TWpPresentationFeedback; AOutput: TWlOutput);
+    procedure wp_presentation_feedback_presented(AWpPresentationFeedback: TWpPresentationFeedback; ATvSecHi: DWord; ATvSecLo: DWord; ATvNsec: DWord; ARefresh: DWord; ASeqHi: DWord; ASeqLo: DWord; AFlags: DWord);
+    procedure wp_presentation_feedback_discarded(AWpPresentationFeedback: TWpPresentationFeedback);
   end;
 
 
 
-procedure wp_presentation_destroy(wp_presentation: Pwp_presentation);
-function  wp_presentation_feedback(wp_presentation: Pwp_presentation; surface: Pwl_surface): Pwp_presentation_feedback;
-function  wp_presentation_add_listener(wp_presentation: Pwp_presentation; listener: Pwp_presentation_listener; data: Pointer): cint;
-procedure  wp_presentation_add_listener(wp_presentation: Pwp_presentation; AIntf: Iwp_presentationListener);
-procedure wp_presentation_set_user_data(wp_presentation: Pwp_presentation; user_data: Pointer);
-function  wp_presentation_get_user_data(wp_presentation: Pwp_presentation): Pointer;
-function  wp_presentation_get_version(wp_presentation: Pwp_presentation): cuint32;
-function  wp_presentation_feedback_add_listener(wp_presentation_feedback: Pwp_presentation_feedback; listener: Pwp_presentation_feedback_listener; data: Pointer): cint;
-procedure  wp_presentation_feedback_add_listener(wp_presentation_feedback: Pwp_presentation_feedback; AIntf: Iwp_presentation_feedbackListener);
-procedure wp_presentation_feedback_set_user_data(wp_presentation_feedback: Pwp_presentation_feedback; user_data: Pointer);
-function  wp_presentation_feedback_get_user_data(wp_presentation_feedback: Pwp_presentation_feedback): Pointer;
-function  wp_presentation_feedback_get_version(wp_presentation_feedback: Pwp_presentation_feedback): cuint32;
-procedure wp_presentation_feedback_destroy(wp_presentation_feedback: Pwp_presentation_feedback);
+
+  TWpPresentation = class(TWLProxyObject)
+  private
+    const _DESTROY = 0;
+    const _FEEDBACK = 1;
+  public
+    destructor Destroy; override;
+    function Feedback(ASurface: TWlSurface; AProxyClass: TWLProxyObjectClass = nil {TWpPresentationFeedback}): TWpPresentationFeedback;
+    function AddListener(AIntf: IWpPresentationListener): LongInt;
+  end;
+
+  TWpPresentationFeedback = class(TWLProxyObject)
+    function AddListener(AIntf: IWpPresentationFeedbackListener): LongInt;
+  end;
+
+
+
 
 
 
@@ -78,110 +84,79 @@ var
 
 implementation
 
-const
-_WP_PRESENTATION_DESTROY = 0;
-_WP_PRESENTATION_FEEDBACK = 1;
-
-
 var
   vIntf_wp_presentation_Listener: Twp_presentation_listener;
   vIntf_wp_presentation_feedback_Listener: Twp_presentation_feedback_listener;
 
 
 
-procedure wp_presentation_destroy(wp_presentation: Pwp_presentation);
+destructor TWpPresentation.Destroy;
 begin
-  wl_proxy_marshal(Pwl_proxy(wp_presentation), _WP_PRESENTATION_DESTROY);
-  wl_proxy_destroy(Pwl_proxy(wp_presentation));
+  wl_proxy_marshal(FProxy, _DESTROY);
+  inherited Destroy;
 end;
 
-function  wp_presentation_feedback(wp_presentation: Pwp_presentation; surface: Pwl_surface): Pwp_presentation_feedback;
+function TWpPresentation.Feedback(ASurface: TWlSurface; AProxyClass: TWLProxyObjectClass = nil {TWpPresentationFeedback}): TWpPresentationFeedback;
 var
   callback: Pwl_proxy;
 begin
-  callback := wl_proxy_marshal_constructor(Pwl_proxy(wp_presentation),
-      _WP_PRESENTATION_FEEDBACK, @wp_presentation_feedback_interface, nil, surface);
-  Result := Pwp_presentation_feedback(callback);
+  callback := wl_proxy_marshal_constructor(FProxy,
+      _FEEDBACK, @wp_presentation_feedback_interface, nil, ASurface.Proxy);
+  if AProxyClass = nil then
+    AProxyClass := TWpPresentationFeedback;
+  Result := TWpPresentationFeedback(AProxyClass.Create(callback));
+  if not AProxyClass.InheritsFrom(TWpPresentationFeedback) then
+    Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TWpPresentationFeedback]);
 end;
 
-function  wp_presentation_add_listener(wp_presentation: Pwp_presentation; listener: Pwp_presentation_listener; data: Pointer): cint;
+function TWpPresentation.AddListener(AIntf: IWpPresentationListener): LongInt;
 begin
-  Result := wl_proxy_add_listener(Pwl_proxy(wp_presentation), listener, data);
+  FUserDataRec.ListenerUserData := Pointer(AIntf);
+  Result := wl_proxy_add_listener(FProxy, @vIntf_wp_presentation_Listener, @FUserDataRec);
 end;
-
-procedure  wp_presentation_add_listener(wp_presentation: Pwp_presentation; AIntf: Iwp_presentationListener);
+function TWpPresentationFeedback.AddListener(AIntf: IWpPresentationFeedbackListener): LongInt;
 begin
-  wp_presentation_add_listener(wp_presentation, @vIntf_wp_presentation_Listener, AIntf);
-end;
-
-procedure wp_presentation_set_user_data(wp_presentation: Pwp_presentation; user_data: Pointer);
-begin
-  wl_proxy_set_user_data(Pwl_proxy(wp_presentation), user_data);
-end;
-
-function  wp_presentation_get_user_data(wp_presentation: Pwp_presentation): Pointer;
-begin
-  Result := wl_proxy_get_user_data(Pwl_proxy(wp_presentation));
-end;
-
-function  wp_presentation_get_version(wp_presentation: Pwp_presentation): cuint32;
-begin
-  Result := wl_proxy_get_version(Pwl_proxy(wp_presentation));
-end;
-
-function  wp_presentation_feedback_add_listener(wp_presentation_feedback: Pwp_presentation_feedback; listener: Pwp_presentation_feedback_listener; data: Pointer): cint;
-begin
-  Result := wl_proxy_add_listener(Pwl_proxy(wp_presentation_feedback), listener, data);
-end;
-
-procedure  wp_presentation_feedback_add_listener(wp_presentation_feedback: Pwp_presentation_feedback; AIntf: Iwp_presentation_feedbackListener);
-begin
-  wp_presentation_feedback_add_listener(wp_presentation_feedback, @vIntf_wp_presentation_feedback_Listener, AIntf);
-end;
-
-procedure wp_presentation_feedback_set_user_data(wp_presentation_feedback: Pwp_presentation_feedback; user_data: Pointer);
-begin
-  wl_proxy_set_user_data(Pwl_proxy(wp_presentation_feedback), user_data);
-end;
-
-function  wp_presentation_feedback_get_user_data(wp_presentation_feedback: Pwp_presentation_feedback): Pointer;
-begin
-  Result := wl_proxy_get_user_data(Pwl_proxy(wp_presentation_feedback));
-end;
-
-function  wp_presentation_feedback_get_version(wp_presentation_feedback: Pwp_presentation_feedback): cuint32;
-begin
-  Result := wl_proxy_get_version(Pwl_proxy(wp_presentation_feedback));
-end;
-
-procedure wp_presentation_feedback_destroy(wp_presentation_feedback: Pwp_presentation_feedback);
-begin
-  wl_proxy_destroy(Pwl_proxy(wp_presentation_feedback));
+  FUserDataRec.ListenerUserData := Pointer(AIntf);
+  Result := wl_proxy_add_listener(FProxy, @vIntf_wp_presentation_feedback_Listener, @FUserDataRec);
 end;
 
 
-procedure wp_presentation_clock_id_Intf(AIntf: Iwp_presentationListener; wp_presentation: Pwp_presentation; clk_id: cuint); cdecl;
+
+
+procedure wp_presentation_clock_id_Intf(AData: PWLUserData; Awp_presentation: Pwp_presentation; AClkId: DWord); cdecl;
+var
+  AIntf: IWpPresentationListener;
 begin
-  WriteLn('wp_presentation.clock_id');
-  AIntf.wp_presentation_clock_id(wp_presentation, clk_id);
+  if AData = nil then Exit;
+  AIntf := IWpPresentationListener(AData^.ListenerUserData);
+  AIntf.wp_presentation_clock_id(TWpPresentation(AData^.PascalObject), AClkId);
 end;
 
-procedure wp_presentation_feedback_sync_output_Intf(AIntf: Iwp_presentation_feedbackListener; wp_presentation_feedback: Pwp_presentation_feedback; output: Pwl_output); cdecl;
+procedure wp_presentation_feedback_sync_output_Intf(AData: PWLUserData; Awp_presentation_feedback: Pwp_presentation_feedback; AOutput: Pwl_output); cdecl;
+var
+  AIntf: IWpPresentationFeedbackListener;
 begin
-  WriteLn('wp_presentation_feedback.sync_output');
-  AIntf.wp_presentation_feedback_sync_output(wp_presentation_feedback, output);
+  if AData = nil then Exit;
+  AIntf := IWpPresentationFeedbackListener(AData^.ListenerUserData);
+  AIntf.wp_presentation_feedback_sync_output(TWpPresentationFeedback(AData^.PascalObject),  TWlOutput(TWLProxyObject.WLToObj(AOutput)));
 end;
 
-procedure wp_presentation_feedback_presented_Intf(AIntf: Iwp_presentation_feedbackListener; wp_presentation_feedback: Pwp_presentation_feedback; tv_sec_hi: cuint; tv_sec_lo: cuint; tv_nsec: cuint; refresh: cuint; seq_hi: cuint; seq_lo: cuint; flags: cuint); cdecl;
+procedure wp_presentation_feedback_presented_Intf(AData: PWLUserData; Awp_presentation_feedback: Pwp_presentation_feedback; ATvSecHi: DWord; ATvSecLo: DWord; ATvNsec: DWord; ARefresh: DWord; ASeqHi: DWord; ASeqLo: DWord; AFlags: DWord); cdecl;
+var
+  AIntf: IWpPresentationFeedbackListener;
 begin
-  WriteLn('wp_presentation_feedback.presented');
-  AIntf.wp_presentation_feedback_presented(wp_presentation_feedback, tv_sec_hi, tv_sec_lo, tv_nsec, refresh, seq_hi, seq_lo, flags);
+  if AData = nil then Exit;
+  AIntf := IWpPresentationFeedbackListener(AData^.ListenerUserData);
+  AIntf.wp_presentation_feedback_presented(TWpPresentationFeedback(AData^.PascalObject), ATvSecHi, ATvSecLo, ATvNsec, ARefresh, ASeqHi, ASeqLo, AFlags);
 end;
 
-procedure wp_presentation_feedback_discarded_Intf(AIntf: Iwp_presentation_feedbackListener; wp_presentation_feedback: Pwp_presentation_feedback); cdecl;
+procedure wp_presentation_feedback_discarded_Intf(AData: PWLUserData; Awp_presentation_feedback: Pwp_presentation_feedback); cdecl;
+var
+  AIntf: IWpPresentationFeedbackListener;
 begin
-  WriteLn('wp_presentation_feedback.discarded');
-  AIntf.wp_presentation_feedback_discarded(wp_presentation_feedback);
+  if AData = nil then Exit;
+  AIntf := IWpPresentationFeedbackListener(AData^.ListenerUserData);
+  AIntf.wp_presentation_feedback_discarded(TWpPresentationFeedback(AData^.PascalObject));
 end;
 
 

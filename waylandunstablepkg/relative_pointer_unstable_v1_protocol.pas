@@ -6,49 +6,59 @@ unit relative_pointer_unstable_v1_protocol;
 interface
 
 uses
-  ctypes, wayland_util, wayland_client_core, wayland_protocol;
+  Classes, Sysutils, ctypes, wayland_util, wayland_client_core, wayland_protocol;
 
 
 type
-  Pzwp_relative_pointer_manager_v1 = ^Tzwp_relative_pointer_manager_v1;
-  Tzwp_relative_pointer_manager_v1 = record end;
-  Pzwp_relative_pointer_v1 = ^Tzwp_relative_pointer_v1;
-  Tzwp_relative_pointer_v1 = record end;
+  Pzwp_relative_pointer_manager_v1 = Pointer;
+  Pzwp_relative_pointer_v1 = Pointer;
   Pzwp_relative_pointer_manager_v1_listener = ^Tzwp_relative_pointer_manager_v1_listener;
   Tzwp_relative_pointer_manager_v1_listener = record
   end;
 
   Pzwp_relative_pointer_v1_listener = ^Tzwp_relative_pointer_v1_listener;
   Tzwp_relative_pointer_v1_listener = record
-    relative_motion : procedure(data: Pointer; zwp_relative_pointer_v1: Pzwp_relative_pointer_v1; utime_hi: cuint; utime_lo: cuint; dx: cint32; dy: cint32; dx_unaccel: cint32; dy_unaccel: cint32); cdecl;
+    relative_motion : procedure(data: Pointer; AZwpRelativePointerV1: Pzwp_relative_pointer_v1; AUtimeHi: DWord; AUtimeLo: DWord; ADx: Longint{24.8}; ADy: Longint{24.8}; ADxUnaccel: Longint{24.8}; ADyUnaccel: Longint{24.8}); cdecl;
   end;
 
 
 
-  Izwp_relative_pointer_manager_v1Listener = interface
-  ['Izwp_relative_pointer_manager_v1Listener']
+  TZwpRelativePointerManagerV1 = class;
+  TZwpRelativePointerV1 = class;
+
+
+  IZwpRelativePointerManagerV1Listener = interface
+  ['IZwpRelativePointerManagerV1Listener']
   end;
 
-  Izwp_relative_pointer_v1Listener = interface
-  ['Izwp_relative_pointer_v1Listener']
-    procedure zwp_relative_pointer_v1_relative_motion(zwp_relative_pointer_v1: Pzwp_relative_pointer_v1; utime_hi: cuint; utime_lo: cuint; dx: cint32; dy: cint32; dx_unaccel: cint32; dy_unaccel: cint32);
+  IZwpRelativePointerV1Listener = interface
+  ['IZwpRelativePointerV1Listener']
+    procedure zwp_relative_pointer_v1_relative_motion(AZwpRelativePointerV1: TZwpRelativePointerV1; AUtimeHi: DWord; AUtimeLo: DWord; ADx: Longint{24.8}; ADy: Longint{24.8}; ADxUnaccel: Longint{24.8}; ADyUnaccel: Longint{24.8});
   end;
 
 
 
-procedure zwp_relative_pointer_manager_v1_destroy(zwp_relative_pointer_manager_v1: Pzwp_relative_pointer_manager_v1);
-function  zwp_relative_pointer_manager_v1_get_relative_pointer(zwp_relative_pointer_manager_v1: Pzwp_relative_pointer_manager_v1; pointer: Pwl_pointer): Pzwp_relative_pointer_v1;
-function  zwp_relative_pointer_manager_v1_add_listener(zwp_relative_pointer_manager_v1: Pzwp_relative_pointer_manager_v1; listener: Pzwp_relative_pointer_manager_v1_listener; data: Pointer): cint;
-procedure  zwp_relative_pointer_manager_v1_add_listener(zwp_relative_pointer_manager_v1: Pzwp_relative_pointer_manager_v1; AIntf: Izwp_relative_pointer_manager_v1Listener);
-procedure zwp_relative_pointer_manager_v1_set_user_data(zwp_relative_pointer_manager_v1: Pzwp_relative_pointer_manager_v1; user_data: Pointer);
-function  zwp_relative_pointer_manager_v1_get_user_data(zwp_relative_pointer_manager_v1: Pzwp_relative_pointer_manager_v1): Pointer;
-function  zwp_relative_pointer_manager_v1_get_version(zwp_relative_pointer_manager_v1: Pzwp_relative_pointer_manager_v1): cuint32;
-procedure zwp_relative_pointer_v1_destroy(zwp_relative_pointer_v1: Pzwp_relative_pointer_v1);
-function  zwp_relative_pointer_v1_add_listener(zwp_relative_pointer_v1: Pzwp_relative_pointer_v1; listener: Pzwp_relative_pointer_v1_listener; data: Pointer): cint;
-procedure  zwp_relative_pointer_v1_add_listener(zwp_relative_pointer_v1: Pzwp_relative_pointer_v1; AIntf: Izwp_relative_pointer_v1Listener);
-procedure zwp_relative_pointer_v1_set_user_data(zwp_relative_pointer_v1: Pzwp_relative_pointer_v1; user_data: Pointer);
-function  zwp_relative_pointer_v1_get_user_data(zwp_relative_pointer_v1: Pzwp_relative_pointer_v1): Pointer;
-function  zwp_relative_pointer_v1_get_version(zwp_relative_pointer_v1: Pzwp_relative_pointer_v1): cuint32;
+
+  TZwpRelativePointerManagerV1 = class(TWLProxyObject)
+  private
+    const _DESTROY = 0;
+    const _GET_RELATIVE_POINTER = 1;
+  public
+    destructor Destroy; override;
+    function GetRelativePointer(APointer: TWlPointer; AProxyClass: TWLProxyObjectClass = nil {TZwpRelativePointerV1}): TZwpRelativePointerV1;
+    function AddListener(AIntf: IZwpRelativePointerManagerV1Listener): LongInt;
+  end;
+
+  TZwpRelativePointerV1 = class(TWLProxyObject)
+  private
+    const _DESTROY = 0;
+  public
+    destructor Destroy; override;
+    function AddListener(AIntf: IZwpRelativePointerV1Listener): LongInt;
+  end;
+
+
+
 
 
 
@@ -60,94 +70,58 @@ var
 
 implementation
 
-const
-_ZWP_RELATIVE_POINTER_MANAGER_V1_DESTROY = 0;
-_ZWP_RELATIVE_POINTER_MANAGER_V1_GET_RELATIVE_POINTER = 1;
-_ZWP_RELATIVE_POINTER_V1_DESTROY = 0;
-
-
 var
   vIntf_zwp_relative_pointer_manager_v1_Listener: Tzwp_relative_pointer_manager_v1_listener;
   vIntf_zwp_relative_pointer_v1_Listener: Tzwp_relative_pointer_v1_listener;
 
 
 
-procedure zwp_relative_pointer_manager_v1_destroy(zwp_relative_pointer_manager_v1: Pzwp_relative_pointer_manager_v1);
+destructor TZwpRelativePointerManagerV1.Destroy;
 begin
-  wl_proxy_marshal(Pwl_proxy(zwp_relative_pointer_manager_v1), _ZWP_RELATIVE_POINTER_MANAGER_V1_DESTROY);
-  wl_proxy_destroy(Pwl_proxy(zwp_relative_pointer_manager_v1));
+  wl_proxy_marshal(FProxy, _DESTROY);
+  inherited Destroy;
 end;
 
-function  zwp_relative_pointer_manager_v1_get_relative_pointer(zwp_relative_pointer_manager_v1: Pzwp_relative_pointer_manager_v1; pointer: Pwl_pointer): Pzwp_relative_pointer_v1;
+function TZwpRelativePointerManagerV1.GetRelativePointer(APointer: TWlPointer; AProxyClass: TWLProxyObjectClass = nil {TZwpRelativePointerV1}): TZwpRelativePointerV1;
 var
   id: Pwl_proxy;
 begin
-  id := wl_proxy_marshal_constructor(Pwl_proxy(zwp_relative_pointer_manager_v1),
-      _ZWP_RELATIVE_POINTER_MANAGER_V1_GET_RELATIVE_POINTER, @zwp_relative_pointer_v1_interface, nil, pointer);
-  Result := Pzwp_relative_pointer_v1(id);
+  id := wl_proxy_marshal_constructor(FProxy,
+      _GET_RELATIVE_POINTER, @zwp_relative_pointer_v1_interface, nil, APointer.Proxy);
+  if AProxyClass = nil then
+    AProxyClass := TZwpRelativePointerV1;
+  Result := TZwpRelativePointerV1(AProxyClass.Create(id));
+  if not AProxyClass.InheritsFrom(TZwpRelativePointerV1) then
+    Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TZwpRelativePointerV1]);
 end;
 
-function  zwp_relative_pointer_manager_v1_add_listener(zwp_relative_pointer_manager_v1: Pzwp_relative_pointer_manager_v1; listener: Pzwp_relative_pointer_manager_v1_listener; data: Pointer): cint;
+function TZwpRelativePointerManagerV1.AddListener(AIntf: IZwpRelativePointerManagerV1Listener): LongInt;
 begin
-  Result := wl_proxy_add_listener(Pwl_proxy(zwp_relative_pointer_manager_v1), listener, data);
+  FUserDataRec.ListenerUserData := Pointer(AIntf);
+  Result := wl_proxy_add_listener(FProxy, @vIntf_zwp_relative_pointer_manager_v1_Listener, @FUserDataRec);
+end;
+destructor TZwpRelativePointerV1.Destroy;
+begin
+  wl_proxy_marshal(FProxy, _DESTROY);
+  inherited Destroy;
 end;
 
-procedure  zwp_relative_pointer_manager_v1_add_listener(zwp_relative_pointer_manager_v1: Pzwp_relative_pointer_manager_v1; AIntf: Izwp_relative_pointer_manager_v1Listener);
+function TZwpRelativePointerV1.AddListener(AIntf: IZwpRelativePointerV1Listener): LongInt;
 begin
-  zwp_relative_pointer_manager_v1_add_listener(zwp_relative_pointer_manager_v1, @vIntf_zwp_relative_pointer_manager_v1_Listener, AIntf);
-end;
-
-procedure zwp_relative_pointer_manager_v1_set_user_data(zwp_relative_pointer_manager_v1: Pzwp_relative_pointer_manager_v1; user_data: Pointer);
-begin
-  wl_proxy_set_user_data(Pwl_proxy(zwp_relative_pointer_manager_v1), user_data);
-end;
-
-function  zwp_relative_pointer_manager_v1_get_user_data(zwp_relative_pointer_manager_v1: Pzwp_relative_pointer_manager_v1): Pointer;
-begin
-  Result := wl_proxy_get_user_data(Pwl_proxy(zwp_relative_pointer_manager_v1));
-end;
-
-function  zwp_relative_pointer_manager_v1_get_version(zwp_relative_pointer_manager_v1: Pzwp_relative_pointer_manager_v1): cuint32;
-begin
-  Result := wl_proxy_get_version(Pwl_proxy(zwp_relative_pointer_manager_v1));
-end;
-
-procedure zwp_relative_pointer_v1_destroy(zwp_relative_pointer_v1: Pzwp_relative_pointer_v1);
-begin
-  wl_proxy_marshal(Pwl_proxy(zwp_relative_pointer_v1), _ZWP_RELATIVE_POINTER_V1_DESTROY);
-  wl_proxy_destroy(Pwl_proxy(zwp_relative_pointer_v1));
-end;
-
-function  zwp_relative_pointer_v1_add_listener(zwp_relative_pointer_v1: Pzwp_relative_pointer_v1; listener: Pzwp_relative_pointer_v1_listener; data: Pointer): cint;
-begin
-  Result := wl_proxy_add_listener(Pwl_proxy(zwp_relative_pointer_v1), listener, data);
-end;
-
-procedure  zwp_relative_pointer_v1_add_listener(zwp_relative_pointer_v1: Pzwp_relative_pointer_v1; AIntf: Izwp_relative_pointer_v1Listener);
-begin
-  zwp_relative_pointer_v1_add_listener(zwp_relative_pointer_v1, @vIntf_zwp_relative_pointer_v1_Listener, AIntf);
-end;
-
-procedure zwp_relative_pointer_v1_set_user_data(zwp_relative_pointer_v1: Pzwp_relative_pointer_v1; user_data: Pointer);
-begin
-  wl_proxy_set_user_data(Pwl_proxy(zwp_relative_pointer_v1), user_data);
-end;
-
-function  zwp_relative_pointer_v1_get_user_data(zwp_relative_pointer_v1: Pzwp_relative_pointer_v1): Pointer;
-begin
-  Result := wl_proxy_get_user_data(Pwl_proxy(zwp_relative_pointer_v1));
-end;
-
-function  zwp_relative_pointer_v1_get_version(zwp_relative_pointer_v1: Pzwp_relative_pointer_v1): cuint32;
-begin
-  Result := wl_proxy_get_version(Pwl_proxy(zwp_relative_pointer_v1));
+  FUserDataRec.ListenerUserData := Pointer(AIntf);
+  Result := wl_proxy_add_listener(FProxy, @vIntf_zwp_relative_pointer_v1_Listener, @FUserDataRec);
 end;
 
 
-procedure zwp_relative_pointer_v1_relative_motion_Intf(AIntf: Izwp_relative_pointer_v1Listener; zwp_relative_pointer_v1: Pzwp_relative_pointer_v1; utime_hi: cuint; utime_lo: cuint; dx: cint32; dy: cint32; dx_unaccel: cint32; dy_unaccel: cint32); cdecl;
+
+
+procedure zwp_relative_pointer_v1_relative_motion_Intf(AData: PWLUserData; Azwp_relative_pointer_v1: Pzwp_relative_pointer_v1; AUtimeHi: DWord; AUtimeLo: DWord; ADx: Longint{24.8}; ADy: Longint{24.8}; ADxUnaccel: Longint{24.8}; ADyUnaccel: Longint{24.8}); cdecl;
+var
+  AIntf: IZwpRelativePointerV1Listener;
 begin
-  WriteLn('zwp_relative_pointer_v1.relative_motion');
-  AIntf.zwp_relative_pointer_v1_relative_motion(zwp_relative_pointer_v1, utime_hi, utime_lo, dx, dy, dx_unaccel, dy_unaccel);
+  if AData = nil then Exit;
+  AIntf := IZwpRelativePointerV1Listener(AData^.ListenerUserData);
+  AIntf.zwp_relative_pointer_v1_relative_motion(TZwpRelativePointerV1(AData^.PascalObject), AUtimeHi, AUtimeLo, ADx, ADy, ADxUnaccel, ADyUnaccel);
 end;
 
 

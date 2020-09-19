@@ -6,16 +6,13 @@ unit linux_explicit_synchronization_unstable_v1_protocol;
 interface
 
 uses
-  ctypes, wayland_util, wayland_client_core, wayland_protocol;
+  Classes, Sysutils, ctypes, wayland_util, wayland_client_core, wayland_protocol;
 
 
 type
-  Pzwp_linux_explicit_synchronization_v1 = ^Tzwp_linux_explicit_synchronization_v1;
-  Tzwp_linux_explicit_synchronization_v1 = record end;
-  Pzwp_linux_surface_synchronization_v1 = ^Tzwp_linux_surface_synchronization_v1;
-  Tzwp_linux_surface_synchronization_v1 = record end;
-  Pzwp_linux_buffer_release_v1 = ^Tzwp_linux_buffer_release_v1;
-  Tzwp_linux_buffer_release_v1 = record end;
+  Pzwp_linux_explicit_synchronization_v1 = Pointer;
+  Pzwp_linux_surface_synchronization_v1 = Pointer;
+  Pzwp_linux_buffer_release_v1 = Pointer;
 const
   ZWP_LINUX_EXPLICIT_SYNCHRONIZATION_V1_ERROR_SYNCHRONIZATION_EXISTS = 0; // the surface already has a synchronization object associated
 
@@ -39,49 +36,62 @@ type
 
   Pzwp_linux_buffer_release_v1_listener = ^Tzwp_linux_buffer_release_v1_listener;
   Tzwp_linux_buffer_release_v1_listener = record
-    fenced_release : procedure(data: Pointer; zwp_linux_buffer_release_v1: Pzwp_linux_buffer_release_v1; fence: cint); cdecl;
-    immediate_release : procedure(data: Pointer; zwp_linux_buffer_release_v1: Pzwp_linux_buffer_release_v1); cdecl;
+    fenced_release : procedure(data: Pointer; AZwpLinuxBufferReleaseV1: Pzwp_linux_buffer_release_v1; AFence: LongInt{fd}); cdecl;
+    immediate_release : procedure(data: Pointer; AZwpLinuxBufferReleaseV1: Pzwp_linux_buffer_release_v1); cdecl;
   end;
 
 
 
-  Izwp_linux_explicit_synchronization_v1Listener = interface
-  ['Izwp_linux_explicit_synchronization_v1Listener']
+  TZwpLinuxExplicitSynchronizationV1 = class;
+  TZwpLinuxSurfaceSynchronizationV1 = class;
+  TZwpLinuxBufferReleaseV1 = class;
+
+
+  IZwpLinuxExplicitSynchronizationV1Listener = interface
+  ['IZwpLinuxExplicitSynchronizationV1Listener']
   end;
 
-  Izwp_linux_surface_synchronization_v1Listener = interface
-  ['Izwp_linux_surface_synchronization_v1Listener']
+  IZwpLinuxSurfaceSynchronizationV1Listener = interface
+  ['IZwpLinuxSurfaceSynchronizationV1Listener']
   end;
 
-  Izwp_linux_buffer_release_v1Listener = interface
-  ['Izwp_linux_buffer_release_v1Listener']
-    procedure zwp_linux_buffer_release_v1_fenced_release(zwp_linux_buffer_release_v1: Pzwp_linux_buffer_release_v1; fence: cint);
-    procedure zwp_linux_buffer_release_v1_immediate_release(zwp_linux_buffer_release_v1: Pzwp_linux_buffer_release_v1);
+  IZwpLinuxBufferReleaseV1Listener = interface
+  ['IZwpLinuxBufferReleaseV1Listener']
+    procedure zwp_linux_buffer_release_v1_fenced_release(AZwpLinuxBufferReleaseV1: TZwpLinuxBufferReleaseV1; AFence: LongInt{fd});
+    procedure zwp_linux_buffer_release_v1_immediate_release(AZwpLinuxBufferReleaseV1: TZwpLinuxBufferReleaseV1);
   end;
 
 
 
-procedure zwp_linux_explicit_synchronization_v1_destroy(zwp_linux_explicit_synchronization_v1: Pzwp_linux_explicit_synchronization_v1);
-function  zwp_linux_explicit_synchronization_v1_get_synchronization(zwp_linux_explicit_synchronization_v1: Pzwp_linux_explicit_synchronization_v1; surface: Pwl_surface): Pzwp_linux_surface_synchronization_v1;
-function  zwp_linux_explicit_synchronization_v1_add_listener(zwp_linux_explicit_synchronization_v1: Pzwp_linux_explicit_synchronization_v1; listener: Pzwp_linux_explicit_synchronization_v1_listener; data: Pointer): cint;
-procedure  zwp_linux_explicit_synchronization_v1_add_listener(zwp_linux_explicit_synchronization_v1: Pzwp_linux_explicit_synchronization_v1; AIntf: Izwp_linux_explicit_synchronization_v1Listener);
-procedure zwp_linux_explicit_synchronization_v1_set_user_data(zwp_linux_explicit_synchronization_v1: Pzwp_linux_explicit_synchronization_v1; user_data: Pointer);
-function  zwp_linux_explicit_synchronization_v1_get_user_data(zwp_linux_explicit_synchronization_v1: Pzwp_linux_explicit_synchronization_v1): Pointer;
-function  zwp_linux_explicit_synchronization_v1_get_version(zwp_linux_explicit_synchronization_v1: Pzwp_linux_explicit_synchronization_v1): cuint32;
-procedure zwp_linux_surface_synchronization_v1_destroy(zwp_linux_surface_synchronization_v1: Pzwp_linux_surface_synchronization_v1);
-procedure zwp_linux_surface_synchronization_v1_set_acquire_fence(zwp_linux_surface_synchronization_v1: Pzwp_linux_surface_synchronization_v1; fd: cint);
-function  zwp_linux_surface_synchronization_v1_get_release(zwp_linux_surface_synchronization_v1: Pzwp_linux_surface_synchronization_v1): Pzwp_linux_buffer_release_v1;
-function  zwp_linux_surface_synchronization_v1_add_listener(zwp_linux_surface_synchronization_v1: Pzwp_linux_surface_synchronization_v1; listener: Pzwp_linux_surface_synchronization_v1_listener; data: Pointer): cint;
-procedure  zwp_linux_surface_synchronization_v1_add_listener(zwp_linux_surface_synchronization_v1: Pzwp_linux_surface_synchronization_v1; AIntf: Izwp_linux_surface_synchronization_v1Listener);
-procedure zwp_linux_surface_synchronization_v1_set_user_data(zwp_linux_surface_synchronization_v1: Pzwp_linux_surface_synchronization_v1; user_data: Pointer);
-function  zwp_linux_surface_synchronization_v1_get_user_data(zwp_linux_surface_synchronization_v1: Pzwp_linux_surface_synchronization_v1): Pointer;
-function  zwp_linux_surface_synchronization_v1_get_version(zwp_linux_surface_synchronization_v1: Pzwp_linux_surface_synchronization_v1): cuint32;
-function  zwp_linux_buffer_release_v1_add_listener(zwp_linux_buffer_release_v1: Pzwp_linux_buffer_release_v1; listener: Pzwp_linux_buffer_release_v1_listener; data: Pointer): cint;
-procedure  zwp_linux_buffer_release_v1_add_listener(zwp_linux_buffer_release_v1: Pzwp_linux_buffer_release_v1; AIntf: Izwp_linux_buffer_release_v1Listener);
-procedure zwp_linux_buffer_release_v1_set_user_data(zwp_linux_buffer_release_v1: Pzwp_linux_buffer_release_v1; user_data: Pointer);
-function  zwp_linux_buffer_release_v1_get_user_data(zwp_linux_buffer_release_v1: Pzwp_linux_buffer_release_v1): Pointer;
-function  zwp_linux_buffer_release_v1_get_version(zwp_linux_buffer_release_v1: Pzwp_linux_buffer_release_v1): cuint32;
-procedure zwp_linux_buffer_release_v1_destroy(zwp_linux_buffer_release_v1: Pzwp_linux_buffer_release_v1);
+
+  TZwpLinuxExplicitSynchronizationV1 = class(TWLProxyObject)
+  private
+    const _DESTROY = 0;
+    const _GET_SYNCHRONIZATION = 1;
+  public
+    destructor Destroy; override;
+    function GetSynchronization(ASurface: TWlSurface; AProxyClass: TWLProxyObjectClass = nil {TZwpLinuxSurfaceSynchronizationV1}): TZwpLinuxSurfaceSynchronizationV1;
+    function AddListener(AIntf: IZwpLinuxExplicitSynchronizationV1Listener): LongInt;
+  end;
+
+  TZwpLinuxSurfaceSynchronizationV1 = class(TWLProxyObject)
+  private
+    const _DESTROY = 0;
+    const _SET_ACQUIRE_FENCE = 1;
+    const _GET_RELEASE = 2;
+  public
+    destructor Destroy; override;
+    procedure SetAcquireFence(AFd: LongInt{fd});
+    function GetRelease(AProxyClass: TWLProxyObjectClass = nil {TZwpLinuxBufferReleaseV1}): TZwpLinuxBufferReleaseV1;
+    function AddListener(AIntf: IZwpLinuxSurfaceSynchronizationV1Listener): LongInt;
+  end;
+
+  TZwpLinuxBufferReleaseV1 = class(TWLProxyObject)
+    function AddListener(AIntf: IZwpLinuxBufferReleaseV1Listener): LongInt;
+  end;
+
+
+
 
 
 
@@ -94,14 +104,6 @@ var
 
 implementation
 
-const
-_ZWP_LINUX_EXPLICIT_SYNCHRONIZATION_V1_DESTROY = 0;
-_ZWP_LINUX_EXPLICIT_SYNCHRONIZATION_V1_GET_SYNCHRONIZATION = 1;
-_ZWP_LINUX_SURFACE_SYNCHRONIZATION_V1_DESTROY = 0;
-_ZWP_LINUX_SURFACE_SYNCHRONIZATION_V1_SET_ACQUIRE_FENCE = 1;
-_ZWP_LINUX_SURFACE_SYNCHRONIZATION_V1_GET_RELEASE = 2;
-
-
 var
   vIntf_zwp_linux_explicit_synchronization_v1_Listener: Tzwp_linux_explicit_synchronization_v1_listener;
   vIntf_zwp_linux_surface_synchronization_v1_Listener: Tzwp_linux_surface_synchronization_v1_listener;
@@ -109,133 +111,84 @@ var
 
 
 
-procedure zwp_linux_explicit_synchronization_v1_destroy(zwp_linux_explicit_synchronization_v1: Pzwp_linux_explicit_synchronization_v1);
+destructor TZwpLinuxExplicitSynchronizationV1.Destroy;
 begin
-  wl_proxy_marshal(Pwl_proxy(zwp_linux_explicit_synchronization_v1), _ZWP_LINUX_EXPLICIT_SYNCHRONIZATION_V1_DESTROY);
-  wl_proxy_destroy(Pwl_proxy(zwp_linux_explicit_synchronization_v1));
+  wl_proxy_marshal(FProxy, _DESTROY);
+  inherited Destroy;
 end;
 
-function  zwp_linux_explicit_synchronization_v1_get_synchronization(zwp_linux_explicit_synchronization_v1: Pzwp_linux_explicit_synchronization_v1; surface: Pwl_surface): Pzwp_linux_surface_synchronization_v1;
+function TZwpLinuxExplicitSynchronizationV1.GetSynchronization(ASurface: TWlSurface; AProxyClass: TWLProxyObjectClass = nil {TZwpLinuxSurfaceSynchronizationV1}): TZwpLinuxSurfaceSynchronizationV1;
 var
   id: Pwl_proxy;
 begin
-  id := wl_proxy_marshal_constructor(Pwl_proxy(zwp_linux_explicit_synchronization_v1),
-      _ZWP_LINUX_EXPLICIT_SYNCHRONIZATION_V1_GET_SYNCHRONIZATION, @zwp_linux_surface_synchronization_v1_interface, nil, surface);
-  Result := Pzwp_linux_surface_synchronization_v1(id);
+  id := wl_proxy_marshal_constructor(FProxy,
+      _GET_SYNCHRONIZATION, @zwp_linux_surface_synchronization_v1_interface, nil, ASurface.Proxy);
+  if AProxyClass = nil then
+    AProxyClass := TZwpLinuxSurfaceSynchronizationV1;
+  Result := TZwpLinuxSurfaceSynchronizationV1(AProxyClass.Create(id));
+  if not AProxyClass.InheritsFrom(TZwpLinuxSurfaceSynchronizationV1) then
+    Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TZwpLinuxSurfaceSynchronizationV1]);
 end;
 
-function  zwp_linux_explicit_synchronization_v1_add_listener(zwp_linux_explicit_synchronization_v1: Pzwp_linux_explicit_synchronization_v1; listener: Pzwp_linux_explicit_synchronization_v1_listener; data: Pointer): cint;
+function TZwpLinuxExplicitSynchronizationV1.AddListener(AIntf: IZwpLinuxExplicitSynchronizationV1Listener): LongInt;
 begin
-  Result := wl_proxy_add_listener(Pwl_proxy(zwp_linux_explicit_synchronization_v1), listener, data);
+  FUserDataRec.ListenerUserData := Pointer(AIntf);
+  Result := wl_proxy_add_listener(FProxy, @vIntf_zwp_linux_explicit_synchronization_v1_Listener, @FUserDataRec);
 end;
-
-procedure  zwp_linux_explicit_synchronization_v1_add_listener(zwp_linux_explicit_synchronization_v1: Pzwp_linux_explicit_synchronization_v1; AIntf: Izwp_linux_explicit_synchronization_v1Listener);
+destructor TZwpLinuxSurfaceSynchronizationV1.Destroy;
 begin
-  zwp_linux_explicit_synchronization_v1_add_listener(zwp_linux_explicit_synchronization_v1, @vIntf_zwp_linux_explicit_synchronization_v1_Listener, AIntf);
+  wl_proxy_marshal(FProxy, _DESTROY);
+  inherited Destroy;
 end;
 
-procedure zwp_linux_explicit_synchronization_v1_set_user_data(zwp_linux_explicit_synchronization_v1: Pzwp_linux_explicit_synchronization_v1; user_data: Pointer);
+procedure TZwpLinuxSurfaceSynchronizationV1.SetAcquireFence(AFd: LongInt{fd});
 begin
-  wl_proxy_set_user_data(Pwl_proxy(zwp_linux_explicit_synchronization_v1), user_data);
+  wl_proxy_marshal(FProxy, _SET_ACQUIRE_FENCE, AFd);
 end;
 
-function  zwp_linux_explicit_synchronization_v1_get_user_data(zwp_linux_explicit_synchronization_v1: Pzwp_linux_explicit_synchronization_v1): Pointer;
-begin
-  Result := wl_proxy_get_user_data(Pwl_proxy(zwp_linux_explicit_synchronization_v1));
-end;
-
-function  zwp_linux_explicit_synchronization_v1_get_version(zwp_linux_explicit_synchronization_v1: Pzwp_linux_explicit_synchronization_v1): cuint32;
-begin
-  Result := wl_proxy_get_version(Pwl_proxy(zwp_linux_explicit_synchronization_v1));
-end;
-
-procedure zwp_linux_surface_synchronization_v1_destroy(zwp_linux_surface_synchronization_v1: Pzwp_linux_surface_synchronization_v1);
-begin
-  wl_proxy_marshal(Pwl_proxy(zwp_linux_surface_synchronization_v1), _ZWP_LINUX_SURFACE_SYNCHRONIZATION_V1_DESTROY);
-  wl_proxy_destroy(Pwl_proxy(zwp_linux_surface_synchronization_v1));
-end;
-
-procedure zwp_linux_surface_synchronization_v1_set_acquire_fence(zwp_linux_surface_synchronization_v1: Pzwp_linux_surface_synchronization_v1; fd: cint);
-begin
-  wl_proxy_marshal(Pwl_proxy(zwp_linux_surface_synchronization_v1),
-      _ZWP_LINUX_SURFACE_SYNCHRONIZATION_V1_SET_ACQUIRE_FENCE, fd);
-end;
-
-function  zwp_linux_surface_synchronization_v1_get_release(zwp_linux_surface_synchronization_v1: Pzwp_linux_surface_synchronization_v1): Pzwp_linux_buffer_release_v1;
+function TZwpLinuxSurfaceSynchronizationV1.GetRelease(AProxyClass: TWLProxyObjectClass = nil {TZwpLinuxBufferReleaseV1}): TZwpLinuxBufferReleaseV1;
 var
   release: Pwl_proxy;
 begin
-  release := wl_proxy_marshal_constructor(Pwl_proxy(zwp_linux_surface_synchronization_v1),
-      _ZWP_LINUX_SURFACE_SYNCHRONIZATION_V1_GET_RELEASE, @zwp_linux_buffer_release_v1_interface, nil);
-  Result := Pzwp_linux_buffer_release_v1(release);
+  release := wl_proxy_marshal_constructor(FProxy,
+      _GET_RELEASE, @zwp_linux_buffer_release_v1_interface, nil);
+  if AProxyClass = nil then
+    AProxyClass := TZwpLinuxBufferReleaseV1;
+  Result := TZwpLinuxBufferReleaseV1(AProxyClass.Create(release));
+  if not AProxyClass.InheritsFrom(TZwpLinuxBufferReleaseV1) then
+    Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TZwpLinuxBufferReleaseV1]);
 end;
 
-function  zwp_linux_surface_synchronization_v1_add_listener(zwp_linux_surface_synchronization_v1: Pzwp_linux_surface_synchronization_v1; listener: Pzwp_linux_surface_synchronization_v1_listener; data: Pointer): cint;
+function TZwpLinuxSurfaceSynchronizationV1.AddListener(AIntf: IZwpLinuxSurfaceSynchronizationV1Listener): LongInt;
 begin
-  Result := wl_proxy_add_listener(Pwl_proxy(zwp_linux_surface_synchronization_v1), listener, data);
+  FUserDataRec.ListenerUserData := Pointer(AIntf);
+  Result := wl_proxy_add_listener(FProxy, @vIntf_zwp_linux_surface_synchronization_v1_Listener, @FUserDataRec);
 end;
-
-procedure  zwp_linux_surface_synchronization_v1_add_listener(zwp_linux_surface_synchronization_v1: Pzwp_linux_surface_synchronization_v1; AIntf: Izwp_linux_surface_synchronization_v1Listener);
+function TZwpLinuxBufferReleaseV1.AddListener(AIntf: IZwpLinuxBufferReleaseV1Listener): LongInt;
 begin
-  zwp_linux_surface_synchronization_v1_add_listener(zwp_linux_surface_synchronization_v1, @vIntf_zwp_linux_surface_synchronization_v1_Listener, AIntf);
-end;
-
-procedure zwp_linux_surface_synchronization_v1_set_user_data(zwp_linux_surface_synchronization_v1: Pzwp_linux_surface_synchronization_v1; user_data: Pointer);
-begin
-  wl_proxy_set_user_data(Pwl_proxy(zwp_linux_surface_synchronization_v1), user_data);
-end;
-
-function  zwp_linux_surface_synchronization_v1_get_user_data(zwp_linux_surface_synchronization_v1: Pzwp_linux_surface_synchronization_v1): Pointer;
-begin
-  Result := wl_proxy_get_user_data(Pwl_proxy(zwp_linux_surface_synchronization_v1));
-end;
-
-function  zwp_linux_surface_synchronization_v1_get_version(zwp_linux_surface_synchronization_v1: Pzwp_linux_surface_synchronization_v1): cuint32;
-begin
-  Result := wl_proxy_get_version(Pwl_proxy(zwp_linux_surface_synchronization_v1));
-end;
-
-function  zwp_linux_buffer_release_v1_add_listener(zwp_linux_buffer_release_v1: Pzwp_linux_buffer_release_v1; listener: Pzwp_linux_buffer_release_v1_listener; data: Pointer): cint;
-begin
-  Result := wl_proxy_add_listener(Pwl_proxy(zwp_linux_buffer_release_v1), listener, data);
-end;
-
-procedure  zwp_linux_buffer_release_v1_add_listener(zwp_linux_buffer_release_v1: Pzwp_linux_buffer_release_v1; AIntf: Izwp_linux_buffer_release_v1Listener);
-begin
-  zwp_linux_buffer_release_v1_add_listener(zwp_linux_buffer_release_v1, @vIntf_zwp_linux_buffer_release_v1_Listener, AIntf);
-end;
-
-procedure zwp_linux_buffer_release_v1_set_user_data(zwp_linux_buffer_release_v1: Pzwp_linux_buffer_release_v1; user_data: Pointer);
-begin
-  wl_proxy_set_user_data(Pwl_proxy(zwp_linux_buffer_release_v1), user_data);
-end;
-
-function  zwp_linux_buffer_release_v1_get_user_data(zwp_linux_buffer_release_v1: Pzwp_linux_buffer_release_v1): Pointer;
-begin
-  Result := wl_proxy_get_user_data(Pwl_proxy(zwp_linux_buffer_release_v1));
-end;
-
-function  zwp_linux_buffer_release_v1_get_version(zwp_linux_buffer_release_v1: Pzwp_linux_buffer_release_v1): cuint32;
-begin
-  Result := wl_proxy_get_version(Pwl_proxy(zwp_linux_buffer_release_v1));
-end;
-
-procedure zwp_linux_buffer_release_v1_destroy(zwp_linux_buffer_release_v1: Pzwp_linux_buffer_release_v1);
-begin
-  wl_proxy_destroy(Pwl_proxy(zwp_linux_buffer_release_v1));
+  FUserDataRec.ListenerUserData := Pointer(AIntf);
+  Result := wl_proxy_add_listener(FProxy, @vIntf_zwp_linux_buffer_release_v1_Listener, @FUserDataRec);
 end;
 
 
-procedure zwp_linux_buffer_release_v1_fenced_release_Intf(AIntf: Izwp_linux_buffer_release_v1Listener; zwp_linux_buffer_release_v1: Pzwp_linux_buffer_release_v1; fence: cint); cdecl;
+
+
+procedure zwp_linux_buffer_release_v1_fenced_release_Intf(AData: PWLUserData; Azwp_linux_buffer_release_v1: Pzwp_linux_buffer_release_v1; AFence: LongInt{fd}); cdecl;
+var
+  AIntf: IZwpLinuxBufferReleaseV1Listener;
 begin
-  WriteLn('zwp_linux_buffer_release_v1.fenced_release');
-  AIntf.zwp_linux_buffer_release_v1_fenced_release(zwp_linux_buffer_release_v1, fence);
+  if AData = nil then Exit;
+  AIntf := IZwpLinuxBufferReleaseV1Listener(AData^.ListenerUserData);
+  AIntf.zwp_linux_buffer_release_v1_fenced_release(TZwpLinuxBufferReleaseV1(AData^.PascalObject), AFence);
 end;
 
-procedure zwp_linux_buffer_release_v1_immediate_release_Intf(AIntf: Izwp_linux_buffer_release_v1Listener; zwp_linux_buffer_release_v1: Pzwp_linux_buffer_release_v1); cdecl;
+procedure zwp_linux_buffer_release_v1_immediate_release_Intf(AData: PWLUserData; Azwp_linux_buffer_release_v1: Pzwp_linux_buffer_release_v1); cdecl;
+var
+  AIntf: IZwpLinuxBufferReleaseV1Listener;
 begin
-  WriteLn('zwp_linux_buffer_release_v1.immediate_release');
-  AIntf.zwp_linux_buffer_release_v1_immediate_release(zwp_linux_buffer_release_v1);
+  if AData = nil then Exit;
+  AIntf := IZwpLinuxBufferReleaseV1Listener(AData^.ListenerUserData);
+  AIntf.zwp_linux_buffer_release_v1_immediate_release(TZwpLinuxBufferReleaseV1(AData^.PascalObject));
 end;
 
 

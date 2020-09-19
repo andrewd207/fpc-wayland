@@ -6,20 +6,15 @@ unit xdg_shell_unstable_v6_protocol;
 interface
 
 uses
-  ctypes, wayland_util, wayland_client_core, wayland_protocol;
+  Classes, Sysutils, ctypes, wayland_util, wayland_client_core, wayland_protocol;
 
 
 type
-  Pzxdg_shell_v6 = ^Tzxdg_shell_v6;
-  Tzxdg_shell_v6 = record end;
-  Pzxdg_positioner_v6 = ^Tzxdg_positioner_v6;
-  Tzxdg_positioner_v6 = record end;
-  Pzxdg_surface_v6 = ^Tzxdg_surface_v6;
-  Tzxdg_surface_v6 = record end;
-  Pzxdg_toplevel_v6 = ^Tzxdg_toplevel_v6;
-  Tzxdg_toplevel_v6 = record end;
-  Pzxdg_popup_v6 = ^Tzxdg_popup_v6;
-  Tzxdg_popup_v6 = record end;
+  Pzxdg_shell_v6 = Pointer;
+  Pzxdg_positioner_v6 = Pointer;
+  Pzxdg_surface_v6 = Pointer;
+  Pzxdg_toplevel_v6 = Pointer;
+  Pzxdg_popup_v6 = Pointer;
 const
   ZXDG_SHELL_V6_ERROR_ROLE = 0; // given wl_surface has another role
   ZXDG_SHELL_V6_ERROR_DEFUNCT_SURFACES = 1; // xdg_shell was destroyed before children
@@ -31,7 +26,7 @@ const
 type
   Pzxdg_shell_v6_listener = ^Tzxdg_shell_v6_listener;
   Tzxdg_shell_v6_listener = record
-    ping : procedure(data: Pointer; zxdg_shell_v6: Pzxdg_shell_v6; serial: cuint); cdecl;
+    ping : procedure(data: Pointer; AZxdgShellV6: Pzxdg_shell_v6; ASerial: DWord); cdecl;
   end;
 
 const
@@ -67,7 +62,7 @@ const
 type
   Pzxdg_surface_v6_listener = ^Tzxdg_surface_v6_listener;
   Tzxdg_surface_v6_listener = record
-    configure : procedure(data: Pointer; zxdg_surface_v6: Pzxdg_surface_v6; serial: cuint); cdecl;
+    configure : procedure(data: Pointer; AZxdgSurfaceV6: Pzxdg_surface_v6; ASerial: DWord); cdecl;
   end;
 
 const
@@ -88,8 +83,8 @@ const
 type
   Pzxdg_toplevel_v6_listener = ^Tzxdg_toplevel_v6_listener;
   Tzxdg_toplevel_v6_listener = record
-    configure : procedure(data: Pointer; zxdg_toplevel_v6: Pzxdg_toplevel_v6; width: cint; height: cint; states: Pwl_array); cdecl;
-    close : procedure(data: Pointer; zxdg_toplevel_v6: Pzxdg_toplevel_v6); cdecl;
+    configure : procedure(data: Pointer; AZxdgToplevelV6: Pzxdg_toplevel_v6; AWidth: LongInt; AHeight: LongInt; AStates: Pwl_array); cdecl;
+    close : procedure(data: Pointer; AZxdgToplevelV6: Pzxdg_toplevel_v6); cdecl;
   end;
 
 const
@@ -98,97 +93,144 @@ const
 type
   Pzxdg_popup_v6_listener = ^Tzxdg_popup_v6_listener;
   Tzxdg_popup_v6_listener = record
-    configure : procedure(data: Pointer; zxdg_popup_v6: Pzxdg_popup_v6; x: cint; y: cint; width: cint; height: cint); cdecl;
-    popup_done : procedure(data: Pointer; zxdg_popup_v6: Pzxdg_popup_v6); cdecl;
+    configure : procedure(data: Pointer; AZxdgPopupV6: Pzxdg_popup_v6; AX: LongInt; AY: LongInt; AWidth: LongInt; AHeight: LongInt); cdecl;
+    popup_done : procedure(data: Pointer; AZxdgPopupV6: Pzxdg_popup_v6); cdecl;
   end;
 
 
 
-  Izxdg_shell_v6Listener = interface
-  ['Izxdg_shell_v6Listener']
-    procedure zxdg_shell_v6_ping(zxdg_shell_v6: Pzxdg_shell_v6; serial: cuint);
+  TZxdgShellV6 = class;
+  TZxdgPositionerV6 = class;
+  TZxdgSurfaceV6 = class;
+  TZxdgToplevelV6 = class;
+  TZxdgPopupV6 = class;
+
+
+  IZxdgShellV6Listener = interface
+  ['IZxdgShellV6Listener']
+    procedure zxdg_shell_v6_ping(AZxdgShellV6: TZxdgShellV6; ASerial: DWord);
   end;
 
-  Izxdg_positioner_v6Listener = interface
-  ['Izxdg_positioner_v6Listener']
+  IZxdgPositionerV6Listener = interface
+  ['IZxdgPositionerV6Listener']
   end;
 
-  Izxdg_surface_v6Listener = interface
-  ['Izxdg_surface_v6Listener']
-    procedure zxdg_surface_v6_configure(zxdg_surface_v6: Pzxdg_surface_v6; serial: cuint);
+  IZxdgSurfaceV6Listener = interface
+  ['IZxdgSurfaceV6Listener']
+    procedure zxdg_surface_v6_configure(AZxdgSurfaceV6: TZxdgSurfaceV6; ASerial: DWord);
   end;
 
-  Izxdg_toplevel_v6Listener = interface
-  ['Izxdg_toplevel_v6Listener']
-    procedure zxdg_toplevel_v6_configure(zxdg_toplevel_v6: Pzxdg_toplevel_v6; width: cint; height: cint; states: Pwl_array);
-    procedure zxdg_toplevel_v6_close(zxdg_toplevel_v6: Pzxdg_toplevel_v6);
+  IZxdgToplevelV6Listener = interface
+  ['IZxdgToplevelV6Listener']
+    procedure zxdg_toplevel_v6_configure(AZxdgToplevelV6: TZxdgToplevelV6; AWidth: LongInt; AHeight: LongInt; AStates: Pwl_array);
+    procedure zxdg_toplevel_v6_close(AZxdgToplevelV6: TZxdgToplevelV6);
   end;
 
-  Izxdg_popup_v6Listener = interface
-  ['Izxdg_popup_v6Listener']
-    procedure zxdg_popup_v6_configure(zxdg_popup_v6: Pzxdg_popup_v6; x: cint; y: cint; width: cint; height: cint);
-    procedure zxdg_popup_v6_popup_done(zxdg_popup_v6: Pzxdg_popup_v6);
+  IZxdgPopupV6Listener = interface
+  ['IZxdgPopupV6Listener']
+    procedure zxdg_popup_v6_configure(AZxdgPopupV6: TZxdgPopupV6; AX: LongInt; AY: LongInt; AWidth: LongInt; AHeight: LongInt);
+    procedure zxdg_popup_v6_popup_done(AZxdgPopupV6: TZxdgPopupV6);
   end;
 
 
 
-procedure zxdg_shell_v6_destroy(zxdg_shell_v6: Pzxdg_shell_v6);
-function  zxdg_shell_v6_create_positioner(zxdg_shell_v6: Pzxdg_shell_v6): Pzxdg_positioner_v6;
-function  zxdg_shell_v6_get_xdg_surface(zxdg_shell_v6: Pzxdg_shell_v6; surface: Pwl_surface): Pzxdg_surface_v6;
-procedure zxdg_shell_v6_pong(zxdg_shell_v6: Pzxdg_shell_v6; serial: cuint);
-function  zxdg_shell_v6_add_listener(zxdg_shell_v6: Pzxdg_shell_v6; listener: Pzxdg_shell_v6_listener; data: Pointer): cint;
-procedure  zxdg_shell_v6_add_listener(zxdg_shell_v6: Pzxdg_shell_v6; AIntf: Izxdg_shell_v6Listener);
-procedure zxdg_shell_v6_set_user_data(zxdg_shell_v6: Pzxdg_shell_v6; user_data: Pointer);
-function  zxdg_shell_v6_get_user_data(zxdg_shell_v6: Pzxdg_shell_v6): Pointer;
-function  zxdg_shell_v6_get_version(zxdg_shell_v6: Pzxdg_shell_v6): cuint32;
-procedure zxdg_positioner_v6_destroy(zxdg_positioner_v6: Pzxdg_positioner_v6);
-procedure zxdg_positioner_v6_set_size(zxdg_positioner_v6: Pzxdg_positioner_v6; width: cint; height: cint);
-procedure zxdg_positioner_v6_set_anchor_rect(zxdg_positioner_v6: Pzxdg_positioner_v6; x: cint; y: cint; width: cint; height: cint);
-procedure zxdg_positioner_v6_set_anchor(zxdg_positioner_v6: Pzxdg_positioner_v6; anchor: cuint);
-procedure zxdg_positioner_v6_set_gravity(zxdg_positioner_v6: Pzxdg_positioner_v6; gravity: cuint);
-procedure zxdg_positioner_v6_set_constraint_adjustment(zxdg_positioner_v6: Pzxdg_positioner_v6; constraint_adjustment: cuint);
-procedure zxdg_positioner_v6_set_offset(zxdg_positioner_v6: Pzxdg_positioner_v6; x: cint; y: cint);
-function  zxdg_positioner_v6_add_listener(zxdg_positioner_v6: Pzxdg_positioner_v6; listener: Pzxdg_positioner_v6_listener; data: Pointer): cint;
-procedure  zxdg_positioner_v6_add_listener(zxdg_positioner_v6: Pzxdg_positioner_v6; AIntf: Izxdg_positioner_v6Listener);
-procedure zxdg_positioner_v6_set_user_data(zxdg_positioner_v6: Pzxdg_positioner_v6; user_data: Pointer);
-function  zxdg_positioner_v6_get_user_data(zxdg_positioner_v6: Pzxdg_positioner_v6): Pointer;
-function  zxdg_positioner_v6_get_version(zxdg_positioner_v6: Pzxdg_positioner_v6): cuint32;
-procedure zxdg_surface_v6_destroy(zxdg_surface_v6: Pzxdg_surface_v6);
-function  zxdg_surface_v6_get_toplevel(zxdg_surface_v6: Pzxdg_surface_v6): Pzxdg_toplevel_v6;
-function  zxdg_surface_v6_get_popup(zxdg_surface_v6: Pzxdg_surface_v6; parent: Pzxdg_surface_v6; positioner: Pzxdg_positioner_v6): Pzxdg_popup_v6;
-procedure zxdg_surface_v6_set_window_geometry(zxdg_surface_v6: Pzxdg_surface_v6; x: cint; y: cint; width: cint; height: cint);
-procedure zxdg_surface_v6_ack_configure(zxdg_surface_v6: Pzxdg_surface_v6; serial: cuint);
-function  zxdg_surface_v6_add_listener(zxdg_surface_v6: Pzxdg_surface_v6; listener: Pzxdg_surface_v6_listener; data: Pointer): cint;
-procedure  zxdg_surface_v6_add_listener(zxdg_surface_v6: Pzxdg_surface_v6; AIntf: Izxdg_surface_v6Listener);
-procedure zxdg_surface_v6_set_user_data(zxdg_surface_v6: Pzxdg_surface_v6; user_data: Pointer);
-function  zxdg_surface_v6_get_user_data(zxdg_surface_v6: Pzxdg_surface_v6): Pointer;
-function  zxdg_surface_v6_get_version(zxdg_surface_v6: Pzxdg_surface_v6): cuint32;
-procedure zxdg_toplevel_v6_destroy(zxdg_toplevel_v6: Pzxdg_toplevel_v6);
-procedure zxdg_toplevel_v6_set_parent(zxdg_toplevel_v6: Pzxdg_toplevel_v6; parent: Pzxdg_toplevel_v6);
-procedure zxdg_toplevel_v6_set_title(zxdg_toplevel_v6: Pzxdg_toplevel_v6; title: pchar);
-procedure zxdg_toplevel_v6_set_app_id(zxdg_toplevel_v6: Pzxdg_toplevel_v6; app_id: pchar);
-procedure zxdg_toplevel_v6_show_window_menu(zxdg_toplevel_v6: Pzxdg_toplevel_v6; seat: Pwl_seat; serial: cuint; x: cint; y: cint);
-procedure zxdg_toplevel_v6_move(zxdg_toplevel_v6: Pzxdg_toplevel_v6; seat: Pwl_seat; serial: cuint);
-procedure zxdg_toplevel_v6_resize(zxdg_toplevel_v6: Pzxdg_toplevel_v6; seat: Pwl_seat; serial: cuint; edges: cuint);
-procedure zxdg_toplevel_v6_set_max_size(zxdg_toplevel_v6: Pzxdg_toplevel_v6; width: cint; height: cint);
-procedure zxdg_toplevel_v6_set_min_size(zxdg_toplevel_v6: Pzxdg_toplevel_v6; width: cint; height: cint);
-procedure zxdg_toplevel_v6_set_maximized(zxdg_toplevel_v6: Pzxdg_toplevel_v6);
-procedure zxdg_toplevel_v6_unset_maximized(zxdg_toplevel_v6: Pzxdg_toplevel_v6);
-procedure zxdg_toplevel_v6_set_fullscreen(zxdg_toplevel_v6: Pzxdg_toplevel_v6; output: Pwl_output);
-procedure zxdg_toplevel_v6_unset_fullscreen(zxdg_toplevel_v6: Pzxdg_toplevel_v6);
-procedure zxdg_toplevel_v6_set_minimized(zxdg_toplevel_v6: Pzxdg_toplevel_v6);
-function  zxdg_toplevel_v6_add_listener(zxdg_toplevel_v6: Pzxdg_toplevel_v6; listener: Pzxdg_toplevel_v6_listener; data: Pointer): cint;
-procedure  zxdg_toplevel_v6_add_listener(zxdg_toplevel_v6: Pzxdg_toplevel_v6; AIntf: Izxdg_toplevel_v6Listener);
-procedure zxdg_toplevel_v6_set_user_data(zxdg_toplevel_v6: Pzxdg_toplevel_v6; user_data: Pointer);
-function  zxdg_toplevel_v6_get_user_data(zxdg_toplevel_v6: Pzxdg_toplevel_v6): Pointer;
-function  zxdg_toplevel_v6_get_version(zxdg_toplevel_v6: Pzxdg_toplevel_v6): cuint32;
-procedure zxdg_popup_v6_destroy(zxdg_popup_v6: Pzxdg_popup_v6);
-procedure zxdg_popup_v6_grab(zxdg_popup_v6: Pzxdg_popup_v6; seat: Pwl_seat; serial: cuint);
-function  zxdg_popup_v6_add_listener(zxdg_popup_v6: Pzxdg_popup_v6; listener: Pzxdg_popup_v6_listener; data: Pointer): cint;
-procedure  zxdg_popup_v6_add_listener(zxdg_popup_v6: Pzxdg_popup_v6; AIntf: Izxdg_popup_v6Listener);
-procedure zxdg_popup_v6_set_user_data(zxdg_popup_v6: Pzxdg_popup_v6; user_data: Pointer);
-function  zxdg_popup_v6_get_user_data(zxdg_popup_v6: Pzxdg_popup_v6): Pointer;
-function  zxdg_popup_v6_get_version(zxdg_popup_v6: Pzxdg_popup_v6): cuint32;
+
+  TZxdgShellV6 = class(TWLProxyObject)
+  private
+    const _DESTROY = 0;
+    const _CREATE_POSITIONER = 1;
+    const _GET_XDG_SURFACE = 2;
+    const _PONG = 3;
+  public
+    destructor Destroy; override;
+    function CreatePositioner(AProxyClass: TWLProxyObjectClass = nil {TZxdgPositionerV6}): TZxdgPositionerV6;
+    function GetXdgSurface(ASurface: TWlSurface; AProxyClass: TWLProxyObjectClass = nil {TZxdgSurfaceV6}): TZxdgSurfaceV6;
+    procedure Pong(ASerial: DWord);
+    function AddListener(AIntf: IZxdgShellV6Listener): LongInt;
+  end;
+
+  TZxdgPositionerV6 = class(TWLProxyObject)
+  private
+    const _DESTROY = 0;
+    const _SET_SIZE = 1;
+    const _SET_ANCHOR_RECT = 2;
+    const _SET_ANCHOR = 3;
+    const _SET_GRAVITY = 4;
+    const _SET_CONSTRAINT_ADJUSTMENT = 5;
+    const _SET_OFFSET = 6;
+  public
+    destructor Destroy; override;
+    procedure SetSize(AWidth: LongInt; AHeight: LongInt);
+    procedure SetAnchorRect(AX: LongInt; AY: LongInt; AWidth: LongInt; AHeight: LongInt);
+    procedure SetAnchor(AAnchor: DWord);
+    procedure SetGravity(AGravity: DWord);
+    procedure SetConstraintAdjustment(AConstraintAdjustment: DWord);
+    procedure SetOffset(AX: LongInt; AY: LongInt);
+    function AddListener(AIntf: IZxdgPositionerV6Listener): LongInt;
+  end;
+
+  TZxdgSurfaceV6 = class(TWLProxyObject)
+  private
+    const _DESTROY = 0;
+    const _GET_TOPLEVEL = 1;
+    const _GET_POPUP = 2;
+    const _SET_WINDOW_GEOMETRY = 3;
+    const _ACK_CONFIGURE = 4;
+  public
+    destructor Destroy; override;
+    function GetToplevel(AProxyClass: TWLProxyObjectClass = nil {TZxdgToplevelV6}): TZxdgToplevelV6;
+    function GetPopup(AParent: TZxdgSurfaceV6; APositioner: TZxdgPositionerV6; AProxyClass: TWLProxyObjectClass = nil {TZxdgPopupV6}): TZxdgPopupV6;
+    procedure SetWindowGeometry(AX: LongInt; AY: LongInt; AWidth: LongInt; AHeight: LongInt);
+    procedure AckConfigure(ASerial: DWord);
+    function AddListener(AIntf: IZxdgSurfaceV6Listener): LongInt;
+  end;
+
+  TZxdgToplevelV6 = class(TWLProxyObject)
+  private
+    const _DESTROY = 0;
+    const _SET_PARENT = 1;
+    const _SET_TITLE = 2;
+    const _SET_APP_ID = 3;
+    const _SHOW_WINDOW_MENU = 4;
+    const _MOVE = 5;
+    const _RESIZE = 6;
+    const _SET_MAX_SIZE = 7;
+    const _SET_MIN_SIZE = 8;
+    const _SET_MAXIMIZED = 9;
+    const _UNSET_MAXIMIZED = 10;
+    const _SET_FULLSCREEN = 11;
+    const _UNSET_FULLSCREEN = 12;
+    const _SET_MINIMIZED = 13;
+  public
+    destructor Destroy; override;
+    procedure SetParent(AParent: TZxdgToplevelV6);
+    procedure SetTitle(ATitle: String);
+    procedure SetAppId(AAppId: String);
+    procedure ShowWindowMenu(ASeat: TWlSeat; ASerial: DWord; AX: LongInt; AY: LongInt);
+    procedure Move(ASeat: TWlSeat; ASerial: DWord);
+    procedure Resize(ASeat: TWlSeat; ASerial: DWord; AEdges: DWord);
+    procedure SetMaxSize(AWidth: LongInt; AHeight: LongInt);
+    procedure SetMinSize(AWidth: LongInt; AHeight: LongInt);
+    procedure SetMaximized;
+    procedure UnsetMaximized;
+    procedure SetFullscreen(AOutput: TWlOutput);
+    procedure UnsetFullscreen;
+    procedure SetMinimized;
+    function AddListener(AIntf: IZxdgToplevelV6Listener): LongInt;
+  end;
+
+  TZxdgPopupV6 = class(TWLProxyObject)
+  private
+    const _DESTROY = 0;
+    const _GRAB = 1;
+  public
+    destructor Destroy; override;
+    procedure Grab(ASeat: TWlSeat; ASerial: DWord);
+    function AddListener(AIntf: IZxdgPopupV6Listener): LongInt;
+  end;
+
+
+
 
 
 
@@ -203,41 +245,6 @@ var
 
 implementation
 
-const
-_ZXDG_SHELL_V6_DESTROY = 0;
-_ZXDG_SHELL_V6_CREATE_POSITIONER = 1;
-_ZXDG_SHELL_V6_GET_XDG_SURFACE = 2;
-_ZXDG_SHELL_V6_PONG = 3;
-_ZXDG_POSITIONER_V6_DESTROY = 0;
-_ZXDG_POSITIONER_V6_SET_SIZE = 1;
-_ZXDG_POSITIONER_V6_SET_ANCHOR_RECT = 2;
-_ZXDG_POSITIONER_V6_SET_ANCHOR = 3;
-_ZXDG_POSITIONER_V6_SET_GRAVITY = 4;
-_ZXDG_POSITIONER_V6_SET_CONSTRAINT_ADJUSTMENT = 5;
-_ZXDG_POSITIONER_V6_SET_OFFSET = 6;
-_ZXDG_SURFACE_V6_DESTROY = 0;
-_ZXDG_SURFACE_V6_GET_TOPLEVEL = 1;
-_ZXDG_SURFACE_V6_GET_POPUP = 2;
-_ZXDG_SURFACE_V6_SET_WINDOW_GEOMETRY = 3;
-_ZXDG_SURFACE_V6_ACK_CONFIGURE = 4;
-_ZXDG_TOPLEVEL_V6_DESTROY = 0;
-_ZXDG_TOPLEVEL_V6_SET_PARENT = 1;
-_ZXDG_TOPLEVEL_V6_SET_TITLE = 2;
-_ZXDG_TOPLEVEL_V6_SET_APP_ID = 3;
-_ZXDG_TOPLEVEL_V6_SHOW_WINDOW_MENU = 4;
-_ZXDG_TOPLEVEL_V6_MOVE = 5;
-_ZXDG_TOPLEVEL_V6_RESIZE = 6;
-_ZXDG_TOPLEVEL_V6_SET_MAX_SIZE = 7;
-_ZXDG_TOPLEVEL_V6_SET_MIN_SIZE = 8;
-_ZXDG_TOPLEVEL_V6_SET_MAXIMIZED = 9;
-_ZXDG_TOPLEVEL_V6_UNSET_MAXIMIZED = 10;
-_ZXDG_TOPLEVEL_V6_SET_FULLSCREEN = 11;
-_ZXDG_TOPLEVEL_V6_UNSET_FULLSCREEN = 12;
-_ZXDG_TOPLEVEL_V6_SET_MINIMIZED = 13;
-_ZXDG_POPUP_V6_DESTROY = 0;
-_ZXDG_POPUP_V6_GRAB = 1;
-
-
 var
   vIntf_zxdg_shell_v6_Listener: Tzxdg_shell_v6_listener;
   vIntf_zxdg_positioner_v6_Listener: Tzxdg_positioner_v6_listener;
@@ -247,370 +254,284 @@ var
 
 
 
-procedure zxdg_shell_v6_destroy(zxdg_shell_v6: Pzxdg_shell_v6);
+destructor TZxdgShellV6.Destroy;
 begin
-  wl_proxy_marshal(Pwl_proxy(zxdg_shell_v6), _ZXDG_SHELL_V6_DESTROY);
-  wl_proxy_destroy(Pwl_proxy(zxdg_shell_v6));
+  wl_proxy_marshal(FProxy, _DESTROY);
+  inherited Destroy;
 end;
 
-function  zxdg_shell_v6_create_positioner(zxdg_shell_v6: Pzxdg_shell_v6): Pzxdg_positioner_v6;
+function TZxdgShellV6.CreatePositioner(AProxyClass: TWLProxyObjectClass = nil {TZxdgPositionerV6}): TZxdgPositionerV6;
 var
   id: Pwl_proxy;
 begin
-  id := wl_proxy_marshal_constructor(Pwl_proxy(zxdg_shell_v6),
-      _ZXDG_SHELL_V6_CREATE_POSITIONER, @zxdg_positioner_v6_interface, nil);
-  Result := Pzxdg_positioner_v6(id);
+  id := wl_proxy_marshal_constructor(FProxy,
+      _CREATE_POSITIONER, @zxdg_positioner_v6_interface, nil);
+  if AProxyClass = nil then
+    AProxyClass := TZxdgPositionerV6;
+  Result := TZxdgPositionerV6(AProxyClass.Create(id));
+  if not AProxyClass.InheritsFrom(TZxdgPositionerV6) then
+    Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TZxdgPositionerV6]);
 end;
 
-function  zxdg_shell_v6_get_xdg_surface(zxdg_shell_v6: Pzxdg_shell_v6; surface: Pwl_surface): Pzxdg_surface_v6;
+function TZxdgShellV6.GetXdgSurface(ASurface: TWlSurface; AProxyClass: TWLProxyObjectClass = nil {TZxdgSurfaceV6}): TZxdgSurfaceV6;
 var
   id: Pwl_proxy;
 begin
-  id := wl_proxy_marshal_constructor(Pwl_proxy(zxdg_shell_v6),
-      _ZXDG_SHELL_V6_GET_XDG_SURFACE, @zxdg_surface_v6_interface, nil, surface);
-  Result := Pzxdg_surface_v6(id);
+  id := wl_proxy_marshal_constructor(FProxy,
+      _GET_XDG_SURFACE, @zxdg_surface_v6_interface, nil, ASurface.Proxy);
+  if AProxyClass = nil then
+    AProxyClass := TZxdgSurfaceV6;
+  Result := TZxdgSurfaceV6(AProxyClass.Create(id));
+  if not AProxyClass.InheritsFrom(TZxdgSurfaceV6) then
+    Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TZxdgSurfaceV6]);
 end;
 
-procedure zxdg_shell_v6_pong(zxdg_shell_v6: Pzxdg_shell_v6; serial: cuint);
+procedure TZxdgShellV6.Pong(ASerial: DWord);
 begin
-  wl_proxy_marshal(Pwl_proxy(zxdg_shell_v6),
-      _ZXDG_SHELL_V6_PONG, serial);
+  wl_proxy_marshal(FProxy, _PONG, ASerial);
 end;
 
-function  zxdg_shell_v6_add_listener(zxdg_shell_v6: Pzxdg_shell_v6; listener: Pzxdg_shell_v6_listener; data: Pointer): cint;
+function TZxdgShellV6.AddListener(AIntf: IZxdgShellV6Listener): LongInt;
 begin
-  Result := wl_proxy_add_listener(Pwl_proxy(zxdg_shell_v6), listener, data);
+  FUserDataRec.ListenerUserData := Pointer(AIntf);
+  Result := wl_proxy_add_listener(FProxy, @vIntf_zxdg_shell_v6_Listener, @FUserDataRec);
 end;
-
-procedure  zxdg_shell_v6_add_listener(zxdg_shell_v6: Pzxdg_shell_v6; AIntf: Izxdg_shell_v6Listener);
+destructor TZxdgPositionerV6.Destroy;
 begin
-  zxdg_shell_v6_add_listener(zxdg_shell_v6, @vIntf_zxdg_shell_v6_Listener, AIntf);
+  wl_proxy_marshal(FProxy, _DESTROY);
+  inherited Destroy;
 end;
 
-procedure zxdg_shell_v6_set_user_data(zxdg_shell_v6: Pzxdg_shell_v6; user_data: Pointer);
+procedure TZxdgPositionerV6.SetSize(AWidth: LongInt; AHeight: LongInt);
 begin
-  wl_proxy_set_user_data(Pwl_proxy(zxdg_shell_v6), user_data);
+  wl_proxy_marshal(FProxy, _SET_SIZE, AWidth, AHeight);
 end;
 
-function  zxdg_shell_v6_get_user_data(zxdg_shell_v6: Pzxdg_shell_v6): Pointer;
+procedure TZxdgPositionerV6.SetAnchorRect(AX: LongInt; AY: LongInt; AWidth: LongInt; AHeight: LongInt);
 begin
-  Result := wl_proxy_get_user_data(Pwl_proxy(zxdg_shell_v6));
+  wl_proxy_marshal(FProxy, _SET_ANCHOR_RECT, AX, AY, AWidth, AHeight);
 end;
 
-function  zxdg_shell_v6_get_version(zxdg_shell_v6: Pzxdg_shell_v6): cuint32;
+procedure TZxdgPositionerV6.SetAnchor(AAnchor: DWord);
 begin
-  Result := wl_proxy_get_version(Pwl_proxy(zxdg_shell_v6));
+  wl_proxy_marshal(FProxy, _SET_ANCHOR, AAnchor);
 end;
 
-procedure zxdg_positioner_v6_destroy(zxdg_positioner_v6: Pzxdg_positioner_v6);
+procedure TZxdgPositionerV6.SetGravity(AGravity: DWord);
 begin
-  wl_proxy_marshal(Pwl_proxy(zxdg_positioner_v6), _ZXDG_POSITIONER_V6_DESTROY);
-  wl_proxy_destroy(Pwl_proxy(zxdg_positioner_v6));
+  wl_proxy_marshal(FProxy, _SET_GRAVITY, AGravity);
 end;
 
-procedure zxdg_positioner_v6_set_size(zxdg_positioner_v6: Pzxdg_positioner_v6; width: cint; height: cint);
+procedure TZxdgPositionerV6.SetConstraintAdjustment(AConstraintAdjustment: DWord);
 begin
-  wl_proxy_marshal(Pwl_proxy(zxdg_positioner_v6),
-      _ZXDG_POSITIONER_V6_SET_SIZE, width, height);
+  wl_proxy_marshal(FProxy, _SET_CONSTRAINT_ADJUSTMENT, AConstraintAdjustment);
 end;
 
-procedure zxdg_positioner_v6_set_anchor_rect(zxdg_positioner_v6: Pzxdg_positioner_v6; x: cint; y: cint; width: cint; height: cint);
+procedure TZxdgPositionerV6.SetOffset(AX: LongInt; AY: LongInt);
 begin
-  wl_proxy_marshal(Pwl_proxy(zxdg_positioner_v6),
-      _ZXDG_POSITIONER_V6_SET_ANCHOR_RECT, x, y, width, height);
+  wl_proxy_marshal(FProxy, _SET_OFFSET, AX, AY);
 end;
 
-procedure zxdg_positioner_v6_set_anchor(zxdg_positioner_v6: Pzxdg_positioner_v6; anchor: cuint);
+function TZxdgPositionerV6.AddListener(AIntf: IZxdgPositionerV6Listener): LongInt;
 begin
-  wl_proxy_marshal(Pwl_proxy(zxdg_positioner_v6),
-      _ZXDG_POSITIONER_V6_SET_ANCHOR, anchor);
+  FUserDataRec.ListenerUserData := Pointer(AIntf);
+  Result := wl_proxy_add_listener(FProxy, @vIntf_zxdg_positioner_v6_Listener, @FUserDataRec);
 end;
-
-procedure zxdg_positioner_v6_set_gravity(zxdg_positioner_v6: Pzxdg_positioner_v6; gravity: cuint);
+destructor TZxdgSurfaceV6.Destroy;
 begin
-  wl_proxy_marshal(Pwl_proxy(zxdg_positioner_v6),
-      _ZXDG_POSITIONER_V6_SET_GRAVITY, gravity);
+  wl_proxy_marshal(FProxy, _DESTROY);
+  inherited Destroy;
 end;
 
-procedure zxdg_positioner_v6_set_constraint_adjustment(zxdg_positioner_v6: Pzxdg_positioner_v6; constraint_adjustment: cuint);
-begin
-  wl_proxy_marshal(Pwl_proxy(zxdg_positioner_v6),
-      _ZXDG_POSITIONER_V6_SET_CONSTRAINT_ADJUSTMENT, constraint_adjustment);
-end;
-
-procedure zxdg_positioner_v6_set_offset(zxdg_positioner_v6: Pzxdg_positioner_v6; x: cint; y: cint);
-begin
-  wl_proxy_marshal(Pwl_proxy(zxdg_positioner_v6),
-      _ZXDG_POSITIONER_V6_SET_OFFSET, x, y);
-end;
-
-function  zxdg_positioner_v6_add_listener(zxdg_positioner_v6: Pzxdg_positioner_v6; listener: Pzxdg_positioner_v6_listener; data: Pointer): cint;
-begin
-  Result := wl_proxy_add_listener(Pwl_proxy(zxdg_positioner_v6), listener, data);
-end;
-
-procedure  zxdg_positioner_v6_add_listener(zxdg_positioner_v6: Pzxdg_positioner_v6; AIntf: Izxdg_positioner_v6Listener);
-begin
-  zxdg_positioner_v6_add_listener(zxdg_positioner_v6, @vIntf_zxdg_positioner_v6_Listener, AIntf);
-end;
-
-procedure zxdg_positioner_v6_set_user_data(zxdg_positioner_v6: Pzxdg_positioner_v6; user_data: Pointer);
-begin
-  wl_proxy_set_user_data(Pwl_proxy(zxdg_positioner_v6), user_data);
-end;
-
-function  zxdg_positioner_v6_get_user_data(zxdg_positioner_v6: Pzxdg_positioner_v6): Pointer;
-begin
-  Result := wl_proxy_get_user_data(Pwl_proxy(zxdg_positioner_v6));
-end;
-
-function  zxdg_positioner_v6_get_version(zxdg_positioner_v6: Pzxdg_positioner_v6): cuint32;
-begin
-  Result := wl_proxy_get_version(Pwl_proxy(zxdg_positioner_v6));
-end;
-
-procedure zxdg_surface_v6_destroy(zxdg_surface_v6: Pzxdg_surface_v6);
-begin
-  wl_proxy_marshal(Pwl_proxy(zxdg_surface_v6), _ZXDG_SURFACE_V6_DESTROY);
-  wl_proxy_destroy(Pwl_proxy(zxdg_surface_v6));
-end;
-
-function  zxdg_surface_v6_get_toplevel(zxdg_surface_v6: Pzxdg_surface_v6): Pzxdg_toplevel_v6;
+function TZxdgSurfaceV6.GetToplevel(AProxyClass: TWLProxyObjectClass = nil {TZxdgToplevelV6}): TZxdgToplevelV6;
 var
   id: Pwl_proxy;
 begin
-  id := wl_proxy_marshal_constructor(Pwl_proxy(zxdg_surface_v6),
-      _ZXDG_SURFACE_V6_GET_TOPLEVEL, @zxdg_toplevel_v6_interface, nil);
-  Result := Pzxdg_toplevel_v6(id);
+  id := wl_proxy_marshal_constructor(FProxy,
+      _GET_TOPLEVEL, @zxdg_toplevel_v6_interface, nil);
+  if AProxyClass = nil then
+    AProxyClass := TZxdgToplevelV6;
+  Result := TZxdgToplevelV6(AProxyClass.Create(id));
+  if not AProxyClass.InheritsFrom(TZxdgToplevelV6) then
+    Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TZxdgToplevelV6]);
 end;
 
-function  zxdg_surface_v6_get_popup(zxdg_surface_v6: Pzxdg_surface_v6; parent: Pzxdg_surface_v6; positioner: Pzxdg_positioner_v6): Pzxdg_popup_v6;
+function TZxdgSurfaceV6.GetPopup(AParent: TZxdgSurfaceV6; APositioner: TZxdgPositionerV6; AProxyClass: TWLProxyObjectClass = nil {TZxdgPopupV6}): TZxdgPopupV6;
 var
   id: Pwl_proxy;
 begin
-  id := wl_proxy_marshal_constructor(Pwl_proxy(zxdg_surface_v6),
-      _ZXDG_SURFACE_V6_GET_POPUP, @zxdg_popup_v6_interface, nil, parent, positioner);
-  Result := Pzxdg_popup_v6(id);
+  id := wl_proxy_marshal_constructor(FProxy,
+      _GET_POPUP, @zxdg_popup_v6_interface, nil, AParent.Proxy, APositioner.Proxy);
+  if AProxyClass = nil then
+    AProxyClass := TZxdgPopupV6;
+  Result := TZxdgPopupV6(AProxyClass.Create(id));
+  if not AProxyClass.InheritsFrom(TZxdgPopupV6) then
+    Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TZxdgPopupV6]);
 end;
 
-procedure zxdg_surface_v6_set_window_geometry(zxdg_surface_v6: Pzxdg_surface_v6; x: cint; y: cint; width: cint; height: cint);
+procedure TZxdgSurfaceV6.SetWindowGeometry(AX: LongInt; AY: LongInt; AWidth: LongInt; AHeight: LongInt);
 begin
-  wl_proxy_marshal(Pwl_proxy(zxdg_surface_v6),
-      _ZXDG_SURFACE_V6_SET_WINDOW_GEOMETRY, x, y, width, height);
+  wl_proxy_marshal(FProxy, _SET_WINDOW_GEOMETRY, AX, AY, AWidth, AHeight);
 end;
 
-procedure zxdg_surface_v6_ack_configure(zxdg_surface_v6: Pzxdg_surface_v6; serial: cuint);
+procedure TZxdgSurfaceV6.AckConfigure(ASerial: DWord);
 begin
-  wl_proxy_marshal(Pwl_proxy(zxdg_surface_v6),
-      _ZXDG_SURFACE_V6_ACK_CONFIGURE, serial);
+  wl_proxy_marshal(FProxy, _ACK_CONFIGURE, ASerial);
 end;
 
-function  zxdg_surface_v6_add_listener(zxdg_surface_v6: Pzxdg_surface_v6; listener: Pzxdg_surface_v6_listener; data: Pointer): cint;
+function TZxdgSurfaceV6.AddListener(AIntf: IZxdgSurfaceV6Listener): LongInt;
 begin
-  Result := wl_proxy_add_listener(Pwl_proxy(zxdg_surface_v6), listener, data);
+  FUserDataRec.ListenerUserData := Pointer(AIntf);
+  Result := wl_proxy_add_listener(FProxy, @vIntf_zxdg_surface_v6_Listener, @FUserDataRec);
+end;
+destructor TZxdgToplevelV6.Destroy;
+begin
+  wl_proxy_marshal(FProxy, _DESTROY);
+  inherited Destroy;
 end;
 
-procedure  zxdg_surface_v6_add_listener(zxdg_surface_v6: Pzxdg_surface_v6; AIntf: Izxdg_surface_v6Listener);
+procedure TZxdgToplevelV6.SetParent(AParent: TZxdgToplevelV6);
 begin
-  zxdg_surface_v6_add_listener(zxdg_surface_v6, @vIntf_zxdg_surface_v6_Listener, AIntf);
+  wl_proxy_marshal(FProxy, _SET_PARENT, AParent.Proxy);
 end;
 
-procedure zxdg_surface_v6_set_user_data(zxdg_surface_v6: Pzxdg_surface_v6; user_data: Pointer);
+procedure TZxdgToplevelV6.SetTitle(ATitle: String);
 begin
-  wl_proxy_set_user_data(Pwl_proxy(zxdg_surface_v6), user_data);
+  wl_proxy_marshal(FProxy, _SET_TITLE, PChar(ATitle));
 end;
 
-function  zxdg_surface_v6_get_user_data(zxdg_surface_v6: Pzxdg_surface_v6): Pointer;
+procedure TZxdgToplevelV6.SetAppId(AAppId: String);
 begin
-  Result := wl_proxy_get_user_data(Pwl_proxy(zxdg_surface_v6));
+  wl_proxy_marshal(FProxy, _SET_APP_ID, PChar(AAppId));
 end;
 
-function  zxdg_surface_v6_get_version(zxdg_surface_v6: Pzxdg_surface_v6): cuint32;
+procedure TZxdgToplevelV6.ShowWindowMenu(ASeat: TWlSeat; ASerial: DWord; AX: LongInt; AY: LongInt);
 begin
-  Result := wl_proxy_get_version(Pwl_proxy(zxdg_surface_v6));
+  wl_proxy_marshal(FProxy, _SHOW_WINDOW_MENU, ASeat.Proxy, ASerial, AX, AY);
 end;
 
-procedure zxdg_toplevel_v6_destroy(zxdg_toplevel_v6: Pzxdg_toplevel_v6);
+procedure TZxdgToplevelV6.Move(ASeat: TWlSeat; ASerial: DWord);
 begin
-  wl_proxy_marshal(Pwl_proxy(zxdg_toplevel_v6), _ZXDG_TOPLEVEL_V6_DESTROY);
-  wl_proxy_destroy(Pwl_proxy(zxdg_toplevel_v6));
+  wl_proxy_marshal(FProxy, _MOVE, ASeat.Proxy, ASerial);
 end;
 
-procedure zxdg_toplevel_v6_set_parent(zxdg_toplevel_v6: Pzxdg_toplevel_v6; parent: Pzxdg_toplevel_v6);
+procedure TZxdgToplevelV6.Resize(ASeat: TWlSeat; ASerial: DWord; AEdges: DWord);
 begin
-  wl_proxy_marshal(Pwl_proxy(zxdg_toplevel_v6),
-      _ZXDG_TOPLEVEL_V6_SET_PARENT, parent);
+  wl_proxy_marshal(FProxy, _RESIZE, ASeat.Proxy, ASerial, AEdges);
 end;
 
-procedure zxdg_toplevel_v6_set_title(zxdg_toplevel_v6: Pzxdg_toplevel_v6; title: pchar);
+procedure TZxdgToplevelV6.SetMaxSize(AWidth: LongInt; AHeight: LongInt);
 begin
-  wl_proxy_marshal(Pwl_proxy(zxdg_toplevel_v6),
-      _ZXDG_TOPLEVEL_V6_SET_TITLE, title);
+  wl_proxy_marshal(FProxy, _SET_MAX_SIZE, AWidth, AHeight);
 end;
 
-procedure zxdg_toplevel_v6_set_app_id(zxdg_toplevel_v6: Pzxdg_toplevel_v6; app_id: pchar);
+procedure TZxdgToplevelV6.SetMinSize(AWidth: LongInt; AHeight: LongInt);
 begin
-  wl_proxy_marshal(Pwl_proxy(zxdg_toplevel_v6),
-      _ZXDG_TOPLEVEL_V6_SET_APP_ID, app_id);
+  wl_proxy_marshal(FProxy, _SET_MIN_SIZE, AWidth, AHeight);
 end;
 
-procedure zxdg_toplevel_v6_show_window_menu(zxdg_toplevel_v6: Pzxdg_toplevel_v6; seat: Pwl_seat; serial: cuint; x: cint; y: cint);
+procedure TZxdgToplevelV6.SetMaximized;
 begin
-  wl_proxy_marshal(Pwl_proxy(zxdg_toplevel_v6),
-      _ZXDG_TOPLEVEL_V6_SHOW_WINDOW_MENU, seat, serial, x, y);
+  wl_proxy_marshal(FProxy, _SET_MAXIMIZED);
 end;
 
-procedure zxdg_toplevel_v6_move(zxdg_toplevel_v6: Pzxdg_toplevel_v6; seat: Pwl_seat; serial: cuint);
+procedure TZxdgToplevelV6.UnsetMaximized;
 begin
-  wl_proxy_marshal(Pwl_proxy(zxdg_toplevel_v6),
-      _ZXDG_TOPLEVEL_V6_MOVE, seat, serial);
+  wl_proxy_marshal(FProxy, _UNSET_MAXIMIZED);
 end;
 
-procedure zxdg_toplevel_v6_resize(zxdg_toplevel_v6: Pzxdg_toplevel_v6; seat: Pwl_seat; serial: cuint; edges: cuint);
+procedure TZxdgToplevelV6.SetFullscreen(AOutput: TWlOutput);
 begin
-  wl_proxy_marshal(Pwl_proxy(zxdg_toplevel_v6),
-      _ZXDG_TOPLEVEL_V6_RESIZE, seat, serial, edges);
+  wl_proxy_marshal(FProxy, _SET_FULLSCREEN, AOutput.Proxy);
 end;
 
-procedure zxdg_toplevel_v6_set_max_size(zxdg_toplevel_v6: Pzxdg_toplevel_v6; width: cint; height: cint);
+procedure TZxdgToplevelV6.UnsetFullscreen;
 begin
-  wl_proxy_marshal(Pwl_proxy(zxdg_toplevel_v6),
-      _ZXDG_TOPLEVEL_V6_SET_MAX_SIZE, width, height);
+  wl_proxy_marshal(FProxy, _UNSET_FULLSCREEN);
 end;
 
-procedure zxdg_toplevel_v6_set_min_size(zxdg_toplevel_v6: Pzxdg_toplevel_v6; width: cint; height: cint);
+procedure TZxdgToplevelV6.SetMinimized;
 begin
-  wl_proxy_marshal(Pwl_proxy(zxdg_toplevel_v6),
-      _ZXDG_TOPLEVEL_V6_SET_MIN_SIZE, width, height);
+  wl_proxy_marshal(FProxy, _SET_MINIMIZED);
 end;
 
-procedure zxdg_toplevel_v6_set_maximized(zxdg_toplevel_v6: Pzxdg_toplevel_v6);
+function TZxdgToplevelV6.AddListener(AIntf: IZxdgToplevelV6Listener): LongInt;
 begin
-  wl_proxy_marshal(Pwl_proxy(zxdg_toplevel_v6),
-      _ZXDG_TOPLEVEL_V6_SET_MAXIMIZED);
+  FUserDataRec.ListenerUserData := Pointer(AIntf);
+  Result := wl_proxy_add_listener(FProxy, @vIntf_zxdg_toplevel_v6_Listener, @FUserDataRec);
+end;
+destructor TZxdgPopupV6.Destroy;
+begin
+  wl_proxy_marshal(FProxy, _DESTROY);
+  inherited Destroy;
 end;
 
-procedure zxdg_toplevel_v6_unset_maximized(zxdg_toplevel_v6: Pzxdg_toplevel_v6);
+procedure TZxdgPopupV6.Grab(ASeat: TWlSeat; ASerial: DWord);
 begin
-  wl_proxy_marshal(Pwl_proxy(zxdg_toplevel_v6),
-      _ZXDG_TOPLEVEL_V6_UNSET_MAXIMIZED);
+  wl_proxy_marshal(FProxy, _GRAB, ASeat.Proxy, ASerial);
 end;
 
-procedure zxdg_toplevel_v6_set_fullscreen(zxdg_toplevel_v6: Pzxdg_toplevel_v6; output: Pwl_output);
+function TZxdgPopupV6.AddListener(AIntf: IZxdgPopupV6Listener): LongInt;
 begin
-  wl_proxy_marshal(Pwl_proxy(zxdg_toplevel_v6),
-      _ZXDG_TOPLEVEL_V6_SET_FULLSCREEN, output);
-end;
-
-procedure zxdg_toplevel_v6_unset_fullscreen(zxdg_toplevel_v6: Pzxdg_toplevel_v6);
-begin
-  wl_proxy_marshal(Pwl_proxy(zxdg_toplevel_v6),
-      _ZXDG_TOPLEVEL_V6_UNSET_FULLSCREEN);
-end;
-
-procedure zxdg_toplevel_v6_set_minimized(zxdg_toplevel_v6: Pzxdg_toplevel_v6);
-begin
-  wl_proxy_marshal(Pwl_proxy(zxdg_toplevel_v6),
-      _ZXDG_TOPLEVEL_V6_SET_MINIMIZED);
-end;
-
-function  zxdg_toplevel_v6_add_listener(zxdg_toplevel_v6: Pzxdg_toplevel_v6; listener: Pzxdg_toplevel_v6_listener; data: Pointer): cint;
-begin
-  Result := wl_proxy_add_listener(Pwl_proxy(zxdg_toplevel_v6), listener, data);
-end;
-
-procedure  zxdg_toplevel_v6_add_listener(zxdg_toplevel_v6: Pzxdg_toplevel_v6; AIntf: Izxdg_toplevel_v6Listener);
-begin
-  zxdg_toplevel_v6_add_listener(zxdg_toplevel_v6, @vIntf_zxdg_toplevel_v6_Listener, AIntf);
-end;
-
-procedure zxdg_toplevel_v6_set_user_data(zxdg_toplevel_v6: Pzxdg_toplevel_v6; user_data: Pointer);
-begin
-  wl_proxy_set_user_data(Pwl_proxy(zxdg_toplevel_v6), user_data);
-end;
-
-function  zxdg_toplevel_v6_get_user_data(zxdg_toplevel_v6: Pzxdg_toplevel_v6): Pointer;
-begin
-  Result := wl_proxy_get_user_data(Pwl_proxy(zxdg_toplevel_v6));
-end;
-
-function  zxdg_toplevel_v6_get_version(zxdg_toplevel_v6: Pzxdg_toplevel_v6): cuint32;
-begin
-  Result := wl_proxy_get_version(Pwl_proxy(zxdg_toplevel_v6));
-end;
-
-procedure zxdg_popup_v6_destroy(zxdg_popup_v6: Pzxdg_popup_v6);
-begin
-  wl_proxy_marshal(Pwl_proxy(zxdg_popup_v6), _ZXDG_POPUP_V6_DESTROY);
-  wl_proxy_destroy(Pwl_proxy(zxdg_popup_v6));
-end;
-
-procedure zxdg_popup_v6_grab(zxdg_popup_v6: Pzxdg_popup_v6; seat: Pwl_seat; serial: cuint);
-begin
-  wl_proxy_marshal(Pwl_proxy(zxdg_popup_v6),
-      _ZXDG_POPUP_V6_GRAB, seat, serial);
-end;
-
-function  zxdg_popup_v6_add_listener(zxdg_popup_v6: Pzxdg_popup_v6; listener: Pzxdg_popup_v6_listener; data: Pointer): cint;
-begin
-  Result := wl_proxy_add_listener(Pwl_proxy(zxdg_popup_v6), listener, data);
-end;
-
-procedure  zxdg_popup_v6_add_listener(zxdg_popup_v6: Pzxdg_popup_v6; AIntf: Izxdg_popup_v6Listener);
-begin
-  zxdg_popup_v6_add_listener(zxdg_popup_v6, @vIntf_zxdg_popup_v6_Listener, AIntf);
-end;
-
-procedure zxdg_popup_v6_set_user_data(zxdg_popup_v6: Pzxdg_popup_v6; user_data: Pointer);
-begin
-  wl_proxy_set_user_data(Pwl_proxy(zxdg_popup_v6), user_data);
-end;
-
-function  zxdg_popup_v6_get_user_data(zxdg_popup_v6: Pzxdg_popup_v6): Pointer;
-begin
-  Result := wl_proxy_get_user_data(Pwl_proxy(zxdg_popup_v6));
-end;
-
-function  zxdg_popup_v6_get_version(zxdg_popup_v6: Pzxdg_popup_v6): cuint32;
-begin
-  Result := wl_proxy_get_version(Pwl_proxy(zxdg_popup_v6));
+  FUserDataRec.ListenerUserData := Pointer(AIntf);
+  Result := wl_proxy_add_listener(FProxy, @vIntf_zxdg_popup_v6_Listener, @FUserDataRec);
 end;
 
 
-procedure zxdg_shell_v6_ping_Intf(AIntf: Izxdg_shell_v6Listener; zxdg_shell_v6: Pzxdg_shell_v6; serial: cuint); cdecl;
+
+
+procedure zxdg_shell_v6_ping_Intf(AData: PWLUserData; Azxdg_shell_v6: Pzxdg_shell_v6; ASerial: DWord); cdecl;
+var
+  AIntf: IZxdgShellV6Listener;
 begin
-  WriteLn('zxdg_shell_v6.ping');
-  AIntf.zxdg_shell_v6_ping(zxdg_shell_v6, serial);
+  if AData = nil then Exit;
+  AIntf := IZxdgShellV6Listener(AData^.ListenerUserData);
+  AIntf.zxdg_shell_v6_ping(TZxdgShellV6(AData^.PascalObject), ASerial);
 end;
 
-procedure zxdg_surface_v6_configure_Intf(AIntf: Izxdg_surface_v6Listener; zxdg_surface_v6: Pzxdg_surface_v6; serial: cuint); cdecl;
+procedure zxdg_surface_v6_configure_Intf(AData: PWLUserData; Azxdg_surface_v6: Pzxdg_surface_v6; ASerial: DWord); cdecl;
+var
+  AIntf: IZxdgSurfaceV6Listener;
 begin
-  WriteLn('zxdg_surface_v6.configure');
-  AIntf.zxdg_surface_v6_configure(zxdg_surface_v6, serial);
+  if AData = nil then Exit;
+  AIntf := IZxdgSurfaceV6Listener(AData^.ListenerUserData);
+  AIntf.zxdg_surface_v6_configure(TZxdgSurfaceV6(AData^.PascalObject), ASerial);
 end;
 
-procedure zxdg_toplevel_v6_configure_Intf(AIntf: Izxdg_toplevel_v6Listener; zxdg_toplevel_v6: Pzxdg_toplevel_v6; width: cint; height: cint; states: Pwl_array); cdecl;
+procedure zxdg_toplevel_v6_configure_Intf(AData: PWLUserData; Azxdg_toplevel_v6: Pzxdg_toplevel_v6; AWidth: LongInt; AHeight: LongInt; AStates: Pwl_array); cdecl;
+var
+  AIntf: IZxdgToplevelV6Listener;
 begin
-  WriteLn('zxdg_toplevel_v6.configure');
-  AIntf.zxdg_toplevel_v6_configure(zxdg_toplevel_v6, width, height, states);
+  if AData = nil then Exit;
+  AIntf := IZxdgToplevelV6Listener(AData^.ListenerUserData);
+  AIntf.zxdg_toplevel_v6_configure(TZxdgToplevelV6(AData^.PascalObject), AWidth, AHeight, AStates);
 end;
 
-procedure zxdg_toplevel_v6_close_Intf(AIntf: Izxdg_toplevel_v6Listener; zxdg_toplevel_v6: Pzxdg_toplevel_v6); cdecl;
+procedure zxdg_toplevel_v6_close_Intf(AData: PWLUserData; Azxdg_toplevel_v6: Pzxdg_toplevel_v6); cdecl;
+var
+  AIntf: IZxdgToplevelV6Listener;
 begin
-  WriteLn('zxdg_toplevel_v6.close');
-  AIntf.zxdg_toplevel_v6_close(zxdg_toplevel_v6);
+  if AData = nil then Exit;
+  AIntf := IZxdgToplevelV6Listener(AData^.ListenerUserData);
+  AIntf.zxdg_toplevel_v6_close(TZxdgToplevelV6(AData^.PascalObject));
 end;
 
-procedure zxdg_popup_v6_configure_Intf(AIntf: Izxdg_popup_v6Listener; zxdg_popup_v6: Pzxdg_popup_v6; x: cint; y: cint; width: cint; height: cint); cdecl;
+procedure zxdg_popup_v6_configure_Intf(AData: PWLUserData; Azxdg_popup_v6: Pzxdg_popup_v6; AX: LongInt; AY: LongInt; AWidth: LongInt; AHeight: LongInt); cdecl;
+var
+  AIntf: IZxdgPopupV6Listener;
 begin
-  WriteLn('zxdg_popup_v6.configure');
-  AIntf.zxdg_popup_v6_configure(zxdg_popup_v6, x, y, width, height);
+  if AData = nil then Exit;
+  AIntf := IZxdgPopupV6Listener(AData^.ListenerUserData);
+  AIntf.zxdg_popup_v6_configure(TZxdgPopupV6(AData^.PascalObject), AX, AY, AWidth, AHeight);
 end;
 
-procedure zxdg_popup_v6_popup_done_Intf(AIntf: Izxdg_popup_v6Listener; zxdg_popup_v6: Pzxdg_popup_v6); cdecl;
+procedure zxdg_popup_v6_popup_done_Intf(AData: PWLUserData; Azxdg_popup_v6: Pzxdg_popup_v6); cdecl;
+var
+  AIntf: IZxdgPopupV6Listener;
 begin
-  WriteLn('zxdg_popup_v6.popup_done');
-  AIntf.zxdg_popup_v6_popup_done(zxdg_popup_v6);
+  if AData = nil then Exit;
+  AIntf := IZxdgPopupV6Listener(AData^.ListenerUserData);
+  AIntf.zxdg_popup_v6_popup_done(TZxdgPopupV6(AData^.PascalObject));
 end;
 
 

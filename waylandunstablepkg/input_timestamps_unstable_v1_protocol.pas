@@ -6,51 +6,63 @@ unit input_timestamps_unstable_v1_protocol;
 interface
 
 uses
-  ctypes, wayland_util, wayland_client_core, wayland_protocol;
+  Classes, Sysutils, ctypes, wayland_util, wayland_client_core, wayland_protocol;
 
 
 type
-  Pzwp_input_timestamps_manager_v1 = ^Tzwp_input_timestamps_manager_v1;
-  Tzwp_input_timestamps_manager_v1 = record end;
-  Pzwp_input_timestamps_v1 = ^Tzwp_input_timestamps_v1;
-  Tzwp_input_timestamps_v1 = record end;
+  Pzwp_input_timestamps_manager_v1 = Pointer;
+  Pzwp_input_timestamps_v1 = Pointer;
   Pzwp_input_timestamps_manager_v1_listener = ^Tzwp_input_timestamps_manager_v1_listener;
   Tzwp_input_timestamps_manager_v1_listener = record
   end;
 
   Pzwp_input_timestamps_v1_listener = ^Tzwp_input_timestamps_v1_listener;
   Tzwp_input_timestamps_v1_listener = record
-    timestamp : procedure(data: Pointer; zwp_input_timestamps_v1: Pzwp_input_timestamps_v1; tv_sec_hi: cuint; tv_sec_lo: cuint; tv_nsec: cuint); cdecl;
+    timestamp : procedure(data: Pointer; AZwpInputTimestampsV1: Pzwp_input_timestamps_v1; ATvSecHi: DWord; ATvSecLo: DWord; ATvNsec: DWord); cdecl;
   end;
 
 
 
-  Izwp_input_timestamps_manager_v1Listener = interface
-  ['Izwp_input_timestamps_manager_v1Listener']
+  TZwpInputTimestampsManagerV1 = class;
+  TZwpInputTimestampsV1 = class;
+
+
+  IZwpInputTimestampsManagerV1Listener = interface
+  ['IZwpInputTimestampsManagerV1Listener']
   end;
 
-  Izwp_input_timestamps_v1Listener = interface
-  ['Izwp_input_timestamps_v1Listener']
-    procedure zwp_input_timestamps_v1_timestamp(zwp_input_timestamps_v1: Pzwp_input_timestamps_v1; tv_sec_hi: cuint; tv_sec_lo: cuint; tv_nsec: cuint);
+  IZwpInputTimestampsV1Listener = interface
+  ['IZwpInputTimestampsV1Listener']
+    procedure zwp_input_timestamps_v1_timestamp(AZwpInputTimestampsV1: TZwpInputTimestampsV1; ATvSecHi: DWord; ATvSecLo: DWord; ATvNsec: DWord);
   end;
 
 
 
-procedure zwp_input_timestamps_manager_v1_destroy(zwp_input_timestamps_manager_v1: Pzwp_input_timestamps_manager_v1);
-function  zwp_input_timestamps_manager_v1_get_keyboard_timestamps(zwp_input_timestamps_manager_v1: Pzwp_input_timestamps_manager_v1; keyboard: Pwl_keyboard): Pzwp_input_timestamps_v1;
-function  zwp_input_timestamps_manager_v1_get_pointer_timestamps(zwp_input_timestamps_manager_v1: Pzwp_input_timestamps_manager_v1; pointer: Pwl_pointer): Pzwp_input_timestamps_v1;
-function  zwp_input_timestamps_manager_v1_get_touch_timestamps(zwp_input_timestamps_manager_v1: Pzwp_input_timestamps_manager_v1; touch: Pwl_touch): Pzwp_input_timestamps_v1;
-function  zwp_input_timestamps_manager_v1_add_listener(zwp_input_timestamps_manager_v1: Pzwp_input_timestamps_manager_v1; listener: Pzwp_input_timestamps_manager_v1_listener; data: Pointer): cint;
-procedure  zwp_input_timestamps_manager_v1_add_listener(zwp_input_timestamps_manager_v1: Pzwp_input_timestamps_manager_v1; AIntf: Izwp_input_timestamps_manager_v1Listener);
-procedure zwp_input_timestamps_manager_v1_set_user_data(zwp_input_timestamps_manager_v1: Pzwp_input_timestamps_manager_v1; user_data: Pointer);
-function  zwp_input_timestamps_manager_v1_get_user_data(zwp_input_timestamps_manager_v1: Pzwp_input_timestamps_manager_v1): Pointer;
-function  zwp_input_timestamps_manager_v1_get_version(zwp_input_timestamps_manager_v1: Pzwp_input_timestamps_manager_v1): cuint32;
-procedure zwp_input_timestamps_v1_destroy(zwp_input_timestamps_v1: Pzwp_input_timestamps_v1);
-function  zwp_input_timestamps_v1_add_listener(zwp_input_timestamps_v1: Pzwp_input_timestamps_v1; listener: Pzwp_input_timestamps_v1_listener; data: Pointer): cint;
-procedure  zwp_input_timestamps_v1_add_listener(zwp_input_timestamps_v1: Pzwp_input_timestamps_v1; AIntf: Izwp_input_timestamps_v1Listener);
-procedure zwp_input_timestamps_v1_set_user_data(zwp_input_timestamps_v1: Pzwp_input_timestamps_v1; user_data: Pointer);
-function  zwp_input_timestamps_v1_get_user_data(zwp_input_timestamps_v1: Pzwp_input_timestamps_v1): Pointer;
-function  zwp_input_timestamps_v1_get_version(zwp_input_timestamps_v1: Pzwp_input_timestamps_v1): cuint32;
+
+  TZwpInputTimestampsManagerV1 = class(TWLProxyObject)
+  private
+    const _DESTROY = 0;
+    const _GET_KEYBOARD_TIMESTAMPS = 1;
+    const _GET_POINTER_TIMESTAMPS = 2;
+    const _GET_TOUCH_TIMESTAMPS = 3;
+  public
+    destructor Destroy; override;
+    function GetKeyboardTimestamps(AKeyboard: TWlKeyboard; AProxyClass: TWLProxyObjectClass = nil {TZwpInputTimestampsV1}): TZwpInputTimestampsV1;
+    function GetPointerTimestamps(APointer: TWlPointer; AProxyClass: TWLProxyObjectClass = nil {TZwpInputTimestampsV1}): TZwpInputTimestampsV1;
+    function GetTouchTimestamps(ATouch: TWlTouch; AProxyClass: TWLProxyObjectClass = nil {TZwpInputTimestampsV1}): TZwpInputTimestampsV1;
+    function AddListener(AIntf: IZwpInputTimestampsManagerV1Listener): LongInt;
+  end;
+
+  TZwpInputTimestampsV1 = class(TWLProxyObject)
+  private
+    const _DESTROY = 0;
+  public
+    destructor Destroy; override;
+    function AddListener(AIntf: IZwpInputTimestampsV1Listener): LongInt;
+  end;
+
+
+
 
 
 
@@ -62,114 +74,84 @@ var
 
 implementation
 
-const
-_ZWP_INPUT_TIMESTAMPS_MANAGER_V1_DESTROY = 0;
-_ZWP_INPUT_TIMESTAMPS_MANAGER_V1_GET_KEYBOARD_TIMESTAMPS = 1;
-_ZWP_INPUT_TIMESTAMPS_MANAGER_V1_GET_POINTER_TIMESTAMPS = 2;
-_ZWP_INPUT_TIMESTAMPS_MANAGER_V1_GET_TOUCH_TIMESTAMPS = 3;
-_ZWP_INPUT_TIMESTAMPS_V1_DESTROY = 0;
-
-
 var
   vIntf_zwp_input_timestamps_manager_v1_Listener: Tzwp_input_timestamps_manager_v1_listener;
   vIntf_zwp_input_timestamps_v1_Listener: Tzwp_input_timestamps_v1_listener;
 
 
 
-procedure zwp_input_timestamps_manager_v1_destroy(zwp_input_timestamps_manager_v1: Pzwp_input_timestamps_manager_v1);
+destructor TZwpInputTimestampsManagerV1.Destroy;
 begin
-  wl_proxy_marshal(Pwl_proxy(zwp_input_timestamps_manager_v1), _ZWP_INPUT_TIMESTAMPS_MANAGER_V1_DESTROY);
-  wl_proxy_destroy(Pwl_proxy(zwp_input_timestamps_manager_v1));
+  wl_proxy_marshal(FProxy, _DESTROY);
+  inherited Destroy;
 end;
 
-function  zwp_input_timestamps_manager_v1_get_keyboard_timestamps(zwp_input_timestamps_manager_v1: Pzwp_input_timestamps_manager_v1; keyboard: Pwl_keyboard): Pzwp_input_timestamps_v1;
+function TZwpInputTimestampsManagerV1.GetKeyboardTimestamps(AKeyboard: TWlKeyboard; AProxyClass: TWLProxyObjectClass = nil {TZwpInputTimestampsV1}): TZwpInputTimestampsV1;
 var
   id: Pwl_proxy;
 begin
-  id := wl_proxy_marshal_constructor(Pwl_proxy(zwp_input_timestamps_manager_v1),
-      _ZWP_INPUT_TIMESTAMPS_MANAGER_V1_GET_KEYBOARD_TIMESTAMPS, @zwp_input_timestamps_v1_interface, nil, keyboard);
-  Result := Pzwp_input_timestamps_v1(id);
+  id := wl_proxy_marshal_constructor(FProxy,
+      _GET_KEYBOARD_TIMESTAMPS, @zwp_input_timestamps_v1_interface, nil, AKeyboard.Proxy);
+  if AProxyClass = nil then
+    AProxyClass := TZwpInputTimestampsV1;
+  Result := TZwpInputTimestampsV1(AProxyClass.Create(id));
+  if not AProxyClass.InheritsFrom(TZwpInputTimestampsV1) then
+    Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TZwpInputTimestampsV1]);
 end;
 
-function  zwp_input_timestamps_manager_v1_get_pointer_timestamps(zwp_input_timestamps_manager_v1: Pzwp_input_timestamps_manager_v1; pointer: Pwl_pointer): Pzwp_input_timestamps_v1;
+function TZwpInputTimestampsManagerV1.GetPointerTimestamps(APointer: TWlPointer; AProxyClass: TWLProxyObjectClass = nil {TZwpInputTimestampsV1}): TZwpInputTimestampsV1;
 var
   id: Pwl_proxy;
 begin
-  id := wl_proxy_marshal_constructor(Pwl_proxy(zwp_input_timestamps_manager_v1),
-      _ZWP_INPUT_TIMESTAMPS_MANAGER_V1_GET_POINTER_TIMESTAMPS, @zwp_input_timestamps_v1_interface, nil, pointer);
-  Result := Pzwp_input_timestamps_v1(id);
+  id := wl_proxy_marshal_constructor(FProxy,
+      _GET_POINTER_TIMESTAMPS, @zwp_input_timestamps_v1_interface, nil, APointer.Proxy);
+  if AProxyClass = nil then
+    AProxyClass := TZwpInputTimestampsV1;
+  Result := TZwpInputTimestampsV1(AProxyClass.Create(id));
+  if not AProxyClass.InheritsFrom(TZwpInputTimestampsV1) then
+    Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TZwpInputTimestampsV1]);
 end;
 
-function  zwp_input_timestamps_manager_v1_get_touch_timestamps(zwp_input_timestamps_manager_v1: Pzwp_input_timestamps_manager_v1; touch: Pwl_touch): Pzwp_input_timestamps_v1;
+function TZwpInputTimestampsManagerV1.GetTouchTimestamps(ATouch: TWlTouch; AProxyClass: TWLProxyObjectClass = nil {TZwpInputTimestampsV1}): TZwpInputTimestampsV1;
 var
   id: Pwl_proxy;
 begin
-  id := wl_proxy_marshal_constructor(Pwl_proxy(zwp_input_timestamps_manager_v1),
-      _ZWP_INPUT_TIMESTAMPS_MANAGER_V1_GET_TOUCH_TIMESTAMPS, @zwp_input_timestamps_v1_interface, nil, touch);
-  Result := Pzwp_input_timestamps_v1(id);
+  id := wl_proxy_marshal_constructor(FProxy,
+      _GET_TOUCH_TIMESTAMPS, @zwp_input_timestamps_v1_interface, nil, ATouch.Proxy);
+  if AProxyClass = nil then
+    AProxyClass := TZwpInputTimestampsV1;
+  Result := TZwpInputTimestampsV1(AProxyClass.Create(id));
+  if not AProxyClass.InheritsFrom(TZwpInputTimestampsV1) then
+    Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TZwpInputTimestampsV1]);
 end;
 
-function  zwp_input_timestamps_manager_v1_add_listener(zwp_input_timestamps_manager_v1: Pzwp_input_timestamps_manager_v1; listener: Pzwp_input_timestamps_manager_v1_listener; data: Pointer): cint;
+function TZwpInputTimestampsManagerV1.AddListener(AIntf: IZwpInputTimestampsManagerV1Listener): LongInt;
 begin
-  Result := wl_proxy_add_listener(Pwl_proxy(zwp_input_timestamps_manager_v1), listener, data);
+  FUserDataRec.ListenerUserData := Pointer(AIntf);
+  Result := wl_proxy_add_listener(FProxy, @vIntf_zwp_input_timestamps_manager_v1_Listener, @FUserDataRec);
+end;
+destructor TZwpInputTimestampsV1.Destroy;
+begin
+  wl_proxy_marshal(FProxy, _DESTROY);
+  inherited Destroy;
 end;
 
-procedure  zwp_input_timestamps_manager_v1_add_listener(zwp_input_timestamps_manager_v1: Pzwp_input_timestamps_manager_v1; AIntf: Izwp_input_timestamps_manager_v1Listener);
+function TZwpInputTimestampsV1.AddListener(AIntf: IZwpInputTimestampsV1Listener): LongInt;
 begin
-  zwp_input_timestamps_manager_v1_add_listener(zwp_input_timestamps_manager_v1, @vIntf_zwp_input_timestamps_manager_v1_Listener, AIntf);
-end;
-
-procedure zwp_input_timestamps_manager_v1_set_user_data(zwp_input_timestamps_manager_v1: Pzwp_input_timestamps_manager_v1; user_data: Pointer);
-begin
-  wl_proxy_set_user_data(Pwl_proxy(zwp_input_timestamps_manager_v1), user_data);
-end;
-
-function  zwp_input_timestamps_manager_v1_get_user_data(zwp_input_timestamps_manager_v1: Pzwp_input_timestamps_manager_v1): Pointer;
-begin
-  Result := wl_proxy_get_user_data(Pwl_proxy(zwp_input_timestamps_manager_v1));
-end;
-
-function  zwp_input_timestamps_manager_v1_get_version(zwp_input_timestamps_manager_v1: Pzwp_input_timestamps_manager_v1): cuint32;
-begin
-  Result := wl_proxy_get_version(Pwl_proxy(zwp_input_timestamps_manager_v1));
-end;
-
-procedure zwp_input_timestamps_v1_destroy(zwp_input_timestamps_v1: Pzwp_input_timestamps_v1);
-begin
-  wl_proxy_marshal(Pwl_proxy(zwp_input_timestamps_v1), _ZWP_INPUT_TIMESTAMPS_V1_DESTROY);
-  wl_proxy_destroy(Pwl_proxy(zwp_input_timestamps_v1));
-end;
-
-function  zwp_input_timestamps_v1_add_listener(zwp_input_timestamps_v1: Pzwp_input_timestamps_v1; listener: Pzwp_input_timestamps_v1_listener; data: Pointer): cint;
-begin
-  Result := wl_proxy_add_listener(Pwl_proxy(zwp_input_timestamps_v1), listener, data);
-end;
-
-procedure  zwp_input_timestamps_v1_add_listener(zwp_input_timestamps_v1: Pzwp_input_timestamps_v1; AIntf: Izwp_input_timestamps_v1Listener);
-begin
-  zwp_input_timestamps_v1_add_listener(zwp_input_timestamps_v1, @vIntf_zwp_input_timestamps_v1_Listener, AIntf);
-end;
-
-procedure zwp_input_timestamps_v1_set_user_data(zwp_input_timestamps_v1: Pzwp_input_timestamps_v1; user_data: Pointer);
-begin
-  wl_proxy_set_user_data(Pwl_proxy(zwp_input_timestamps_v1), user_data);
-end;
-
-function  zwp_input_timestamps_v1_get_user_data(zwp_input_timestamps_v1: Pzwp_input_timestamps_v1): Pointer;
-begin
-  Result := wl_proxy_get_user_data(Pwl_proxy(zwp_input_timestamps_v1));
-end;
-
-function  zwp_input_timestamps_v1_get_version(zwp_input_timestamps_v1: Pzwp_input_timestamps_v1): cuint32;
-begin
-  Result := wl_proxy_get_version(Pwl_proxy(zwp_input_timestamps_v1));
+  FUserDataRec.ListenerUserData := Pointer(AIntf);
+  Result := wl_proxy_add_listener(FProxy, @vIntf_zwp_input_timestamps_v1_Listener, @FUserDataRec);
 end;
 
 
-procedure zwp_input_timestamps_v1_timestamp_Intf(AIntf: Izwp_input_timestamps_v1Listener; zwp_input_timestamps_v1: Pzwp_input_timestamps_v1; tv_sec_hi: cuint; tv_sec_lo: cuint; tv_nsec: cuint); cdecl;
+
+
+procedure zwp_input_timestamps_v1_timestamp_Intf(AData: PWLUserData; Azwp_input_timestamps_v1: Pzwp_input_timestamps_v1; ATvSecHi: DWord; ATvSecLo: DWord; ATvNsec: DWord); cdecl;
+var
+  AIntf: IZwpInputTimestampsV1Listener;
 begin
-  WriteLn('zwp_input_timestamps_v1.timestamp');
-  AIntf.zwp_input_timestamps_v1_timestamp(zwp_input_timestamps_v1, tv_sec_hi, tv_sec_lo, tv_nsec);
+  if AData = nil then Exit;
+  AIntf := IZwpInputTimestampsV1Listener(AData^.ListenerUserData);
+  AIntf.zwp_input_timestamps_v1_timestamp(TZwpInputTimestampsV1(AData^.PascalObject), ATvSecHi, ATvSecLo, ATvNsec);
 end;
 
 
