@@ -83,7 +83,7 @@ end;
 begin
   BaseDir:=IncludeTrailingPathDelimiter(GetEnvironmentVariable('WAYLAND_BASE'));
   if BaseDir = PathDelim then
-    BaseDir:='/usr/local/';
+    BaseDir:='/usr/share/';
 
   if not DirectoryExists(BaseDir) then
   begin
