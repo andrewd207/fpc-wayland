@@ -47,8 +47,10 @@ type
     FElementNumber: Integer;
     FAttrs: TStringList;
     function GetDescription: String; // most have this
+    function GetDescriptionSummary: String;
     function GetName: String;
     procedure SetDescription(AValue: String);
+    procedure SetDescriptionSummary(AValue: String);
     procedure SetName(AValue: String);
   protected
     function  GetAttr(AAttrName: String): String;
@@ -61,6 +63,7 @@ type
   published
     property Name: String read GetName write SetName;
     property Description: String read GetDescription write SetDescription;
+    property DescriptionSummary: String read GetDescriptionSummary write SetDescriptionSummary;
 
   end;
 
@@ -261,6 +264,8 @@ end;
 function TEntry.GetSummary: String;
 begin
  Result := GetAttr('summary');
+ if Result = '' then
+   Result := DescriptionSummary;
 end;
 
 function TEntry.GetValue: String;
@@ -474,6 +479,21 @@ begin
   FAttrs.Values['description'] := AValue;
 end;
 
+procedure TBaseNode.SetDescriptionSummary(AValue: String);
+var
+  lDesc: TDOMElement;
+begin
+  if not Assigned(FNode) then
+    Exit; // todo?
+  lDesc := TDOMElement(FNode.FindNode('description'));
+  if not Assigned(lDesc) then
+  begin
+    lDesc := FNode.OwnerDocument.CreateElement('description');
+    FNode.AppendChild(lDesc);
+  end;
+  lDesc.SetAttribute('summary', AValue);
+end;
+
 procedure TBaseNode.SetName(AValue: String);
 begin
   FAttrs.Values['name'] := AValue;
@@ -487,6 +507,19 @@ begin
   lDesc := FNode.FindNode('description');
   if Assigned(lDesc) then
     Result := lDesc.TextContent;
+end;
+
+function TBaseNode.GetDescriptionSummary: String;
+var
+  lDesc: TDOMELement;
+begin
+  Result := '';
+  if not Assigned(FNode) then
+    Exit;
+  lDesc := TDOMELement(FNode.FindNode('description'));
+  if Assigned(lDesc) then
+    Result := lDesc.GetAttribute('summary');
+
 end;
 
 function TBaseNode.GetAttr(AAttrName: String): String;
