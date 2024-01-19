@@ -252,7 +252,7 @@ var
   lWrapperLine: String;
   lWrapperDecl: String;
   lWrapperBind, lWrapperVar, lWrapperVarAssign, lArg, lInterface,
-    lInterfaceArg: String;
+    lInterfaceArg, lComment: String;
   lNeedsWrapper: Boolean;
       procedure WriteEvent;
       begin
@@ -294,7 +294,11 @@ begin
           Delete(lValue, 1, 2);
           lValue:='$'+  lValue;
         end;
-        Sections[sTypes].Add('  '+UpperCase(Element.Name+'_'+lEnum.Name+'_'+lEntry.Name)+' = '+lValue +'; // '+ lEntry.Summary);
+        lComment := lEntry.Summary;
+        if lComment <> '' then
+          lComment := ' // '+ StringReplace(lComment, '’', '''', [rfReplaceAll]);
+
+        Sections[sTypes].Add('  '+UpperCase(Element.Name+'_'+lEnum.Name+'_'+lEntry.Name)+' = '+lValue +';'+ lComment);
       end;
     end;
 
