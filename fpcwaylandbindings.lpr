@@ -31,6 +31,7 @@ uses
 var
   list: TStringList;
   Protocol: String;
+  BaseDir: String;
 
 procedure GatherProtocols(ADir: String);
 var
@@ -80,14 +81,27 @@ begin
 end;
 
 begin
-  Createbinding('/usr/local/share/wayland/wayland.xml', 'waylandpkg/');
+  BaseDir:=IncludeTrailingPathDelimiter(GetEnvironmentVariable('WAYLAND_BASE'));
+  if BaseDir = PathDelim then
+    BaseDir:='/usr/local/';
+
+  if not DirectoryExists(BaseDir) then
+  begin
+    WriteLn('Wayland path not found: ', BaseDir+'wayland/');
+    WriteLn('use "WAYLAND_BASE={path} ', ExtractFileName(ParamStr(0)),'" to set the base directory that contains:');
+    WriteLn('  wayland/');
+    WriteLn('  wayland-protocols/');
+    Halt(1);
+  end;
+
+  Createbinding(BaseDir+'wayland/wayland.xml', 'waylandpkg/');
 
   List := TStringList.Create;
-  GatherProtocols('/usr/local/share/wayland-protocols/stable/');
+  GatherProtocols(BaseDir+'wayland-protocols/stable/');
   for Protocol in list do
     Createbinding(Protocol, 'waylandstablepkg/');
   list.Clear;
-  GatherProtocols('/usr/local/share/wayland-protocols/unstable/');
+  GatherProtocols(BaseDir+'wayland-protocols/unstable/');
   for Protocol in list do
     Createbinding(Protocol, 'waylandunstablepkg/');
   List.free;
