@@ -208,14 +208,14 @@ initialization
 
 
   zxdg_output_manager_v1_interface.name := 'zxdg_output_manager_v1';
-  zxdg_output_manager_v1_interface.version := 2;
+  zxdg_output_manager_v1_interface.version := 3;
   zxdg_output_manager_v1_interface.method_count := 2;
   zxdg_output_manager_v1_interface.methods := @zxdg_output_manager_v1_requests;
   zxdg_output_manager_v1_interface.event_count := 0;
   zxdg_output_manager_v1_interface.events := nil;
 
   zxdg_output_v1_interface.name := 'zxdg_output_v1';
-  zxdg_output_v1_interface.version := 2;
+  zxdg_output_v1_interface.version := 3;
   zxdg_output_v1_interface.method_count := 1;
   zxdg_output_v1_interface.methods := @zxdg_output_v1_requests;
   zxdg_output_v1_interface.event_count := 5;

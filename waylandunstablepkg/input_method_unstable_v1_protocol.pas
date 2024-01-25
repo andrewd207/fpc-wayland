@@ -35,7 +35,7 @@ type
   end;
 
 const
-  ZWP_INPUT_PANEL_SURFACE_V1_POSITION_CENTER_BOTTOM = 0; // 
+  ZWP_INPUT_PANEL_SURFACE_V1_POSITION_CENTER_BOTTOM = 0;
 
 type
   Pzwp_input_panel_surface_v1_listener = ^Tzwp_input_panel_surface_v1_listener;

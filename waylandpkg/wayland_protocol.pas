@@ -34,8 +34,9 @@ type
   Pwl_subsurface = Pointer;
 const
   WL_DISPLAY_ERROR_INVALID_OBJECT = 0; // server couldn't find object
-  WL_DISPLAY_ERROR_INVALID_METHOD = 1; // method doesn't exist on the specified interface
+  WL_DISPLAY_ERROR_INVALID_METHOD = 1; // method doesn't exist on the specified interface or malformed request
   WL_DISPLAY_ERROR_NO_MEMORY = 2; // server is out of memory
+  WL_DISPLAY_ERROR_IMPLEMENTATION = 3; // implementation error in compositor
 
 type
   Pwl_display_listener = ^Twl_display_listener;
@@ -125,6 +126,56 @@ const
   WL_SHM_FORMAT_YVU422 = $36315659; // 3 plane YCbCr format, 2x1 subsampled Cr (1) and Cb (2) planes
   WL_SHM_FORMAT_YUV444 = $34325559; // 3 plane YCbCr format, non-subsampled Cb (1) and Cr (2) planes
   WL_SHM_FORMAT_YVU444 = $34325659; // 3 plane YCbCr format, non-subsampled Cr (1) and Cb (2) planes
+  WL_SHM_FORMAT_R8 = $20203852; // [7:0] R
+  WL_SHM_FORMAT_R16 = $20363152; // [15:0] R little endian
+  WL_SHM_FORMAT_RG88 = $38384752; // [15:0] R:G 8:8 little endian
+  WL_SHM_FORMAT_GR88 = $38385247; // [15:0] G:R 8:8 little endian
+  WL_SHM_FORMAT_RG1616 = $32334752; // [31:0] R:G 16:16 little endian
+  WL_SHM_FORMAT_GR1616 = $32335247; // [31:0] G:R 16:16 little endian
+  WL_SHM_FORMAT_XRGB16161616F = $48345258; // [63:0] x:R:G:B 16:16:16:16 little endian
+  WL_SHM_FORMAT_XBGR16161616F = $48344258; // [63:0] x:B:G:R 16:16:16:16 little endian
+  WL_SHM_FORMAT_ARGB16161616F = $48345241; // [63:0] A:R:G:B 16:16:16:16 little endian
+  WL_SHM_FORMAT_ABGR16161616F = $48344241; // [63:0] A:B:G:R 16:16:16:16 little endian
+  WL_SHM_FORMAT_XYUV8888 = $56555958; // [31:0] X:Y:Cb:Cr 8:8:8:8 little endian
+  WL_SHM_FORMAT_VUY888 = $34325556; // [23:0] Cr:Cb:Y 8:8:8 little endian
+  WL_SHM_FORMAT_VUY101010 = $30335556; // Y followed by U then V, 10:10:10. Non-linear modifier only
+  WL_SHM_FORMAT_Y210 = $30313259; // [63:0] Cr0:0:Y1:0:Cb0:0:Y0:0 10:6:10:6:10:6:10:6 little endian per 2 Y pixels
+  WL_SHM_FORMAT_Y212 = $32313259; // [63:0] Cr0:0:Y1:0:Cb0:0:Y0:0 12:4:12:4:12:4:12:4 little endian per 2 Y pixels
+  WL_SHM_FORMAT_Y216 = $36313259; // [63:0] Cr0:Y1:Cb0:Y0 16:16:16:16 little endian per 2 Y pixels
+  WL_SHM_FORMAT_Y410 = $30313459; // [31:0] A:Cr:Y:Cb 2:10:10:10 little endian
+  WL_SHM_FORMAT_Y412 = $32313459; // [63:0] A:0:Cr:0:Y:0:Cb:0 12:4:12:4:12:4:12:4 little endian
+  WL_SHM_FORMAT_Y416 = $36313459; // [63:0] A:Cr:Y:Cb 16:16:16:16 little endian
+  WL_SHM_FORMAT_XVYU2101010 = $30335658; // [31:0] X:Cr:Y:Cb 2:10:10:10 little endian
+  WL_SHM_FORMAT_XVYU12_16161616 = $36335658; // [63:0] X:0:Cr:0:Y:0:Cb:0 12:4:12:4:12:4:12:4 little endian
+  WL_SHM_FORMAT_XVYU16161616 = $38345658; // [63:0] X:Cr:Y:Cb 16:16:16:16 little endian
+  WL_SHM_FORMAT_Y0L0 = $304c3059; // [63:0]   A3:A2:Y3:0:Cr0:0:Y2:0:A1:A0:Y1:0:Cb0:0:Y0:0  1:1:8:2:8:2:8:2:1:1:8:2:8:2:8:2 little endian
+  WL_SHM_FORMAT_X0L0 = $304c3058; // [63:0]   X3:X2:Y3:0:Cr0:0:Y2:0:X1:X0:Y1:0:Cb0:0:Y0:0  1:1:8:2:8:2:8:2:1:1:8:2:8:2:8:2 little endian
+  WL_SHM_FORMAT_Y0L2 = $324c3059; // [63:0]   A3:A2:Y3:Cr0:Y2:A1:A0:Y1:Cb0:Y0  1:1:10:10:10:1:1:10:10:10 little endian
+  WL_SHM_FORMAT_X0L2 = $324c3058; // [63:0]   X3:X2:Y3:Cr0:Y2:X1:X0:Y1:Cb0:Y0  1:1:10:10:10:1:1:10:10:10 little endian
+  WL_SHM_FORMAT_YUV420_8BIT = $38305559;
+  WL_SHM_FORMAT_YUV420_10BIT = $30315559;
+  WL_SHM_FORMAT_XRGB8888_A8 = $38415258;
+  WL_SHM_FORMAT_XBGR8888_A8 = $38414258;
+  WL_SHM_FORMAT_RGBX8888_A8 = $38415852;
+  WL_SHM_FORMAT_BGRX8888_A8 = $38415842;
+  WL_SHM_FORMAT_RGB888_A8 = $38413852;
+  WL_SHM_FORMAT_BGR888_A8 = $38413842;
+  WL_SHM_FORMAT_RGB565_A8 = $38413552;
+  WL_SHM_FORMAT_BGR565_A8 = $38413542;
+  WL_SHM_FORMAT_NV24 = $3432564e; // non-subsampled Cr:Cb plane
+  WL_SHM_FORMAT_NV42 = $3234564e; // non-subsampled Cb:Cr plane
+  WL_SHM_FORMAT_P210 = $30313250; // 2x1 subsampled Cr:Cb plane, 10 bit per channel
+  WL_SHM_FORMAT_P010 = $30313050; // 2x2 subsampled Cr:Cb plane 10 bits per channel
+  WL_SHM_FORMAT_P012 = $32313050; // 2x2 subsampled Cr:Cb plane 12 bits per channel
+  WL_SHM_FORMAT_P016 = $36313050; // 2x2 subsampled Cr:Cb plane 16 bits per channel
+  WL_SHM_FORMAT_AXBXGXRX106106106106 = $30314241; // [63:0] A:x:B:x:G:x:R:x 10:6:10:6:10:6:10:6 little endian
+  WL_SHM_FORMAT_NV15 = $3531564e; // 2x2 subsampled Cr:Cb plane
+  WL_SHM_FORMAT_Q410 = $30313451;
+  WL_SHM_FORMAT_Q401 = $31303451;
+  WL_SHM_FORMAT_XRGB16161616 = $38345258; // [63:0] x:R:G:B 16:16:16:16 little endian
+  WL_SHM_FORMAT_XBGR16161616 = $38344258; // [63:0] x:B:G:R 16:16:16:16 little endian
+  WL_SHM_FORMAT_ARGB16161616 = $38345241; // [63:0] A:R:G:B 16:16:16:16 little endian
+  WL_SHM_FORMAT_ABGR16161616 = $38344241; // [63:0] A:B:G:R 16:16:16:16 little endian
 
 type
   Pwl_shm_listener = ^Twl_shm_listener;
@@ -226,6 +277,8 @@ type
 const
   WL_SURFACE_ERROR_INVALID_SCALE = 0; // buffer scale value is invalid
   WL_SURFACE_ERROR_INVALID_TRANSFORM = 1; // buffer transform value is invalid
+  WL_SURFACE_ERROR_INVALID_SIZE = 2; // buffer size is invalid
+  WL_SURFACE_ERROR_INVALID_OFFSET = 3; // buffer offset is invalid
 
 type
   Pwl_surface_listener = ^Twl_surface_listener;
@@ -238,6 +291,7 @@ const
   WL_SEAT_CAPABILITY_POINTER = 1; // the seat has pointer devices
   WL_SEAT_CAPABILITY_KEYBOARD = 2; // the seat has one or more keyboards
   WL_SEAT_CAPABILITY_TOUCH = 4; // the seat has touch devices
+  WL_SEAT_ERROR_MISSING_CAPABILITY = 0; // get_pointer, get_keyboard or get_touch called on seat without the matching capability
 
 type
   Pwl_seat_listener = ^Twl_seat_listener;
@@ -324,6 +378,8 @@ type
     mode : procedure(data: Pointer; AWlOutput: Pwl_output; AFlags: DWord; AWidth: LongInt; AHeight: LongInt; ARefresh: LongInt); cdecl;
     done : procedure(data: Pointer; AWlOutput: Pwl_output); cdecl;
     scale : procedure(data: Pointer; AWlOutput: Pwl_output; AFactor: LongInt); cdecl;
+    name : procedure(data: Pointer; AWlOutput: Pwl_output; AName: Pchar); cdecl;
+    description : procedure(data: Pointer; AWlOutput: Pwl_output; ADescription: Pchar); cdecl;
   end;
 
   Pwl_region_listener = ^Twl_region_listener;
@@ -501,6 +557,8 @@ type
     procedure wl_output_mode(AWlOutput: TWlOutput; AFlags: DWord; AWidth: LongInt; AHeight: LongInt; ARefresh: LongInt);
     procedure wl_output_done(AWlOutput: TWlOutput);
     procedure wl_output_scale(AWlOutput: TWlOutput; AFactor: LongInt);
+    procedure wl_output_name(AWlOutput: TWlOutput; AName: String);
+    procedure wl_output_description(AWlOutput: TWlOutput; ADescription: String);
   end;
 
   IWlRegionListener = interface
@@ -674,6 +732,7 @@ type
     const _SET_BUFFER_TRANSFORM = 7;
     const _SET_BUFFER_SCALE = 8;
     const _DAMAGE_BUFFER = 9;
+    const _OFFSET = 10;
   public
     destructor Destroy; override;
     procedure Attach(ABuffer: TWlBuffer; AX: LongInt; AY: LongInt);
@@ -685,6 +744,7 @@ type
     procedure SetBufferTransform(ATransform: LongInt);
     procedure SetBufferScale(AScale: LongInt);
     procedure DamageBuffer(AX: LongInt; AY: LongInt; AWidth: LongInt; AHeight: LongInt);
+    procedure Offset(AX: LongInt; AY: LongInt);
     function AddListener(AIntf: IWlSurfaceListener): LongInt;
   end;
 
@@ -1205,6 +1265,11 @@ end;
 procedure TWlSurface.DamageBuffer(AX: LongInt; AY: LongInt; AWidth: LongInt; AHeight: LongInt);
 begin
   wl_proxy_marshal(FProxy, _DAMAGE_BUFFER, AX, AY, AWidth, AHeight);
+end;
+
+procedure TWlSurface.Offset(AX: LongInt; AY: LongInt);
+begin
+  wl_proxy_marshal(FProxy, _OFFSET, AX, AY);
 end;
 
 function TWlSurface.AddListener(AIntf: IWlSurfaceListener): LongInt;
@@ -1891,6 +1956,24 @@ begin
   AIntf.wl_output_scale(TWlOutput(AData^.PascalObject), AFactor);
 end;
 
+procedure wl_output_name_Intf(AData: PWLUserData; Awl_output: Pwl_output; AName: Pchar); cdecl;
+var
+  AIntf: IWlOutputListener;
+begin
+  if AData = nil then Exit;
+  AIntf := IWlOutputListener(AData^.ListenerUserData);
+  AIntf.wl_output_name(TWlOutput(AData^.PascalObject), AName);
+end;
+
+procedure wl_output_description_Intf(AData: PWLUserData; Awl_output: Pwl_output; ADescription: Pchar); cdecl;
+var
+  AIntf: IWlOutputListener;
+begin
+  if AData = nil then Exit;
+  AIntf := IWlOutputListener(AData^.ListenerUserData);
+  AIntf.wl_output_description(TWlOutput(AData^.PascalObject), ADescription);
+end;
+
 
 
 const
@@ -2092,7 +2175,7 @@ const
     (name: 'configure'; signature: 'uii'; types: @pInterfaces[0]),
     (name: 'popup_done'; signature: ''; types: @pInterfaces[0])
   );
-  wl_surface_requests: array[0..9] of Twl_message = (
+  wl_surface_requests: array[0..10] of Twl_message = (
     (name: 'destroy'; signature: ''; types: @pInterfaces[0]),
     (name: 'attach'; signature: '?oii'; types: @pInterfaces[57]),
     (name: 'damage'; signature: 'iiii'; types: @pInterfaces[0]),
@@ -2102,7 +2185,8 @@ const
     (name: 'commit'; signature: ''; types: @pInterfaces[0]),
     (name: 'set_buffer_transform'; signature: '2i'; types: @pInterfaces[0]),
     (name: 'set_buffer_scale'; signature: '3i'; types: @pInterfaces[0]),
-    (name: 'damage_buffer'; signature: '4iiii'; types: @pInterfaces[0])
+    (name: 'damage_buffer'; signature: '4iiii'; types: @pInterfaces[0]),
+    (name: 'offset'; signature: '5ii'; types: @pInterfaces[0])
   );
   wl_surface_events: array[0..1] of Twl_message = (
     (name: 'enter'; signature: 'o'; types: @pInterfaces[63]),
@@ -2159,11 +2243,13 @@ const
   wl_output_requests: array[0..0] of Twl_message = (
     (name: 'release'; signature: '3'; types: @pInterfaces[0])
   );
-  wl_output_events: array[0..3] of Twl_message = (
+  wl_output_events: array[0..5] of Twl_message = (
     (name: 'geometry'; signature: 'iiiiissi'; types: @pInterfaces[0]),
     (name: 'mode'; signature: 'uiii'; types: @pInterfaces[0]),
     (name: 'done'; signature: '2'; types: @pInterfaces[0]),
-    (name: 'scale'; signature: '2i'; types: @pInterfaces[0])
+    (name: 'scale'; signature: '2i'; types: @pInterfaces[0]),
+    (name: 'name'; signature: '4s'; types: @pInterfaces[0]),
+    (name: 'description'; signature: '4s'; types: @pInterfaces[0])
   );
   wl_region_requests: array[0..2] of Twl_message = (
     (name: 'destroy'; signature: ''; types: @pInterfaces[0]),
@@ -2239,6 +2325,8 @@ initialization
   Pointer(vIntf_wl_output_Listener.mode) := @wl_output_mode_Intf;
   Pointer(vIntf_wl_output_Listener.done) := @wl_output_done_Intf;
   Pointer(vIntf_wl_output_Listener.scale) := @wl_output_scale_Intf;
+  Pointer(vIntf_wl_output_Listener.name) := @wl_output_name_Intf;
+  Pointer(vIntf_wl_output_Listener.description) := @wl_output_description_Intf;
 
 
   wl_display_interface.name := 'wl_display';
@@ -2263,7 +2351,7 @@ initialization
   wl_callback_interface.events := @wl_callback_events;
 
   wl_compositor_interface.name := 'wl_compositor';
-  wl_compositor_interface.version := 4;
+  wl_compositor_interface.version := 5;
   wl_compositor_interface.method_count := 2;
   wl_compositor_interface.methods := @wl_compositor_requests;
   wl_compositor_interface.event_count := 0;
@@ -2333,8 +2421,8 @@ initialization
   wl_shell_surface_interface.events := @wl_shell_surface_events;
 
   wl_surface_interface.name := 'wl_surface';
-  wl_surface_interface.version := 4;
-  wl_surface_interface.method_count := 10;
+  wl_surface_interface.version := 5;
+  wl_surface_interface.method_count := 11;
   wl_surface_interface.methods := @wl_surface_requests;
   wl_surface_interface.event_count := 2;
   wl_surface_interface.events := @wl_surface_events;
@@ -2368,10 +2456,10 @@ initialization
   wl_touch_interface.events := @wl_touch_events;
 
   wl_output_interface.name := 'wl_output';
-  wl_output_interface.version := 3;
+  wl_output_interface.version := 4;
   wl_output_interface.method_count := 1;
   wl_output_interface.methods := @wl_output_requests;
-  wl_output_interface.event_count := 4;
+  wl_output_interface.event_count := 6;
   wl_output_interface.events := @wl_output_events;
 
   wl_region_interface.name := 'wl_region';

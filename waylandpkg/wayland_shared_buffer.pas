@@ -70,7 +70,6 @@ begin
   pool := Create_shm_pool(shm, size, @Data, @fd);
   Result := pool.CreateBuffer(0, AWidth, AHeight, stride, AFormat);
   pool.Free // proxy will be destroyed after the buffer is destroyed
-
 end;
 
 

@@ -21,6 +21,7 @@ const
   ZWP_FULLSCREEN_SHELL_V1_PRESENT_METHOD_ZOOM_CROP = 3; // scale the surface, preserving aspect ratio, to fully fill the output cropping if needed
   ZWP_FULLSCREEN_SHELL_V1_PRESENT_METHOD_STRETCH = 4; // scale the surface to the size of the output ignoring aspect ratio
   ZWP_FULLSCREEN_SHELL_V1_ERROR_INVALID_METHOD = 0; // present_method is not known
+  ZWP_FULLSCREEN_SHELL_V1_ERROR_ROLE = 1; // given wl_surface has another role
 
 type
   Pzwp_fullscreen_shell_v1_listener = ^Tzwp_fullscreen_shell_v1_listener;

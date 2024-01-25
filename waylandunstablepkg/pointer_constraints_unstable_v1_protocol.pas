@@ -15,8 +15,8 @@ type
   Pzwp_confined_pointer_v1 = Pointer;
 const
   ZWP_POINTER_CONSTRAINTS_V1_ERROR_ALREADY_CONSTRAINED = 1; // pointer constraint already requested on that surface
-  ZWP_POINTER_CONSTRAINTS_V1_LIFETIME_ONESHOT = 1; // 
-  ZWP_POINTER_CONSTRAINTS_V1_LIFETIME_PERSISTENT = 2; // 
+  ZWP_POINTER_CONSTRAINTS_V1_LIFETIME_ONESHOT = 1; // the pointer constraint is defunct once deactivated
+  ZWP_POINTER_CONSTRAINTS_V1_LIFETIME_PERSISTENT = 2; // the pointer constraint may reactivate
 
 type
   Pzwp_pointer_constraints_v1_listener = ^Tzwp_pointer_constraints_v1_listener;
