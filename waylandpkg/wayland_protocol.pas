@@ -466,8 +466,8 @@ type
   IWlDataOfferListener = interface
   ['IWlDataOfferListener']
     procedure wl_data_offer_offer(AWlDataOffer: TWlDataOffer; AMimeType: String);
-    procedure wl_data_offer_source_actions(AWlDataOffer: TWlDataOffer; ASourceActions: DWord);
-    procedure wl_data_offer_action(AWlDataOffer: TWlDataOffer; ADndAction: DWord);
+    procedure wl_data_offer_source_actions(AWlDataOffer: TWlDataOffer; ASourceActions: DWord); {since: 3}
+    procedure wl_data_offer_action(AWlDataOffer: TWlDataOffer; ADndAction: DWord); {since: 3}
   end;
 
   IWlDataSourceListener = interface
@@ -475,17 +475,17 @@ type
     procedure wl_data_source_target(AWlDataSource: TWlDataSource; AMimeType: String);
     procedure wl_data_source_send(AWlDataSource: TWlDataSource; AMimeType: String; AFd: LongInt{fd});
     procedure wl_data_source_cancelled(AWlDataSource: TWlDataSource);
-    procedure wl_data_source_dnd_drop_performed(AWlDataSource: TWlDataSource);
-    procedure wl_data_source_dnd_finished(AWlDataSource: TWlDataSource);
-    procedure wl_data_source_action(AWlDataSource: TWlDataSource; ADndAction: DWord);
+    procedure wl_data_source_dnd_drop_performed(AWlDataSource: TWlDataSource); {since: 3}
+    procedure wl_data_source_dnd_finished(AWlDataSource: TWlDataSource); {since: 3}
+    procedure wl_data_source_action(AWlDataSource: TWlDataSource; ADndAction: DWord); {since: 3}
   end;
 
   IWlDataDeviceListener = interface
   ['IWlDataDeviceListener']
     procedure wl_data_device_data_offer(AWlDataDevice: TWlDataDevice; AId: TWlDataOffer);
-    procedure wl_data_device_enter(AWlDataDevice: TWlDataDevice; ASerial: DWord; ASurface: TWlSurface; AX: Longint{24.8}; AY: Longint{24.8}; AId: TWlDataOffer);
+    procedure wl_data_device_enter(AWlDataDevice: TWlDataDevice; ASerial: DWord; ASurface: TWlSurface; AX: Twl_fixed; AY: Twl_fixed; AId: TWlDataOffer);
     procedure wl_data_device_leave(AWlDataDevice: TWlDataDevice);
-    procedure wl_data_device_motion(AWlDataDevice: TWlDataDevice; ATime: DWord; AX: Longint{24.8}; AY: Longint{24.8});
+    procedure wl_data_device_motion(AWlDataDevice: TWlDataDevice; ATime: DWord; AX: Twl_fixed; AY: Twl_fixed);
     procedure wl_data_device_drop(AWlDataDevice: TWlDataDevice);
     procedure wl_data_device_selection(AWlDataDevice: TWlDataDevice; AId: TWlDataOffer);
   end;
@@ -514,20 +514,20 @@ type
   IWlSeatListener = interface
   ['IWlSeatListener']
     procedure wl_seat_capabilities(AWlSeat: TWlSeat; ACapabilities: DWord);
-    procedure wl_seat_name(AWlSeat: TWlSeat; AName: String);
+    procedure wl_seat_name(AWlSeat: TWlSeat; AName: String); {since: 2}
   end;
 
   IWlPointerListener = interface
   ['IWlPointerListener']
-    procedure wl_pointer_enter(AWlPointer: TWlPointer; ASerial: DWord; ASurface: TWlSurface; ASurfaceX: Longint{24.8}; ASurfaceY: Longint{24.8});
+    procedure wl_pointer_enter(AWlPointer: TWlPointer; ASerial: DWord; ASurface: TWlSurface; ASurfaceX: Twl_fixed; ASurfaceY: Twl_fixed);
     procedure wl_pointer_leave(AWlPointer: TWlPointer; ASerial: DWord; ASurface: TWlSurface);
-    procedure wl_pointer_motion(AWlPointer: TWlPointer; ATime: DWord; ASurfaceX: Longint{24.8}; ASurfaceY: Longint{24.8});
+    procedure wl_pointer_motion(AWlPointer: TWlPointer; ATime: DWord; ASurfaceX: Twl_fixed; ASurfaceY: Twl_fixed);
     procedure wl_pointer_button(AWlPointer: TWlPointer; ASerial: DWord; ATime: DWord; AButton: DWord; AState: DWord);
-    procedure wl_pointer_axis(AWlPointer: TWlPointer; ATime: DWord; AAxis: DWord; AValue: Longint{24.8});
-    procedure wl_pointer_frame(AWlPointer: TWlPointer);
-    procedure wl_pointer_axis_source(AWlPointer: TWlPointer; AAxisSource: DWord);
-    procedure wl_pointer_axis_stop(AWlPointer: TWlPointer; ATime: DWord; AAxis: DWord);
-    procedure wl_pointer_axis_discrete(AWlPointer: TWlPointer; AAxis: DWord; ADiscrete: LongInt);
+    procedure wl_pointer_axis(AWlPointer: TWlPointer; ATime: DWord; AAxis: DWord; AValue: Twl_fixed);
+    procedure wl_pointer_frame(AWlPointer: TWlPointer); {since: 5}
+    procedure wl_pointer_axis_source(AWlPointer: TWlPointer; AAxisSource: DWord); {since: 5}
+    procedure wl_pointer_axis_stop(AWlPointer: TWlPointer; ATime: DWord; AAxis: DWord); {since: 5}
+    procedure wl_pointer_axis_discrete(AWlPointer: TWlPointer; AAxis: DWord; ADiscrete: LongInt); {since: 5}
   end;
 
   IWlKeyboardListener = interface
@@ -537,28 +537,28 @@ type
     procedure wl_keyboard_leave(AWlKeyboard: TWlKeyboard; ASerial: DWord; ASurface: TWlSurface);
     procedure wl_keyboard_key(AWlKeyboard: TWlKeyboard; ASerial: DWord; ATime: DWord; AKey: DWord; AState: DWord);
     procedure wl_keyboard_modifiers(AWlKeyboard: TWlKeyboard; ASerial: DWord; AModsDepressed: DWord; AModsLatched: DWord; AModsLocked: DWord; AGroup: DWord);
-    procedure wl_keyboard_repeat_info(AWlKeyboard: TWlKeyboard; ARate: LongInt; ADelay: LongInt);
+    procedure wl_keyboard_repeat_info(AWlKeyboard: TWlKeyboard; ARate: LongInt; ADelay: LongInt); {since: 4}
   end;
 
   IWlTouchListener = interface
   ['IWlTouchListener']
-    procedure wl_touch_down(AWlTouch: TWlTouch; ASerial: DWord; ATime: DWord; ASurface: TWlSurface; AId: LongInt; AX: Longint{24.8}; AY: Longint{24.8});
+    procedure wl_touch_down(AWlTouch: TWlTouch; ASerial: DWord; ATime: DWord; ASurface: TWlSurface; AId: LongInt; AX: Twl_fixed; AY: Twl_fixed);
     procedure wl_touch_up(AWlTouch: TWlTouch; ASerial: DWord; ATime: DWord; AId: LongInt);
-    procedure wl_touch_motion(AWlTouch: TWlTouch; ATime: DWord; AId: LongInt; AX: Longint{24.8}; AY: Longint{24.8});
+    procedure wl_touch_motion(AWlTouch: TWlTouch; ATime: DWord; AId: LongInt; AX: Twl_fixed; AY: Twl_fixed);
     procedure wl_touch_frame(AWlTouch: TWlTouch);
     procedure wl_touch_cancel(AWlTouch: TWlTouch);
-    procedure wl_touch_shape(AWlTouch: TWlTouch; AId: LongInt; AMajor: Longint{24.8}; AMinor: Longint{24.8});
-    procedure wl_touch_orientation(AWlTouch: TWlTouch; AId: LongInt; AOrientation: Longint{24.8});
+    procedure wl_touch_shape(AWlTouch: TWlTouch; AId: LongInt; AMajor: Twl_fixed; AMinor: Twl_fixed); {since: 6}
+    procedure wl_touch_orientation(AWlTouch: TWlTouch; AId: LongInt; AOrientation: Twl_fixed); {since: 6}
   end;
 
   IWlOutputListener = interface
   ['IWlOutputListener']
     procedure wl_output_geometry(AWlOutput: TWlOutput; AX: LongInt; AY: LongInt; APhysicalWidth: LongInt; APhysicalHeight: LongInt; ASubpixel: LongInt; AMake: String; AModel: String; ATransform: LongInt);
     procedure wl_output_mode(AWlOutput: TWlOutput; AFlags: DWord; AWidth: LongInt; AHeight: LongInt; ARefresh: LongInt);
-    procedure wl_output_done(AWlOutput: TWlOutput);
-    procedure wl_output_scale(AWlOutput: TWlOutput; AFactor: LongInt);
-    procedure wl_output_name(AWlOutput: TWlOutput; AName: String);
-    procedure wl_output_description(AWlOutput: TWlOutput; ADescription: String);
+    procedure wl_output_done(AWlOutput: TWlOutput); {since: 2}
+    procedure wl_output_scale(AWlOutput: TWlOutput; AFactor: LongInt); {since: 2}
+    procedure wl_output_name(AWlOutput: TWlOutput; AName: String); {since: 4}
+    procedure wl_output_description(AWlOutput: TWlOutput; ADescription: String); {since: 4}
   end;
 
   IWlRegionListener = interface
@@ -641,14 +641,14 @@ type
     const _ACCEPT = 0;
     const _RECEIVE = 1;
     const _DESTROY = 2;
-    const _FINISH = 3;
-    const _SET_ACTIONS = 4;
+    const _FINISH = 3; { since version: 3}
+    const _SET_ACTIONS = 4; { since version: 3}
   public
     procedure Accept(ASerial: DWord; AMimeType: String);
     procedure Receive(AMimeType: String; AFd: LongInt{fd});
     destructor Destroy; override;
-    procedure Finish;
-    procedure SetActions(ADndActions: DWord; APreferredAction: DWord);
+    procedure Finish; {since version: 3}
+    procedure SetActions(ADndActions: DWord; APreferredAction: DWord); {since version: 3}
     function AddListener(AIntf: IWlDataOfferListener): LongInt;
   end;
 
@@ -656,11 +656,11 @@ type
   private
     const _OFFER = 0;
     const _DESTROY = 1;
-    const _SET_ACTIONS = 2;
+    const _SET_ACTIONS = 2; { since version: 3}
   public
     procedure Offer(AMimeType: String);
     destructor Destroy; override;
-    procedure SetActions(ADndActions: DWord);
+    procedure SetActions(ADndActions: DWord); {since version: 3}
     function AddListener(AIntf: IWlDataSourceListener): LongInt;
   end;
 
@@ -668,11 +668,11 @@ type
   private
     const _START_DRAG = 0;
     const _SET_SELECTION = 1;
-    const _RELEASE = 2;
+    const _RELEASE = 2; { since version: 2}
   public
     procedure StartDrag(ASource: TWlDataSource; AOrigin: TWlSurface; AIcon: TWlSurface; ASerial: DWord);
     procedure SetSelection(ASource: TWlDataSource; ASerial: DWord);
-    destructor Destroy; override;
+    destructor Destroy; override; {since version: 2}
     function AddListener(AIntf: IWlDataDeviceListener): LongInt;
   end;
 
@@ -729,10 +729,10 @@ type
     const _SET_OPAQUE_REGION = 4;
     const _SET_INPUT_REGION = 5;
     const _COMMIT = 6;
-    const _SET_BUFFER_TRANSFORM = 7;
-    const _SET_BUFFER_SCALE = 8;
-    const _DAMAGE_BUFFER = 9;
-    const _OFFSET = 10;
+    const _SET_BUFFER_TRANSFORM = 7; { since version: 2}
+    const _SET_BUFFER_SCALE = 8; { since version: 3}
+    const _DAMAGE_BUFFER = 9; { since version: 4}
+    const _OFFSET = 10; { since version: 5}
   public
     destructor Destroy; override;
     procedure Attach(ABuffer: TWlBuffer; AX: LongInt; AY: LongInt);
@@ -741,10 +741,10 @@ type
     procedure SetOpaqueRegion(ARegion: TWlRegion);
     procedure SetInputRegion(ARegion: TWlRegion);
     procedure Commit;
-    procedure SetBufferTransform(ATransform: LongInt);
-    procedure SetBufferScale(AScale: LongInt);
-    procedure DamageBuffer(AX: LongInt; AY: LongInt; AWidth: LongInt; AHeight: LongInt);
-    procedure Offset(AX: LongInt; AY: LongInt);
+    procedure SetBufferTransform(ATransform: LongInt); {since version: 2}
+    procedure SetBufferScale(AScale: LongInt); {since version: 3}
+    procedure DamageBuffer(AX: LongInt; AY: LongInt; AWidth: LongInt; AHeight: LongInt); {since version: 4}
+    procedure Offset(AX: LongInt; AY: LongInt); {since version: 5}
     function AddListener(AIntf: IWlSurfaceListener): LongInt;
   end;
 
@@ -753,46 +753,46 @@ type
     const _GET_POINTER = 0;
     const _GET_KEYBOARD = 1;
     const _GET_TOUCH = 2;
-    const _RELEASE = 3;
+    const _RELEASE = 3; { since version: 5}
   public
     function GetPointer(AProxyClass: TWLProxyObjectClass = nil {TWlPointer}): TWlPointer;
     function GetKeyboard(AProxyClass: TWLProxyObjectClass = nil {TWlKeyboard}): TWlKeyboard;
     function GetTouch(AProxyClass: TWLProxyObjectClass = nil {TWlTouch}): TWlTouch;
-    destructor Destroy; override;
+    destructor Destroy; override; {since version: 5}
     function AddListener(AIntf: IWlSeatListener): LongInt;
   end;
 
   TWlPointer = class(TWLProxyObject)
   private
     const _SET_CURSOR = 0;
-    const _RELEASE = 1;
+    const _RELEASE = 1; { since version: 3}
   public
     procedure SetCursor(ASerial: DWord; ASurface: TWlSurface; AHotspotX: LongInt; AHotspotY: LongInt);
-    destructor Destroy; override;
+    destructor Destroy; override; {since version: 3}
     function AddListener(AIntf: IWlPointerListener): LongInt;
   end;
 
   TWlKeyboard = class(TWLProxyObject)
   private
-    const _RELEASE = 0;
+    const _RELEASE = 0; { since version: 3}
   public
-    destructor Destroy; override;
+    destructor Destroy; override; {since version: 3}
     function AddListener(AIntf: IWlKeyboardListener): LongInt;
   end;
 
   TWlTouch = class(TWLProxyObject)
   private
-    const _RELEASE = 0;
+    const _RELEASE = 0; { since version: 3}
   public
-    destructor Destroy; override;
+    destructor Destroy; override; {since version: 3}
     function AddListener(AIntf: IWlTouchListener): LongInt;
   end;
 
   TWlOutput = class(TWLProxyObject)
   private
-    const _RELEASE = 0;
+    const _RELEASE = 0; { since version: 3}
   public
-    destructor Destroy; override;
+    destructor Destroy; override; {since version: 3}
     function AddListener(AIntf: IWlOutputListener): LongInt;
   end;
 
@@ -903,9 +903,9 @@ begin
       _SYNC, @wl_callback_interface, nil);
   if AProxyClass = nil then
     AProxyClass := TWlCallback;
-  Result := TWlCallback(AProxyClass.Create(callback));
   if not AProxyClass.InheritsFrom(TWlCallback) then
     Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TWlCallback]);
+  Result := TWlCallback(AProxyClass.Create(callback));
 end;
 
 function TWlDisplay.GetRegistry(AProxyClass: TWLProxyObjectClass = nil {TWlRegistry}): TWlRegistry;
@@ -916,9 +916,9 @@ begin
       _GET_REGISTRY, @wl_registry_interface, nil);
   if AProxyClass = nil then
     AProxyClass := TWlRegistry;
-  Result := TWlRegistry(AProxyClass.Create(registry));
   if not AProxyClass.InheritsFrom(TWlRegistry) then
     Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TWlRegistry]);
+  Result := TWlRegistry(AProxyClass.Create(registry));
 end;
 
 function TWlDisplay.AddListener(AIntf: IWlDisplayListener): LongInt;
@@ -950,9 +950,9 @@ begin
       _CREATE_SURFACE, @wl_surface_interface, nil);
   if AProxyClass = nil then
     AProxyClass := TWlSurface;
-  Result := TWlSurface(AProxyClass.Create(id));
   if not AProxyClass.InheritsFrom(TWlSurface) then
     Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TWlSurface]);
+  Result := TWlSurface(AProxyClass.Create(id));
 end;
 
 function TWlCompositor.CreateRegion(AProxyClass: TWLProxyObjectClass = nil {TWlRegion}): TWlRegion;
@@ -963,9 +963,9 @@ begin
       _CREATE_REGION, @wl_region_interface, nil);
   if AProxyClass = nil then
     AProxyClass := TWlRegion;
-  Result := TWlRegion(AProxyClass.Create(id));
   if not AProxyClass.InheritsFrom(TWlRegion) then
     Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TWlRegion]);
+  Result := TWlRegion(AProxyClass.Create(id));
 end;
 
 function TWlCompositor.AddListener(AIntf: IWlCompositorListener): LongInt;
@@ -981,9 +981,9 @@ begin
       _CREATE_BUFFER, @wl_buffer_interface, nil, AOffset, AWidth, AHeight, AStride, AFormat);
   if AProxyClass = nil then
     AProxyClass := TWlBuffer;
-  Result := TWlBuffer(AProxyClass.Create(id));
   if not AProxyClass.InheritsFrom(TWlBuffer) then
     Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TWlBuffer]);
+  Result := TWlBuffer(AProxyClass.Create(id));
 end;
 
 destructor TWlShmPool.Destroy;
@@ -1010,9 +1010,9 @@ begin
       _CREATE_POOL, @wl_shm_pool_interface, nil, AFd, ASize);
   if AProxyClass = nil then
     AProxyClass := TWlShmPool;
-  Result := TWlShmPool(AProxyClass.Create(id));
   if not AProxyClass.InheritsFrom(TWlShmPool) then
     Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TWlShmPool]);
+  Result := TWlShmPool(AProxyClass.Create(id));
 end;
 
 function TWlShm.AddListener(AIntf: IWlShmListener): LongInt;
@@ -1112,9 +1112,9 @@ begin
       _CREATE_DATA_SOURCE, @wl_data_source_interface, nil);
   if AProxyClass = nil then
     AProxyClass := TWlDataSource;
-  Result := TWlDataSource(AProxyClass.Create(id));
   if not AProxyClass.InheritsFrom(TWlDataSource) then
     Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TWlDataSource]);
+  Result := TWlDataSource(AProxyClass.Create(id));
 end;
 
 function TWlDataDeviceManager.GetDataDevice(ASeat: TWlSeat; AProxyClass: TWLProxyObjectClass = nil {TWlDataDevice}): TWlDataDevice;
@@ -1125,9 +1125,9 @@ begin
       _GET_DATA_DEVICE, @wl_data_device_interface, nil, ASeat.Proxy);
   if AProxyClass = nil then
     AProxyClass := TWlDataDevice;
-  Result := TWlDataDevice(AProxyClass.Create(id));
   if not AProxyClass.InheritsFrom(TWlDataDevice) then
     Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TWlDataDevice]);
+  Result := TWlDataDevice(AProxyClass.Create(id));
 end;
 
 function TWlDataDeviceManager.AddListener(AIntf: IWlDataDeviceManagerListener): LongInt;
@@ -1143,9 +1143,9 @@ begin
       _GET_SHELL_SURFACE, @wl_shell_surface_interface, nil, ASurface.Proxy);
   if AProxyClass = nil then
     AProxyClass := TWlShellSurface;
-  Result := TWlShellSurface(AProxyClass.Create(id));
   if not AProxyClass.InheritsFrom(TWlShellSurface) then
     Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TWlShellSurface]);
+  Result := TWlShellSurface(AProxyClass.Create(id));
 end;
 
 function TWlShell.AddListener(AIntf: IWlShellListener): LongInt;
@@ -1232,9 +1232,9 @@ begin
       _FRAME, @wl_callback_interface, nil);
   if AProxyClass = nil then
     AProxyClass := TWlCallback;
-  Result := TWlCallback(AProxyClass.Create(callback));
   if not AProxyClass.InheritsFrom(TWlCallback) then
     Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TWlCallback]);
+  Result := TWlCallback(AProxyClass.Create(callback));
 end;
 
 procedure TWlSurface.SetOpaqueRegion(ARegion: TWlRegion);
@@ -1285,9 +1285,9 @@ begin
       _GET_POINTER, @wl_pointer_interface, nil);
   if AProxyClass = nil then
     AProxyClass := TWlPointer;
-  Result := TWlPointer(AProxyClass.Create(id));
   if not AProxyClass.InheritsFrom(TWlPointer) then
     Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TWlPointer]);
+  Result := TWlPointer(AProxyClass.Create(id));
 end;
 
 function TWlSeat.GetKeyboard(AProxyClass: TWLProxyObjectClass = nil {TWlKeyboard}): TWlKeyboard;
@@ -1298,9 +1298,9 @@ begin
       _GET_KEYBOARD, @wl_keyboard_interface, nil);
   if AProxyClass = nil then
     AProxyClass := TWlKeyboard;
-  Result := TWlKeyboard(AProxyClass.Create(id));
   if not AProxyClass.InheritsFrom(TWlKeyboard) then
     Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TWlKeyboard]);
+  Result := TWlKeyboard(AProxyClass.Create(id));
 end;
 
 function TWlSeat.GetTouch(AProxyClass: TWLProxyObjectClass = nil {TWlTouch}): TWlTouch;
@@ -1311,9 +1311,9 @@ begin
       _GET_TOUCH, @wl_touch_interface, nil);
   if AProxyClass = nil then
     AProxyClass := TWlTouch;
-  Result := TWlTouch(AProxyClass.Create(id));
   if not AProxyClass.InheritsFrom(TWlTouch) then
     Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TWlTouch]);
+  Result := TWlTouch(AProxyClass.Create(id));
 end;
 
 destructor TWlSeat.Destroy;
@@ -1411,9 +1411,9 @@ begin
       _GET_SUBSURFACE, @wl_subsurface_interface, nil, ASurface.Proxy, AParent.Proxy);
   if AProxyClass = nil then
     AProxyClass := TWlSubsurface;
-  Result := TWlSubsurface(AProxyClass.Create(id));
   if not AProxyClass.InheritsFrom(TWlSubsurface) then
     Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TWlSubsurface]);
+  Result := TWlSubsurface(AProxyClass.Create(id));
 end;
 
 function TWlSubcompositor.AddListener(AIntf: IWlSubcompositorListener): LongInt;
@@ -1620,7 +1620,7 @@ var
 begin
   if AData = nil then Exit;
   AIntf := IWlDataDeviceListener(AData^.ListenerUserData);
-  AIntf.wl_data_device_enter(TWlDataDevice(AData^.PascalObject), ASerial,  TWlSurface(TWLProxyObject.WLToObj(ASurface)), AX, AY,  TWlDataOffer(TWLProxyObject.WLToObj(AId)));
+  AIntf.wl_data_device_enter(TWlDataDevice(AData^.PascalObject), ASerial,  TWlSurface(TWLProxyObject.WLToObj(ASurface)), Twl_fixed(AX), Twl_fixed(AY),  TWlDataOffer(TWLProxyObject.WLToObj(AId)));
 end;
 
 procedure wl_data_device_leave_Intf(AData: PWLUserData; Awl_data_device: Pwl_data_device); cdecl;
@@ -1638,7 +1638,7 @@ var
 begin
   if AData = nil then Exit;
   AIntf := IWlDataDeviceListener(AData^.ListenerUserData);
-  AIntf.wl_data_device_motion(TWlDataDevice(AData^.PascalObject), ATime, AX, AY);
+  AIntf.wl_data_device_motion(TWlDataDevice(AData^.PascalObject), ATime, Twl_fixed(AX), Twl_fixed(AY));
 end;
 
 procedure wl_data_device_drop_Intf(AData: PWLUserData; Awl_data_device: Pwl_data_device); cdecl;
@@ -1728,7 +1728,7 @@ var
 begin
   if AData = nil then Exit;
   AIntf := IWlPointerListener(AData^.ListenerUserData);
-  AIntf.wl_pointer_enter(TWlPointer(AData^.PascalObject), ASerial,  TWlSurface(TWLProxyObject.WLToObj(ASurface)), ASurfaceX, ASurfaceY);
+  AIntf.wl_pointer_enter(TWlPointer(AData^.PascalObject), ASerial,  TWlSurface(TWLProxyObject.WLToObj(ASurface)), Twl_fixed(ASurfaceX), Twl_fixed(ASurfaceY));
 end;
 
 procedure wl_pointer_leave_Intf(AData: PWLUserData; Awl_pointer: Pwl_pointer; ASerial: DWord; ASurface: Pwl_surface); cdecl;
@@ -1746,7 +1746,7 @@ var
 begin
   if AData = nil then Exit;
   AIntf := IWlPointerListener(AData^.ListenerUserData);
-  AIntf.wl_pointer_motion(TWlPointer(AData^.PascalObject), ATime, ASurfaceX, ASurfaceY);
+  AIntf.wl_pointer_motion(TWlPointer(AData^.PascalObject), ATime, Twl_fixed(ASurfaceX), Twl_fixed(ASurfaceY));
 end;
 
 procedure wl_pointer_button_Intf(AData: PWLUserData; Awl_pointer: Pwl_pointer; ASerial: DWord; ATime: DWord; AButton: DWord; AState: DWord); cdecl;
@@ -1764,7 +1764,7 @@ var
 begin
   if AData = nil then Exit;
   AIntf := IWlPointerListener(AData^.ListenerUserData);
-  AIntf.wl_pointer_axis(TWlPointer(AData^.PascalObject), ATime, AAxis, AValue);
+  AIntf.wl_pointer_axis(TWlPointer(AData^.PascalObject), ATime, AAxis, Twl_fixed(AValue));
 end;
 
 procedure wl_pointer_frame_Intf(AData: PWLUserData; Awl_pointer: Pwl_pointer); cdecl;
@@ -1863,7 +1863,7 @@ var
 begin
   if AData = nil then Exit;
   AIntf := IWlTouchListener(AData^.ListenerUserData);
-  AIntf.wl_touch_down(TWlTouch(AData^.PascalObject), ASerial, ATime,  TWlSurface(TWLProxyObject.WLToObj(ASurface)), AId, AX, AY);
+  AIntf.wl_touch_down(TWlTouch(AData^.PascalObject), ASerial, ATime,  TWlSurface(TWLProxyObject.WLToObj(ASurface)), AId, Twl_fixed(AX), Twl_fixed(AY));
 end;
 
 procedure wl_touch_up_Intf(AData: PWLUserData; Awl_touch: Pwl_touch; ASerial: DWord; ATime: DWord; AId: LongInt); cdecl;
@@ -1881,7 +1881,7 @@ var
 begin
   if AData = nil then Exit;
   AIntf := IWlTouchListener(AData^.ListenerUserData);
-  AIntf.wl_touch_motion(TWlTouch(AData^.PascalObject), ATime, AId, AX, AY);
+  AIntf.wl_touch_motion(TWlTouch(AData^.PascalObject), ATime, AId, Twl_fixed(AX), Twl_fixed(AY));
 end;
 
 procedure wl_touch_frame_Intf(AData: PWLUserData; Awl_touch: Pwl_touch); cdecl;
@@ -1908,7 +1908,7 @@ var
 begin
   if AData = nil then Exit;
   AIntf := IWlTouchListener(AData^.ListenerUserData);
-  AIntf.wl_touch_shape(TWlTouch(AData^.PascalObject), AId, AMajor, AMinor);
+  AIntf.wl_touch_shape(TWlTouch(AData^.PascalObject), AId, Twl_fixed(AMajor), Twl_fixed(AMinor));
 end;
 
 procedure wl_touch_orientation_Intf(AData: PWLUserData; Awl_touch: Pwl_touch; AId: LongInt; AOrientation: Longint{24.8}); cdecl;
@@ -1917,7 +1917,7 @@ var
 begin
   if AData = nil then Exit;
   AIntf := IWlTouchListener(AData^.ListenerUserData);
-  AIntf.wl_touch_orientation(TWlTouch(AData^.PascalObject), AId, AOrientation);
+  AIntf.wl_touch_orientation(TWlTouch(AData^.PascalObject), AId, Twl_fixed(AOrientation));
 end;
 
 procedure wl_output_geometry_Intf(AData: PWLUserData; Awl_output: Pwl_output; AX: LongInt; AY: LongInt; APhysicalWidth: LongInt; APhysicalHeight: LongInt; ASubpixel: LongInt; AMake: Pchar; AModel: Pchar; ATransform: LongInt); cdecl;

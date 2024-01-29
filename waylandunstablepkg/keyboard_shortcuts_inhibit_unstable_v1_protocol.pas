@@ -96,9 +96,9 @@ begin
       _INHIBIT_SHORTCUTS, @zwp_keyboard_shortcuts_inhibitor_v1_interface, nil, ASurface.Proxy, ASeat.Proxy);
   if AProxyClass = nil then
     AProxyClass := TZwpKeyboardShortcutsInhibitorV1;
-  Result := TZwpKeyboardShortcutsInhibitorV1(AProxyClass.Create(id));
   if not AProxyClass.InheritsFrom(TZwpKeyboardShortcutsInhibitorV1) then
     Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TZwpKeyboardShortcutsInhibitorV1]);
+  Result := TZwpKeyboardShortcutsInhibitorV1(AProxyClass.Create(id));
 end;
 
 function TZwpKeyboardShortcutsInhibitManagerV1.AddListener(AIntf: IZwpKeyboardShortcutsInhibitManagerV1Listener): LongInt;

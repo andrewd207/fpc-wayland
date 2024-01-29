@@ -140,9 +140,9 @@ begin
       _CREATE_SOURCE, @zwp_primary_selection_source_v1_interface, nil);
   if AProxyClass = nil then
     AProxyClass := TZwpPrimarySelectionSourceV1;
-  Result := TZwpPrimarySelectionSourceV1(AProxyClass.Create(id));
   if not AProxyClass.InheritsFrom(TZwpPrimarySelectionSourceV1) then
     Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TZwpPrimarySelectionSourceV1]);
+  Result := TZwpPrimarySelectionSourceV1(AProxyClass.Create(id));
 end;
 
 function TZwpPrimarySelectionDeviceManagerV1.GetDevice(ASeat: TWlSeat; AProxyClass: TWLProxyObjectClass = nil {TZwpPrimarySelectionDeviceV1}): TZwpPrimarySelectionDeviceV1;
@@ -153,9 +153,9 @@ begin
       _GET_DEVICE, @zwp_primary_selection_device_v1_interface, nil, ASeat.Proxy);
   if AProxyClass = nil then
     AProxyClass := TZwpPrimarySelectionDeviceV1;
-  Result := TZwpPrimarySelectionDeviceV1(AProxyClass.Create(id));
   if not AProxyClass.InheritsFrom(TZwpPrimarySelectionDeviceV1) then
     Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TZwpPrimarySelectionDeviceV1]);
+  Result := TZwpPrimarySelectionDeviceV1(AProxyClass.Create(id));
 end;
 
 destructor TZwpPrimarySelectionDeviceManagerV1.Destroy;

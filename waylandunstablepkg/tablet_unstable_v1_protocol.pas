@@ -106,7 +106,7 @@ type
     procedure zwp_tablet_tool_v1_proximity_out(AZwpTabletToolV1: TZwpTabletToolV1);
     procedure zwp_tablet_tool_v1_down(AZwpTabletToolV1: TZwpTabletToolV1; ASerial: DWord);
     procedure zwp_tablet_tool_v1_up(AZwpTabletToolV1: TZwpTabletToolV1);
-    procedure zwp_tablet_tool_v1_motion(AZwpTabletToolV1: TZwpTabletToolV1; AX: Longint{24.8}; AY: Longint{24.8});
+    procedure zwp_tablet_tool_v1_motion(AZwpTabletToolV1: TZwpTabletToolV1; AX: Twl_fixed; AY: Twl_fixed);
     procedure zwp_tablet_tool_v1_pressure(AZwpTabletToolV1: TZwpTabletToolV1; APressure: DWord);
     procedure zwp_tablet_tool_v1_distance(AZwpTabletToolV1: TZwpTabletToolV1; ADistance: DWord);
     procedure zwp_tablet_tool_v1_tilt(AZwpTabletToolV1: TZwpTabletToolV1; ATiltX: LongInt; ATiltY: LongInt);
@@ -196,9 +196,9 @@ begin
       _GET_TABLET_SEAT, @zwp_tablet_seat_v1_interface, nil, ASeat.Proxy);
   if AProxyClass = nil then
     AProxyClass := TZwpTabletSeatV1;
-  Result := TZwpTabletSeatV1(AProxyClass.Create(tablet_seat));
   if not AProxyClass.InheritsFrom(TZwpTabletSeatV1) then
     Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TZwpTabletSeatV1]);
+  Result := TZwpTabletSeatV1(AProxyClass.Create(tablet_seat));
 end;
 
 destructor TZwpTabletManagerV1.Destroy;
@@ -368,7 +368,7 @@ var
 begin
   if AData = nil then Exit;
   AIntf := IZwpTabletToolV1Listener(AData^.ListenerUserData);
-  AIntf.zwp_tablet_tool_v1_motion(TZwpTabletToolV1(AData^.PascalObject), AX, AY);
+  AIntf.zwp_tablet_tool_v1_motion(TZwpTabletToolV1(AData^.PascalObject), Twl_fixed(AX), Twl_fixed(AY));
 end;
 
 procedure zwp_tablet_tool_v1_pressure_Intf(AData: PWLUserData; Azwp_tablet_tool_v1: Pzwp_tablet_tool_v1; APressure: DWord); cdecl;

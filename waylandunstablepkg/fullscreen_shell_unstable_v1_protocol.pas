@@ -111,9 +111,9 @@ begin
       _PRESENT_SURFACE_FOR_MODE, @zwp_fullscreen_shell_mode_feedback_v1_interface, nil, ASurface.Proxy, AOutput.Proxy, AFramerate);
   if AProxyClass = nil then
     AProxyClass := TZwpFullscreenShellModeFeedbackV1;
-  Result := TZwpFullscreenShellModeFeedbackV1(AProxyClass.Create(feedback));
   if not AProxyClass.InheritsFrom(TZwpFullscreenShellModeFeedbackV1) then
     Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TZwpFullscreenShellModeFeedbackV1]);
+  Result := TZwpFullscreenShellModeFeedbackV1(AProxyClass.Create(feedback));
 end;
 
 function TZwpFullscreenShellV1.AddListener(AIntf: IZwpFullscreenShellV1Listener): LongInt;

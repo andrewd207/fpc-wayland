@@ -139,14 +139,14 @@ type
   ['IXdgToplevelListener']
     procedure xdg_toplevel_configure(AXdgToplevel: TXdgToplevel; AWidth: LongInt; AHeight: LongInt; AStates: Pwl_array);
     procedure xdg_toplevel_close(AXdgToplevel: TXdgToplevel);
-    procedure xdg_toplevel_configure_bounds(AXdgToplevel: TXdgToplevel; AWidth: LongInt; AHeight: LongInt);
+    procedure xdg_toplevel_configure_bounds(AXdgToplevel: TXdgToplevel; AWidth: LongInt; AHeight: LongInt); {since: 4}
   end;
 
   IXdgPopupListener = interface
   ['IXdgPopupListener']
     procedure xdg_popup_configure(AXdgPopup: TXdgPopup; AX: LongInt; AY: LongInt; AWidth: LongInt; AHeight: LongInt);
     procedure xdg_popup_popup_done(AXdgPopup: TXdgPopup);
-    procedure xdg_popup_repositioned(AXdgPopup: TXdgPopup; AToken: DWord);
+    procedure xdg_popup_repositioned(AXdgPopup: TXdgPopup; AToken: DWord); {since: 3}
   end;
 
 
@@ -175,9 +175,9 @@ type
     const _SET_GRAVITY = 4;
     const _SET_CONSTRAINT_ADJUSTMENT = 5;
     const _SET_OFFSET = 6;
-    const _SET_REACTIVE = 7;
-    const _SET_PARENT_SIZE = 8;
-    const _SET_PARENT_CONFIGURE = 9;
+    const _SET_REACTIVE = 7; { since version: 3}
+    const _SET_PARENT_SIZE = 8; { since version: 3}
+    const _SET_PARENT_CONFIGURE = 9; { since version: 3}
   public
     destructor Destroy; override;
     procedure SetSize(AWidth: LongInt; AHeight: LongInt);
@@ -186,9 +186,9 @@ type
     procedure SetGravity(AGravity: DWord);
     procedure SetConstraintAdjustment(AConstraintAdjustment: DWord);
     procedure SetOffset(AX: LongInt; AY: LongInt);
-    procedure SetReactive;
-    procedure SetParentSize(AParentWidth: LongInt; AParentHeight: LongInt);
-    procedure SetParentConfigure(ASerial: DWord);
+    procedure SetReactive; {since version: 3}
+    procedure SetParentSize(AParentWidth: LongInt; AParentHeight: LongInt); {since version: 3}
+    procedure SetParentConfigure(ASerial: DWord); {since version: 3}
     function AddListener(AIntf: IXdgPositionerListener): LongInt;
   end;
 
@@ -246,11 +246,11 @@ type
   private
     const _DESTROY = 0;
     const _GRAB = 1;
-    const _REPOSITION = 2;
+    const _REPOSITION = 2; { since version: 3}
   public
     destructor Destroy; override;
     procedure Grab(ASeat: TWlSeat; ASerial: DWord);
-    procedure Reposition(APositioner: TXdgPositioner; AToken: DWord);
+    procedure Reposition(APositioner: TXdgPositioner; AToken: DWord); {since version: 3}
     function AddListener(AIntf: IXdgPopupListener): LongInt;
   end;
 
@@ -293,9 +293,9 @@ begin
       _CREATE_POSITIONER, @xdg_positioner_interface, nil);
   if AProxyClass = nil then
     AProxyClass := TXdgPositioner;
-  Result := TXdgPositioner(AProxyClass.Create(id));
   if not AProxyClass.InheritsFrom(TXdgPositioner) then
     Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TXdgPositioner]);
+  Result := TXdgPositioner(AProxyClass.Create(id));
 end;
 
 function TXdgWmBase.GetXdgSurface(ASurface: TWlSurface; AProxyClass: TWLProxyObjectClass = nil {TXdgSurface}): TXdgSurface;
@@ -306,9 +306,9 @@ begin
       _GET_XDG_SURFACE, @xdg_surface_interface, nil, ASurface.Proxy);
   if AProxyClass = nil then
     AProxyClass := TXdgSurface;
-  Result := TXdgSurface(AProxyClass.Create(id));
   if not AProxyClass.InheritsFrom(TXdgSurface) then
     Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TXdgSurface]);
+  Result := TXdgSurface(AProxyClass.Create(id));
 end;
 
 procedure TXdgWmBase.Pong(ASerial: DWord);
@@ -391,9 +391,9 @@ begin
       _GET_TOPLEVEL, @xdg_toplevel_interface, nil);
   if AProxyClass = nil then
     AProxyClass := TXdgToplevel;
-  Result := TXdgToplevel(AProxyClass.Create(id));
   if not AProxyClass.InheritsFrom(TXdgToplevel) then
     Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TXdgToplevel]);
+  Result := TXdgToplevel(AProxyClass.Create(id));
 end;
 
 function TXdgSurface.GetPopup(AParent: TXdgSurface; APositioner: TXdgPositioner; AProxyClass: TWLProxyObjectClass = nil {TXdgPopup}): TXdgPopup;
@@ -404,9 +404,9 @@ begin
       _GET_POPUP, @xdg_popup_interface, nil, AParent.Proxy, APositioner.Proxy);
   if AProxyClass = nil then
     AProxyClass := TXdgPopup;
-  Result := TXdgPopup(AProxyClass.Create(id));
   if not AProxyClass.InheritsFrom(TXdgPopup) then
     Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TXdgPopup]);
+  Result := TXdgPopup(AProxyClass.Create(id));
 end;
 
 procedure TXdgSurface.SetWindowGeometry(AX: LongInt; AY: LongInt; AWidth: LongInt; AHeight: LongInt);

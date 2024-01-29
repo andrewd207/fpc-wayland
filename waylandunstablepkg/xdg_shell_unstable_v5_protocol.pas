@@ -177,9 +177,9 @@ begin
       _GET_XDG_SURFACE, @xdg_surface_interface, nil, ASurface.Proxy);
   if AProxyClass = nil then
     AProxyClass := TXdgSurface;
-  Result := TXdgSurface(AProxyClass.Create(id));
   if not AProxyClass.InheritsFrom(TXdgSurface) then
     Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TXdgSurface]);
+  Result := TXdgSurface(AProxyClass.Create(id));
 end;
 
 function TXdgShell.GetXdgPopup(ASurface: TWlSurface; AParent: TWlSurface; ASeat: TWlSeat; ASerial: DWord; AX: LongInt; AY: LongInt; AProxyClass: TWLProxyObjectClass = nil {TXdgPopup}): TXdgPopup;
@@ -190,9 +190,9 @@ begin
       _GET_XDG_POPUP, @xdg_popup_interface, nil, ASurface.Proxy, AParent.Proxy, ASeat.Proxy, ASerial, AX, AY);
   if AProxyClass = nil then
     AProxyClass := TXdgPopup;
-  Result := TXdgPopup(AProxyClass.Create(id));
   if not AProxyClass.InheritsFrom(TXdgPopup) then
     Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TXdgPopup]);
+  Result := TXdgPopup(AProxyClass.Create(id));
 end;
 
 procedure TXdgShell.Pong(ASerial: DWord);

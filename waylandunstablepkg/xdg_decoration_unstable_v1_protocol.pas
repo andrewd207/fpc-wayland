@@ -102,9 +102,9 @@ begin
       _GET_TOPLEVEL_DECORATION, @zxdg_toplevel_decoration_v1_interface, nil, AToplevel.Proxy);
   if AProxyClass = nil then
     AProxyClass := TZxdgToplevelDecorationV1;
-  Result := TZxdgToplevelDecorationV1(AProxyClass.Create(id));
   if not AProxyClass.InheritsFrom(TZxdgToplevelDecorationV1) then
     Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TZxdgToplevelDecorationV1]);
+  Result := TZxdgToplevelDecorationV1(AProxyClass.Create(id));
 end;
 
 function TZxdgDecorationManagerV1.AddListener(AIntf: IZxdgDecorationManagerV1Listener): LongInt;

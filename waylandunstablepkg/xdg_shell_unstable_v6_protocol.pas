@@ -268,9 +268,9 @@ begin
       _CREATE_POSITIONER, @zxdg_positioner_v6_interface, nil);
   if AProxyClass = nil then
     AProxyClass := TZxdgPositionerV6;
-  Result := TZxdgPositionerV6(AProxyClass.Create(id));
   if not AProxyClass.InheritsFrom(TZxdgPositionerV6) then
     Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TZxdgPositionerV6]);
+  Result := TZxdgPositionerV6(AProxyClass.Create(id));
 end;
 
 function TZxdgShellV6.GetXdgSurface(ASurface: TWlSurface; AProxyClass: TWLProxyObjectClass = nil {TZxdgSurfaceV6}): TZxdgSurfaceV6;
@@ -281,9 +281,9 @@ begin
       _GET_XDG_SURFACE, @zxdg_surface_v6_interface, nil, ASurface.Proxy);
   if AProxyClass = nil then
     AProxyClass := TZxdgSurfaceV6;
-  Result := TZxdgSurfaceV6(AProxyClass.Create(id));
   if not AProxyClass.InheritsFrom(TZxdgSurfaceV6) then
     Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TZxdgSurfaceV6]);
+  Result := TZxdgSurfaceV6(AProxyClass.Create(id));
 end;
 
 procedure TZxdgShellV6.Pong(ASerial: DWord);
@@ -351,9 +351,9 @@ begin
       _GET_TOPLEVEL, @zxdg_toplevel_v6_interface, nil);
   if AProxyClass = nil then
     AProxyClass := TZxdgToplevelV6;
-  Result := TZxdgToplevelV6(AProxyClass.Create(id));
   if not AProxyClass.InheritsFrom(TZxdgToplevelV6) then
     Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TZxdgToplevelV6]);
+  Result := TZxdgToplevelV6(AProxyClass.Create(id));
 end;
 
 function TZxdgSurfaceV6.GetPopup(AParent: TZxdgSurfaceV6; APositioner: TZxdgPositionerV6; AProxyClass: TWLProxyObjectClass = nil {TZxdgPopupV6}): TZxdgPopupV6;
@@ -364,9 +364,9 @@ begin
       _GET_POPUP, @zxdg_popup_v6_interface, nil, AParent.Proxy, APositioner.Proxy);
   if AProxyClass = nil then
     AProxyClass := TZxdgPopupV6;
-  Result := TZxdgPopupV6(AProxyClass.Create(id));
   if not AProxyClass.InheritsFrom(TZxdgPopupV6) then
     Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TZxdgPopupV6]);
+  Result := TZxdgPopupV6(AProxyClass.Create(id));
 end;
 
 procedure TZxdgSurfaceV6.SetWindowGeometry(AX: LongInt; AY: LongInt; AWidth: LongInt; AHeight: LongInt);

@@ -40,8 +40,8 @@ type
     procedure zxdg_output_v1_logical_position(AZxdgOutputV1: TZxdgOutputV1; AX: LongInt; AY: LongInt);
     procedure zxdg_output_v1_logical_size(AZxdgOutputV1: TZxdgOutputV1; AWidth: LongInt; AHeight: LongInt);
     procedure zxdg_output_v1_done(AZxdgOutputV1: TZxdgOutputV1);
-    procedure zxdg_output_v1_name(AZxdgOutputV1: TZxdgOutputV1; AName: String);
-    procedure zxdg_output_v1_description(AZxdgOutputV1: TZxdgOutputV1; ADescription: String);
+    procedure zxdg_output_v1_name(AZxdgOutputV1: TZxdgOutputV1; AName: String); {since: 2}
+    procedure zxdg_output_v1_description(AZxdgOutputV1: TZxdgOutputV1; ADescription: String); {since: 2}
   end;
 
 
@@ -98,9 +98,9 @@ begin
       _GET_XDG_OUTPUT, @zxdg_output_v1_interface, nil, AOutput.Proxy);
   if AProxyClass = nil then
     AProxyClass := TZxdgOutputV1;
-  Result := TZxdgOutputV1(AProxyClass.Create(id));
   if not AProxyClass.InheritsFrom(TZxdgOutputV1) then
     Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TZxdgOutputV1]);
+  Result := TZxdgOutputV1(AProxyClass.Create(id));
 end;
 
 function TZxdgOutputManagerV1.AddListener(AIntf: IZxdgOutputManagerV1Listener): LongInt;

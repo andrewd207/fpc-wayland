@@ -33,7 +33,7 @@ type
 
   IZwpRelativePointerV1Listener = interface
   ['IZwpRelativePointerV1Listener']
-    procedure zwp_relative_pointer_v1_relative_motion(AZwpRelativePointerV1: TZwpRelativePointerV1; AUtimeHi: DWord; AUtimeLo: DWord; ADx: Longint{24.8}; ADy: Longint{24.8}; ADxUnaccel: Longint{24.8}; ADyUnaccel: Longint{24.8});
+    procedure zwp_relative_pointer_v1_relative_motion(AZwpRelativePointerV1: TZwpRelativePointerV1; AUtimeHi: DWord; AUtimeLo: DWord; ADx: Twl_fixed; ADy: Twl_fixed; ADxUnaccel: Twl_fixed; ADyUnaccel: Twl_fixed);
   end;
 
 
@@ -90,9 +90,9 @@ begin
       _GET_RELATIVE_POINTER, @zwp_relative_pointer_v1_interface, nil, APointer.Proxy);
   if AProxyClass = nil then
     AProxyClass := TZwpRelativePointerV1;
-  Result := TZwpRelativePointerV1(AProxyClass.Create(id));
   if not AProxyClass.InheritsFrom(TZwpRelativePointerV1) then
     Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TZwpRelativePointerV1]);
+  Result := TZwpRelativePointerV1(AProxyClass.Create(id));
 end;
 
 function TZwpRelativePointerManagerV1.AddListener(AIntf: IZwpRelativePointerManagerV1Listener): LongInt;
@@ -121,7 +121,7 @@ var
 begin
   if AData = nil then Exit;
   AIntf := IZwpRelativePointerV1Listener(AData^.ListenerUserData);
-  AIntf.zwp_relative_pointer_v1_relative_motion(TZwpRelativePointerV1(AData^.PascalObject), AUtimeHi, AUtimeLo, ADx, ADy, ADxUnaccel, ADyUnaccel);
+  AIntf.zwp_relative_pointer_v1_relative_motion(TZwpRelativePointerV1(AData^.PascalObject), AUtimeHi, AUtimeLo, Twl_fixed(ADx), Twl_fixed(ADy), Twl_fixed(ADxUnaccel), Twl_fixed(ADyUnaccel));
 end;
 
 

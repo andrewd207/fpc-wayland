@@ -167,13 +167,13 @@ type
     procedure zwp_tablet_tool_v2_proximity_out(AZwpTabletToolV2: TZwpTabletToolV2);
     procedure zwp_tablet_tool_v2_down(AZwpTabletToolV2: TZwpTabletToolV2; ASerial: DWord);
     procedure zwp_tablet_tool_v2_up(AZwpTabletToolV2: TZwpTabletToolV2);
-    procedure zwp_tablet_tool_v2_motion(AZwpTabletToolV2: TZwpTabletToolV2; AX: Longint{24.8}; AY: Longint{24.8});
+    procedure zwp_tablet_tool_v2_motion(AZwpTabletToolV2: TZwpTabletToolV2; AX: Twl_fixed; AY: Twl_fixed);
     procedure zwp_tablet_tool_v2_pressure(AZwpTabletToolV2: TZwpTabletToolV2; APressure: DWord);
     procedure zwp_tablet_tool_v2_distance(AZwpTabletToolV2: TZwpTabletToolV2; ADistance: DWord);
-    procedure zwp_tablet_tool_v2_tilt(AZwpTabletToolV2: TZwpTabletToolV2; ATiltX: Longint{24.8}; ATiltY: Longint{24.8});
-    procedure zwp_tablet_tool_v2_rotation(AZwpTabletToolV2: TZwpTabletToolV2; ADegrees: Longint{24.8});
+    procedure zwp_tablet_tool_v2_tilt(AZwpTabletToolV2: TZwpTabletToolV2; ATiltX: Twl_fixed; ATiltY: Twl_fixed);
+    procedure zwp_tablet_tool_v2_rotation(AZwpTabletToolV2: TZwpTabletToolV2; ADegrees: Twl_fixed);
     procedure zwp_tablet_tool_v2_slider(AZwpTabletToolV2: TZwpTabletToolV2; APosition: LongInt);
-    procedure zwp_tablet_tool_v2_wheel(AZwpTabletToolV2: TZwpTabletToolV2; ADegrees: Longint{24.8}; AClicks: LongInt);
+    procedure zwp_tablet_tool_v2_wheel(AZwpTabletToolV2: TZwpTabletToolV2; ADegrees: Twl_fixed; AClicks: LongInt);
     procedure zwp_tablet_tool_v2_button(AZwpTabletToolV2: TZwpTabletToolV2; ASerial: DWord; AButton: DWord; AState: DWord);
     procedure zwp_tablet_tool_v2_frame(AZwpTabletToolV2: TZwpTabletToolV2; ATime: DWord);
   end;
@@ -190,7 +190,7 @@ type
   IZwpTabletPadRingV2Listener = interface
   ['IZwpTabletPadRingV2Listener']
     procedure zwp_tablet_pad_ring_v2_source(AZwpTabletPadRingV2: TZwpTabletPadRingV2; ASource: DWord);
-    procedure zwp_tablet_pad_ring_v2_angle(AZwpTabletPadRingV2: TZwpTabletPadRingV2; ADegrees: Longint{24.8});
+    procedure zwp_tablet_pad_ring_v2_angle(AZwpTabletPadRingV2: TZwpTabletPadRingV2; ADegrees: Twl_fixed);
     procedure zwp_tablet_pad_ring_v2_stop(AZwpTabletPadRingV2: TZwpTabletPadRingV2);
     procedure zwp_tablet_pad_ring_v2_frame(AZwpTabletPadRingV2: TZwpTabletPadRingV2; ATime: DWord);
   end;
@@ -341,9 +341,9 @@ begin
       _GET_TABLET_SEAT, @zwp_tablet_seat_v2_interface, nil, ASeat.Proxy);
   if AProxyClass = nil then
     AProxyClass := TZwpTabletSeatV2;
-  Result := TZwpTabletSeatV2(AProxyClass.Create(tablet_seat));
   if not AProxyClass.InheritsFrom(TZwpTabletSeatV2) then
     Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TZwpTabletSeatV2]);
+  Result := TZwpTabletSeatV2(AProxyClass.Create(tablet_seat));
 end;
 
 destructor TZwpTabletManagerV2.Destroy;
@@ -581,7 +581,7 @@ var
 begin
   if AData = nil then Exit;
   AIntf := IZwpTabletToolV2Listener(AData^.ListenerUserData);
-  AIntf.zwp_tablet_tool_v2_motion(TZwpTabletToolV2(AData^.PascalObject), AX, AY);
+  AIntf.zwp_tablet_tool_v2_motion(TZwpTabletToolV2(AData^.PascalObject), Twl_fixed(AX), Twl_fixed(AY));
 end;
 
 procedure zwp_tablet_tool_v2_pressure_Intf(AData: PWLUserData; Azwp_tablet_tool_v2: Pzwp_tablet_tool_v2; APressure: DWord); cdecl;
@@ -608,7 +608,7 @@ var
 begin
   if AData = nil then Exit;
   AIntf := IZwpTabletToolV2Listener(AData^.ListenerUserData);
-  AIntf.zwp_tablet_tool_v2_tilt(TZwpTabletToolV2(AData^.PascalObject), ATiltX, ATiltY);
+  AIntf.zwp_tablet_tool_v2_tilt(TZwpTabletToolV2(AData^.PascalObject), Twl_fixed(ATiltX), Twl_fixed(ATiltY));
 end;
 
 procedure zwp_tablet_tool_v2_rotation_Intf(AData: PWLUserData; Azwp_tablet_tool_v2: Pzwp_tablet_tool_v2; ADegrees: Longint{24.8}); cdecl;
@@ -617,7 +617,7 @@ var
 begin
   if AData = nil then Exit;
   AIntf := IZwpTabletToolV2Listener(AData^.ListenerUserData);
-  AIntf.zwp_tablet_tool_v2_rotation(TZwpTabletToolV2(AData^.PascalObject), ADegrees);
+  AIntf.zwp_tablet_tool_v2_rotation(TZwpTabletToolV2(AData^.PascalObject), Twl_fixed(ADegrees));
 end;
 
 procedure zwp_tablet_tool_v2_slider_Intf(AData: PWLUserData; Azwp_tablet_tool_v2: Pzwp_tablet_tool_v2; APosition: LongInt); cdecl;
@@ -635,7 +635,7 @@ var
 begin
   if AData = nil then Exit;
   AIntf := IZwpTabletToolV2Listener(AData^.ListenerUserData);
-  AIntf.zwp_tablet_tool_v2_wheel(TZwpTabletToolV2(AData^.PascalObject), ADegrees, AClicks);
+  AIntf.zwp_tablet_tool_v2_wheel(TZwpTabletToolV2(AData^.PascalObject), Twl_fixed(ADegrees), AClicks);
 end;
 
 procedure zwp_tablet_tool_v2_button_Intf(AData: PWLUserData; Azwp_tablet_tool_v2: Pzwp_tablet_tool_v2; ASerial: DWord; AButton: DWord; AState: DWord); cdecl;
@@ -716,7 +716,7 @@ var
 begin
   if AData = nil then Exit;
   AIntf := IZwpTabletPadRingV2Listener(AData^.ListenerUserData);
-  AIntf.zwp_tablet_pad_ring_v2_angle(TZwpTabletPadRingV2(AData^.PascalObject), ADegrees);
+  AIntf.zwp_tablet_pad_ring_v2_angle(TZwpTabletPadRingV2(AData^.PascalObject), Twl_fixed(ADegrees));
 end;
 
 procedure zwp_tablet_pad_ring_v2_stop_Intf(AData: PWLUserData; Azwp_tablet_pad_ring_v2: Pzwp_tablet_pad_ring_v2); cdecl;

@@ -144,9 +144,9 @@ begin
       _EXPORT_TOPLEVEL, @zxdg_exported_v2_interface, nil, ASurface.Proxy);
   if AProxyClass = nil then
     AProxyClass := TZxdgExportedV2;
-  Result := TZxdgExportedV2(AProxyClass.Create(id));
   if not AProxyClass.InheritsFrom(TZxdgExportedV2) then
     Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TZxdgExportedV2]);
+  Result := TZxdgExportedV2(AProxyClass.Create(id));
 end;
 
 function TZxdgExporterV2.AddListener(AIntf: IZxdgExporterV2Listener): LongInt;
@@ -168,9 +168,9 @@ begin
       _IMPORT_TOPLEVEL, @zxdg_imported_v2_interface, nil, PChar(AHandle));
   if AProxyClass = nil then
     AProxyClass := TZxdgImportedV2;
-  Result := TZxdgImportedV2(AProxyClass.Create(id));
   if not AProxyClass.InheritsFrom(TZxdgImportedV2) then
     Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TZxdgImportedV2]);
+  Result := TZxdgImportedV2(AProxyClass.Create(id));
 end;
 
 function TZxdgImporterV2.AddListener(AIntf: IZxdgImporterV2Listener): LongInt;

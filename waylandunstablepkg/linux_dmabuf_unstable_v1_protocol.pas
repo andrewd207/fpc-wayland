@@ -64,7 +64,7 @@ type
   IZwpLinuxDmabufV1Listener = interface
   ['IZwpLinuxDmabufV1Listener']
     procedure zwp_linux_dmabuf_v1_format(AZwpLinuxDmabufV1: TZwpLinuxDmabufV1; AFormat: DWord);
-    procedure zwp_linux_dmabuf_v1_modifier(AZwpLinuxDmabufV1: TZwpLinuxDmabufV1; AFormat: DWord; AModifierHi: DWord; AModifierLo: DWord);
+    procedure zwp_linux_dmabuf_v1_modifier(AZwpLinuxDmabufV1: TZwpLinuxDmabufV1; AFormat: DWord; AModifierHi: DWord; AModifierLo: DWord); {since: 3}
   end;
 
   IZwpLinuxBufferParamsV1Listener = interface
@@ -91,13 +91,13 @@ type
   private
     const _DESTROY = 0;
     const _CREATE_PARAMS = 1;
-    const _GET_DEFAULT_FEEDBACK = 2;
-    const _GET_SURFACE_FEEDBACK = 3;
+    const _GET_DEFAULT_FEEDBACK = 2; { since version: 4}
+    const _GET_SURFACE_FEEDBACK = 3; { since version: 4}
   public
     destructor Destroy; override;
     function CreateParams(AProxyClass: TWLProxyObjectClass = nil {TZwpLinuxBufferParamsV1}): TZwpLinuxBufferParamsV1;
-    function GetDefaultFeedback(AProxyClass: TWLProxyObjectClass = nil {TZwpLinuxDmabufFeedbackV1}): TZwpLinuxDmabufFeedbackV1;
-    function GetSurfaceFeedback(ASurface: TWlSurface; AProxyClass: TWLProxyObjectClass = nil {TZwpLinuxDmabufFeedbackV1}): TZwpLinuxDmabufFeedbackV1;
+    function GetDefaultFeedback(AProxyClass: TWLProxyObjectClass = nil {TZwpLinuxDmabufFeedbackV1}): TZwpLinuxDmabufFeedbackV1; {since version: 4}
+    function GetSurfaceFeedback(ASurface: TWlSurface; AProxyClass: TWLProxyObjectClass = nil {TZwpLinuxDmabufFeedbackV1}): TZwpLinuxDmabufFeedbackV1; {since version: 4}
     function AddListener(AIntf: IZwpLinuxDmabufV1Listener): LongInt;
   end;
 
@@ -106,12 +106,12 @@ type
     const _DESTROY = 0;
     const _ADD = 1;
     const _CREATE = 2;
-    const _CREATE_IMMED = 3;
+    const _CREATE_IMMED = 3; { since version: 2}
   public
     destructor Destroy; override;
     procedure Add(AFd: LongInt{fd}; APlaneIdx: DWord; AOffset: DWord; AStride: DWord; AModifierHi: DWord; AModifierLo: DWord);
     procedure Create(AWidth: LongInt; AHeight: LongInt; AFormat: DWord; AFlags: DWord);
-    function CreateImmed(AWidth: LongInt; AHeight: LongInt; AFormat: DWord; AFlags: DWord; AProxyClass: TWLProxyObjectClass = nil {TWlBuffer}): TWlBuffer;
+    function CreateImmed(AWidth: LongInt; AHeight: LongInt; AFormat: DWord; AFlags: DWord; AProxyClass: TWLProxyObjectClass = nil {TWlBuffer}): TWlBuffer; {since version: 2}
     function AddListener(AIntf: IZwpLinuxBufferParamsV1Listener): LongInt;
   end;
 
@@ -158,9 +158,9 @@ begin
       _CREATE_PARAMS, @zwp_linux_buffer_params_v1_interface, nil);
   if AProxyClass = nil then
     AProxyClass := TZwpLinuxBufferParamsV1;
-  Result := TZwpLinuxBufferParamsV1(AProxyClass.Create(params_id));
   if not AProxyClass.InheritsFrom(TZwpLinuxBufferParamsV1) then
     Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TZwpLinuxBufferParamsV1]);
+  Result := TZwpLinuxBufferParamsV1(AProxyClass.Create(params_id));
 end;
 
 function TZwpLinuxDmabufV1.GetDefaultFeedback(AProxyClass: TWLProxyObjectClass = nil {TZwpLinuxDmabufFeedbackV1}): TZwpLinuxDmabufFeedbackV1;
@@ -171,9 +171,9 @@ begin
       _GET_DEFAULT_FEEDBACK, @zwp_linux_dmabuf_feedback_v1_interface, nil);
   if AProxyClass = nil then
     AProxyClass := TZwpLinuxDmabufFeedbackV1;
-  Result := TZwpLinuxDmabufFeedbackV1(AProxyClass.Create(id));
   if not AProxyClass.InheritsFrom(TZwpLinuxDmabufFeedbackV1) then
     Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TZwpLinuxDmabufFeedbackV1]);
+  Result := TZwpLinuxDmabufFeedbackV1(AProxyClass.Create(id));
 end;
 
 function TZwpLinuxDmabufV1.GetSurfaceFeedback(ASurface: TWlSurface; AProxyClass: TWLProxyObjectClass = nil {TZwpLinuxDmabufFeedbackV1}): TZwpLinuxDmabufFeedbackV1;
@@ -184,9 +184,9 @@ begin
       _GET_SURFACE_FEEDBACK, @zwp_linux_dmabuf_feedback_v1_interface, nil, ASurface.Proxy);
   if AProxyClass = nil then
     AProxyClass := TZwpLinuxDmabufFeedbackV1;
-  Result := TZwpLinuxDmabufFeedbackV1(AProxyClass.Create(id));
   if not AProxyClass.InheritsFrom(TZwpLinuxDmabufFeedbackV1) then
     Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TZwpLinuxDmabufFeedbackV1]);
+  Result := TZwpLinuxDmabufFeedbackV1(AProxyClass.Create(id));
 end;
 
 function TZwpLinuxDmabufV1.AddListener(AIntf: IZwpLinuxDmabufV1Listener): LongInt;
@@ -218,9 +218,9 @@ begin
       _CREATE_IMMED, @wl_buffer_interface, nil, AWidth, AHeight, AFormat, AFlags);
   if AProxyClass = nil then
     AProxyClass := TWlBuffer;
-  Result := TWlBuffer(AProxyClass.Create(buffer_id));
   if not AProxyClass.InheritsFrom(TWlBuffer) then
     Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TWlBuffer]);
+  Result := TWlBuffer(AProxyClass.Create(buffer_id));
 end;
 
 function TZwpLinuxBufferParamsV1.AddListener(AIntf: IZwpLinuxBufferParamsV1Listener): LongInt;

@@ -94,9 +94,9 @@ begin
       _GET_KEYBOARD_TIMESTAMPS, @zwp_input_timestamps_v1_interface, nil, AKeyboard.Proxy);
   if AProxyClass = nil then
     AProxyClass := TZwpInputTimestampsV1;
-  Result := TZwpInputTimestampsV1(AProxyClass.Create(id));
   if not AProxyClass.InheritsFrom(TZwpInputTimestampsV1) then
     Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TZwpInputTimestampsV1]);
+  Result := TZwpInputTimestampsV1(AProxyClass.Create(id));
 end;
 
 function TZwpInputTimestampsManagerV1.GetPointerTimestamps(APointer: TWlPointer; AProxyClass: TWLProxyObjectClass = nil {TZwpInputTimestampsV1}): TZwpInputTimestampsV1;
@@ -107,9 +107,9 @@ begin
       _GET_POINTER_TIMESTAMPS, @zwp_input_timestamps_v1_interface, nil, APointer.Proxy);
   if AProxyClass = nil then
     AProxyClass := TZwpInputTimestampsV1;
-  Result := TZwpInputTimestampsV1(AProxyClass.Create(id));
   if not AProxyClass.InheritsFrom(TZwpInputTimestampsV1) then
     Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TZwpInputTimestampsV1]);
+  Result := TZwpInputTimestampsV1(AProxyClass.Create(id));
 end;
 
 function TZwpInputTimestampsManagerV1.GetTouchTimestamps(ATouch: TWlTouch; AProxyClass: TWLProxyObjectClass = nil {TZwpInputTimestampsV1}): TZwpInputTimestampsV1;
@@ -120,9 +120,9 @@ begin
       _GET_TOUCH_TIMESTAMPS, @zwp_input_timestamps_v1_interface, nil, ATouch.Proxy);
   if AProxyClass = nil then
     AProxyClass := TZwpInputTimestampsV1;
-  Result := TZwpInputTimestampsV1(AProxyClass.Create(id));
   if not AProxyClass.InheritsFrom(TZwpInputTimestampsV1) then
     Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TZwpInputTimestampsV1]);
+  Result := TZwpInputTimestampsV1(AProxyClass.Create(id));
 end;
 
 function TZwpInputTimestampsManagerV1.AddListener(AIntf: IZwpInputTimestampsManagerV1Listener): LongInt;

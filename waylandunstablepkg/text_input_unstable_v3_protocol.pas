@@ -190,9 +190,9 @@ begin
       _GET_TEXT_INPUT, @zwp_text_input_v3_interface, nil, ASeat.Proxy);
   if AProxyClass = nil then
     AProxyClass := TZwpTextInputV3;
-  Result := TZwpTextInputV3(AProxyClass.Create(id));
   if not AProxyClass.InheritsFrom(TZwpTextInputV3) then
     Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TZwpTextInputV3]);
+  Result := TZwpTextInputV3(AProxyClass.Create(id));
 end;
 
 function TZwpTextInputManagerV3.AddListener(AIntf: IZwpTextInputManagerV3Listener): LongInt;

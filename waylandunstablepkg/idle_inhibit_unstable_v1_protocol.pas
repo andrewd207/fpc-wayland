@@ -88,9 +88,9 @@ begin
       _CREATE_INHIBITOR, @zwp_idle_inhibitor_v1_interface, nil, ASurface.Proxy);
   if AProxyClass = nil then
     AProxyClass := TZwpIdleInhibitorV1;
-  Result := TZwpIdleInhibitorV1(AProxyClass.Create(id));
   if not AProxyClass.InheritsFrom(TZwpIdleInhibitorV1) then
     Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TZwpIdleInhibitorV1]);
+  Result := TZwpIdleInhibitorV1(AProxyClass.Create(id));
 end;
 
 function TZwpIdleInhibitManagerV1.AddListener(AIntf: IZwpIdleInhibitManagerV1Listener): LongInt;

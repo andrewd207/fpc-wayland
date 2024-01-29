@@ -226,9 +226,9 @@ begin
       _CREATE_TEXT_INPUT, @zwp_text_input_v1_interface, nil);
   if AProxyClass = nil then
     AProxyClass := TZwpTextInputV1;
-  Result := TZwpTextInputV1(AProxyClass.Create(id));
   if not AProxyClass.InheritsFrom(TZwpTextInputV1) then
     Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TZwpTextInputV1]);
+  Result := TZwpTextInputV1(AProxyClass.Create(id));
 end;
 
 function TZwpTextInputManagerV1.AddListener(AIntf: IZwpTextInputManagerV1Listener): LongInt;

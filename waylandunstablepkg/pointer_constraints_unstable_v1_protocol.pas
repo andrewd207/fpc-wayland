@@ -80,7 +80,7 @@ type
     const _SET_REGION = 2;
   public
     destructor Destroy; override;
-    procedure SetCursorPositionHint(ASurfaceX: Longint{24.8}; ASurfaceY: Longint{24.8});
+    procedure SetCursorPositionHint(ASurfaceX: Twl_fixed; ASurfaceY: Twl_fixed);
     procedure SetRegion(ARegion: TWlRegion);
     function AddListener(AIntf: IZwpLockedPointerV1Listener): LongInt;
   end;
@@ -130,9 +130,9 @@ begin
       _LOCK_POINTER, @zwp_locked_pointer_v1_interface, nil, ASurface.Proxy, APointer.Proxy, ARegion.Proxy, ALifetime);
   if AProxyClass = nil then
     AProxyClass := TZwpLockedPointerV1;
-  Result := TZwpLockedPointerV1(AProxyClass.Create(id));
   if not AProxyClass.InheritsFrom(TZwpLockedPointerV1) then
     Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TZwpLockedPointerV1]);
+  Result := TZwpLockedPointerV1(AProxyClass.Create(id));
 end;
 
 function TZwpPointerConstraintsV1.ConfinePointer(ASurface: TWlSurface; APointer: TWlPointer; ARegion: TWlRegion; ALifetime: DWord; AProxyClass: TWLProxyObjectClass = nil {TZwpConfinedPointerV1}): TZwpConfinedPointerV1;
@@ -143,9 +143,9 @@ begin
       _CONFINE_POINTER, @zwp_confined_pointer_v1_interface, nil, ASurface.Proxy, APointer.Proxy, ARegion.Proxy, ALifetime);
   if AProxyClass = nil then
     AProxyClass := TZwpConfinedPointerV1;
-  Result := TZwpConfinedPointerV1(AProxyClass.Create(id));
   if not AProxyClass.InheritsFrom(TZwpConfinedPointerV1) then
     Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TZwpConfinedPointerV1]);
+  Result := TZwpConfinedPointerV1(AProxyClass.Create(id));
 end;
 
 function TZwpPointerConstraintsV1.AddListener(AIntf: IZwpPointerConstraintsV1Listener): LongInt;
@@ -159,9 +159,9 @@ begin
   inherited Destroy;
 end;
 
-procedure TZwpLockedPointerV1.SetCursorPositionHint(ASurfaceX: Longint{24.8}; ASurfaceY: Longint{24.8});
+procedure TZwpLockedPointerV1.SetCursorPositionHint(ASurfaceX: Twl_fixed; ASurfaceY: Twl_fixed);
 begin
-  wl_proxy_marshal(FProxy, _SET_CURSOR_POSITION_HINT, ASurfaceX, ASurfaceY);
+  wl_proxy_marshal(FProxy, _SET_CURSOR_POSITION_HINT, ASurfaceX.AsFixed24_8, ASurfaceY.AsFixed24_8);
 end;
 
 procedure TZwpLockedPointerV1.SetRegion(ARegion: TWlRegion);

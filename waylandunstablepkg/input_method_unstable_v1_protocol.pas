@@ -210,9 +210,9 @@ begin
       _GRAB_KEYBOARD, @wl_keyboard_interface, nil);
   if AProxyClass = nil then
     AProxyClass := TWlKeyboard;
-  Result := TWlKeyboard(AProxyClass.Create(keyboard));
   if not AProxyClass.InheritsFrom(TWlKeyboard) then
     Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TWlKeyboard]);
+  Result := TWlKeyboard(AProxyClass.Create(keyboard));
 end;
 
 procedure TZwpInputMethodContextV1.Key(ASerial: DWord; ATime: DWord; AKey: DWord; AState: DWord);
@@ -253,9 +253,9 @@ begin
       _GET_INPUT_PANEL_SURFACE, @zwp_input_panel_surface_v1_interface, nil, ASurface.Proxy);
   if AProxyClass = nil then
     AProxyClass := TZwpInputPanelSurfaceV1;
-  Result := TZwpInputPanelSurfaceV1(AProxyClass.Create(id));
   if not AProxyClass.InheritsFrom(TZwpInputPanelSurfaceV1) then
     Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TZwpInputPanelSurfaceV1]);
+  Result := TZwpInputPanelSurfaceV1(AProxyClass.Create(id));
 end;
 
 function TZwpInputPanelV1.AddListener(AIntf: IZwpInputPanelV1Listener): LongInt;

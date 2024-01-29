@@ -125,9 +125,9 @@ begin
       _GET_SYNCHRONIZATION, @zwp_linux_surface_synchronization_v1_interface, nil, ASurface.Proxy);
   if AProxyClass = nil then
     AProxyClass := TZwpLinuxSurfaceSynchronizationV1;
-  Result := TZwpLinuxSurfaceSynchronizationV1(AProxyClass.Create(id));
   if not AProxyClass.InheritsFrom(TZwpLinuxSurfaceSynchronizationV1) then
     Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TZwpLinuxSurfaceSynchronizationV1]);
+  Result := TZwpLinuxSurfaceSynchronizationV1(AProxyClass.Create(id));
 end;
 
 function TZwpLinuxExplicitSynchronizationV1.AddListener(AIntf: IZwpLinuxExplicitSynchronizationV1Listener): LongInt;
@@ -154,9 +154,9 @@ begin
       _GET_RELEASE, @zwp_linux_buffer_release_v1_interface, nil);
   if AProxyClass = nil then
     AProxyClass := TZwpLinuxBufferReleaseV1;
-  Result := TZwpLinuxBufferReleaseV1(AProxyClass.Create(release));
   if not AProxyClass.InheritsFrom(TZwpLinuxBufferReleaseV1) then
     Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TZwpLinuxBufferReleaseV1]);
+  Result := TZwpLinuxBufferReleaseV1(AProxyClass.Create(release));
 end;
 
 function TZwpLinuxSurfaceSynchronizationV1.AddListener(AIntf: IZwpLinuxSurfaceSynchronizationV1Listener): LongInt;

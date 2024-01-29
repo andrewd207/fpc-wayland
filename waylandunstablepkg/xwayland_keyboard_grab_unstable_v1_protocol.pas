@@ -88,9 +88,9 @@ begin
       _GRAB_KEYBOARD, @zwp_xwayland_keyboard_grab_v1_interface, nil, ASurface.Proxy, ASeat.Proxy);
   if AProxyClass = nil then
     AProxyClass := TZwpXwaylandKeyboardGrabV1;
-  Result := TZwpXwaylandKeyboardGrabV1(AProxyClass.Create(id));
   if not AProxyClass.InheritsFrom(TZwpXwaylandKeyboardGrabV1) then
     Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TZwpXwaylandKeyboardGrabV1]);
+  Result := TZwpXwaylandKeyboardGrabV1(AProxyClass.Create(id));
 end;
 
 function TZwpXwaylandKeyboardGrabManagerV1.AddListener(AIntf: IZwpXwaylandKeyboardGrabManagerV1Listener): LongInt;

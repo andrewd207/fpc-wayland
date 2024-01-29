@@ -104,9 +104,9 @@ begin
       _FEEDBACK, @wp_presentation_feedback_interface, nil, ASurface.Proxy);
   if AProxyClass = nil then
     AProxyClass := TWpPresentationFeedback;
-  Result := TWpPresentationFeedback(AProxyClass.Create(callback));
   if not AProxyClass.InheritsFrom(TWpPresentationFeedback) then
     Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TWpPresentationFeedback]);
+  Result := TWpPresentationFeedback(AProxyClass.Create(callback));
 end;
 
 function TWpPresentation.AddListener(AIntf: IWpPresentationListener): LongInt;

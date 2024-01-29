@@ -53,21 +53,21 @@ type
   IZwpPointerGestureSwipeV1Listener = interface
   ['IZwpPointerGestureSwipeV1Listener']
     procedure zwp_pointer_gesture_swipe_v1_begin(AZwpPointerGestureSwipeV1: TZwpPointerGestureSwipeV1; ASerial: DWord; ATime: DWord; ASurface: TWlSurface; AFingers: DWord);
-    procedure zwp_pointer_gesture_swipe_v1_update(AZwpPointerGestureSwipeV1: TZwpPointerGestureSwipeV1; ATime: DWord; ADx: Longint{24.8}; ADy: Longint{24.8});
+    procedure zwp_pointer_gesture_swipe_v1_update(AZwpPointerGestureSwipeV1: TZwpPointerGestureSwipeV1; ATime: DWord; ADx: Twl_fixed; ADy: Twl_fixed);
     procedure zwp_pointer_gesture_swipe_v1_end(AZwpPointerGestureSwipeV1: TZwpPointerGestureSwipeV1; ASerial: DWord; ATime: DWord; ACancelled: LongInt);
   end;
 
   IZwpPointerGesturePinchV1Listener = interface
   ['IZwpPointerGesturePinchV1Listener']
     procedure zwp_pointer_gesture_pinch_v1_begin(AZwpPointerGesturePinchV1: TZwpPointerGesturePinchV1; ASerial: DWord; ATime: DWord; ASurface: TWlSurface; AFingers: DWord);
-    procedure zwp_pointer_gesture_pinch_v1_update(AZwpPointerGesturePinchV1: TZwpPointerGesturePinchV1; ATime: DWord; ADx: Longint{24.8}; ADy: Longint{24.8}; AScale: Longint{24.8}; ARotation: Longint{24.8});
+    procedure zwp_pointer_gesture_pinch_v1_update(AZwpPointerGesturePinchV1: TZwpPointerGesturePinchV1; ATime: DWord; ADx: Twl_fixed; ADy: Twl_fixed; AScale: Twl_fixed; ARotation: Twl_fixed);
     procedure zwp_pointer_gesture_pinch_v1_end(AZwpPointerGesturePinchV1: TZwpPointerGesturePinchV1; ASerial: DWord; ATime: DWord; ACancelled: LongInt);
   end;
 
   IZwpPointerGestureHoldV1Listener = interface
   ['IZwpPointerGestureHoldV1Listener']
-    procedure zwp_pointer_gesture_hold_v1_begin(AZwpPointerGestureHoldV1: TZwpPointerGestureHoldV1; ASerial: DWord; ATime: DWord; ASurface: TWlSurface; AFingers: DWord);
-    procedure zwp_pointer_gesture_hold_v1_end(AZwpPointerGestureHoldV1: TZwpPointerGestureHoldV1; ASerial: DWord; ATime: DWord; ACancelled: LongInt);
+    procedure zwp_pointer_gesture_hold_v1_begin(AZwpPointerGestureHoldV1: TZwpPointerGestureHoldV1; ASerial: DWord; ATime: DWord; ASurface: TWlSurface; AFingers: DWord); {since: 3}
+    procedure zwp_pointer_gesture_hold_v1_end(AZwpPointerGestureHoldV1: TZwpPointerGestureHoldV1; ASerial: DWord; ATime: DWord; ACancelled: LongInt); {since: 3}
   end;
 
 
@@ -77,13 +77,13 @@ type
   private
     const _GET_SWIPE_GESTURE = 0;
     const _GET_PINCH_GESTURE = 1;
-    const _RELEASE = 2;
-    const _GET_HOLD_GESTURE = 3;
+    const _RELEASE = 2; { since version: 2}
+    const _GET_HOLD_GESTURE = 3; { since version: 3}
   public
     function GetSwipeGesture(APointer: TWlPointer; AProxyClass: TWLProxyObjectClass = nil {TZwpPointerGestureSwipeV1}): TZwpPointerGestureSwipeV1;
     function GetPinchGesture(APointer: TWlPointer; AProxyClass: TWLProxyObjectClass = nil {TZwpPointerGesturePinchV1}): TZwpPointerGesturePinchV1;
-    destructor Destroy; override;
-    function GetHoldGesture(APointer: TWlPointer; AProxyClass: TWLProxyObjectClass = nil {TZwpPointerGestureHoldV1}): TZwpPointerGestureHoldV1;
+    destructor Destroy; override; {since version: 2}
+    function GetHoldGesture(APointer: TWlPointer; AProxyClass: TWLProxyObjectClass = nil {TZwpPointerGestureHoldV1}): TZwpPointerGestureHoldV1; {since version: 3}
     function AddListener(AIntf: IZwpPointerGesturesV1Listener): LongInt;
   end;
 
@@ -105,9 +105,9 @@ type
 
   TZwpPointerGestureHoldV1 = class(TWLProxyObject)
   private
-    const _DESTROY = 0;
+    const _DESTROY = 0; { since version: 3}
   public
-    destructor Destroy; override;
+    destructor Destroy; override; {since version: 3}
     function AddListener(AIntf: IZwpPointerGestureHoldV1Listener): LongInt;
   end;
 
@@ -142,9 +142,9 @@ begin
       _GET_SWIPE_GESTURE, @zwp_pointer_gesture_swipe_v1_interface, nil, APointer.Proxy);
   if AProxyClass = nil then
     AProxyClass := TZwpPointerGestureSwipeV1;
-  Result := TZwpPointerGestureSwipeV1(AProxyClass.Create(id));
   if not AProxyClass.InheritsFrom(TZwpPointerGestureSwipeV1) then
     Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TZwpPointerGestureSwipeV1]);
+  Result := TZwpPointerGestureSwipeV1(AProxyClass.Create(id));
 end;
 
 function TZwpPointerGesturesV1.GetPinchGesture(APointer: TWlPointer; AProxyClass: TWLProxyObjectClass = nil {TZwpPointerGesturePinchV1}): TZwpPointerGesturePinchV1;
@@ -155,9 +155,9 @@ begin
       _GET_PINCH_GESTURE, @zwp_pointer_gesture_pinch_v1_interface, nil, APointer.Proxy);
   if AProxyClass = nil then
     AProxyClass := TZwpPointerGesturePinchV1;
-  Result := TZwpPointerGesturePinchV1(AProxyClass.Create(id));
   if not AProxyClass.InheritsFrom(TZwpPointerGesturePinchV1) then
     Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TZwpPointerGesturePinchV1]);
+  Result := TZwpPointerGesturePinchV1(AProxyClass.Create(id));
 end;
 
 destructor TZwpPointerGesturesV1.Destroy;
@@ -174,9 +174,9 @@ begin
       _GET_HOLD_GESTURE, @zwp_pointer_gesture_hold_v1_interface, nil, APointer.Proxy);
   if AProxyClass = nil then
     AProxyClass := TZwpPointerGestureHoldV1;
-  Result := TZwpPointerGestureHoldV1(AProxyClass.Create(id));
   if not AProxyClass.InheritsFrom(TZwpPointerGestureHoldV1) then
     Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TZwpPointerGestureHoldV1]);
+  Result := TZwpPointerGestureHoldV1(AProxyClass.Create(id));
 end;
 
 function TZwpPointerGesturesV1.AddListener(AIntf: IZwpPointerGesturesV1Listener): LongInt;
@@ -236,7 +236,7 @@ var
 begin
   if AData = nil then Exit;
   AIntf := IZwpPointerGestureSwipeV1Listener(AData^.ListenerUserData);
-  AIntf.zwp_pointer_gesture_swipe_v1_update(TZwpPointerGestureSwipeV1(AData^.PascalObject), ATime, ADx, ADy);
+  AIntf.zwp_pointer_gesture_swipe_v1_update(TZwpPointerGestureSwipeV1(AData^.PascalObject), ATime, Twl_fixed(ADx), Twl_fixed(ADy));
 end;
 
 procedure zwp_pointer_gesture_swipe_v1_end_Intf(AData: PWLUserData; Azwp_pointer_gesture_swipe_v1: Pzwp_pointer_gesture_swipe_v1; ASerial: DWord; ATime: DWord; ACancelled: LongInt); cdecl;
@@ -263,7 +263,7 @@ var
 begin
   if AData = nil then Exit;
   AIntf := IZwpPointerGesturePinchV1Listener(AData^.ListenerUserData);
-  AIntf.zwp_pointer_gesture_pinch_v1_update(TZwpPointerGesturePinchV1(AData^.PascalObject), ATime, ADx, ADy, AScale, ARotation);
+  AIntf.zwp_pointer_gesture_pinch_v1_update(TZwpPointerGesturePinchV1(AData^.PascalObject), ATime, Twl_fixed(ADx), Twl_fixed(ADy), Twl_fixed(AScale), Twl_fixed(ARotation));
 end;
 
 procedure zwp_pointer_gesture_pinch_v1_end_Intf(AData: PWLUserData; Azwp_pointer_gesture_pinch_v1: Pzwp_pointer_gesture_pinch_v1; ASerial: DWord; ATime: DWord; ACancelled: LongInt); cdecl;

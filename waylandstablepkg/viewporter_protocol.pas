@@ -65,7 +65,7 @@ type
     const _SET_DESTINATION = 2;
   public
     destructor Destroy; override;
-    procedure SetSource(AX: Longint{24.8}; AY: Longint{24.8}; AWidth: Longint{24.8}; AHeight: Longint{24.8});
+    procedure SetSource(AX: Twl_fixed; AY: Twl_fixed; AWidth: Twl_fixed; AHeight: Twl_fixed);
     procedure SetDestination(AWidth: LongInt; AHeight: LongInt);
     function AddListener(AIntf: IWpViewportListener): LongInt;
   end;
@@ -103,9 +103,9 @@ begin
       _GET_VIEWPORT, @wp_viewport_interface, nil, ASurface.Proxy);
   if AProxyClass = nil then
     AProxyClass := TWpViewport;
-  Result := TWpViewport(AProxyClass.Create(id));
   if not AProxyClass.InheritsFrom(TWpViewport) then
     Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TWpViewport]);
+  Result := TWpViewport(AProxyClass.Create(id));
 end;
 
 function TWpViewporter.AddListener(AIntf: IWpViewporterListener): LongInt;
@@ -119,9 +119,9 @@ begin
   inherited Destroy;
 end;
 
-procedure TWpViewport.SetSource(AX: Longint{24.8}; AY: Longint{24.8}; AWidth: Longint{24.8}; AHeight: Longint{24.8});
+procedure TWpViewport.SetSource(AX: Twl_fixed; AY: Twl_fixed; AWidth: Twl_fixed; AHeight: Twl_fixed);
 begin
-  wl_proxy_marshal(FProxy, _SET_SOURCE, AX, AY, AWidth, AHeight);
+  wl_proxy_marshal(FProxy, _SET_SOURCE, AX.AsFixed24_8, AY.AsFixed24_8, AWidth.AsFixed24_8, AHeight.AsFixed24_8);
 end;
 
 procedure TWpViewport.SetDestination(AWidth: LongInt; AHeight: LongInt);
