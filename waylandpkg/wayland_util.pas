@@ -107,6 +107,21 @@ type
 	//** Continue the iteration */
 	WL_ITERATOR_CONTINUE = 1);
 
+  { Twl_fixed }
+
+  Twl_fixed = object
+    AsFixed24_8: Longint;
+  private
+    function GetAsDouble: Double;
+    function GetAsInteger: Integer;
+    procedure SetAsDouble(AValue: Double);
+    procedure SetAsInteger(AValue: Integer);
+  public
+    property AsDouble: Double read GetAsDouble write SetAsDouble;
+    //property AsFixed24_8: Integer read Value write Value;
+    property AsInteger: Integer read GetAsInteger write SetAsInteger;
+  end;
+
 procedure wl_list_init(list: Pwl_list); cdecl; external;
 procedure wl_list_insert(list: Pwl_list; elm: Pwl_list); cdecl; external;
 procedure wl_list_remove(element: Pwl_list); cdecl; external;
@@ -120,7 +135,16 @@ function  wl_array_add(&array: Pwl_array; size: csize_t): Pointer; cdecl; extern
 function  wl_array_copy(&array: Pwl_array; source: Pwl_array): Integer; cdecl; external;
 
 
+operator:=(AFixed: Twl_fixed)Res: Integer;
+// internal functions
+
 implementation
+
+operator:=(AFixed: Twl_fixed)Res: Integer;
+begin
+  Res := AFixed.AsFixed24_8;
+end;
+
 
 { Twl_array }
 
@@ -138,6 +162,36 @@ begin
 
   if AIncIndex then
     Inc(AIndex);
+end;
+
+{ Twl_fixed }
+
+function Twl_fixed.GetAsDouble: Double;
+var
+  lInt64: Int64 absolute Result;
+begin
+  lInt64:=(Int64(1023 + 44) shl 52) + (Int64(1) shl 51) + AsFixed24_8;
+  Result:=Result - (Int64(3) shl 43);
+end;
+
+function Twl_fixed.GetAsInteger: Integer;
+begin
+  Result := Trunc(AsDouble);
+end;
+
+procedure Twl_fixed.SetAsDouble(AValue: Double);
+var
+  lDouble: Double;
+  lInt64: Int64 absolute lDouble;
+begin
+  lDouble := AValue + (Int64(3) shl (51 - 8));
+  AsFixed24_8:=lInt64;
+end;
+
+
+procedure Twl_fixed.SetAsInteger(AValue: Integer);
+begin
+  AsDouble := AValue;
 end;
 
 
