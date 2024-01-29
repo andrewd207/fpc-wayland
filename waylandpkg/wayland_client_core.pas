@@ -423,6 +423,7 @@ constructor TWLProxyObject.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean);
 begin
   FUserDataRec.PascalObject := Self;
   FProxy:=AProxy;
+  wl_proxy_set_user_data(FProxy, @FUserDataRec);
 end;
 
 destructor TWLProxyObject.Destroy;
