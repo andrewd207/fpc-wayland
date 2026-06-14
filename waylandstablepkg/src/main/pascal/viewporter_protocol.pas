@@ -77,7 +77,9 @@ type
 
 var
   wp_viewporter_interface: Twl_interface;
+  WP_VIEWPORTER_INTERFACE_NAME: String = 'wp_viewporter';
   wp_viewport_interface: Twl_interface;
+  WP_VIEWPORT_INTERFACE_NAME: String = 'wp_viewport';
 
 
 
@@ -167,14 +169,14 @@ const
 initialization
 
 
-  wp_viewporter_interface.name := 'wp_viewporter';
+  wp_viewporter_interface.name := PChar(WP_VIEWPORTER_INTERFACE_NAME);
   wp_viewporter_interface.version := 1;
   wp_viewporter_interface.method_count := 2;
   wp_viewporter_interface.methods := @wp_viewporter_requests;
   wp_viewporter_interface.event_count := 0;
   wp_viewporter_interface.events := nil;
 
-  wp_viewport_interface.name := 'wp_viewport';
+  wp_viewport_interface.name := PChar(WP_VIEWPORT_INTERFACE_NAME);
   wp_viewport_interface.version := 1;
   wp_viewport_interface.method_count := 3;
   wp_viewport_interface.methods := @wp_viewport_requests;

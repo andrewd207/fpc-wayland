@@ -78,7 +78,9 @@ type
 
 var
   xdg_toplevel_icon_manager_v1_interface: Twl_interface;
+  XDG_TOPLEVEL_ICON_MANAGER_V1_INTERFACE_NAME: String = 'xdg_toplevel_icon_manager_v1';
   xdg_toplevel_icon_v1_interface: Twl_interface;
+  XDG_TOPLEVEL_ICON_V1_INTERFACE_NAME: String = 'xdg_toplevel_icon_v1';
 
 
 
@@ -201,14 +203,14 @@ initialization
   Pointer(vIntf_xdg_toplevel_icon_manager_v1_Listener.done) := @xdg_toplevel_icon_manager_v1_done_Intf;
 
 
-  xdg_toplevel_icon_manager_v1_interface.name := 'xdg_toplevel_icon_manager_v1';
+  xdg_toplevel_icon_manager_v1_interface.name := PChar(XDG_TOPLEVEL_ICON_MANAGER_V1_INTERFACE_NAME);
   xdg_toplevel_icon_manager_v1_interface.version := 1;
   xdg_toplevel_icon_manager_v1_interface.method_count := 3;
   xdg_toplevel_icon_manager_v1_interface.methods := @xdg_toplevel_icon_manager_v1_requests;
   xdg_toplevel_icon_manager_v1_interface.event_count := 2;
   xdg_toplevel_icon_manager_v1_interface.events := @xdg_toplevel_icon_manager_v1_events;
 
-  xdg_toplevel_icon_v1_interface.name := 'xdg_toplevel_icon_v1';
+  xdg_toplevel_icon_v1_interface.name := PChar(XDG_TOPLEVEL_ICON_V1_INTERFACE_NAME);
   xdg_toplevel_icon_v1_interface.version := 1;
   xdg_toplevel_icon_v1_interface.method_count := 3;
   xdg_toplevel_icon_v1_interface.methods := @xdg_toplevel_icon_v1_requests;

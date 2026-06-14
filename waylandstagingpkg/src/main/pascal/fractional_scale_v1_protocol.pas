@@ -68,7 +68,9 @@ type
 
 var
   wp_fractional_scale_manager_v1_interface: Twl_interface;
+  WP_FRACTIONAL_SCALE_MANAGER_V1_INTERFACE_NAME: String = 'wp_fractional_scale_manager_v1';
   wp_fractional_scale_v1_interface: Twl_interface;
+  WP_FRACTIONAL_SCALE_V1_INTERFACE_NAME: String = 'wp_fractional_scale_v1';
 
 
 
@@ -159,14 +161,14 @@ initialization
   Pointer(vIntf_wp_fractional_scale_v1_Listener.preferred_scale) := @wp_fractional_scale_v1_preferred_scale_Intf;
 
 
-  wp_fractional_scale_manager_v1_interface.name := 'wp_fractional_scale_manager_v1';
+  wp_fractional_scale_manager_v1_interface.name := PChar(WP_FRACTIONAL_SCALE_MANAGER_V1_INTERFACE_NAME);
   wp_fractional_scale_manager_v1_interface.version := 1;
   wp_fractional_scale_manager_v1_interface.method_count := 2;
   wp_fractional_scale_manager_v1_interface.methods := @wp_fractional_scale_manager_v1_requests;
   wp_fractional_scale_manager_v1_interface.event_count := 0;
   wp_fractional_scale_manager_v1_interface.events := nil;
 
-  wp_fractional_scale_v1_interface.name := 'wp_fractional_scale_v1';
+  wp_fractional_scale_v1_interface.name := PChar(WP_FRACTIONAL_SCALE_V1_INTERFACE_NAME);
   wp_fractional_scale_v1_interface.version := 1;
   wp_fractional_scale_v1_interface.method_count := 1;
   wp_fractional_scale_v1_interface.methods := @wp_fractional_scale_v1_requests;

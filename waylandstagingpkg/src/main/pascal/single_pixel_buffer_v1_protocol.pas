@@ -44,6 +44,7 @@ type
 
 var
   wp_single_pixel_buffer_manager_v1_interface: Twl_interface;
+  WP_SINGLE_PIXEL_BUFFER_MANAGER_V1_INTERFACE_NAME: String = 'wp_single_pixel_buffer_manager_v1';
 
 
 
@@ -109,7 +110,7 @@ const
 initialization
 
 
-  wp_single_pixel_buffer_manager_v1_interface.name := 'wp_single_pixel_buffer_manager_v1';
+  wp_single_pixel_buffer_manager_v1_interface.name := PChar(WP_SINGLE_PIXEL_BUFFER_MANAGER_V1_INTERFACE_NAME);
   wp_single_pixel_buffer_manager_v1_interface.version := 1;
   wp_single_pixel_buffer_manager_v1_interface.method_count := 2;
   wp_single_pixel_buffer_manager_v1_interface.methods := @wp_single_pixel_buffer_manager_v1_requests;

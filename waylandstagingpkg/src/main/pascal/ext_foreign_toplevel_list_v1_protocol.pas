@@ -76,7 +76,9 @@ type
 
 var
   ext_foreign_toplevel_list_v1_interface: Twl_interface;
+  EXT_FOREIGN_TOPLEVEL_LIST_V1_INTERFACE_NAME: String = 'ext_foreign_toplevel_list_v1';
   ext_foreign_toplevel_handle_v1_interface: Twl_interface;
+  EXT_FOREIGN_TOPLEVEL_HANDLE_V1_INTERFACE_NAME: String = 'ext_foreign_toplevel_handle_v1';
 
 
 
@@ -225,14 +227,14 @@ initialization
   Pointer(vIntf_ext_foreign_toplevel_handle_v1_Listener.identifier) := @ext_foreign_toplevel_handle_v1_identifier_Intf;
 
 
-  ext_foreign_toplevel_list_v1_interface.name := 'ext_foreign_toplevel_list_v1';
+  ext_foreign_toplevel_list_v1_interface.name := PChar(EXT_FOREIGN_TOPLEVEL_LIST_V1_INTERFACE_NAME);
   ext_foreign_toplevel_list_v1_interface.version := 1;
   ext_foreign_toplevel_list_v1_interface.method_count := 2;
   ext_foreign_toplevel_list_v1_interface.methods := @ext_foreign_toplevel_list_v1_requests;
   ext_foreign_toplevel_list_v1_interface.event_count := 2;
   ext_foreign_toplevel_list_v1_interface.events := @ext_foreign_toplevel_list_v1_events;
 
-  ext_foreign_toplevel_handle_v1_interface.name := 'ext_foreign_toplevel_handle_v1';
+  ext_foreign_toplevel_handle_v1_interface.name := PChar(EXT_FOREIGN_TOPLEVEL_HANDLE_V1_INTERFACE_NAME);
   ext_foreign_toplevel_handle_v1_interface.version := 1;
   ext_foreign_toplevel_handle_v1_interface.method_count := 1;
   ext_foreign_toplevel_handle_v1_interface.methods := @ext_foreign_toplevel_handle_v1_requests;

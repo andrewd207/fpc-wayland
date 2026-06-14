@@ -46,6 +46,7 @@ type
 
 var
   xdg_toplevel_tag_manager_v1_interface: Twl_interface;
+  XDG_TOPLEVEL_TAG_MANAGER_V1_INTERFACE_NAME: String = 'xdg_toplevel_tag_manager_v1';
 
 
 
@@ -108,7 +109,7 @@ const
 initialization
 
 
-  xdg_toplevel_tag_manager_v1_interface.name := 'xdg_toplevel_tag_manager_v1';
+  xdg_toplevel_tag_manager_v1_interface.name := PChar(XDG_TOPLEVEL_TAG_MANAGER_V1_INTERFACE_NAME);
   xdg_toplevel_tag_manager_v1_interface.version := 1;
   xdg_toplevel_tag_manager_v1_interface.method_count := 3;
   xdg_toplevel_tag_manager_v1_interface.methods := @xdg_toplevel_tag_manager_v1_requests;

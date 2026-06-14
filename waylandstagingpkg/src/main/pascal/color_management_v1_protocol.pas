@@ -326,13 +326,21 @@ type
 
 var
   wp_color_manager_v1_interface: Twl_interface;
+  WP_COLOR_MANAGER_V1_INTERFACE_NAME: String = 'wp_color_manager_v1';
   wp_color_management_output_v1_interface: Twl_interface;
+  WP_COLOR_MANAGEMENT_OUTPUT_V1_INTERFACE_NAME: String = 'wp_color_management_output_v1';
   wp_color_management_surface_v1_interface: Twl_interface;
+  WP_COLOR_MANAGEMENT_SURFACE_V1_INTERFACE_NAME: String = 'wp_color_management_surface_v1';
   wp_color_management_surface_feedback_v1_interface: Twl_interface;
+  WP_COLOR_MANAGEMENT_SURFACE_FEEDBACK_V1_INTERFACE_NAME: String = 'wp_color_management_surface_feedback_v1';
   wp_image_description_creator_icc_v1_interface: Twl_interface;
+  WP_IMAGE_DESCRIPTION_CREATOR_ICC_V1_INTERFACE_NAME: String = 'wp_image_description_creator_icc_v1';
   wp_image_description_creator_params_v1_interface: Twl_interface;
+  WP_IMAGE_DESCRIPTION_CREATOR_PARAMS_V1_INTERFACE_NAME: String = 'wp_image_description_creator_params_v1';
   wp_image_description_v1_interface: Twl_interface;
+  WP_IMAGE_DESCRIPTION_V1_INTERFACE_NAME: String = 'wp_image_description_v1';
   wp_image_description_info_v1_interface: Twl_interface;
+  WP_IMAGE_DESCRIPTION_INFO_V1_INTERFACE_NAME: String = 'wp_image_description_info_v1';
 
 
 
@@ -950,56 +958,56 @@ initialization
   Pointer(vIntf_wp_image_description_info_v1_Listener.target_max_fall) := @wp_image_description_info_v1_target_max_fall_Intf;
 
 
-  wp_color_manager_v1_interface.name := 'wp_color_manager_v1';
+  wp_color_manager_v1_interface.name := PChar(WP_COLOR_MANAGER_V1_INTERFACE_NAME);
   wp_color_manager_v1_interface.version := 1;
   wp_color_manager_v1_interface.method_count := 7;
   wp_color_manager_v1_interface.methods := @wp_color_manager_v1_requests;
   wp_color_manager_v1_interface.event_count := 5;
   wp_color_manager_v1_interface.events := @wp_color_manager_v1_events;
 
-  wp_color_management_output_v1_interface.name := 'wp_color_management_output_v1';
+  wp_color_management_output_v1_interface.name := PChar(WP_COLOR_MANAGEMENT_OUTPUT_V1_INTERFACE_NAME);
   wp_color_management_output_v1_interface.version := 1;
   wp_color_management_output_v1_interface.method_count := 2;
   wp_color_management_output_v1_interface.methods := @wp_color_management_output_v1_requests;
   wp_color_management_output_v1_interface.event_count := 1;
   wp_color_management_output_v1_interface.events := @wp_color_management_output_v1_events;
 
-  wp_color_management_surface_v1_interface.name := 'wp_color_management_surface_v1';
+  wp_color_management_surface_v1_interface.name := PChar(WP_COLOR_MANAGEMENT_SURFACE_V1_INTERFACE_NAME);
   wp_color_management_surface_v1_interface.version := 1;
   wp_color_management_surface_v1_interface.method_count := 3;
   wp_color_management_surface_v1_interface.methods := @wp_color_management_surface_v1_requests;
   wp_color_management_surface_v1_interface.event_count := 0;
   wp_color_management_surface_v1_interface.events := nil;
 
-  wp_color_management_surface_feedback_v1_interface.name := 'wp_color_management_surface_feedback_v1';
+  wp_color_management_surface_feedback_v1_interface.name := PChar(WP_COLOR_MANAGEMENT_SURFACE_FEEDBACK_V1_INTERFACE_NAME);
   wp_color_management_surface_feedback_v1_interface.version := 1;
   wp_color_management_surface_feedback_v1_interface.method_count := 3;
   wp_color_management_surface_feedback_v1_interface.methods := @wp_color_management_surface_feedback_v1_requests;
   wp_color_management_surface_feedback_v1_interface.event_count := 1;
   wp_color_management_surface_feedback_v1_interface.events := @wp_color_management_surface_feedback_v1_events;
 
-  wp_image_description_creator_icc_v1_interface.name := 'wp_image_description_creator_icc_v1';
+  wp_image_description_creator_icc_v1_interface.name := PChar(WP_IMAGE_DESCRIPTION_CREATOR_ICC_V1_INTERFACE_NAME);
   wp_image_description_creator_icc_v1_interface.version := 1;
   wp_image_description_creator_icc_v1_interface.method_count := 2;
   wp_image_description_creator_icc_v1_interface.methods := @wp_image_description_creator_icc_v1_requests;
   wp_image_description_creator_icc_v1_interface.event_count := 0;
   wp_image_description_creator_icc_v1_interface.events := nil;
 
-  wp_image_description_creator_params_v1_interface.name := 'wp_image_description_creator_params_v1';
+  wp_image_description_creator_params_v1_interface.name := PChar(WP_IMAGE_DESCRIPTION_CREATOR_PARAMS_V1_INTERFACE_NAME);
   wp_image_description_creator_params_v1_interface.version := 1;
   wp_image_description_creator_params_v1_interface.method_count := 10;
   wp_image_description_creator_params_v1_interface.methods := @wp_image_description_creator_params_v1_requests;
   wp_image_description_creator_params_v1_interface.event_count := 0;
   wp_image_description_creator_params_v1_interface.events := nil;
 
-  wp_image_description_v1_interface.name := 'wp_image_description_v1';
+  wp_image_description_v1_interface.name := PChar(WP_IMAGE_DESCRIPTION_V1_INTERFACE_NAME);
   wp_image_description_v1_interface.version := 1;
   wp_image_description_v1_interface.method_count := 2;
   wp_image_description_v1_interface.methods := @wp_image_description_v1_requests;
   wp_image_description_v1_interface.event_count := 2;
   wp_image_description_v1_interface.events := @wp_image_description_v1_events;
 
-  wp_image_description_info_v1_interface.name := 'wp_image_description_info_v1';
+  wp_image_description_info_v1_interface.name := PChar(WP_IMAGE_DESCRIPTION_INFO_V1_INTERFACE_NAME);
   wp_image_description_info_v1_interface.version := 1;
   wp_image_description_info_v1_interface.method_count := 0;
   wp_image_description_info_v1_interface.methods := nil;

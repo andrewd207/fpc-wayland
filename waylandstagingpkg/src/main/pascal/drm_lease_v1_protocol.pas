@@ -128,9 +128,13 @@ type
 
 var
   wp_drm_lease_device_v1_interface: Twl_interface;
+  WP_DRM_LEASE_DEVICE_V1_INTERFACE_NAME: String = 'wp_drm_lease_device_v1';
   wp_drm_lease_connector_v1_interface: Twl_interface;
+  WP_DRM_LEASE_CONNECTOR_V1_INTERFACE_NAME: String = 'wp_drm_lease_connector_v1';
   wp_drm_lease_request_v1_interface: Twl_interface;
+  WP_DRM_LEASE_REQUEST_V1_INTERFACE_NAME: String = 'wp_drm_lease_request_v1';
   wp_drm_lease_v1_interface: Twl_interface;
+  WP_DRM_LEASE_V1_INTERFACE_NAME: String = 'wp_drm_lease_v1';
 
 
 
@@ -379,28 +383,28 @@ initialization
   Pointer(vIntf_wp_drm_lease_v1_Listener.finished) := @wp_drm_lease_v1_finished_Intf;
 
 
-  wp_drm_lease_device_v1_interface.name := 'wp_drm_lease_device_v1';
+  wp_drm_lease_device_v1_interface.name := PChar(WP_DRM_LEASE_DEVICE_V1_INTERFACE_NAME);
   wp_drm_lease_device_v1_interface.version := 1;
   wp_drm_lease_device_v1_interface.method_count := 2;
   wp_drm_lease_device_v1_interface.methods := @wp_drm_lease_device_v1_requests;
   wp_drm_lease_device_v1_interface.event_count := 4;
   wp_drm_lease_device_v1_interface.events := @wp_drm_lease_device_v1_events;
 
-  wp_drm_lease_connector_v1_interface.name := 'wp_drm_lease_connector_v1';
+  wp_drm_lease_connector_v1_interface.name := PChar(WP_DRM_LEASE_CONNECTOR_V1_INTERFACE_NAME);
   wp_drm_lease_connector_v1_interface.version := 1;
   wp_drm_lease_connector_v1_interface.method_count := 1;
   wp_drm_lease_connector_v1_interface.methods := @wp_drm_lease_connector_v1_requests;
   wp_drm_lease_connector_v1_interface.event_count := 5;
   wp_drm_lease_connector_v1_interface.events := @wp_drm_lease_connector_v1_events;
 
-  wp_drm_lease_request_v1_interface.name := 'wp_drm_lease_request_v1';
+  wp_drm_lease_request_v1_interface.name := PChar(WP_DRM_LEASE_REQUEST_V1_INTERFACE_NAME);
   wp_drm_lease_request_v1_interface.version := 1;
   wp_drm_lease_request_v1_interface.method_count := 2;
   wp_drm_lease_request_v1_interface.methods := @wp_drm_lease_request_v1_requests;
   wp_drm_lease_request_v1_interface.event_count := 0;
   wp_drm_lease_request_v1_interface.events := nil;
 
-  wp_drm_lease_v1_interface.name := 'wp_drm_lease_v1';
+  wp_drm_lease_v1_interface.name := PChar(WP_DRM_LEASE_V1_INTERFACE_NAME);
   wp_drm_lease_v1_interface.version := 1;
   wp_drm_lease_v1_interface.method_count := 1;
   wp_drm_lease_v1_interface.methods := @wp_drm_lease_v1_requests;

@@ -73,7 +73,9 @@ type
 
 var
   wp_tearing_control_manager_v1_interface: Twl_interface;
+  WP_TEARING_CONTROL_MANAGER_V1_INTERFACE_NAME: String = 'wp_tearing_control_manager_v1';
   wp_tearing_control_v1_interface: Twl_interface;
+  WP_TEARING_CONTROL_V1_INTERFACE_NAME: String = 'wp_tearing_control_v1';
 
 
 
@@ -157,14 +159,14 @@ const
 initialization
 
 
-  wp_tearing_control_manager_v1_interface.name := 'wp_tearing_control_manager_v1';
+  wp_tearing_control_manager_v1_interface.name := PChar(WP_TEARING_CONTROL_MANAGER_V1_INTERFACE_NAME);
   wp_tearing_control_manager_v1_interface.version := 1;
   wp_tearing_control_manager_v1_interface.method_count := 2;
   wp_tearing_control_manager_v1_interface.methods := @wp_tearing_control_manager_v1_requests;
   wp_tearing_control_manager_v1_interface.event_count := 0;
   wp_tearing_control_manager_v1_interface.events := nil;
 
-  wp_tearing_control_v1_interface.name := 'wp_tearing_control_v1';
+  wp_tearing_control_v1_interface.name := PChar(WP_TEARING_CONTROL_V1_INTERFACE_NAME);
   wp_tearing_control_v1_interface.version := 1;
   wp_tearing_control_v1_interface.method_count := 2;
   wp_tearing_control_v1_interface.methods := @wp_tearing_control_v1_requests;

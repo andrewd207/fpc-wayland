@@ -73,7 +73,9 @@ type
 
 var
   xwayland_shell_v1_interface: Twl_interface;
+  XWAYLAND_SHELL_V1_INTERFACE_NAME: String = 'xwayland_shell_v1';
   xwayland_surface_v1_interface: Twl_interface;
+  XWAYLAND_SURFACE_V1_INTERFACE_NAME: String = 'xwayland_surface_v1';
 
 
 
@@ -157,14 +159,14 @@ const
 initialization
 
 
-  xwayland_shell_v1_interface.name := 'xwayland_shell_v1';
+  xwayland_shell_v1_interface.name := PChar(XWAYLAND_SHELL_V1_INTERFACE_NAME);
   xwayland_shell_v1_interface.version := 1;
   xwayland_shell_v1_interface.method_count := 2;
   xwayland_shell_v1_interface.methods := @xwayland_shell_v1_requests;
   xwayland_shell_v1_interface.event_count := 0;
   xwayland_shell_v1_interface.events := nil;
 
-  xwayland_surface_v1_interface.name := 'xwayland_surface_v1';
+  xwayland_surface_v1_interface.name := PChar(XWAYLAND_SURFACE_V1_INTERFACE_NAME);
   xwayland_surface_v1_interface.version := 1;
   xwayland_surface_v1_interface.method_count := 2;
   xwayland_surface_v1_interface.methods := @xwayland_surface_v1_requests;

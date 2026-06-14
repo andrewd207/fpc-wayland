@@ -75,7 +75,9 @@ type
 
 var
   ext_background_effect_manager_v1_interface: Twl_interface;
+  EXT_BACKGROUND_EFFECT_MANAGER_V1_INTERFACE_NAME: String = 'ext_background_effect_manager_v1';
   ext_background_effect_surface_v1_interface: Twl_interface;
+  EXT_BACKGROUND_EFFECT_SURFACE_V1_INTERFACE_NAME: String = 'ext_background_effect_surface_v1';
 
 
 
@@ -173,14 +175,14 @@ initialization
   Pointer(vIntf_ext_background_effect_manager_v1_Listener.capabilities) := @ext_background_effect_manager_v1_capabilities_Intf;
 
 
-  ext_background_effect_manager_v1_interface.name := 'ext_background_effect_manager_v1';
+  ext_background_effect_manager_v1_interface.name := PChar(EXT_BACKGROUND_EFFECT_MANAGER_V1_INTERFACE_NAME);
   ext_background_effect_manager_v1_interface.version := 1;
   ext_background_effect_manager_v1_interface.method_count := 2;
   ext_background_effect_manager_v1_interface.methods := @ext_background_effect_manager_v1_requests;
   ext_background_effect_manager_v1_interface.event_count := 1;
   ext_background_effect_manager_v1_interface.events := @ext_background_effect_manager_v1_events;
 
-  ext_background_effect_surface_v1_interface.name := 'ext_background_effect_surface_v1';
+  ext_background_effect_surface_v1_interface.name := PChar(EXT_BACKGROUND_EFFECT_SURFACE_V1_INTERFACE_NAME);
   ext_background_effect_surface_v1_interface.version := 1;
   ext_background_effect_surface_v1_interface.method_count := 2;
   ext_background_effect_surface_v1_interface.methods := @ext_background_effect_surface_v1_requests;

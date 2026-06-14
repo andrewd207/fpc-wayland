@@ -78,7 +78,9 @@ type
 
 var
   xdg_activation_v1_interface: Twl_interface;
+  XDG_ACTIVATION_V1_INTERFACE_NAME: String = 'xdg_activation_v1';
   xdg_activation_token_v1_interface: Twl_interface;
+  XDG_ACTIVATION_TOKEN_V1_INTERFACE_NAME: String = 'xdg_activation_token_v1';
 
 
 
@@ -203,14 +205,14 @@ initialization
   Pointer(vIntf_xdg_activation_token_v1_Listener.done) := @xdg_activation_token_v1_done_Intf;
 
 
-  xdg_activation_v1_interface.name := 'xdg_activation_v1';
+  xdg_activation_v1_interface.name := PChar(XDG_ACTIVATION_V1_INTERFACE_NAME);
   xdg_activation_v1_interface.version := 1;
   xdg_activation_v1_interface.method_count := 3;
   xdg_activation_v1_interface.methods := @xdg_activation_v1_requests;
   xdg_activation_v1_interface.event_count := 0;
   xdg_activation_v1_interface.events := nil;
 
-  xdg_activation_token_v1_interface.name := 'xdg_activation_token_v1';
+  xdg_activation_token_v1_interface.name := PChar(XDG_ACTIVATION_TOKEN_V1_INTERFACE_NAME);
   xdg_activation_token_v1_interface.version := 1;
   xdg_activation_token_v1_interface.method_count := 5;
   xdg_activation_token_v1_interface.methods := @xdg_activation_token_v1_requests;

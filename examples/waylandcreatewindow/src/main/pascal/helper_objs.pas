@@ -20,7 +20,7 @@ type
     FShell: TWlShell;
     FShm: TWlShm;
     FSeat: TWlSeat;
-    FRelativePointerManager: TZwpRelativePointerManagerV1;
+    FRelativePointerManager: TWpRelativePointerManagerV1;
     FFormats: LongWord;
     procedure wl_registry_global(AWlRegistry: TWlRegistry; AName: DWord; AInterface: String; AVersion: DWord);
     procedure wl_registry_global_remove(AWlRegistry: TWlRegistry; AName: DWord);
@@ -44,7 +44,7 @@ type
 
   { TWindow }
 
-  TWindow = class(TObject, IWlShellSurfaceListener, IWlCallbackListener, IWlPointerListener, IZwpRelativePointerV1Listener)
+  TWindow = class(TObject, IWlShellSurfaceListener, IWlCallbackListener, IWlPointerListener, IWpRelativePointerV1Listener)
     FDisplay: TDisplay;
     FWidth, FHeight: Integer;
     FSurface: TWlSurface;
@@ -53,7 +53,7 @@ type
     FPrevBuffer: TBuffer;
     FCallback: TWlCallback;
     FPointer: TWlPointer;
-    FRelativePointer: TZwpRelativePointerV1;
+    FRelativePointer: TWpRelativePointerV1;
 
     procedure wl_shell_surface_ping(AWlShellSurface: TWlShellSurface; ASerial: DWord);
     procedure wl_shell_surface_configure(AWlShellSurface: TWlShellSurface; AEdges: DWord; AWidth: LongInt; AHeight: LongInt);
@@ -70,7 +70,7 @@ type
     procedure wl_pointer_axis_discrete(AWlPointer: TWlPointer; AAxis: DWord; ADiscrete: LongInt);
     procedure wl_pointer_axis_value120(AWlPointer: TWlPointer; AAxis: DWord; AValue120: LongInt);
     procedure wl_pointer_axis_relative_direction(AWlPointer: TWlPointer; AAxis: DWord; ADirection: DWord);
-    procedure zwp_relative_pointer_v1_relative_motion(AZwpRelativePointerV1: TZwpRelativePointerV1; AUtimeHi: DWord; AUtimeLo: DWord; ADx: Longint; ADy: Longint; ADxUnaccel: Longint; ADyUnaccel: Longint);
+    procedure wp_relative_pointer_v1_relative_motion(AZwpRelativePointerV1: TWpRelativePointerV1; AUtimeHi: DWord; AUtimeLo: DWord; ADx: Longint; ADy: Longint; ADxUnaccel: Longint; ADyUnaccel: Longint);
   public
     constructor Create(ADisplay: TDisplay; AWidth, AHeight: Integer);
     destructor  Destroy; override;
@@ -99,7 +99,7 @@ begin
         FSeat.AddListener(Self);
       end;
     'zwp_relative_pointer_manager_v1':
-        FRelativePointerManager := TZwpRelativePointerManagerV1.Create(AWlRegistry.Bind(AName, @zwp_relative_pointer_manager_v1_interface, 1));
+        FRelativePointerManager := TWpRelativePointerManagerV1.Create(AWlRegistry.Bind(AName, @wp_relative_pointer_manager_v1_interface, 1));
   else
     WriteLn(AInterface);
   end;
@@ -252,8 +252,8 @@ begin
 
 end;
 
-procedure TWindow.zwp_relative_pointer_v1_relative_motion(
-  AZwpRelativePointerV1: TZwpRelativePointerV1; AUtimeHi: DWord; AUtimeLo: DWord;
+procedure TWindow.wp_relative_pointer_v1_relative_motion(
+  AZwpRelativePointerV1: TWpRelativePointerV1; AUtimeHi: DWord; AUtimeLo: DWord;
   ADx: Longint; ADy: Longint; ADxUnaccel: Longint; ADyUnaccel: Longint);
 begin
   WriteLn(Format('Relative pointer move %d:%d', [ADx, ADy]));

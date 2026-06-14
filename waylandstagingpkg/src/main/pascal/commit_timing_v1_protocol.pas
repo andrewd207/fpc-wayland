@@ -74,7 +74,9 @@ type
 
 var
   wp_commit_timing_manager_v1_interface: Twl_interface;
+  WP_COMMIT_TIMING_MANAGER_V1_INTERFACE_NAME: String = 'wp_commit_timing_manager_v1';
   wp_commit_timer_v1_interface: Twl_interface;
+  WP_COMMIT_TIMER_V1_INTERFACE_NAME: String = 'wp_commit_timer_v1';
 
 
 
@@ -158,14 +160,14 @@ const
 initialization
 
 
-  wp_commit_timing_manager_v1_interface.name := 'wp_commit_timing_manager_v1';
+  wp_commit_timing_manager_v1_interface.name := PChar(WP_COMMIT_TIMING_MANAGER_V1_INTERFACE_NAME);
   wp_commit_timing_manager_v1_interface.version := 1;
   wp_commit_timing_manager_v1_interface.method_count := 2;
   wp_commit_timing_manager_v1_interface.methods := @wp_commit_timing_manager_v1_requests;
   wp_commit_timing_manager_v1_interface.event_count := 0;
   wp_commit_timing_manager_v1_interface.events := nil;
 
-  wp_commit_timer_v1_interface.name := 'wp_commit_timer_v1';
+  wp_commit_timer_v1_interface.name := PChar(WP_COMMIT_TIMER_V1_INTERFACE_NAME);
   wp_commit_timer_v1_interface.version := 1;
   wp_commit_timer_v1_interface.method_count := 2;
   wp_commit_timer_v1_interface.methods := @wp_commit_timer_v1_requests;

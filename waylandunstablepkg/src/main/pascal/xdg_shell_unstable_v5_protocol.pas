@@ -144,8 +144,11 @@ type
 
 var
   xdg_shell_interface: Twl_interface;
+  XDG_SHELL_INTERFACE_NAME: String = 'xdg_shell';
   xdg_surface_interface: Twl_interface;
+  XDG_SURFACE_INTERFACE_NAME: String = 'xdg_surface';
   xdg_popup_interface: Twl_interface;
+  XDG_POPUP_INTERFACE_NAME: String = 'xdg_popup';
 
 
 
@@ -410,21 +413,21 @@ initialization
   Pointer(vIntf_xdg_popup_Listener.popup_done) := @xdg_popup_popup_done_Intf;
 
 
-  xdg_shell_interface.name := 'xdg_shell';
+  xdg_shell_interface.name := PChar(XDG_SHELL_INTERFACE_NAME);
   xdg_shell_interface.version := 1;
   xdg_shell_interface.method_count := 5;
   xdg_shell_interface.methods := @xdg_shell_requests;
   xdg_shell_interface.event_count := 1;
   xdg_shell_interface.events := @xdg_shell_events;
 
-  xdg_surface_interface.name := 'xdg_surface';
+  xdg_surface_interface.name := PChar(XDG_SURFACE_INTERFACE_NAME);
   xdg_surface_interface.version := 1;
   xdg_surface_interface.method_count := 14;
   xdg_surface_interface.methods := @xdg_surface_requests;
   xdg_surface_interface.event_count := 2;
   xdg_surface_interface.events := @xdg_surface_events;
 
-  xdg_popup_interface.name := 'xdg_popup';
+  xdg_popup_interface.name := PChar(XDG_POPUP_INTERFACE_NAME);
   xdg_popup_interface.version := 1;
   xdg_popup_interface.method_count := 1;
   xdg_popup_interface.methods := @xdg_popup_requests;

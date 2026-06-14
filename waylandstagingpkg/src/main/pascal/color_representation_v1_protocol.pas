@@ -104,7 +104,9 @@ type
 
 var
   wp_color_representation_manager_v1_interface: Twl_interface;
+  WP_COLOR_REPRESENTATION_MANAGER_V1_INTERFACE_NAME: String = 'wp_color_representation_manager_v1';
   wp_color_representation_surface_v1_interface: Twl_interface;
+  WP_COLOR_REPRESENTATION_SURFACE_V1_INTERFACE_NAME: String = 'wp_color_representation_surface_v1';
 
 
 
@@ -235,14 +237,14 @@ initialization
   Pointer(vIntf_wp_color_representation_manager_v1_Listener.done) := @wp_color_representation_manager_v1_done_Intf;
 
 
-  wp_color_representation_manager_v1_interface.name := 'wp_color_representation_manager_v1';
+  wp_color_representation_manager_v1_interface.name := PChar(WP_COLOR_REPRESENTATION_MANAGER_V1_INTERFACE_NAME);
   wp_color_representation_manager_v1_interface.version := 1;
   wp_color_representation_manager_v1_interface.method_count := 2;
   wp_color_representation_manager_v1_interface.methods := @wp_color_representation_manager_v1_requests;
   wp_color_representation_manager_v1_interface.event_count := 3;
   wp_color_representation_manager_v1_interface.events := @wp_color_representation_manager_v1_events;
 
-  wp_color_representation_surface_v1_interface.name := 'wp_color_representation_surface_v1';
+  wp_color_representation_surface_v1_interface.name := PChar(WP_COLOR_REPRESENTATION_SURFACE_V1_INTERFACE_NAME);
   wp_color_representation_surface_v1_interface.version := 1;
   wp_color_representation_surface_v1_interface.method_count := 4;
   wp_color_representation_surface_v1_interface.methods := @wp_color_representation_surface_v1_requests;

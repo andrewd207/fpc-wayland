@@ -44,6 +44,7 @@ type
 
 var
   xdg_system_bell_v1_interface: Twl_interface;
+  XDG_SYSTEM_BELL_V1_INTERFACE_NAME: String = 'xdg_system_bell_v1';
 
 
 
@@ -97,7 +98,7 @@ const
 initialization
 
 
-  xdg_system_bell_v1_interface.name := 'xdg_system_bell_v1';
+  xdg_system_bell_v1_interface.name := PChar(XDG_SYSTEM_BELL_V1_INTERFACE_NAME);
   xdg_system_bell_v1_interface.version := 1;
   xdg_system_bell_v1_interface.method_count := 2;
   xdg_system_bell_v1_interface.methods := @xdg_system_bell_v1_requests;

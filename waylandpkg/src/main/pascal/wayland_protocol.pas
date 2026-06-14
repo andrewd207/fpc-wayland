@@ -855,27 +855,49 @@ type
 
 var
   wl_display_interface: Twl_interface;
+  WL_DISPLAY_INTERFACE_NAME: String = 'wl_display';
   wl_registry_interface: Twl_interface;
+  WL_REGISTRY_INTERFACE_NAME: String = 'wl_registry';
   wl_callback_interface: Twl_interface;
+  WL_CALLBACK_INTERFACE_NAME: String = 'wl_callback';
   wl_compositor_interface: Twl_interface;
+  WL_COMPOSITOR_INTERFACE_NAME: String = 'wl_compositor';
   wl_shm_pool_interface: Twl_interface;
+  WL_SHM_POOL_INTERFACE_NAME: String = 'wl_shm_pool';
   wl_shm_interface: Twl_interface;
+  WL_SHM_INTERFACE_NAME: String = 'wl_shm';
   wl_buffer_interface: Twl_interface;
+  WL_BUFFER_INTERFACE_NAME: String = 'wl_buffer';
   wl_data_offer_interface: Twl_interface;
+  WL_DATA_OFFER_INTERFACE_NAME: String = 'wl_data_offer';
   wl_data_source_interface: Twl_interface;
+  WL_DATA_SOURCE_INTERFACE_NAME: String = 'wl_data_source';
   wl_data_device_interface: Twl_interface;
+  WL_DATA_DEVICE_INTERFACE_NAME: String = 'wl_data_device';
   wl_data_device_manager_interface: Twl_interface;
+  WL_DATA_DEVICE_MANAGER_INTERFACE_NAME: String = 'wl_data_device_manager';
   wl_shell_interface: Twl_interface;
+  WL_SHELL_INTERFACE_NAME: String = 'wl_shell';
   wl_shell_surface_interface: Twl_interface;
+  WL_SHELL_SURFACE_INTERFACE_NAME: String = 'wl_shell_surface';
   wl_surface_interface: Twl_interface;
+  WL_SURFACE_INTERFACE_NAME: String = 'wl_surface';
   wl_seat_interface: Twl_interface;
+  WL_SEAT_INTERFACE_NAME: String = 'wl_seat';
   wl_pointer_interface: Twl_interface;
+  WL_POINTER_INTERFACE_NAME: String = 'wl_pointer';
   wl_keyboard_interface: Twl_interface;
+  WL_KEYBOARD_INTERFACE_NAME: String = 'wl_keyboard';
   wl_touch_interface: Twl_interface;
+  WL_TOUCH_INTERFACE_NAME: String = 'wl_touch';
   wl_output_interface: Twl_interface;
+  WL_OUTPUT_INTERFACE_NAME: String = 'wl_output';
   wl_region_interface: Twl_interface;
+  WL_REGION_INTERFACE_NAME: String = 'wl_region';
   wl_subcompositor_interface: Twl_interface;
+  WL_SUBCOMPOSITOR_INTERFACE_NAME: String = 'wl_subcompositor';
   wl_subsurface_interface: Twl_interface;
+  WL_SUBSURFACE_INTERFACE_NAME: String = 'wl_subsurface';
 
 
 
@@ -2385,154 +2407,154 @@ initialization
   Pointer(vIntf_wl_output_Listener.description) := @wl_output_description_Intf;
 
 
-  wl_display_interface.name := 'wl_display';
+  wl_display_interface.name := PChar(WL_DISPLAY_INTERFACE_NAME);
   wl_display_interface.version := 1;
   wl_display_interface.method_count := 2;
   wl_display_interface.methods := @wl_display_requests;
   wl_display_interface.event_count := 2;
   wl_display_interface.events := @wl_display_events;
 
-  wl_registry_interface.name := 'wl_registry';
+  wl_registry_interface.name := PChar(WL_REGISTRY_INTERFACE_NAME);
   wl_registry_interface.version := 1;
   wl_registry_interface.method_count := 1;
   wl_registry_interface.methods := @wl_registry_requests;
   wl_registry_interface.event_count := 2;
   wl_registry_interface.events := @wl_registry_events;
 
-  wl_callback_interface.name := 'wl_callback';
+  wl_callback_interface.name := PChar(WL_CALLBACK_INTERFACE_NAME);
   wl_callback_interface.version := 1;
   wl_callback_interface.method_count := 0;
   wl_callback_interface.methods := nil;
   wl_callback_interface.event_count := 1;
   wl_callback_interface.events := @wl_callback_events;
 
-  wl_compositor_interface.name := 'wl_compositor';
+  wl_compositor_interface.name := PChar(WL_COMPOSITOR_INTERFACE_NAME);
   wl_compositor_interface.version := 6;
   wl_compositor_interface.method_count := 2;
   wl_compositor_interface.methods := @wl_compositor_requests;
   wl_compositor_interface.event_count := 0;
   wl_compositor_interface.events := nil;
 
-  wl_shm_pool_interface.name := 'wl_shm_pool';
+  wl_shm_pool_interface.name := PChar(WL_SHM_POOL_INTERFACE_NAME);
   wl_shm_pool_interface.version := 1;
   wl_shm_pool_interface.method_count := 3;
   wl_shm_pool_interface.methods := @wl_shm_pool_requests;
   wl_shm_pool_interface.event_count := 0;
   wl_shm_pool_interface.events := nil;
 
-  wl_shm_interface.name := 'wl_shm';
+  wl_shm_interface.name := PChar(WL_SHM_INTERFACE_NAME);
   wl_shm_interface.version := 1;
   wl_shm_interface.method_count := 1;
   wl_shm_interface.methods := @wl_shm_requests;
   wl_shm_interface.event_count := 1;
   wl_shm_interface.events := @wl_shm_events;
 
-  wl_buffer_interface.name := 'wl_buffer';
+  wl_buffer_interface.name := PChar(WL_BUFFER_INTERFACE_NAME);
   wl_buffer_interface.version := 1;
   wl_buffer_interface.method_count := 1;
   wl_buffer_interface.methods := @wl_buffer_requests;
   wl_buffer_interface.event_count := 1;
   wl_buffer_interface.events := @wl_buffer_events;
 
-  wl_data_offer_interface.name := 'wl_data_offer';
+  wl_data_offer_interface.name := PChar(WL_DATA_OFFER_INTERFACE_NAME);
   wl_data_offer_interface.version := 3;
   wl_data_offer_interface.method_count := 5;
   wl_data_offer_interface.methods := @wl_data_offer_requests;
   wl_data_offer_interface.event_count := 3;
   wl_data_offer_interface.events := @wl_data_offer_events;
 
-  wl_data_source_interface.name := 'wl_data_source';
+  wl_data_source_interface.name := PChar(WL_DATA_SOURCE_INTERFACE_NAME);
   wl_data_source_interface.version := 3;
   wl_data_source_interface.method_count := 3;
   wl_data_source_interface.methods := @wl_data_source_requests;
   wl_data_source_interface.event_count := 6;
   wl_data_source_interface.events := @wl_data_source_events;
 
-  wl_data_device_interface.name := 'wl_data_device';
+  wl_data_device_interface.name := PChar(WL_DATA_DEVICE_INTERFACE_NAME);
   wl_data_device_interface.version := 3;
   wl_data_device_interface.method_count := 3;
   wl_data_device_interface.methods := @wl_data_device_requests;
   wl_data_device_interface.event_count := 6;
   wl_data_device_interface.events := @wl_data_device_events;
 
-  wl_data_device_manager_interface.name := 'wl_data_device_manager';
+  wl_data_device_manager_interface.name := PChar(WL_DATA_DEVICE_MANAGER_INTERFACE_NAME);
   wl_data_device_manager_interface.version := 3;
   wl_data_device_manager_interface.method_count := 2;
   wl_data_device_manager_interface.methods := @wl_data_device_manager_requests;
   wl_data_device_manager_interface.event_count := 0;
   wl_data_device_manager_interface.events := nil;
 
-  wl_shell_interface.name := 'wl_shell';
+  wl_shell_interface.name := PChar(WL_SHELL_INTERFACE_NAME);
   wl_shell_interface.version := 1;
   wl_shell_interface.method_count := 1;
   wl_shell_interface.methods := @wl_shell_requests;
   wl_shell_interface.event_count := 0;
   wl_shell_interface.events := nil;
 
-  wl_shell_surface_interface.name := 'wl_shell_surface';
+  wl_shell_surface_interface.name := PChar(WL_SHELL_SURFACE_INTERFACE_NAME);
   wl_shell_surface_interface.version := 1;
   wl_shell_surface_interface.method_count := 10;
   wl_shell_surface_interface.methods := @wl_shell_surface_requests;
   wl_shell_surface_interface.event_count := 3;
   wl_shell_surface_interface.events := @wl_shell_surface_events;
 
-  wl_surface_interface.name := 'wl_surface';
+  wl_surface_interface.name := PChar(WL_SURFACE_INTERFACE_NAME);
   wl_surface_interface.version := 6;
   wl_surface_interface.method_count := 11;
   wl_surface_interface.methods := @wl_surface_requests;
   wl_surface_interface.event_count := 4;
   wl_surface_interface.events := @wl_surface_events;
 
-  wl_seat_interface.name := 'wl_seat';
+  wl_seat_interface.name := PChar(WL_SEAT_INTERFACE_NAME);
   wl_seat_interface.version := 9;
   wl_seat_interface.method_count := 4;
   wl_seat_interface.methods := @wl_seat_requests;
   wl_seat_interface.event_count := 2;
   wl_seat_interface.events := @wl_seat_events;
 
-  wl_pointer_interface.name := 'wl_pointer';
+  wl_pointer_interface.name := PChar(WL_POINTER_INTERFACE_NAME);
   wl_pointer_interface.version := 9;
   wl_pointer_interface.method_count := 2;
   wl_pointer_interface.methods := @wl_pointer_requests;
   wl_pointer_interface.event_count := 11;
   wl_pointer_interface.events := @wl_pointer_events;
 
-  wl_keyboard_interface.name := 'wl_keyboard';
+  wl_keyboard_interface.name := PChar(WL_KEYBOARD_INTERFACE_NAME);
   wl_keyboard_interface.version := 9;
   wl_keyboard_interface.method_count := 1;
   wl_keyboard_interface.methods := @wl_keyboard_requests;
   wl_keyboard_interface.event_count := 6;
   wl_keyboard_interface.events := @wl_keyboard_events;
 
-  wl_touch_interface.name := 'wl_touch';
+  wl_touch_interface.name := PChar(WL_TOUCH_INTERFACE_NAME);
   wl_touch_interface.version := 9;
   wl_touch_interface.method_count := 1;
   wl_touch_interface.methods := @wl_touch_requests;
   wl_touch_interface.event_count := 7;
   wl_touch_interface.events := @wl_touch_events;
 
-  wl_output_interface.name := 'wl_output';
+  wl_output_interface.name := PChar(WL_OUTPUT_INTERFACE_NAME);
   wl_output_interface.version := 4;
   wl_output_interface.method_count := 1;
   wl_output_interface.methods := @wl_output_requests;
   wl_output_interface.event_count := 6;
   wl_output_interface.events := @wl_output_events;
 
-  wl_region_interface.name := 'wl_region';
+  wl_region_interface.name := PChar(WL_REGION_INTERFACE_NAME);
   wl_region_interface.version := 1;
   wl_region_interface.method_count := 3;
   wl_region_interface.methods := @wl_region_requests;
   wl_region_interface.event_count := 0;
   wl_region_interface.events := nil;
 
-  wl_subcompositor_interface.name := 'wl_subcompositor';
+  wl_subcompositor_interface.name := PChar(WL_SUBCOMPOSITOR_INTERFACE_NAME);
   wl_subcompositor_interface.version := 1;
   wl_subcompositor_interface.method_count := 2;
   wl_subcompositor_interface.methods := @wl_subcompositor_requests;
   wl_subcompositor_interface.event_count := 0;
   wl_subcompositor_interface.events := nil;
 
-  wl_subsurface_interface.name := 'wl_subsurface';
+  wl_subsurface_interface.name := PChar(WL_SUBSURFACE_INTERFACE_NAME);
   wl_subsurface_interface.version := 1;
   wl_subsurface_interface.method_count := 6;
   wl_subsurface_interface.methods := @wl_subsurface_requests;

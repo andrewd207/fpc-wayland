@@ -107,8 +107,11 @@ type
 
 var
   ext_session_lock_manager_v1_interface: Twl_interface;
+  EXT_SESSION_LOCK_MANAGER_V1_INTERFACE_NAME: String = 'ext_session_lock_manager_v1';
   ext_session_lock_v1_interface: Twl_interface;
+  EXT_SESSION_LOCK_V1_INTERFACE_NAME: String = 'ext_session_lock_v1';
   ext_session_lock_surface_v1_interface: Twl_interface;
+  EXT_SESSION_LOCK_SURFACE_V1_INTERFACE_NAME: String = 'ext_session_lock_surface_v1';
 
 
 
@@ -267,21 +270,21 @@ initialization
   Pointer(vIntf_ext_session_lock_surface_v1_Listener.configure) := @ext_session_lock_surface_v1_configure_Intf;
 
 
-  ext_session_lock_manager_v1_interface.name := 'ext_session_lock_manager_v1';
+  ext_session_lock_manager_v1_interface.name := PChar(EXT_SESSION_LOCK_MANAGER_V1_INTERFACE_NAME);
   ext_session_lock_manager_v1_interface.version := 1;
   ext_session_lock_manager_v1_interface.method_count := 2;
   ext_session_lock_manager_v1_interface.methods := @ext_session_lock_manager_v1_requests;
   ext_session_lock_manager_v1_interface.event_count := 0;
   ext_session_lock_manager_v1_interface.events := nil;
 
-  ext_session_lock_v1_interface.name := 'ext_session_lock_v1';
+  ext_session_lock_v1_interface.name := PChar(EXT_SESSION_LOCK_V1_INTERFACE_NAME);
   ext_session_lock_v1_interface.version := 1;
   ext_session_lock_v1_interface.method_count := 3;
   ext_session_lock_v1_interface.methods := @ext_session_lock_v1_requests;
   ext_session_lock_v1_interface.event_count := 2;
   ext_session_lock_v1_interface.events := @ext_session_lock_v1_events;
 
-  ext_session_lock_surface_v1_interface.name := 'ext_session_lock_surface_v1';
+  ext_session_lock_surface_v1_interface.name := PChar(EXT_SESSION_LOCK_SURFACE_V1_INTERFACE_NAME);
   ext_session_lock_surface_v1_interface.version := 1;
   ext_session_lock_surface_v1_interface.method_count := 2;
   ext_session_lock_surface_v1_interface.methods := @ext_session_lock_surface_v1_requests;

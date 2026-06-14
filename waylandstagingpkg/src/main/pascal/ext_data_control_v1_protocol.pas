@@ -130,9 +130,13 @@ type
 
 var
   ext_data_control_manager_v1_interface: Twl_interface;
+  EXT_DATA_CONTROL_MANAGER_V1_INTERFACE_NAME: String = 'ext_data_control_manager_v1';
   ext_data_control_device_v1_interface: Twl_interface;
+  EXT_DATA_CONTROL_DEVICE_V1_INTERFACE_NAME: String = 'ext_data_control_device_v1';
   ext_data_control_source_v1_interface: Twl_interface;
+  EXT_DATA_CONTROL_SOURCE_V1_INTERFACE_NAME: String = 'ext_data_control_source_v1';
   ext_data_control_offer_v1_interface: Twl_interface;
+  EXT_DATA_CONTROL_OFFER_V1_INTERFACE_NAME: String = 'ext_data_control_offer_v1';
 
 
 
@@ -366,28 +370,28 @@ initialization
   Pointer(vIntf_ext_data_control_offer_v1_Listener.offer) := @ext_data_control_offer_v1_offer_Intf;
 
 
-  ext_data_control_manager_v1_interface.name := 'ext_data_control_manager_v1';
+  ext_data_control_manager_v1_interface.name := PChar(EXT_DATA_CONTROL_MANAGER_V1_INTERFACE_NAME);
   ext_data_control_manager_v1_interface.version := 1;
   ext_data_control_manager_v1_interface.method_count := 3;
   ext_data_control_manager_v1_interface.methods := @ext_data_control_manager_v1_requests;
   ext_data_control_manager_v1_interface.event_count := 0;
   ext_data_control_manager_v1_interface.events := nil;
 
-  ext_data_control_device_v1_interface.name := 'ext_data_control_device_v1';
+  ext_data_control_device_v1_interface.name := PChar(EXT_DATA_CONTROL_DEVICE_V1_INTERFACE_NAME);
   ext_data_control_device_v1_interface.version := 1;
   ext_data_control_device_v1_interface.method_count := 3;
   ext_data_control_device_v1_interface.methods := @ext_data_control_device_v1_requests;
   ext_data_control_device_v1_interface.event_count := 4;
   ext_data_control_device_v1_interface.events := @ext_data_control_device_v1_events;
 
-  ext_data_control_source_v1_interface.name := 'ext_data_control_source_v1';
+  ext_data_control_source_v1_interface.name := PChar(EXT_DATA_CONTROL_SOURCE_V1_INTERFACE_NAME);
   ext_data_control_source_v1_interface.version := 1;
   ext_data_control_source_v1_interface.method_count := 2;
   ext_data_control_source_v1_interface.methods := @ext_data_control_source_v1_requests;
   ext_data_control_source_v1_interface.event_count := 2;
   ext_data_control_source_v1_interface.events := @ext_data_control_source_v1_events;
 
-  ext_data_control_offer_v1_interface.name := 'ext_data_control_offer_v1';
+  ext_data_control_offer_v1_interface.name := PChar(EXT_DATA_CONTROL_OFFER_V1_INTERFACE_NAME);
   ext_data_control_offer_v1_interface.version := 1;
   ext_data_control_offer_v1_interface.method_count := 2;
   ext_data_control_offer_v1_interface.methods := @ext_data_control_offer_v1_requests;

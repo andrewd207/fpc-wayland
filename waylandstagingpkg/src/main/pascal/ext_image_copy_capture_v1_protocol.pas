@@ -162,9 +162,13 @@ type
 
 var
   ext_image_copy_capture_manager_v1_interface: Twl_interface;
+  EXT_IMAGE_COPY_CAPTURE_MANAGER_V1_INTERFACE_NAME: String = 'ext_image_copy_capture_manager_v1';
   ext_image_copy_capture_session_v1_interface: Twl_interface;
+  EXT_IMAGE_COPY_CAPTURE_SESSION_V1_INTERFACE_NAME: String = 'ext_image_copy_capture_session_v1';
   ext_image_copy_capture_frame_v1_interface: Twl_interface;
+  EXT_IMAGE_COPY_CAPTURE_FRAME_V1_INTERFACE_NAME: String = 'ext_image_copy_capture_frame_v1';
   ext_image_copy_capture_cursor_session_v1_interface: Twl_interface;
+  EXT_IMAGE_COPY_CAPTURE_CURSOR_SESSION_V1_INTERFACE_NAME: String = 'ext_image_copy_capture_cursor_session_v1';
 
 
 
@@ -510,28 +514,28 @@ initialization
   Pointer(vIntf_ext_image_copy_capture_cursor_session_v1_Listener.hotspot) := @ext_image_copy_capture_cursor_session_v1_hotspot_Intf;
 
 
-  ext_image_copy_capture_manager_v1_interface.name := 'ext_image_copy_capture_manager_v1';
+  ext_image_copy_capture_manager_v1_interface.name := PChar(EXT_IMAGE_COPY_CAPTURE_MANAGER_V1_INTERFACE_NAME);
   ext_image_copy_capture_manager_v1_interface.version := 1;
   ext_image_copy_capture_manager_v1_interface.method_count := 3;
   ext_image_copy_capture_manager_v1_interface.methods := @ext_image_copy_capture_manager_v1_requests;
   ext_image_copy_capture_manager_v1_interface.event_count := 0;
   ext_image_copy_capture_manager_v1_interface.events := nil;
 
-  ext_image_copy_capture_session_v1_interface.name := 'ext_image_copy_capture_session_v1';
+  ext_image_copy_capture_session_v1_interface.name := PChar(EXT_IMAGE_COPY_CAPTURE_SESSION_V1_INTERFACE_NAME);
   ext_image_copy_capture_session_v1_interface.version := 1;
   ext_image_copy_capture_session_v1_interface.method_count := 2;
   ext_image_copy_capture_session_v1_interface.methods := @ext_image_copy_capture_session_v1_requests;
   ext_image_copy_capture_session_v1_interface.event_count := 6;
   ext_image_copy_capture_session_v1_interface.events := @ext_image_copy_capture_session_v1_events;
 
-  ext_image_copy_capture_frame_v1_interface.name := 'ext_image_copy_capture_frame_v1';
+  ext_image_copy_capture_frame_v1_interface.name := PChar(EXT_IMAGE_COPY_CAPTURE_FRAME_V1_INTERFACE_NAME);
   ext_image_copy_capture_frame_v1_interface.version := 1;
   ext_image_copy_capture_frame_v1_interface.method_count := 4;
   ext_image_copy_capture_frame_v1_interface.methods := @ext_image_copy_capture_frame_v1_requests;
   ext_image_copy_capture_frame_v1_interface.event_count := 5;
   ext_image_copy_capture_frame_v1_interface.events := @ext_image_copy_capture_frame_v1_events;
 
-  ext_image_copy_capture_cursor_session_v1_interface.name := 'ext_image_copy_capture_cursor_session_v1';
+  ext_image_copy_capture_cursor_session_v1_interface.name := PChar(EXT_IMAGE_COPY_CAPTURE_CURSOR_SESSION_V1_INTERFACE_NAME);
   ext_image_copy_capture_cursor_session_v1_interface.version := 1;
   ext_image_copy_capture_cursor_session_v1_interface.method_count := 2;
   ext_image_copy_capture_cursor_session_v1_interface.methods := @ext_image_copy_capture_cursor_session_v1_requests;

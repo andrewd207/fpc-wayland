@@ -72,7 +72,9 @@ type
 
 var
   wp_alpha_modifier_v1_interface: Twl_interface;
+  WP_ALPHA_MODIFIER_V1_INTERFACE_NAME: String = 'wp_alpha_modifier_v1';
   wp_alpha_modifier_surface_v1_interface: Twl_interface;
+  WP_ALPHA_MODIFIER_SURFACE_V1_INTERFACE_NAME: String = 'wp_alpha_modifier_surface_v1';
 
 
 
@@ -156,14 +158,14 @@ const
 initialization
 
 
-  wp_alpha_modifier_v1_interface.name := 'wp_alpha_modifier_v1';
+  wp_alpha_modifier_v1_interface.name := PChar(WP_ALPHA_MODIFIER_V1_INTERFACE_NAME);
   wp_alpha_modifier_v1_interface.version := 1;
   wp_alpha_modifier_v1_interface.method_count := 2;
   wp_alpha_modifier_v1_interface.methods := @wp_alpha_modifier_v1_requests;
   wp_alpha_modifier_v1_interface.event_count := 0;
   wp_alpha_modifier_v1_interface.events := nil;
 
-  wp_alpha_modifier_surface_v1_interface.name := 'wp_alpha_modifier_surface_v1';
+  wp_alpha_modifier_surface_v1_interface.name := PChar(WP_ALPHA_MODIFIER_SURFACE_V1_INTERFACE_NAME);
   wp_alpha_modifier_surface_v1_interface.version := 1;
   wp_alpha_modifier_surface_v1_interface.method_count := 2;
   wp_alpha_modifier_surface_v1_interface.methods := @wp_alpha_modifier_surface_v1_requests;

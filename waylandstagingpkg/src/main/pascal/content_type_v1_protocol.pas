@@ -75,7 +75,9 @@ type
 
 var
   wp_content_type_manager_v1_interface: Twl_interface;
+  WP_CONTENT_TYPE_MANAGER_V1_INTERFACE_NAME: String = 'wp_content_type_manager_v1';
   wp_content_type_v1_interface: Twl_interface;
+  WP_CONTENT_TYPE_V1_INTERFACE_NAME: String = 'wp_content_type_v1';
 
 
 
@@ -159,14 +161,14 @@ const
 initialization
 
 
-  wp_content_type_manager_v1_interface.name := 'wp_content_type_manager_v1';
+  wp_content_type_manager_v1_interface.name := PChar(WP_CONTENT_TYPE_MANAGER_V1_INTERFACE_NAME);
   wp_content_type_manager_v1_interface.version := 1;
   wp_content_type_manager_v1_interface.method_count := 2;
   wp_content_type_manager_v1_interface.methods := @wp_content_type_manager_v1_requests;
   wp_content_type_manager_v1_interface.event_count := 0;
   wp_content_type_manager_v1_interface.events := nil;
 
-  wp_content_type_v1_interface.name := 'wp_content_type_v1';
+  wp_content_type_v1_interface.name := PChar(WP_CONTENT_TYPE_V1_INTERFACE_NAME);
   wp_content_type_v1_interface.version := 1;
   wp_content_type_v1_interface.method_count := 2;
   wp_content_type_v1_interface.methods := @wp_content_type_v1_requests;

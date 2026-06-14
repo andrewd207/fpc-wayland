@@ -78,7 +78,9 @@ type
 
 var
   wp_presentation_interface: Twl_interface;
+  WP_PRESENTATION_INTERFACE_NAME: String = 'wp_presentation';
   wp_presentation_feedback_interface: Twl_interface;
+  WP_PRESENTATION_FEEDBACK_INTERFACE_NAME: String = 'wp_presentation_feedback';
 
 
 
@@ -196,14 +198,14 @@ initialization
   Pointer(vIntf_wp_presentation_feedback_Listener.discarded) := @wp_presentation_feedback_discarded_Intf;
 
 
-  wp_presentation_interface.name := 'wp_presentation';
+  wp_presentation_interface.name := PChar(WP_PRESENTATION_INTERFACE_NAME);
   wp_presentation_interface.version := 2;
   wp_presentation_interface.method_count := 2;
   wp_presentation_interface.methods := @wp_presentation_requests;
   wp_presentation_interface.event_count := 1;
   wp_presentation_interface.events := @wp_presentation_events;
 
-  wp_presentation_feedback_interface.name := 'wp_presentation_feedback';
+  wp_presentation_feedback_interface.name := PChar(WP_PRESENTATION_FEEDBACK_INTERFACE_NAME);
   wp_presentation_feedback_interface.version := 2;
   wp_presentation_feedback_interface.method_count := 0;
   wp_presentation_feedback_interface.methods := nil;

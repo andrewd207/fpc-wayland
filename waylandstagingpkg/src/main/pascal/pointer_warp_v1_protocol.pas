@@ -44,6 +44,7 @@ type
 
 var
   wp_pointer_warp_v1_interface: Twl_interface;
+  WP_POINTER_WARP_V1_INTERFACE_NAME: String = 'wp_pointer_warp_v1';
 
 
 
@@ -101,7 +102,7 @@ const
 initialization
 
 
-  wp_pointer_warp_v1_interface.name := 'wp_pointer_warp_v1';
+  wp_pointer_warp_v1_interface.name := PChar(WP_POINTER_WARP_V1_INTERFACE_NAME);
   wp_pointer_warp_v1_interface.version := 1;
   wp_pointer_warp_v1_interface.method_count := 2;
   wp_pointer_warp_v1_interface.methods := @wp_pointer_warp_v1_requests;

@@ -104,6 +104,22 @@ begin
   Result := GIfaceUnit.Values[AIface];
 end;
 
+// Unstable wayland interfaces carry a 'z' namespace prefix (zwp_, zxdg_, ...).
+// Strip it for generated Pascal identifiers; the on-the-wire protocol name
+// keeps the prefix and is exposed via the *_INTERFACE_NAME variable.
+function StripZ(const AName: String): String;
+begin
+  Result := AName;
+  if (Length(Result) >= 2) and (Result[1] = 'z') and (Result[2] in ['a'..'z']) then
+    Delete(Result, 1, 1);
+end;
+
+// The overridable interface-name variable, e.g. WP_POINTER_CONSTRAINTS_V1_INTERFACE_NAME.
+function InterfaceNameVar(const AName: String): String;
+begin
+  Result := UpperCase(StripZ(AName)) + '_INTERFACE_NAME';
+end;
+
 procedure TrimLastChar(AStrings: TStrings);
 var
   lLine: String;
@@ -128,7 +144,7 @@ begin
   // global vars :(
 
   DeclareInterfaceVars(Element, nil);
-  lInterfaceVar := Element.Name+'_interface';
+  lInterfaceVar := StripZ(Element.Name)+'_interface';
 
   case Element.Name of
     'wl_display'  : lParentClass:='TWlDisplayBase';
@@ -140,9 +156,9 @@ begin
   end;
 
   //Sections[sClassForward].Add('  T'+Pascalify(Element.Name)+'Class = class of T'+Pascalify(Element.Name)+';');
-  Sections[sClassForward].Add('  T'+Pascalify(Element.Name)+' = class;');
+  Sections[sClassForward].Add('  T'+Pascalify(StripZ(Element.Name))+' = class;');
   Sections[sClasses].Add('');
-  Sections[sClasses].Add('  T'+Pascalify(Element.Name)+' = class('+lParentClass+')');
+  Sections[sClasses].Add('  T'+Pascalify(StripZ(Element.Name))+' = class('+lParentClass+')');
 
   if Element.HasRequests then
   begin
@@ -171,7 +187,7 @@ begin
       // get rid of comma
       TrimLastChar(Sections[sRequestandEvents]);
 
-      lRequestConstName := Element.Name+'_requests';
+      lRequestConstName := StripZ(Element.Name)+'_requests';
       Sections[sRequestandEvents].Insert(lIndex,
         Format('  %s: array[0..%d] of Twl_message = (', [lRequestConstName, lRequestCount-1]));
       Sections[sRequestandEvents].Add('  );');
@@ -185,14 +201,14 @@ begin
     begin
       // get rid of comma
       TrimLastChar(Sections[sRequestandEvents]);
-      lEventConstName:=Element.Name+'_events';
+      lEventConstName:=StripZ(Element.Name)+'_events';
       Sections[sRequestandEvents].Insert(lIndex,
         Format('  %s: array[0..%d] of Twl_message = (', [lEventConstName, lEventCount-1]));
       Sections[sRequestandEvents].Add('  );');
       lEventConstName := '@'+lEventConstName;
     end;
 
-    Sections[sInit].Add(Format('  %s.name := ''%s'';',     [lInterfaceVar, Element.Name]));
+    Sections[sInit].Add(Format('  %s.name := PChar(%s);',  [lInterfaceVar, InterfaceNameVar(Element.Name)]));
     Sections[sInit].Add(Format('  %s.version := %s;',      [lInterfaceVar, Element.Version]));
     Sections[sInit].Add(Format('  %s.method_count := %d;', [lInterfaceVar, lRequestCount]));
     Sections[sInit].Add(Format('  %s.methods := %s;',      [lInterfaceVar, lRequestConstName]));
@@ -229,9 +245,7 @@ end;
 
 procedure TGenerator.DeclareInterfaceTypes(Element: TBaseNode; AData: Pointer);
 begin
-  Sections[sTypes].Add('  P'+Element.Name+' = Pointer;');
-  //Sections[sTypes].Add('  P'+Element.Name+' = ^T'+Element.Name+';');
-  //Sections[sTypes].Add('  T'+Element.Name+' = record end;');
+  Sections[sTypes].Add('  P'+StripZ(Element.Name)+' = Pointer;');
 end;
 
 procedure TGenerator.DeclareInterfaceVars(Element: TBaseNode; AData: Pointer);
@@ -239,11 +253,14 @@ var
   lInterfaceVar, lLine: String;
 begin
   // global vars :(
-  lInterfaceVar := Element.Name+'_interface';
+  lInterfaceVar := StripZ(Element.Name)+'_interface';
   lLine := '  '+lInterfaceVar+': Twl_interface;';
   if not FImplementInterfaceVars then
     lLine+=' cvar; external;';
   Sections[sVars].Add(lLine);
+  // overridable wire interface name; defaults to the real protocol name.
+  if FImplementInterfaceVars then
+    Sections[sVars].Add('  '+InterfaceNameVar(Element.Name)+': String = '''+Element.Name+''';');
 end;
 
 procedure TGenerator.CollectEnums(Element: TBaseNode; AData: Pointer);
@@ -324,7 +341,7 @@ begin
           Delete(lValue, 1, 2);
           lValue:='$'+  lValue;
         end;
-        Sections[sTypes].Add('  '+UpperCase(Element.Name+'_'+lEnum.Name+'_'+lEntry.Name)+' = '+lValue +'; // '+ lEntry.Summary);
+        Sections[sTypes].Add('  '+UpperCase(StripZ(Element.Name)+'_'+lEnum.Name+'_'+lEntry.Name)+' = '+lValue +'; // '+ lEntry.Summary);
       end;
     end;
 
@@ -335,15 +352,15 @@ begin
     Sections[sTypes].Add('type');
   end;
 
-  lTypeName := Element.Name+'_listener';
+  lTypeName := StripZ(Element.Name)+'_listener';
 
   //CreateGUID(lGUID);
-  lInterfaceName:='I'+Pascalify(Element.Name)+'Listener';
+  lInterfaceName:='I'+Pascalify(StripZ(Element.Name))+'Listener';
   Sections[sListenerDecl].Add('  '+lInterfaceName+' = interface');
   //Sections[sListenerDecl].Add('  ['''+GUIDToString(lGUID)+''']');
   Sections[sListenerDecl].Add('  ['''+lInterfaceName+''']');
 
-  Sections[sPrivateVar].Add('  vIntf_'+Element.Name+'_Listener: T'+ Element.Name+'_listener;');
+  Sections[sPrivateVar].Add('  vIntf_'+StripZ(Element.Name)+'_Listener: T'+ StripZ(Element.Name)+'_listener;');
 
   Sections[sTypes].Add('  P'+lTypeName+' = ^T'+lTypeName+';');
   Sections[sTypes].Add('  T'+lTypeName+' = record');
@@ -369,17 +386,17 @@ begin
       or (lEventName = 'type') then
         lEventName+= '_';
 
-      lArgs :='    '+ lEventName+' : procedure(data: Pointer; A'+Pascalify(Element.Name)+': P'+Element.Name;
+      lArgs :='    '+ lEventName+' : procedure(data: Pointer; A'+Pascalify(StripZ(Element.Name))+': P'+StripZ(Element.Name);
 
       // for IxxxListener
-      lInterfaceLine := '    procedure '+Element.Name+'_'+lEvent.Name+'(A'+Pascalify(Element.Name)+': T'+Pascalify(Element.Name);
+      lInterfaceLine := '    procedure '+StripZ(Element.Name)+'_'+lEvent.Name+'(A'+Pascalify(StripZ(Element.Name))+': T'+Pascalify(StripZ(Element.Name));
       lWrapperVar := '  AIntf: ' + lInterfaceName+';';
       lWrapperVarAssign := '  AIntf := '+lInterfaceName+'(AData^.ListenerUserData);';
-      lWrapperDecl   := 'procedure '+Element.Name+'_'+lEvent.Name+'_Intf(AData: PWLUserData; A'+Element.Name+': P'+Element.Name;
-      lWrapperLine:= '  AIntf.'+Element.Name+'_'+lEvent.Name+'(T'+Pascalify(Element.Name)+'(AData^.PascalObject)';
+      lWrapperDecl   := 'procedure '+StripZ(Element.Name)+'_'+lEvent.Name+'_Intf(AData: PWLUserData; A'+StripZ(Element.Name)+': P'+StripZ(Element.Name);
+      lWrapperLine:= '  AIntf.'+StripZ(Element.Name)+'_'+lEvent.Name+'(T'+Pascalify(StripZ(Element.Name))+'(AData^.PascalObject)';
 
       // setting the listener variable
-      lWrapperBind := '  Pointer(vIntf_'+Element.Name+'_Listener.'+lEventName+') := @'+Element.Name+'_'+lEvent.Name+'_Intf;';
+      lWrapperBind := '  Pointer(vIntf_'+StripZ(Element.Name)+'_Listener.'+lEventName+') := @'+StripZ(Element.Name)+'_'+lEvent.Name+'_Intf;';
 
     end
     else
@@ -537,9 +554,9 @@ begin
           begin
             NoteInterfaceUse(AInterface);
             if APascalify then
-              Result:='T'+ Pascalify(AInterface)
+              Result:='T'+ Pascalify(StripZ(AInterface))
             else
-              Result := 'P'+AInterface;
+              Result := 'P'+StripZ(AInterface);
           end;
           ANeedsWrapper:=True;
         end;
@@ -547,9 +564,9 @@ begin
         begin
           NoteInterfaceUse(AInterface);
           if APascalify then
-            Result:='T'+ Pascalify(AInterface)
+            Result:='T'+ Pascalify(StripZ(AInterface))
           else
-            Result := 'P'+AInterface;
+            Result := 'P'+StripZ(AInterface);
 
           if Length(Result) = 1 then
             Result := 'Pointer';
@@ -604,7 +621,7 @@ var
 begin
   lInterfaceType := larg.&Interface;
   if lInterfaceType <> '' then
-    Sections[sInterfacePointers].Add(Format('    (@%s_interface),', [lInterfaceType]))
+    Sections[sInterfacePointers].Add(Format('    (@%s_interface),', [StripZ(lInterfaceType)]))
   else
     Sections[sInterfacePointers].Add('    (nil),');
 end;
@@ -801,8 +818,8 @@ begin
   else
   if Assigned(lReturnVar) then
   begin
-    lArgs+='; AProxyClass: TWLProxyObjectClass = nil {T'+Pascalify(lReturnVar.&Interface+'}');
-    lWrapperArgs+='; AProxyClass: TWLProxyObjectClass = nil {T'+Pascalify(lReturnVar.&Interface+'}');
+    lArgs+='; AProxyClass: TWLProxyObjectClass = nil {T'+Pascalify(StripZ(lReturnVar.&Interface)+'}');
+    lWrapperArgs+='; AProxyClass: TWLProxyObjectClass = nil {T'+Pascalify(StripZ(lReturnVar.&Interface)+'}');
   end;
 
   // Only the request literally named "destroy" maps to Pascal's destructor.
@@ -834,7 +851,7 @@ begin
     lWrapperArgs := '';
 
   lIntf:=Format('    %s %s%s%s%s;', [lFuncType, lFuncName, lOverride, lWrapperArgs, lFuncReturn]);
-  lImpl:=Format('%s T%s.%s%s%s;', [lFuncType, Pascalify(lInterface.Name), lFuncName, lWrapperArgs, lFuncReturn]);
+  lImpl:=Format('%s T%s.%s%s%s;', [lFuncType, Pascalify(StripZ(lInterface.Name)), lFuncName, lWrapperArgs, lFuncReturn]);
 
   // add interface line of request
   Sections[sClasses].Add(lIntf);
@@ -868,12 +885,12 @@ begin
     lTypeCast := lReturnVar.&Interface;
     if lTypeCast = '' then
       lTypeCast:=lInterface.Name;
-    lTypeCast:=Pascalify(lTypeCast);
+    lTypeCast:=Pascalify(StripZ(lTypeCast));
     Sections[sClassImpl].Add('var');
     Sections[sClassImpl].Add('  '+lReturnVar.Name+': Pwl_proxy;');
     Sections[sClassImpl].Add('begin');
     Sections[sClassImpl].Add('  '+lReturnVar.Name+' := wl_proxy_marshal_constructor(FProxy,' );
-    Sections[sClassImpl].Add('      '+UpperCase('_'+Element.Name)+', @'+ lReturnVar.&Interface+'_interface, nil'+lArgs);
+    Sections[sClassImpl].Add('      '+UpperCase('_'+Element.Name)+', @'+ StripZ(lReturnVar.&Interface)+'_interface, nil'+lArgs);
     Sections[sClassImpl].Add('  if AProxyClass = nil then');
     Sections[sClassImpl].Add('    AProxyClass := T'+lTypeCast+';');
     Sections[sClassImpl].Add('  Result := T'+lTypeCast+'(AProxyClass.Create('+lReturnVar.Name+'));');
@@ -904,14 +921,14 @@ procedure TGenerator.WriteListenerObjectMethod(Element: TInterface);
 var
   lIntf, lClassname: String;
 begin
-  lIntf:='I'+Pascalify(Element.Name)+'Listener';
-  lClassname := 'T'+Pascalify(Element.Name);
+  lIntf:='I'+Pascalify(StripZ(Element.Name))+'Listener';
+  lClassname := 'T'+Pascalify(StripZ(Element.Name));
   Sections[sClasses].Add('    function AddListener(AIntf: '+lIntf+'): LongInt;');
 
   Sections[sClassImpl].Add('function '+lClassname+'.AddListener(AIntf: '+lIntf+'): LongInt;');
   Sections[sClassImpl].Add('begin');
   Sections[sClassImpl].Add('  FUserDataRec.ListenerUserData := Pointer(AIntf);');
-  Sections[sClassImpl].Add('  Result := wl_proxy_add_listener(FProxy, @vIntf_'+Element.Name+'_Listener, @FUserDataRec);');
+  Sections[sClassImpl].Add('  Result := wl_proxy_add_listener(FProxy, @vIntf_'+StripZ(Element.Name)+'_Listener, @FUserDataRec);');
   Sections[sClassImpl].Add('end;');
 end;
 

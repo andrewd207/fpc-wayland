@@ -10,296 +10,296 @@ uses
 
 
 type
-  Pzwp_tablet_manager_v2 = Pointer;
-  Pzwp_tablet_seat_v2 = Pointer;
-  Pzwp_tablet_tool_v2 = Pointer;
-  Pzwp_tablet_v2 = Pointer;
-  Pzwp_tablet_pad_ring_v2 = Pointer;
-  Pzwp_tablet_pad_strip_v2 = Pointer;
-  Pzwp_tablet_pad_group_v2 = Pointer;
-  Pzwp_tablet_pad_v2 = Pointer;
-  Pzwp_tablet_manager_v2_listener = ^Tzwp_tablet_manager_v2_listener;
-  Tzwp_tablet_manager_v2_listener = record
+  Pwp_tablet_manager_v2 = Pointer;
+  Pwp_tablet_seat_v2 = Pointer;
+  Pwp_tablet_tool_v2 = Pointer;
+  Pwp_tablet_v2 = Pointer;
+  Pwp_tablet_pad_ring_v2 = Pointer;
+  Pwp_tablet_pad_strip_v2 = Pointer;
+  Pwp_tablet_pad_group_v2 = Pointer;
+  Pwp_tablet_pad_v2 = Pointer;
+  Pwp_tablet_manager_v2_listener = ^Twp_tablet_manager_v2_listener;
+  Twp_tablet_manager_v2_listener = record
   end;
 
-  Pzwp_tablet_seat_v2_listener = ^Tzwp_tablet_seat_v2_listener;
-  Tzwp_tablet_seat_v2_listener = record
-    tablet_added : procedure(data: Pointer; AZwpTabletSeatV2: Pzwp_tablet_seat_v2; AId: Pzwp_tablet_v2); cdecl;
-    tool_added : procedure(data: Pointer; AZwpTabletSeatV2: Pzwp_tablet_seat_v2; AId: Pzwp_tablet_tool_v2); cdecl;
-    pad_added : procedure(data: Pointer; AZwpTabletSeatV2: Pzwp_tablet_seat_v2; AId: Pzwp_tablet_pad_v2); cdecl;
-  end;
-
-const
-  ZWP_TABLET_TOOL_V2_TYPE_PEN = $140; // Pen
-  ZWP_TABLET_TOOL_V2_TYPE_ERASER = $141; // Eraser
-  ZWP_TABLET_TOOL_V2_TYPE_BRUSH = $142; // Brush
-  ZWP_TABLET_TOOL_V2_TYPE_PENCIL = $143; // Pencil
-  ZWP_TABLET_TOOL_V2_TYPE_AIRBRUSH = $144; // Airbrush
-  ZWP_TABLET_TOOL_V2_TYPE_FINGER = $145; // Finger
-  ZWP_TABLET_TOOL_V2_TYPE_MOUSE = $146; // Mouse
-  ZWP_TABLET_TOOL_V2_TYPE_LENS = $147; // Lens
-  ZWP_TABLET_TOOL_V2_CAPABILITY_TILT = 1; // Tilt axes
-  ZWP_TABLET_TOOL_V2_CAPABILITY_PRESSURE = 2; // Pressure axis
-  ZWP_TABLET_TOOL_V2_CAPABILITY_DISTANCE = 3; // Distance axis
-  ZWP_TABLET_TOOL_V2_CAPABILITY_ROTATION = 4; // Z-rotation axis
-  ZWP_TABLET_TOOL_V2_CAPABILITY_SLIDER = 5; // Slider axis
-  ZWP_TABLET_TOOL_V2_CAPABILITY_WHEEL = 6; // Wheel axis
-  ZWP_TABLET_TOOL_V2_BUTTON_STATE_RELEASED = 0; // button is not pressed
-  ZWP_TABLET_TOOL_V2_BUTTON_STATE_PRESSED = 1; // button is pressed
-  ZWP_TABLET_TOOL_V2_ERROR_ROLE = 0; // given wl_surface has another role
-
-type
-  Pzwp_tablet_tool_v2_listener = ^Tzwp_tablet_tool_v2_listener;
-  Tzwp_tablet_tool_v2_listener = record
-    type_ : procedure(data: Pointer; AZwpTabletToolV2: Pzwp_tablet_tool_v2; AToolType: DWord); cdecl;
-    hardware_serial : procedure(data: Pointer; AZwpTabletToolV2: Pzwp_tablet_tool_v2; AHardwareSerialHi: DWord; AHardwareSerialLo: DWord); cdecl;
-    hardware_id_wacom : procedure(data: Pointer; AZwpTabletToolV2: Pzwp_tablet_tool_v2; AHardwareIdHi: DWord; AHardwareIdLo: DWord); cdecl;
-    capability : procedure(data: Pointer; AZwpTabletToolV2: Pzwp_tablet_tool_v2; ACapability: DWord); cdecl;
-    done : procedure(data: Pointer; AZwpTabletToolV2: Pzwp_tablet_tool_v2); cdecl;
-    removed : procedure(data: Pointer; AZwpTabletToolV2: Pzwp_tablet_tool_v2); cdecl;
-    proximity_in : procedure(data: Pointer; AZwpTabletToolV2: Pzwp_tablet_tool_v2; ASerial: DWord; ATablet: Pzwp_tablet_v2; ASurface: Pwl_surface); cdecl;
-    proximity_out : procedure(data: Pointer; AZwpTabletToolV2: Pzwp_tablet_tool_v2); cdecl;
-    down : procedure(data: Pointer; AZwpTabletToolV2: Pzwp_tablet_tool_v2; ASerial: DWord); cdecl;
-    up : procedure(data: Pointer; AZwpTabletToolV2: Pzwp_tablet_tool_v2); cdecl;
-    motion : procedure(data: Pointer; AZwpTabletToolV2: Pzwp_tablet_tool_v2; AX: Longint{24.8}; AY: Longint{24.8}); cdecl;
-    pressure : procedure(data: Pointer; AZwpTabletToolV2: Pzwp_tablet_tool_v2; APressure: DWord); cdecl;
-    distance : procedure(data: Pointer; AZwpTabletToolV2: Pzwp_tablet_tool_v2; ADistance: DWord); cdecl;
-    tilt : procedure(data: Pointer; AZwpTabletToolV2: Pzwp_tablet_tool_v2; ATiltX: Longint{24.8}; ATiltY: Longint{24.8}); cdecl;
-    rotation : procedure(data: Pointer; AZwpTabletToolV2: Pzwp_tablet_tool_v2; ADegrees: Longint{24.8}); cdecl;
-    slider : procedure(data: Pointer; AZwpTabletToolV2: Pzwp_tablet_tool_v2; APosition: LongInt); cdecl;
-    wheel : procedure(data: Pointer; AZwpTabletToolV2: Pzwp_tablet_tool_v2; ADegrees: Longint{24.8}; AClicks: LongInt); cdecl;
-    button : procedure(data: Pointer; AZwpTabletToolV2: Pzwp_tablet_tool_v2; ASerial: DWord; AButton: DWord; AState: DWord); cdecl;
-    frame : procedure(data: Pointer; AZwpTabletToolV2: Pzwp_tablet_tool_v2; ATime: DWord); cdecl;
-  end;
-
-  Pzwp_tablet_v2_listener = ^Tzwp_tablet_v2_listener;
-  Tzwp_tablet_v2_listener = record
-    name : procedure(data: Pointer; AZwpTabletV2: Pzwp_tablet_v2; AName: Pchar); cdecl;
-    id : procedure(data: Pointer; AZwpTabletV2: Pzwp_tablet_v2; AVid: DWord; APid: DWord); cdecl;
-    path : procedure(data: Pointer; AZwpTabletV2: Pzwp_tablet_v2; APath: Pchar); cdecl;
-    done : procedure(data: Pointer; AZwpTabletV2: Pzwp_tablet_v2); cdecl;
-    removed : procedure(data: Pointer; AZwpTabletV2: Pzwp_tablet_v2); cdecl;
+  Pwp_tablet_seat_v2_listener = ^Twp_tablet_seat_v2_listener;
+  Twp_tablet_seat_v2_listener = record
+    tablet_added : procedure(data: Pointer; AWpTabletSeatV2: Pwp_tablet_seat_v2; AId: Pwp_tablet_v2); cdecl;
+    tool_added : procedure(data: Pointer; AWpTabletSeatV2: Pwp_tablet_seat_v2; AId: Pwp_tablet_tool_v2); cdecl;
+    pad_added : procedure(data: Pointer; AWpTabletSeatV2: Pwp_tablet_seat_v2; AId: Pwp_tablet_pad_v2); cdecl;
   end;
 
 const
-  ZWP_TABLET_PAD_RING_V2_SOURCE_FINGER = 1; // finger
+  WP_TABLET_TOOL_V2_TYPE_PEN = $140; // Pen
+  WP_TABLET_TOOL_V2_TYPE_ERASER = $141; // Eraser
+  WP_TABLET_TOOL_V2_TYPE_BRUSH = $142; // Brush
+  WP_TABLET_TOOL_V2_TYPE_PENCIL = $143; // Pencil
+  WP_TABLET_TOOL_V2_TYPE_AIRBRUSH = $144; // Airbrush
+  WP_TABLET_TOOL_V2_TYPE_FINGER = $145; // Finger
+  WP_TABLET_TOOL_V2_TYPE_MOUSE = $146; // Mouse
+  WP_TABLET_TOOL_V2_TYPE_LENS = $147; // Lens
+  WP_TABLET_TOOL_V2_CAPABILITY_TILT = 1; // Tilt axes
+  WP_TABLET_TOOL_V2_CAPABILITY_PRESSURE = 2; // Pressure axis
+  WP_TABLET_TOOL_V2_CAPABILITY_DISTANCE = 3; // Distance axis
+  WP_TABLET_TOOL_V2_CAPABILITY_ROTATION = 4; // Z-rotation axis
+  WP_TABLET_TOOL_V2_CAPABILITY_SLIDER = 5; // Slider axis
+  WP_TABLET_TOOL_V2_CAPABILITY_WHEEL = 6; // Wheel axis
+  WP_TABLET_TOOL_V2_BUTTON_STATE_RELEASED = 0; // button is not pressed
+  WP_TABLET_TOOL_V2_BUTTON_STATE_PRESSED = 1; // button is pressed
+  WP_TABLET_TOOL_V2_ERROR_ROLE = 0; // given wl_surface has another role
 
 type
-  Pzwp_tablet_pad_ring_v2_listener = ^Tzwp_tablet_pad_ring_v2_listener;
-  Tzwp_tablet_pad_ring_v2_listener = record
-    source : procedure(data: Pointer; AZwpTabletPadRingV2: Pzwp_tablet_pad_ring_v2; ASource: DWord); cdecl;
-    angle : procedure(data: Pointer; AZwpTabletPadRingV2: Pzwp_tablet_pad_ring_v2; ADegrees: Longint{24.8}); cdecl;
-    stop : procedure(data: Pointer; AZwpTabletPadRingV2: Pzwp_tablet_pad_ring_v2); cdecl;
-    frame : procedure(data: Pointer; AZwpTabletPadRingV2: Pzwp_tablet_pad_ring_v2; ATime: DWord); cdecl;
+  Pwp_tablet_tool_v2_listener = ^Twp_tablet_tool_v2_listener;
+  Twp_tablet_tool_v2_listener = record
+    type_ : procedure(data: Pointer; AWpTabletToolV2: Pwp_tablet_tool_v2; AToolType: DWord); cdecl;
+    hardware_serial : procedure(data: Pointer; AWpTabletToolV2: Pwp_tablet_tool_v2; AHardwareSerialHi: DWord; AHardwareSerialLo: DWord); cdecl;
+    hardware_id_wacom : procedure(data: Pointer; AWpTabletToolV2: Pwp_tablet_tool_v2; AHardwareIdHi: DWord; AHardwareIdLo: DWord); cdecl;
+    capability : procedure(data: Pointer; AWpTabletToolV2: Pwp_tablet_tool_v2; ACapability: DWord); cdecl;
+    done : procedure(data: Pointer; AWpTabletToolV2: Pwp_tablet_tool_v2); cdecl;
+    removed : procedure(data: Pointer; AWpTabletToolV2: Pwp_tablet_tool_v2); cdecl;
+    proximity_in : procedure(data: Pointer; AWpTabletToolV2: Pwp_tablet_tool_v2; ASerial: DWord; ATablet: Pwp_tablet_v2; ASurface: Pwl_surface); cdecl;
+    proximity_out : procedure(data: Pointer; AWpTabletToolV2: Pwp_tablet_tool_v2); cdecl;
+    down : procedure(data: Pointer; AWpTabletToolV2: Pwp_tablet_tool_v2; ASerial: DWord); cdecl;
+    up : procedure(data: Pointer; AWpTabletToolV2: Pwp_tablet_tool_v2); cdecl;
+    motion : procedure(data: Pointer; AWpTabletToolV2: Pwp_tablet_tool_v2; AX: Longint{24.8}; AY: Longint{24.8}); cdecl;
+    pressure : procedure(data: Pointer; AWpTabletToolV2: Pwp_tablet_tool_v2; APressure: DWord); cdecl;
+    distance : procedure(data: Pointer; AWpTabletToolV2: Pwp_tablet_tool_v2; ADistance: DWord); cdecl;
+    tilt : procedure(data: Pointer; AWpTabletToolV2: Pwp_tablet_tool_v2; ATiltX: Longint{24.8}; ATiltY: Longint{24.8}); cdecl;
+    rotation : procedure(data: Pointer; AWpTabletToolV2: Pwp_tablet_tool_v2; ADegrees: Longint{24.8}); cdecl;
+    slider : procedure(data: Pointer; AWpTabletToolV2: Pwp_tablet_tool_v2; APosition: LongInt); cdecl;
+    wheel : procedure(data: Pointer; AWpTabletToolV2: Pwp_tablet_tool_v2; ADegrees: Longint{24.8}; AClicks: LongInt); cdecl;
+    button : procedure(data: Pointer; AWpTabletToolV2: Pwp_tablet_tool_v2; ASerial: DWord; AButton: DWord; AState: DWord); cdecl;
+    frame : procedure(data: Pointer; AWpTabletToolV2: Pwp_tablet_tool_v2; ATime: DWord); cdecl;
+  end;
+
+  Pwp_tablet_v2_listener = ^Twp_tablet_v2_listener;
+  Twp_tablet_v2_listener = record
+    name : procedure(data: Pointer; AWpTabletV2: Pwp_tablet_v2; AName: Pchar); cdecl;
+    id : procedure(data: Pointer; AWpTabletV2: Pwp_tablet_v2; AVid: DWord; APid: DWord); cdecl;
+    path : procedure(data: Pointer; AWpTabletV2: Pwp_tablet_v2; APath: Pchar); cdecl;
+    done : procedure(data: Pointer; AWpTabletV2: Pwp_tablet_v2); cdecl;
+    removed : procedure(data: Pointer; AWpTabletV2: Pwp_tablet_v2); cdecl;
   end;
 
 const
-  ZWP_TABLET_PAD_STRIP_V2_SOURCE_FINGER = 1; // finger
+  WP_TABLET_PAD_RING_V2_SOURCE_FINGER = 1; // finger
 
 type
-  Pzwp_tablet_pad_strip_v2_listener = ^Tzwp_tablet_pad_strip_v2_listener;
-  Tzwp_tablet_pad_strip_v2_listener = record
-    source : procedure(data: Pointer; AZwpTabletPadStripV2: Pzwp_tablet_pad_strip_v2; ASource: DWord); cdecl;
-    position : procedure(data: Pointer; AZwpTabletPadStripV2: Pzwp_tablet_pad_strip_v2; APosition: DWord); cdecl;
-    stop : procedure(data: Pointer; AZwpTabletPadStripV2: Pzwp_tablet_pad_strip_v2); cdecl;
-    frame : procedure(data: Pointer; AZwpTabletPadStripV2: Pzwp_tablet_pad_strip_v2; ATime: DWord); cdecl;
-  end;
-
-  Pzwp_tablet_pad_group_v2_listener = ^Tzwp_tablet_pad_group_v2_listener;
-  Tzwp_tablet_pad_group_v2_listener = record
-    buttons : procedure(data: Pointer; AZwpTabletPadGroupV2: Pzwp_tablet_pad_group_v2; AButtons: Pwl_array); cdecl;
-    ring : procedure(data: Pointer; AZwpTabletPadGroupV2: Pzwp_tablet_pad_group_v2; ARing: Pzwp_tablet_pad_ring_v2); cdecl;
-    strip : procedure(data: Pointer; AZwpTabletPadGroupV2: Pzwp_tablet_pad_group_v2; AStrip: Pzwp_tablet_pad_strip_v2); cdecl;
-    modes : procedure(data: Pointer; AZwpTabletPadGroupV2: Pzwp_tablet_pad_group_v2; AModes: DWord); cdecl;
-    done : procedure(data: Pointer; AZwpTabletPadGroupV2: Pzwp_tablet_pad_group_v2); cdecl;
-    mode_switch : procedure(data: Pointer; AZwpTabletPadGroupV2: Pzwp_tablet_pad_group_v2; ATime: DWord; ASerial: DWord; AMode: DWord); cdecl;
+  Pwp_tablet_pad_ring_v2_listener = ^Twp_tablet_pad_ring_v2_listener;
+  Twp_tablet_pad_ring_v2_listener = record
+    source : procedure(data: Pointer; AWpTabletPadRingV2: Pwp_tablet_pad_ring_v2; ASource: DWord); cdecl;
+    angle : procedure(data: Pointer; AWpTabletPadRingV2: Pwp_tablet_pad_ring_v2; ADegrees: Longint{24.8}); cdecl;
+    stop : procedure(data: Pointer; AWpTabletPadRingV2: Pwp_tablet_pad_ring_v2); cdecl;
+    frame : procedure(data: Pointer; AWpTabletPadRingV2: Pwp_tablet_pad_ring_v2; ATime: DWord); cdecl;
   end;
 
 const
-  ZWP_TABLET_PAD_V2_BUTTON_STATE_RELEASED = 0; // the button is not pressed
-  ZWP_TABLET_PAD_V2_BUTTON_STATE_PRESSED = 1; // the button is pressed
+  WP_TABLET_PAD_STRIP_V2_SOURCE_FINGER = 1; // finger
 
 type
-  Pzwp_tablet_pad_v2_listener = ^Tzwp_tablet_pad_v2_listener;
-  Tzwp_tablet_pad_v2_listener = record
-    group : procedure(data: Pointer; AZwpTabletPadV2: Pzwp_tablet_pad_v2; APadGroup: Pzwp_tablet_pad_group_v2); cdecl;
-    path : procedure(data: Pointer; AZwpTabletPadV2: Pzwp_tablet_pad_v2; APath: Pchar); cdecl;
-    buttons : procedure(data: Pointer; AZwpTabletPadV2: Pzwp_tablet_pad_v2; AButtons: DWord); cdecl;
-    done : procedure(data: Pointer; AZwpTabletPadV2: Pzwp_tablet_pad_v2); cdecl;
-    button : procedure(data: Pointer; AZwpTabletPadV2: Pzwp_tablet_pad_v2; ATime: DWord; AButton: DWord; AState: DWord); cdecl;
-    enter : procedure(data: Pointer; AZwpTabletPadV2: Pzwp_tablet_pad_v2; ASerial: DWord; ATablet: Pzwp_tablet_v2; ASurface: Pwl_surface); cdecl;
-    leave : procedure(data: Pointer; AZwpTabletPadV2: Pzwp_tablet_pad_v2; ASerial: DWord; ASurface: Pwl_surface); cdecl;
-    removed : procedure(data: Pointer; AZwpTabletPadV2: Pzwp_tablet_pad_v2); cdecl;
+  Pwp_tablet_pad_strip_v2_listener = ^Twp_tablet_pad_strip_v2_listener;
+  Twp_tablet_pad_strip_v2_listener = record
+    source : procedure(data: Pointer; AWpTabletPadStripV2: Pwp_tablet_pad_strip_v2; ASource: DWord); cdecl;
+    position : procedure(data: Pointer; AWpTabletPadStripV2: Pwp_tablet_pad_strip_v2; APosition: DWord); cdecl;
+    stop : procedure(data: Pointer; AWpTabletPadStripV2: Pwp_tablet_pad_strip_v2); cdecl;
+    frame : procedure(data: Pointer; AWpTabletPadStripV2: Pwp_tablet_pad_strip_v2; ATime: DWord); cdecl;
+  end;
+
+  Pwp_tablet_pad_group_v2_listener = ^Twp_tablet_pad_group_v2_listener;
+  Twp_tablet_pad_group_v2_listener = record
+    buttons : procedure(data: Pointer; AWpTabletPadGroupV2: Pwp_tablet_pad_group_v2; AButtons: Pwl_array); cdecl;
+    ring : procedure(data: Pointer; AWpTabletPadGroupV2: Pwp_tablet_pad_group_v2; ARing: Pwp_tablet_pad_ring_v2); cdecl;
+    strip : procedure(data: Pointer; AWpTabletPadGroupV2: Pwp_tablet_pad_group_v2; AStrip: Pwp_tablet_pad_strip_v2); cdecl;
+    modes : procedure(data: Pointer; AWpTabletPadGroupV2: Pwp_tablet_pad_group_v2; AModes: DWord); cdecl;
+    done : procedure(data: Pointer; AWpTabletPadGroupV2: Pwp_tablet_pad_group_v2); cdecl;
+    mode_switch : procedure(data: Pointer; AWpTabletPadGroupV2: Pwp_tablet_pad_group_v2; ATime: DWord; ASerial: DWord; AMode: DWord); cdecl;
+  end;
+
+const
+  WP_TABLET_PAD_V2_BUTTON_STATE_RELEASED = 0; // the button is not pressed
+  WP_TABLET_PAD_V2_BUTTON_STATE_PRESSED = 1; // the button is pressed
+
+type
+  Pwp_tablet_pad_v2_listener = ^Twp_tablet_pad_v2_listener;
+  Twp_tablet_pad_v2_listener = record
+    group : procedure(data: Pointer; AWpTabletPadV2: Pwp_tablet_pad_v2; APadGroup: Pwp_tablet_pad_group_v2); cdecl;
+    path : procedure(data: Pointer; AWpTabletPadV2: Pwp_tablet_pad_v2; APath: Pchar); cdecl;
+    buttons : procedure(data: Pointer; AWpTabletPadV2: Pwp_tablet_pad_v2; AButtons: DWord); cdecl;
+    done : procedure(data: Pointer; AWpTabletPadV2: Pwp_tablet_pad_v2); cdecl;
+    button : procedure(data: Pointer; AWpTabletPadV2: Pwp_tablet_pad_v2; ATime: DWord; AButton: DWord; AState: DWord); cdecl;
+    enter : procedure(data: Pointer; AWpTabletPadV2: Pwp_tablet_pad_v2; ASerial: DWord; ATablet: Pwp_tablet_v2; ASurface: Pwl_surface); cdecl;
+    leave : procedure(data: Pointer; AWpTabletPadV2: Pwp_tablet_pad_v2; ASerial: DWord; ASurface: Pwl_surface); cdecl;
+    removed : procedure(data: Pointer; AWpTabletPadV2: Pwp_tablet_pad_v2); cdecl;
   end;
 
 
 
-  TZwpTabletManagerV2 = class;
-  TZwpTabletSeatV2 = class;
-  TZwpTabletToolV2 = class;
-  TZwpTabletV2 = class;
-  TZwpTabletPadRingV2 = class;
-  TZwpTabletPadStripV2 = class;
-  TZwpTabletPadGroupV2 = class;
-  TZwpTabletPadV2 = class;
+  TWpTabletManagerV2 = class;
+  TWpTabletSeatV2 = class;
+  TWpTabletToolV2 = class;
+  TWpTabletV2 = class;
+  TWpTabletPadRingV2 = class;
+  TWpTabletPadStripV2 = class;
+  TWpTabletPadGroupV2 = class;
+  TWpTabletPadV2 = class;
 
 
-  IZwpTabletManagerV2Listener = interface
-  ['IZwpTabletManagerV2Listener']
+  IWpTabletManagerV2Listener = interface
+  ['IWpTabletManagerV2Listener']
   end;
 
-  IZwpTabletSeatV2Listener = interface
-  ['IZwpTabletSeatV2Listener']
-    procedure zwp_tablet_seat_v2_tablet_added(AZwpTabletSeatV2: TZwpTabletSeatV2; AId: TZwpTabletV2);
-    procedure zwp_tablet_seat_v2_tool_added(AZwpTabletSeatV2: TZwpTabletSeatV2; AId: TZwpTabletToolV2);
-    procedure zwp_tablet_seat_v2_pad_added(AZwpTabletSeatV2: TZwpTabletSeatV2; AId: TZwpTabletPadV2);
+  IWpTabletSeatV2Listener = interface
+  ['IWpTabletSeatV2Listener']
+    procedure wp_tablet_seat_v2_tablet_added(AWpTabletSeatV2: TWpTabletSeatV2; AId: TWpTabletV2);
+    procedure wp_tablet_seat_v2_tool_added(AWpTabletSeatV2: TWpTabletSeatV2; AId: TWpTabletToolV2);
+    procedure wp_tablet_seat_v2_pad_added(AWpTabletSeatV2: TWpTabletSeatV2; AId: TWpTabletPadV2);
   end;
 
-  IZwpTabletToolV2Listener = interface
-  ['IZwpTabletToolV2Listener']
-    procedure zwp_tablet_tool_v2_type(AZwpTabletToolV2: TZwpTabletToolV2; AToolType: DWord);
-    procedure zwp_tablet_tool_v2_hardware_serial(AZwpTabletToolV2: TZwpTabletToolV2; AHardwareSerialHi: DWord; AHardwareSerialLo: DWord);
-    procedure zwp_tablet_tool_v2_hardware_id_wacom(AZwpTabletToolV2: TZwpTabletToolV2; AHardwareIdHi: DWord; AHardwareIdLo: DWord);
-    procedure zwp_tablet_tool_v2_capability(AZwpTabletToolV2: TZwpTabletToolV2; ACapability: DWord);
-    procedure zwp_tablet_tool_v2_done(AZwpTabletToolV2: TZwpTabletToolV2);
-    procedure zwp_tablet_tool_v2_removed(AZwpTabletToolV2: TZwpTabletToolV2);
-    procedure zwp_tablet_tool_v2_proximity_in(AZwpTabletToolV2: TZwpTabletToolV2; ASerial: DWord; ATablet: TZwpTabletV2; ASurface: TWlSurface);
-    procedure zwp_tablet_tool_v2_proximity_out(AZwpTabletToolV2: TZwpTabletToolV2);
-    procedure zwp_tablet_tool_v2_down(AZwpTabletToolV2: TZwpTabletToolV2; ASerial: DWord);
-    procedure zwp_tablet_tool_v2_up(AZwpTabletToolV2: TZwpTabletToolV2);
-    procedure zwp_tablet_tool_v2_motion(AZwpTabletToolV2: TZwpTabletToolV2; AX: Longint{24.8}; AY: Longint{24.8});
-    procedure zwp_tablet_tool_v2_pressure(AZwpTabletToolV2: TZwpTabletToolV2; APressure: DWord);
-    procedure zwp_tablet_tool_v2_distance(AZwpTabletToolV2: TZwpTabletToolV2; ADistance: DWord);
-    procedure zwp_tablet_tool_v2_tilt(AZwpTabletToolV2: TZwpTabletToolV2; ATiltX: Longint{24.8}; ATiltY: Longint{24.8});
-    procedure zwp_tablet_tool_v2_rotation(AZwpTabletToolV2: TZwpTabletToolV2; ADegrees: Longint{24.8});
-    procedure zwp_tablet_tool_v2_slider(AZwpTabletToolV2: TZwpTabletToolV2; APosition: LongInt);
-    procedure zwp_tablet_tool_v2_wheel(AZwpTabletToolV2: TZwpTabletToolV2; ADegrees: Longint{24.8}; AClicks: LongInt);
-    procedure zwp_tablet_tool_v2_button(AZwpTabletToolV2: TZwpTabletToolV2; ASerial: DWord; AButton: DWord; AState: DWord);
-    procedure zwp_tablet_tool_v2_frame(AZwpTabletToolV2: TZwpTabletToolV2; ATime: DWord);
+  IWpTabletToolV2Listener = interface
+  ['IWpTabletToolV2Listener']
+    procedure wp_tablet_tool_v2_type(AWpTabletToolV2: TWpTabletToolV2; AToolType: DWord);
+    procedure wp_tablet_tool_v2_hardware_serial(AWpTabletToolV2: TWpTabletToolV2; AHardwareSerialHi: DWord; AHardwareSerialLo: DWord);
+    procedure wp_tablet_tool_v2_hardware_id_wacom(AWpTabletToolV2: TWpTabletToolV2; AHardwareIdHi: DWord; AHardwareIdLo: DWord);
+    procedure wp_tablet_tool_v2_capability(AWpTabletToolV2: TWpTabletToolV2; ACapability: DWord);
+    procedure wp_tablet_tool_v2_done(AWpTabletToolV2: TWpTabletToolV2);
+    procedure wp_tablet_tool_v2_removed(AWpTabletToolV2: TWpTabletToolV2);
+    procedure wp_tablet_tool_v2_proximity_in(AWpTabletToolV2: TWpTabletToolV2; ASerial: DWord; ATablet: TWpTabletV2; ASurface: TWlSurface);
+    procedure wp_tablet_tool_v2_proximity_out(AWpTabletToolV2: TWpTabletToolV2);
+    procedure wp_tablet_tool_v2_down(AWpTabletToolV2: TWpTabletToolV2; ASerial: DWord);
+    procedure wp_tablet_tool_v2_up(AWpTabletToolV2: TWpTabletToolV2);
+    procedure wp_tablet_tool_v2_motion(AWpTabletToolV2: TWpTabletToolV2; AX: Longint{24.8}; AY: Longint{24.8});
+    procedure wp_tablet_tool_v2_pressure(AWpTabletToolV2: TWpTabletToolV2; APressure: DWord);
+    procedure wp_tablet_tool_v2_distance(AWpTabletToolV2: TWpTabletToolV2; ADistance: DWord);
+    procedure wp_tablet_tool_v2_tilt(AWpTabletToolV2: TWpTabletToolV2; ATiltX: Longint{24.8}; ATiltY: Longint{24.8});
+    procedure wp_tablet_tool_v2_rotation(AWpTabletToolV2: TWpTabletToolV2; ADegrees: Longint{24.8});
+    procedure wp_tablet_tool_v2_slider(AWpTabletToolV2: TWpTabletToolV2; APosition: LongInt);
+    procedure wp_tablet_tool_v2_wheel(AWpTabletToolV2: TWpTabletToolV2; ADegrees: Longint{24.8}; AClicks: LongInt);
+    procedure wp_tablet_tool_v2_button(AWpTabletToolV2: TWpTabletToolV2; ASerial: DWord; AButton: DWord; AState: DWord);
+    procedure wp_tablet_tool_v2_frame(AWpTabletToolV2: TWpTabletToolV2; ATime: DWord);
   end;
 
-  IZwpTabletV2Listener = interface
-  ['IZwpTabletV2Listener']
-    procedure zwp_tablet_v2_name(AZwpTabletV2: TZwpTabletV2; AName: String);
-    procedure zwp_tablet_v2_id(AZwpTabletV2: TZwpTabletV2; AVid: DWord; APid: DWord);
-    procedure zwp_tablet_v2_path(AZwpTabletV2: TZwpTabletV2; APath: String);
-    procedure zwp_tablet_v2_done(AZwpTabletV2: TZwpTabletV2);
-    procedure zwp_tablet_v2_removed(AZwpTabletV2: TZwpTabletV2);
+  IWpTabletV2Listener = interface
+  ['IWpTabletV2Listener']
+    procedure wp_tablet_v2_name(AWpTabletV2: TWpTabletV2; AName: String);
+    procedure wp_tablet_v2_id(AWpTabletV2: TWpTabletV2; AVid: DWord; APid: DWord);
+    procedure wp_tablet_v2_path(AWpTabletV2: TWpTabletV2; APath: String);
+    procedure wp_tablet_v2_done(AWpTabletV2: TWpTabletV2);
+    procedure wp_tablet_v2_removed(AWpTabletV2: TWpTabletV2);
   end;
 
-  IZwpTabletPadRingV2Listener = interface
-  ['IZwpTabletPadRingV2Listener']
-    procedure zwp_tablet_pad_ring_v2_source(AZwpTabletPadRingV2: TZwpTabletPadRingV2; ASource: DWord);
-    procedure zwp_tablet_pad_ring_v2_angle(AZwpTabletPadRingV2: TZwpTabletPadRingV2; ADegrees: Longint{24.8});
-    procedure zwp_tablet_pad_ring_v2_stop(AZwpTabletPadRingV2: TZwpTabletPadRingV2);
-    procedure zwp_tablet_pad_ring_v2_frame(AZwpTabletPadRingV2: TZwpTabletPadRingV2; ATime: DWord);
+  IWpTabletPadRingV2Listener = interface
+  ['IWpTabletPadRingV2Listener']
+    procedure wp_tablet_pad_ring_v2_source(AWpTabletPadRingV2: TWpTabletPadRingV2; ASource: DWord);
+    procedure wp_tablet_pad_ring_v2_angle(AWpTabletPadRingV2: TWpTabletPadRingV2; ADegrees: Longint{24.8});
+    procedure wp_tablet_pad_ring_v2_stop(AWpTabletPadRingV2: TWpTabletPadRingV2);
+    procedure wp_tablet_pad_ring_v2_frame(AWpTabletPadRingV2: TWpTabletPadRingV2; ATime: DWord);
   end;
 
-  IZwpTabletPadStripV2Listener = interface
-  ['IZwpTabletPadStripV2Listener']
-    procedure zwp_tablet_pad_strip_v2_source(AZwpTabletPadStripV2: TZwpTabletPadStripV2; ASource: DWord);
-    procedure zwp_tablet_pad_strip_v2_position(AZwpTabletPadStripV2: TZwpTabletPadStripV2; APosition: DWord);
-    procedure zwp_tablet_pad_strip_v2_stop(AZwpTabletPadStripV2: TZwpTabletPadStripV2);
-    procedure zwp_tablet_pad_strip_v2_frame(AZwpTabletPadStripV2: TZwpTabletPadStripV2; ATime: DWord);
+  IWpTabletPadStripV2Listener = interface
+  ['IWpTabletPadStripV2Listener']
+    procedure wp_tablet_pad_strip_v2_source(AWpTabletPadStripV2: TWpTabletPadStripV2; ASource: DWord);
+    procedure wp_tablet_pad_strip_v2_position(AWpTabletPadStripV2: TWpTabletPadStripV2; APosition: DWord);
+    procedure wp_tablet_pad_strip_v2_stop(AWpTabletPadStripV2: TWpTabletPadStripV2);
+    procedure wp_tablet_pad_strip_v2_frame(AWpTabletPadStripV2: TWpTabletPadStripV2; ATime: DWord);
   end;
 
-  IZwpTabletPadGroupV2Listener = interface
-  ['IZwpTabletPadGroupV2Listener']
-    procedure zwp_tablet_pad_group_v2_buttons(AZwpTabletPadGroupV2: TZwpTabletPadGroupV2; AButtons: Pwl_array);
-    procedure zwp_tablet_pad_group_v2_ring(AZwpTabletPadGroupV2: TZwpTabletPadGroupV2; ARing: TZwpTabletPadRingV2);
-    procedure zwp_tablet_pad_group_v2_strip(AZwpTabletPadGroupV2: TZwpTabletPadGroupV2; AStrip: TZwpTabletPadStripV2);
-    procedure zwp_tablet_pad_group_v2_modes(AZwpTabletPadGroupV2: TZwpTabletPadGroupV2; AModes: DWord);
-    procedure zwp_tablet_pad_group_v2_done(AZwpTabletPadGroupV2: TZwpTabletPadGroupV2);
-    procedure zwp_tablet_pad_group_v2_mode_switch(AZwpTabletPadGroupV2: TZwpTabletPadGroupV2; ATime: DWord; ASerial: DWord; AMode: DWord);
+  IWpTabletPadGroupV2Listener = interface
+  ['IWpTabletPadGroupV2Listener']
+    procedure wp_tablet_pad_group_v2_buttons(AWpTabletPadGroupV2: TWpTabletPadGroupV2; AButtons: Pwl_array);
+    procedure wp_tablet_pad_group_v2_ring(AWpTabletPadGroupV2: TWpTabletPadGroupV2; ARing: TWpTabletPadRingV2);
+    procedure wp_tablet_pad_group_v2_strip(AWpTabletPadGroupV2: TWpTabletPadGroupV2; AStrip: TWpTabletPadStripV2);
+    procedure wp_tablet_pad_group_v2_modes(AWpTabletPadGroupV2: TWpTabletPadGroupV2; AModes: DWord);
+    procedure wp_tablet_pad_group_v2_done(AWpTabletPadGroupV2: TWpTabletPadGroupV2);
+    procedure wp_tablet_pad_group_v2_mode_switch(AWpTabletPadGroupV2: TWpTabletPadGroupV2; ATime: DWord; ASerial: DWord; AMode: DWord);
   end;
 
-  IZwpTabletPadV2Listener = interface
-  ['IZwpTabletPadV2Listener']
-    procedure zwp_tablet_pad_v2_group(AZwpTabletPadV2: TZwpTabletPadV2; APadGroup: TZwpTabletPadGroupV2);
-    procedure zwp_tablet_pad_v2_path(AZwpTabletPadV2: TZwpTabletPadV2; APath: String);
-    procedure zwp_tablet_pad_v2_buttons(AZwpTabletPadV2: TZwpTabletPadV2; AButtons: DWord);
-    procedure zwp_tablet_pad_v2_done(AZwpTabletPadV2: TZwpTabletPadV2);
-    procedure zwp_tablet_pad_v2_button(AZwpTabletPadV2: TZwpTabletPadV2; ATime: DWord; AButton: DWord; AState: DWord);
-    procedure zwp_tablet_pad_v2_enter(AZwpTabletPadV2: TZwpTabletPadV2; ASerial: DWord; ATablet: TZwpTabletV2; ASurface: TWlSurface);
-    procedure zwp_tablet_pad_v2_leave(AZwpTabletPadV2: TZwpTabletPadV2; ASerial: DWord; ASurface: TWlSurface);
-    procedure zwp_tablet_pad_v2_removed(AZwpTabletPadV2: TZwpTabletPadV2);
+  IWpTabletPadV2Listener = interface
+  ['IWpTabletPadV2Listener']
+    procedure wp_tablet_pad_v2_group(AWpTabletPadV2: TWpTabletPadV2; APadGroup: TWpTabletPadGroupV2);
+    procedure wp_tablet_pad_v2_path(AWpTabletPadV2: TWpTabletPadV2; APath: String);
+    procedure wp_tablet_pad_v2_buttons(AWpTabletPadV2: TWpTabletPadV2; AButtons: DWord);
+    procedure wp_tablet_pad_v2_done(AWpTabletPadV2: TWpTabletPadV2);
+    procedure wp_tablet_pad_v2_button(AWpTabletPadV2: TWpTabletPadV2; ATime: DWord; AButton: DWord; AState: DWord);
+    procedure wp_tablet_pad_v2_enter(AWpTabletPadV2: TWpTabletPadV2; ASerial: DWord; ATablet: TWpTabletV2; ASurface: TWlSurface);
+    procedure wp_tablet_pad_v2_leave(AWpTabletPadV2: TWpTabletPadV2; ASerial: DWord; ASurface: TWlSurface);
+    procedure wp_tablet_pad_v2_removed(AWpTabletPadV2: TWpTabletPadV2);
   end;
 
 
 
 
-  TZwpTabletManagerV2 = class(TWLProxyObject)
+  TWpTabletManagerV2 = class(TWLProxyObject)
   private
     const _GET_TABLET_SEAT = 0;
     const _DESTROY = 1;
   public
-    function GetTabletSeat(ASeat: TWlSeat; AProxyClass: TWLProxyObjectClass = nil {TZwpTabletSeatV2}): TZwpTabletSeatV2;
+    function GetTabletSeat(ASeat: TWlSeat; AProxyClass: TWLProxyObjectClass = nil {TWpTabletSeatV2}): TWpTabletSeatV2;
     destructor Destroy; override;
-    function AddListener(AIntf: IZwpTabletManagerV2Listener): LongInt;
+    function AddListener(AIntf: IWpTabletManagerV2Listener): LongInt;
   end;
 
-  TZwpTabletSeatV2 = class(TWLProxyObject)
+  TWpTabletSeatV2 = class(TWLProxyObject)
   private
     const _DESTROY = 0;
   public
     destructor Destroy; override;
-    function AddListener(AIntf: IZwpTabletSeatV2Listener): LongInt;
+    function AddListener(AIntf: IWpTabletSeatV2Listener): LongInt;
   end;
 
-  TZwpTabletToolV2 = class(TWLProxyObject)
+  TWpTabletToolV2 = class(TWLProxyObject)
   private
     const _SET_CURSOR = 0;
     const _DESTROY = 1;
   public
     procedure SetCursor(ASerial: DWord; ASurface: TWlSurface; AHotspotX: LongInt; AHotspotY: LongInt);
     destructor Destroy; override;
-    function AddListener(AIntf: IZwpTabletToolV2Listener): LongInt;
+    function AddListener(AIntf: IWpTabletToolV2Listener): LongInt;
   end;
 
-  TZwpTabletV2 = class(TWLProxyObject)
+  TWpTabletV2 = class(TWLProxyObject)
   private
     const _DESTROY = 0;
   public
     destructor Destroy; override;
-    function AddListener(AIntf: IZwpTabletV2Listener): LongInt;
+    function AddListener(AIntf: IWpTabletV2Listener): LongInt;
   end;
 
-  TZwpTabletPadRingV2 = class(TWLProxyObject)
+  TWpTabletPadRingV2 = class(TWLProxyObject)
   private
     const _SET_FEEDBACK = 0;
     const _DESTROY = 1;
   public
     procedure SetFeedback(ADescription: String; ASerial: DWord);
     destructor Destroy; override;
-    function AddListener(AIntf: IZwpTabletPadRingV2Listener): LongInt;
+    function AddListener(AIntf: IWpTabletPadRingV2Listener): LongInt;
   end;
 
-  TZwpTabletPadStripV2 = class(TWLProxyObject)
+  TWpTabletPadStripV2 = class(TWLProxyObject)
   private
     const _SET_FEEDBACK = 0;
     const _DESTROY = 1;
   public
     procedure SetFeedback(ADescription: String; ASerial: DWord);
     destructor Destroy; override;
-    function AddListener(AIntf: IZwpTabletPadStripV2Listener): LongInt;
+    function AddListener(AIntf: IWpTabletPadStripV2Listener): LongInt;
   end;
 
-  TZwpTabletPadGroupV2 = class(TWLProxyObject)
+  TWpTabletPadGroupV2 = class(TWLProxyObject)
   private
     const _DESTROY = 0;
   public
     destructor Destroy; override;
-    function AddListener(AIntf: IZwpTabletPadGroupV2Listener): LongInt;
+    function AddListener(AIntf: IWpTabletPadGroupV2Listener): LongInt;
   end;
 
-  TZwpTabletPadV2 = class(TWLProxyObject)
+  TWpTabletPadV2 = class(TWLProxyObject)
   private
     const _SET_FEEDBACK = 0;
     const _DESTROY = 1;
   public
     procedure SetFeedback(AButton: DWord; ADescription: String; ASerial: DWord);
     destructor Destroy; override;
-    function AddListener(AIntf: IZwpTabletPadV2Listener): LongInt;
+    function AddListener(AIntf: IWpTabletPadV2Listener): LongInt;
   end;
 
 
@@ -308,595 +308,603 @@ type
 
 
 var
-  zwp_tablet_manager_v2_interface: Twl_interface;
-  zwp_tablet_seat_v2_interface: Twl_interface;
-  zwp_tablet_tool_v2_interface: Twl_interface;
-  zwp_tablet_v2_interface: Twl_interface;
-  zwp_tablet_pad_ring_v2_interface: Twl_interface;
-  zwp_tablet_pad_strip_v2_interface: Twl_interface;
-  zwp_tablet_pad_group_v2_interface: Twl_interface;
-  zwp_tablet_pad_v2_interface: Twl_interface;
+  wp_tablet_manager_v2_interface: Twl_interface;
+  WP_TABLET_MANAGER_V2_INTERFACE_NAME: String = 'zwp_tablet_manager_v2';
+  wp_tablet_seat_v2_interface: Twl_interface;
+  WP_TABLET_SEAT_V2_INTERFACE_NAME: String = 'zwp_tablet_seat_v2';
+  wp_tablet_tool_v2_interface: Twl_interface;
+  WP_TABLET_TOOL_V2_INTERFACE_NAME: String = 'zwp_tablet_tool_v2';
+  wp_tablet_v2_interface: Twl_interface;
+  WP_TABLET_V2_INTERFACE_NAME: String = 'zwp_tablet_v2';
+  wp_tablet_pad_ring_v2_interface: Twl_interface;
+  WP_TABLET_PAD_RING_V2_INTERFACE_NAME: String = 'zwp_tablet_pad_ring_v2';
+  wp_tablet_pad_strip_v2_interface: Twl_interface;
+  WP_TABLET_PAD_STRIP_V2_INTERFACE_NAME: String = 'zwp_tablet_pad_strip_v2';
+  wp_tablet_pad_group_v2_interface: Twl_interface;
+  WP_TABLET_PAD_GROUP_V2_INTERFACE_NAME: String = 'zwp_tablet_pad_group_v2';
+  wp_tablet_pad_v2_interface: Twl_interface;
+  WP_TABLET_PAD_V2_INTERFACE_NAME: String = 'zwp_tablet_pad_v2';
 
 
 
 implementation
 
 var
-  vIntf_zwp_tablet_manager_v2_Listener: Tzwp_tablet_manager_v2_listener;
-  vIntf_zwp_tablet_seat_v2_Listener: Tzwp_tablet_seat_v2_listener;
-  vIntf_zwp_tablet_tool_v2_Listener: Tzwp_tablet_tool_v2_listener;
-  vIntf_zwp_tablet_v2_Listener: Tzwp_tablet_v2_listener;
-  vIntf_zwp_tablet_pad_ring_v2_Listener: Tzwp_tablet_pad_ring_v2_listener;
-  vIntf_zwp_tablet_pad_strip_v2_Listener: Tzwp_tablet_pad_strip_v2_listener;
-  vIntf_zwp_tablet_pad_group_v2_Listener: Tzwp_tablet_pad_group_v2_listener;
-  vIntf_zwp_tablet_pad_v2_Listener: Tzwp_tablet_pad_v2_listener;
+  vIntf_wp_tablet_manager_v2_Listener: Twp_tablet_manager_v2_listener;
+  vIntf_wp_tablet_seat_v2_Listener: Twp_tablet_seat_v2_listener;
+  vIntf_wp_tablet_tool_v2_Listener: Twp_tablet_tool_v2_listener;
+  vIntf_wp_tablet_v2_Listener: Twp_tablet_v2_listener;
+  vIntf_wp_tablet_pad_ring_v2_Listener: Twp_tablet_pad_ring_v2_listener;
+  vIntf_wp_tablet_pad_strip_v2_Listener: Twp_tablet_pad_strip_v2_listener;
+  vIntf_wp_tablet_pad_group_v2_Listener: Twp_tablet_pad_group_v2_listener;
+  vIntf_wp_tablet_pad_v2_Listener: Twp_tablet_pad_v2_listener;
 
 
 
-function TZwpTabletManagerV2.GetTabletSeat(ASeat: TWlSeat; AProxyClass: TWLProxyObjectClass = nil {TZwpTabletSeatV2}): TZwpTabletSeatV2;
+function TWpTabletManagerV2.GetTabletSeat(ASeat: TWlSeat; AProxyClass: TWLProxyObjectClass = nil {TWpTabletSeatV2}): TWpTabletSeatV2;
 var
   tablet_seat: Pwl_proxy;
 begin
   tablet_seat := wl_proxy_marshal_constructor(FProxy,
-      _GET_TABLET_SEAT, @zwp_tablet_seat_v2_interface, nil, ASeat.Proxy);
+      _GET_TABLET_SEAT, @wp_tablet_seat_v2_interface, nil, ASeat.Proxy);
   if AProxyClass = nil then
-    AProxyClass := TZwpTabletSeatV2;
-  Result := TZwpTabletSeatV2(AProxyClass.Create(tablet_seat));
-  if not AProxyClass.InheritsFrom(TZwpTabletSeatV2) then
-    Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TZwpTabletSeatV2]);
+    AProxyClass := TWpTabletSeatV2;
+  Result := TWpTabletSeatV2(AProxyClass.Create(tablet_seat));
+  if not AProxyClass.InheritsFrom(TWpTabletSeatV2) then
+    Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TWpTabletSeatV2]);
 end;
 
-destructor TZwpTabletManagerV2.Destroy;
+destructor TWpTabletManagerV2.Destroy;
 begin
   wl_proxy_marshal(FProxy, _DESTROY);
   inherited Destroy;
 end;
 
-function TZwpTabletManagerV2.AddListener(AIntf: IZwpTabletManagerV2Listener): LongInt;
+function TWpTabletManagerV2.AddListener(AIntf: IWpTabletManagerV2Listener): LongInt;
 begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
-  Result := wl_proxy_add_listener(FProxy, @vIntf_zwp_tablet_manager_v2_Listener, @FUserDataRec);
+  Result := wl_proxy_add_listener(FProxy, @vIntf_wp_tablet_manager_v2_Listener, @FUserDataRec);
 end;
-destructor TZwpTabletSeatV2.Destroy;
+destructor TWpTabletSeatV2.Destroy;
 begin
   wl_proxy_marshal(FProxy, _DESTROY);
   inherited Destroy;
 end;
 
-function TZwpTabletSeatV2.AddListener(AIntf: IZwpTabletSeatV2Listener): LongInt;
+function TWpTabletSeatV2.AddListener(AIntf: IWpTabletSeatV2Listener): LongInt;
 begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
-  Result := wl_proxy_add_listener(FProxy, @vIntf_zwp_tablet_seat_v2_Listener, @FUserDataRec);
+  Result := wl_proxy_add_listener(FProxy, @vIntf_wp_tablet_seat_v2_Listener, @FUserDataRec);
 end;
-procedure TZwpTabletToolV2.SetCursor(ASerial: DWord; ASurface: TWlSurface; AHotspotX: LongInt; AHotspotY: LongInt);
+procedure TWpTabletToolV2.SetCursor(ASerial: DWord; ASurface: TWlSurface; AHotspotX: LongInt; AHotspotY: LongInt);
 begin
   wl_proxy_marshal(FProxy, _SET_CURSOR, ASerial, ASurface.Proxy, AHotspotX, AHotspotY);
 end;
 
-destructor TZwpTabletToolV2.Destroy;
+destructor TWpTabletToolV2.Destroy;
 begin
   wl_proxy_marshal(FProxy, _DESTROY);
   inherited Destroy;
 end;
 
-function TZwpTabletToolV2.AddListener(AIntf: IZwpTabletToolV2Listener): LongInt;
+function TWpTabletToolV2.AddListener(AIntf: IWpTabletToolV2Listener): LongInt;
 begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
-  Result := wl_proxy_add_listener(FProxy, @vIntf_zwp_tablet_tool_v2_Listener, @FUserDataRec);
+  Result := wl_proxy_add_listener(FProxy, @vIntf_wp_tablet_tool_v2_Listener, @FUserDataRec);
 end;
-destructor TZwpTabletV2.Destroy;
+destructor TWpTabletV2.Destroy;
 begin
   wl_proxy_marshal(FProxy, _DESTROY);
   inherited Destroy;
 end;
 
-function TZwpTabletV2.AddListener(AIntf: IZwpTabletV2Listener): LongInt;
+function TWpTabletV2.AddListener(AIntf: IWpTabletV2Listener): LongInt;
 begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
-  Result := wl_proxy_add_listener(FProxy, @vIntf_zwp_tablet_v2_Listener, @FUserDataRec);
+  Result := wl_proxy_add_listener(FProxy, @vIntf_wp_tablet_v2_Listener, @FUserDataRec);
 end;
-procedure TZwpTabletPadRingV2.SetFeedback(ADescription: String; ASerial: DWord);
+procedure TWpTabletPadRingV2.SetFeedback(ADescription: String; ASerial: DWord);
 begin
   wl_proxy_marshal(FProxy, _SET_FEEDBACK, PChar(ADescription), ASerial);
 end;
 
-destructor TZwpTabletPadRingV2.Destroy;
+destructor TWpTabletPadRingV2.Destroy;
 begin
   wl_proxy_marshal(FProxy, _DESTROY);
   inherited Destroy;
 end;
 
-function TZwpTabletPadRingV2.AddListener(AIntf: IZwpTabletPadRingV2Listener): LongInt;
+function TWpTabletPadRingV2.AddListener(AIntf: IWpTabletPadRingV2Listener): LongInt;
 begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
-  Result := wl_proxy_add_listener(FProxy, @vIntf_zwp_tablet_pad_ring_v2_Listener, @FUserDataRec);
+  Result := wl_proxy_add_listener(FProxy, @vIntf_wp_tablet_pad_ring_v2_Listener, @FUserDataRec);
 end;
-procedure TZwpTabletPadStripV2.SetFeedback(ADescription: String; ASerial: DWord);
+procedure TWpTabletPadStripV2.SetFeedback(ADescription: String; ASerial: DWord);
 begin
   wl_proxy_marshal(FProxy, _SET_FEEDBACK, PChar(ADescription), ASerial);
 end;
 
-destructor TZwpTabletPadStripV2.Destroy;
+destructor TWpTabletPadStripV2.Destroy;
 begin
   wl_proxy_marshal(FProxy, _DESTROY);
   inherited Destroy;
 end;
 
-function TZwpTabletPadStripV2.AddListener(AIntf: IZwpTabletPadStripV2Listener): LongInt;
+function TWpTabletPadStripV2.AddListener(AIntf: IWpTabletPadStripV2Listener): LongInt;
 begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
-  Result := wl_proxy_add_listener(FProxy, @vIntf_zwp_tablet_pad_strip_v2_Listener, @FUserDataRec);
+  Result := wl_proxy_add_listener(FProxy, @vIntf_wp_tablet_pad_strip_v2_Listener, @FUserDataRec);
 end;
-destructor TZwpTabletPadGroupV2.Destroy;
+destructor TWpTabletPadGroupV2.Destroy;
 begin
   wl_proxy_marshal(FProxy, _DESTROY);
   inherited Destroy;
 end;
 
-function TZwpTabletPadGroupV2.AddListener(AIntf: IZwpTabletPadGroupV2Listener): LongInt;
+function TWpTabletPadGroupV2.AddListener(AIntf: IWpTabletPadGroupV2Listener): LongInt;
 begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
-  Result := wl_proxy_add_listener(FProxy, @vIntf_zwp_tablet_pad_group_v2_Listener, @FUserDataRec);
+  Result := wl_proxy_add_listener(FProxy, @vIntf_wp_tablet_pad_group_v2_Listener, @FUserDataRec);
 end;
-procedure TZwpTabletPadV2.SetFeedback(AButton: DWord; ADescription: String; ASerial: DWord);
+procedure TWpTabletPadV2.SetFeedback(AButton: DWord; ADescription: String; ASerial: DWord);
 begin
   wl_proxy_marshal(FProxy, _SET_FEEDBACK, AButton, PChar(ADescription), ASerial);
 end;
 
-destructor TZwpTabletPadV2.Destroy;
+destructor TWpTabletPadV2.Destroy;
 begin
   wl_proxy_marshal(FProxy, _DESTROY);
   inherited Destroy;
 end;
 
-function TZwpTabletPadV2.AddListener(AIntf: IZwpTabletPadV2Listener): LongInt;
+function TWpTabletPadV2.AddListener(AIntf: IWpTabletPadV2Listener): LongInt;
 begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
-  Result := wl_proxy_add_listener(FProxy, @vIntf_zwp_tablet_pad_v2_Listener, @FUserDataRec);
+  Result := wl_proxy_add_listener(FProxy, @vIntf_wp_tablet_pad_v2_Listener, @FUserDataRec);
 end;
 
 
 
 
-procedure zwp_tablet_seat_v2_tablet_added_Intf(AData: PWLUserData; Azwp_tablet_seat_v2: Pzwp_tablet_seat_v2; AId: Pzwp_tablet_v2); cdecl;
+procedure wp_tablet_seat_v2_tablet_added_Intf(AData: PWLUserData; Awp_tablet_seat_v2: Pwp_tablet_seat_v2; AId: Pwp_tablet_v2); cdecl;
 var
-  AIntf: IZwpTabletSeatV2Listener;
+  AIntf: IWpTabletSeatV2Listener;
 begin
   if AData = nil then Exit;
-  AIntf := IZwpTabletSeatV2Listener(AData^.ListenerUserData);
-  AIntf.zwp_tablet_seat_v2_tablet_added(TZwpTabletSeatV2(AData^.PascalObject),  TZwpTabletV2.Create(AId));
+  AIntf := IWpTabletSeatV2Listener(AData^.ListenerUserData);
+  AIntf.wp_tablet_seat_v2_tablet_added(TWpTabletSeatV2(AData^.PascalObject),  TWpTabletV2.Create(AId));
 end;
 
-procedure zwp_tablet_seat_v2_tool_added_Intf(AData: PWLUserData; Azwp_tablet_seat_v2: Pzwp_tablet_seat_v2; AId: Pzwp_tablet_tool_v2); cdecl;
+procedure wp_tablet_seat_v2_tool_added_Intf(AData: PWLUserData; Awp_tablet_seat_v2: Pwp_tablet_seat_v2; AId: Pwp_tablet_tool_v2); cdecl;
 var
-  AIntf: IZwpTabletSeatV2Listener;
+  AIntf: IWpTabletSeatV2Listener;
 begin
   if AData = nil then Exit;
-  AIntf := IZwpTabletSeatV2Listener(AData^.ListenerUserData);
-  AIntf.zwp_tablet_seat_v2_tool_added(TZwpTabletSeatV2(AData^.PascalObject),  TZwpTabletToolV2.Create(AId));
+  AIntf := IWpTabletSeatV2Listener(AData^.ListenerUserData);
+  AIntf.wp_tablet_seat_v2_tool_added(TWpTabletSeatV2(AData^.PascalObject),  TWpTabletToolV2.Create(AId));
 end;
 
-procedure zwp_tablet_seat_v2_pad_added_Intf(AData: PWLUserData; Azwp_tablet_seat_v2: Pzwp_tablet_seat_v2; AId: Pzwp_tablet_pad_v2); cdecl;
+procedure wp_tablet_seat_v2_pad_added_Intf(AData: PWLUserData; Awp_tablet_seat_v2: Pwp_tablet_seat_v2; AId: Pwp_tablet_pad_v2); cdecl;
 var
-  AIntf: IZwpTabletSeatV2Listener;
+  AIntf: IWpTabletSeatV2Listener;
 begin
   if AData = nil then Exit;
-  AIntf := IZwpTabletSeatV2Listener(AData^.ListenerUserData);
-  AIntf.zwp_tablet_seat_v2_pad_added(TZwpTabletSeatV2(AData^.PascalObject),  TZwpTabletPadV2.Create(AId));
+  AIntf := IWpTabletSeatV2Listener(AData^.ListenerUserData);
+  AIntf.wp_tablet_seat_v2_pad_added(TWpTabletSeatV2(AData^.PascalObject),  TWpTabletPadV2.Create(AId));
 end;
 
-procedure zwp_tablet_tool_v2_type_Intf(AData: PWLUserData; Azwp_tablet_tool_v2: Pzwp_tablet_tool_v2; AToolType: DWord); cdecl;
+procedure wp_tablet_tool_v2_type_Intf(AData: PWLUserData; Awp_tablet_tool_v2: Pwp_tablet_tool_v2; AToolType: DWord); cdecl;
 var
-  AIntf: IZwpTabletToolV2Listener;
+  AIntf: IWpTabletToolV2Listener;
 begin
   if AData = nil then Exit;
-  AIntf := IZwpTabletToolV2Listener(AData^.ListenerUserData);
-  AIntf.zwp_tablet_tool_v2_type(TZwpTabletToolV2(AData^.PascalObject), AToolType);
+  AIntf := IWpTabletToolV2Listener(AData^.ListenerUserData);
+  AIntf.wp_tablet_tool_v2_type(TWpTabletToolV2(AData^.PascalObject), AToolType);
 end;
 
-procedure zwp_tablet_tool_v2_hardware_serial_Intf(AData: PWLUserData; Azwp_tablet_tool_v2: Pzwp_tablet_tool_v2; AHardwareSerialHi: DWord; AHardwareSerialLo: DWord); cdecl;
+procedure wp_tablet_tool_v2_hardware_serial_Intf(AData: PWLUserData; Awp_tablet_tool_v2: Pwp_tablet_tool_v2; AHardwareSerialHi: DWord; AHardwareSerialLo: DWord); cdecl;
 var
-  AIntf: IZwpTabletToolV2Listener;
+  AIntf: IWpTabletToolV2Listener;
 begin
   if AData = nil then Exit;
-  AIntf := IZwpTabletToolV2Listener(AData^.ListenerUserData);
-  AIntf.zwp_tablet_tool_v2_hardware_serial(TZwpTabletToolV2(AData^.PascalObject), AHardwareSerialHi, AHardwareSerialLo);
+  AIntf := IWpTabletToolV2Listener(AData^.ListenerUserData);
+  AIntf.wp_tablet_tool_v2_hardware_serial(TWpTabletToolV2(AData^.PascalObject), AHardwareSerialHi, AHardwareSerialLo);
 end;
 
-procedure zwp_tablet_tool_v2_hardware_id_wacom_Intf(AData: PWLUserData; Azwp_tablet_tool_v2: Pzwp_tablet_tool_v2; AHardwareIdHi: DWord; AHardwareIdLo: DWord); cdecl;
+procedure wp_tablet_tool_v2_hardware_id_wacom_Intf(AData: PWLUserData; Awp_tablet_tool_v2: Pwp_tablet_tool_v2; AHardwareIdHi: DWord; AHardwareIdLo: DWord); cdecl;
 var
-  AIntf: IZwpTabletToolV2Listener;
+  AIntf: IWpTabletToolV2Listener;
 begin
   if AData = nil then Exit;
-  AIntf := IZwpTabletToolV2Listener(AData^.ListenerUserData);
-  AIntf.zwp_tablet_tool_v2_hardware_id_wacom(TZwpTabletToolV2(AData^.PascalObject), AHardwareIdHi, AHardwareIdLo);
+  AIntf := IWpTabletToolV2Listener(AData^.ListenerUserData);
+  AIntf.wp_tablet_tool_v2_hardware_id_wacom(TWpTabletToolV2(AData^.PascalObject), AHardwareIdHi, AHardwareIdLo);
 end;
 
-procedure zwp_tablet_tool_v2_capability_Intf(AData: PWLUserData; Azwp_tablet_tool_v2: Pzwp_tablet_tool_v2; ACapability: DWord); cdecl;
+procedure wp_tablet_tool_v2_capability_Intf(AData: PWLUserData; Awp_tablet_tool_v2: Pwp_tablet_tool_v2; ACapability: DWord); cdecl;
 var
-  AIntf: IZwpTabletToolV2Listener;
+  AIntf: IWpTabletToolV2Listener;
 begin
   if AData = nil then Exit;
-  AIntf := IZwpTabletToolV2Listener(AData^.ListenerUserData);
-  AIntf.zwp_tablet_tool_v2_capability(TZwpTabletToolV2(AData^.PascalObject), ACapability);
+  AIntf := IWpTabletToolV2Listener(AData^.ListenerUserData);
+  AIntf.wp_tablet_tool_v2_capability(TWpTabletToolV2(AData^.PascalObject), ACapability);
 end;
 
-procedure zwp_tablet_tool_v2_done_Intf(AData: PWLUserData; Azwp_tablet_tool_v2: Pzwp_tablet_tool_v2); cdecl;
+procedure wp_tablet_tool_v2_done_Intf(AData: PWLUserData; Awp_tablet_tool_v2: Pwp_tablet_tool_v2); cdecl;
 var
-  AIntf: IZwpTabletToolV2Listener;
+  AIntf: IWpTabletToolV2Listener;
 begin
   if AData = nil then Exit;
-  AIntf := IZwpTabletToolV2Listener(AData^.ListenerUserData);
-  AIntf.zwp_tablet_tool_v2_done(TZwpTabletToolV2(AData^.PascalObject));
+  AIntf := IWpTabletToolV2Listener(AData^.ListenerUserData);
+  AIntf.wp_tablet_tool_v2_done(TWpTabletToolV2(AData^.PascalObject));
 end;
 
-procedure zwp_tablet_tool_v2_removed_Intf(AData: PWLUserData; Azwp_tablet_tool_v2: Pzwp_tablet_tool_v2); cdecl;
+procedure wp_tablet_tool_v2_removed_Intf(AData: PWLUserData; Awp_tablet_tool_v2: Pwp_tablet_tool_v2); cdecl;
 var
-  AIntf: IZwpTabletToolV2Listener;
+  AIntf: IWpTabletToolV2Listener;
 begin
   if AData = nil then Exit;
-  AIntf := IZwpTabletToolV2Listener(AData^.ListenerUserData);
-  AIntf.zwp_tablet_tool_v2_removed(TZwpTabletToolV2(AData^.PascalObject));
+  AIntf := IWpTabletToolV2Listener(AData^.ListenerUserData);
+  AIntf.wp_tablet_tool_v2_removed(TWpTabletToolV2(AData^.PascalObject));
 end;
 
-procedure zwp_tablet_tool_v2_proximity_in_Intf(AData: PWLUserData; Azwp_tablet_tool_v2: Pzwp_tablet_tool_v2; ASerial: DWord; ATablet: Pzwp_tablet_v2; ASurface: Pwl_surface); cdecl;
+procedure wp_tablet_tool_v2_proximity_in_Intf(AData: PWLUserData; Awp_tablet_tool_v2: Pwp_tablet_tool_v2; ASerial: DWord; ATablet: Pwp_tablet_v2; ASurface: Pwl_surface); cdecl;
 var
-  AIntf: IZwpTabletToolV2Listener;
+  AIntf: IWpTabletToolV2Listener;
 begin
   if AData = nil then Exit;
-  AIntf := IZwpTabletToolV2Listener(AData^.ListenerUserData);
-  AIntf.zwp_tablet_tool_v2_proximity_in(TZwpTabletToolV2(AData^.PascalObject), ASerial,  TZwpTabletV2(TWLProxyObject.WLToObj(ATablet)),  TWlSurface(TWLProxyObject.WLToObj(ASurface)));
+  AIntf := IWpTabletToolV2Listener(AData^.ListenerUserData);
+  AIntf.wp_tablet_tool_v2_proximity_in(TWpTabletToolV2(AData^.PascalObject), ASerial,  TWpTabletV2(TWLProxyObject.WLToObj(ATablet)),  TWlSurface(TWLProxyObject.WLToObj(ASurface)));
 end;
 
-procedure zwp_tablet_tool_v2_proximity_out_Intf(AData: PWLUserData; Azwp_tablet_tool_v2: Pzwp_tablet_tool_v2); cdecl;
+procedure wp_tablet_tool_v2_proximity_out_Intf(AData: PWLUserData; Awp_tablet_tool_v2: Pwp_tablet_tool_v2); cdecl;
 var
-  AIntf: IZwpTabletToolV2Listener;
+  AIntf: IWpTabletToolV2Listener;
 begin
   if AData = nil then Exit;
-  AIntf := IZwpTabletToolV2Listener(AData^.ListenerUserData);
-  AIntf.zwp_tablet_tool_v2_proximity_out(TZwpTabletToolV2(AData^.PascalObject));
+  AIntf := IWpTabletToolV2Listener(AData^.ListenerUserData);
+  AIntf.wp_tablet_tool_v2_proximity_out(TWpTabletToolV2(AData^.PascalObject));
 end;
 
-procedure zwp_tablet_tool_v2_down_Intf(AData: PWLUserData; Azwp_tablet_tool_v2: Pzwp_tablet_tool_v2; ASerial: DWord); cdecl;
+procedure wp_tablet_tool_v2_down_Intf(AData: PWLUserData; Awp_tablet_tool_v2: Pwp_tablet_tool_v2; ASerial: DWord); cdecl;
 var
-  AIntf: IZwpTabletToolV2Listener;
+  AIntf: IWpTabletToolV2Listener;
 begin
   if AData = nil then Exit;
-  AIntf := IZwpTabletToolV2Listener(AData^.ListenerUserData);
-  AIntf.zwp_tablet_tool_v2_down(TZwpTabletToolV2(AData^.PascalObject), ASerial);
+  AIntf := IWpTabletToolV2Listener(AData^.ListenerUserData);
+  AIntf.wp_tablet_tool_v2_down(TWpTabletToolV2(AData^.PascalObject), ASerial);
 end;
 
-procedure zwp_tablet_tool_v2_up_Intf(AData: PWLUserData; Azwp_tablet_tool_v2: Pzwp_tablet_tool_v2); cdecl;
+procedure wp_tablet_tool_v2_up_Intf(AData: PWLUserData; Awp_tablet_tool_v2: Pwp_tablet_tool_v2); cdecl;
 var
-  AIntf: IZwpTabletToolV2Listener;
+  AIntf: IWpTabletToolV2Listener;
 begin
   if AData = nil then Exit;
-  AIntf := IZwpTabletToolV2Listener(AData^.ListenerUserData);
-  AIntf.zwp_tablet_tool_v2_up(TZwpTabletToolV2(AData^.PascalObject));
+  AIntf := IWpTabletToolV2Listener(AData^.ListenerUserData);
+  AIntf.wp_tablet_tool_v2_up(TWpTabletToolV2(AData^.PascalObject));
 end;
 
-procedure zwp_tablet_tool_v2_motion_Intf(AData: PWLUserData; Azwp_tablet_tool_v2: Pzwp_tablet_tool_v2; AX: Longint{24.8}; AY: Longint{24.8}); cdecl;
+procedure wp_tablet_tool_v2_motion_Intf(AData: PWLUserData; Awp_tablet_tool_v2: Pwp_tablet_tool_v2; AX: Longint{24.8}; AY: Longint{24.8}); cdecl;
 var
-  AIntf: IZwpTabletToolV2Listener;
+  AIntf: IWpTabletToolV2Listener;
 begin
   if AData = nil then Exit;
-  AIntf := IZwpTabletToolV2Listener(AData^.ListenerUserData);
-  AIntf.zwp_tablet_tool_v2_motion(TZwpTabletToolV2(AData^.PascalObject), AX, AY);
+  AIntf := IWpTabletToolV2Listener(AData^.ListenerUserData);
+  AIntf.wp_tablet_tool_v2_motion(TWpTabletToolV2(AData^.PascalObject), AX, AY);
 end;
 
-procedure zwp_tablet_tool_v2_pressure_Intf(AData: PWLUserData; Azwp_tablet_tool_v2: Pzwp_tablet_tool_v2; APressure: DWord); cdecl;
+procedure wp_tablet_tool_v2_pressure_Intf(AData: PWLUserData; Awp_tablet_tool_v2: Pwp_tablet_tool_v2; APressure: DWord); cdecl;
 var
-  AIntf: IZwpTabletToolV2Listener;
+  AIntf: IWpTabletToolV2Listener;
 begin
   if AData = nil then Exit;
-  AIntf := IZwpTabletToolV2Listener(AData^.ListenerUserData);
-  AIntf.zwp_tablet_tool_v2_pressure(TZwpTabletToolV2(AData^.PascalObject), APressure);
+  AIntf := IWpTabletToolV2Listener(AData^.ListenerUserData);
+  AIntf.wp_tablet_tool_v2_pressure(TWpTabletToolV2(AData^.PascalObject), APressure);
 end;
 
-procedure zwp_tablet_tool_v2_distance_Intf(AData: PWLUserData; Azwp_tablet_tool_v2: Pzwp_tablet_tool_v2; ADistance: DWord); cdecl;
+procedure wp_tablet_tool_v2_distance_Intf(AData: PWLUserData; Awp_tablet_tool_v2: Pwp_tablet_tool_v2; ADistance: DWord); cdecl;
 var
-  AIntf: IZwpTabletToolV2Listener;
+  AIntf: IWpTabletToolV2Listener;
 begin
   if AData = nil then Exit;
-  AIntf := IZwpTabletToolV2Listener(AData^.ListenerUserData);
-  AIntf.zwp_tablet_tool_v2_distance(TZwpTabletToolV2(AData^.PascalObject), ADistance);
+  AIntf := IWpTabletToolV2Listener(AData^.ListenerUserData);
+  AIntf.wp_tablet_tool_v2_distance(TWpTabletToolV2(AData^.PascalObject), ADistance);
 end;
 
-procedure zwp_tablet_tool_v2_tilt_Intf(AData: PWLUserData; Azwp_tablet_tool_v2: Pzwp_tablet_tool_v2; ATiltX: Longint{24.8}; ATiltY: Longint{24.8}); cdecl;
+procedure wp_tablet_tool_v2_tilt_Intf(AData: PWLUserData; Awp_tablet_tool_v2: Pwp_tablet_tool_v2; ATiltX: Longint{24.8}; ATiltY: Longint{24.8}); cdecl;
 var
-  AIntf: IZwpTabletToolV2Listener;
+  AIntf: IWpTabletToolV2Listener;
 begin
   if AData = nil then Exit;
-  AIntf := IZwpTabletToolV2Listener(AData^.ListenerUserData);
-  AIntf.zwp_tablet_tool_v2_tilt(TZwpTabletToolV2(AData^.PascalObject), ATiltX, ATiltY);
+  AIntf := IWpTabletToolV2Listener(AData^.ListenerUserData);
+  AIntf.wp_tablet_tool_v2_tilt(TWpTabletToolV2(AData^.PascalObject), ATiltX, ATiltY);
 end;
 
-procedure zwp_tablet_tool_v2_rotation_Intf(AData: PWLUserData; Azwp_tablet_tool_v2: Pzwp_tablet_tool_v2; ADegrees: Longint{24.8}); cdecl;
+procedure wp_tablet_tool_v2_rotation_Intf(AData: PWLUserData; Awp_tablet_tool_v2: Pwp_tablet_tool_v2; ADegrees: Longint{24.8}); cdecl;
 var
-  AIntf: IZwpTabletToolV2Listener;
+  AIntf: IWpTabletToolV2Listener;
 begin
   if AData = nil then Exit;
-  AIntf := IZwpTabletToolV2Listener(AData^.ListenerUserData);
-  AIntf.zwp_tablet_tool_v2_rotation(TZwpTabletToolV2(AData^.PascalObject), ADegrees);
+  AIntf := IWpTabletToolV2Listener(AData^.ListenerUserData);
+  AIntf.wp_tablet_tool_v2_rotation(TWpTabletToolV2(AData^.PascalObject), ADegrees);
 end;
 
-procedure zwp_tablet_tool_v2_slider_Intf(AData: PWLUserData; Azwp_tablet_tool_v2: Pzwp_tablet_tool_v2; APosition: LongInt); cdecl;
+procedure wp_tablet_tool_v2_slider_Intf(AData: PWLUserData; Awp_tablet_tool_v2: Pwp_tablet_tool_v2; APosition: LongInt); cdecl;
 var
-  AIntf: IZwpTabletToolV2Listener;
+  AIntf: IWpTabletToolV2Listener;
 begin
   if AData = nil then Exit;
-  AIntf := IZwpTabletToolV2Listener(AData^.ListenerUserData);
-  AIntf.zwp_tablet_tool_v2_slider(TZwpTabletToolV2(AData^.PascalObject), APosition);
+  AIntf := IWpTabletToolV2Listener(AData^.ListenerUserData);
+  AIntf.wp_tablet_tool_v2_slider(TWpTabletToolV2(AData^.PascalObject), APosition);
 end;
 
-procedure zwp_tablet_tool_v2_wheel_Intf(AData: PWLUserData; Azwp_tablet_tool_v2: Pzwp_tablet_tool_v2; ADegrees: Longint{24.8}; AClicks: LongInt); cdecl;
+procedure wp_tablet_tool_v2_wheel_Intf(AData: PWLUserData; Awp_tablet_tool_v2: Pwp_tablet_tool_v2; ADegrees: Longint{24.8}; AClicks: LongInt); cdecl;
 var
-  AIntf: IZwpTabletToolV2Listener;
+  AIntf: IWpTabletToolV2Listener;
 begin
   if AData = nil then Exit;
-  AIntf := IZwpTabletToolV2Listener(AData^.ListenerUserData);
-  AIntf.zwp_tablet_tool_v2_wheel(TZwpTabletToolV2(AData^.PascalObject), ADegrees, AClicks);
+  AIntf := IWpTabletToolV2Listener(AData^.ListenerUserData);
+  AIntf.wp_tablet_tool_v2_wheel(TWpTabletToolV2(AData^.PascalObject), ADegrees, AClicks);
 end;
 
-procedure zwp_tablet_tool_v2_button_Intf(AData: PWLUserData; Azwp_tablet_tool_v2: Pzwp_tablet_tool_v2; ASerial: DWord; AButton: DWord; AState: DWord); cdecl;
+procedure wp_tablet_tool_v2_button_Intf(AData: PWLUserData; Awp_tablet_tool_v2: Pwp_tablet_tool_v2; ASerial: DWord; AButton: DWord; AState: DWord); cdecl;
 var
-  AIntf: IZwpTabletToolV2Listener;
+  AIntf: IWpTabletToolV2Listener;
 begin
   if AData = nil then Exit;
-  AIntf := IZwpTabletToolV2Listener(AData^.ListenerUserData);
-  AIntf.zwp_tablet_tool_v2_button(TZwpTabletToolV2(AData^.PascalObject), ASerial, AButton, AState);
+  AIntf := IWpTabletToolV2Listener(AData^.ListenerUserData);
+  AIntf.wp_tablet_tool_v2_button(TWpTabletToolV2(AData^.PascalObject), ASerial, AButton, AState);
 end;
 
-procedure zwp_tablet_tool_v2_frame_Intf(AData: PWLUserData; Azwp_tablet_tool_v2: Pzwp_tablet_tool_v2; ATime: DWord); cdecl;
+procedure wp_tablet_tool_v2_frame_Intf(AData: PWLUserData; Awp_tablet_tool_v2: Pwp_tablet_tool_v2; ATime: DWord); cdecl;
 var
-  AIntf: IZwpTabletToolV2Listener;
+  AIntf: IWpTabletToolV2Listener;
 begin
   if AData = nil then Exit;
-  AIntf := IZwpTabletToolV2Listener(AData^.ListenerUserData);
-  AIntf.zwp_tablet_tool_v2_frame(TZwpTabletToolV2(AData^.PascalObject), ATime);
+  AIntf := IWpTabletToolV2Listener(AData^.ListenerUserData);
+  AIntf.wp_tablet_tool_v2_frame(TWpTabletToolV2(AData^.PascalObject), ATime);
 end;
 
-procedure zwp_tablet_v2_name_Intf(AData: PWLUserData; Azwp_tablet_v2: Pzwp_tablet_v2; AName: Pchar); cdecl;
+procedure wp_tablet_v2_name_Intf(AData: PWLUserData; Awp_tablet_v2: Pwp_tablet_v2; AName: Pchar); cdecl;
 var
-  AIntf: IZwpTabletV2Listener;
+  AIntf: IWpTabletV2Listener;
 begin
   if AData = nil then Exit;
-  AIntf := IZwpTabletV2Listener(AData^.ListenerUserData);
-  AIntf.zwp_tablet_v2_name(TZwpTabletV2(AData^.PascalObject), AName);
+  AIntf := IWpTabletV2Listener(AData^.ListenerUserData);
+  AIntf.wp_tablet_v2_name(TWpTabletV2(AData^.PascalObject), AName);
 end;
 
-procedure zwp_tablet_v2_id_Intf(AData: PWLUserData; Azwp_tablet_v2: Pzwp_tablet_v2; AVid: DWord; APid: DWord); cdecl;
+procedure wp_tablet_v2_id_Intf(AData: PWLUserData; Awp_tablet_v2: Pwp_tablet_v2; AVid: DWord; APid: DWord); cdecl;
 var
-  AIntf: IZwpTabletV2Listener;
+  AIntf: IWpTabletV2Listener;
 begin
   if AData = nil then Exit;
-  AIntf := IZwpTabletV2Listener(AData^.ListenerUserData);
-  AIntf.zwp_tablet_v2_id(TZwpTabletV2(AData^.PascalObject), AVid, APid);
+  AIntf := IWpTabletV2Listener(AData^.ListenerUserData);
+  AIntf.wp_tablet_v2_id(TWpTabletV2(AData^.PascalObject), AVid, APid);
 end;
 
-procedure zwp_tablet_v2_path_Intf(AData: PWLUserData; Azwp_tablet_v2: Pzwp_tablet_v2; APath: Pchar); cdecl;
+procedure wp_tablet_v2_path_Intf(AData: PWLUserData; Awp_tablet_v2: Pwp_tablet_v2; APath: Pchar); cdecl;
 var
-  AIntf: IZwpTabletV2Listener;
+  AIntf: IWpTabletV2Listener;
 begin
   if AData = nil then Exit;
-  AIntf := IZwpTabletV2Listener(AData^.ListenerUserData);
-  AIntf.zwp_tablet_v2_path(TZwpTabletV2(AData^.PascalObject), APath);
+  AIntf := IWpTabletV2Listener(AData^.ListenerUserData);
+  AIntf.wp_tablet_v2_path(TWpTabletV2(AData^.PascalObject), APath);
 end;
 
-procedure zwp_tablet_v2_done_Intf(AData: PWLUserData; Azwp_tablet_v2: Pzwp_tablet_v2); cdecl;
+procedure wp_tablet_v2_done_Intf(AData: PWLUserData; Awp_tablet_v2: Pwp_tablet_v2); cdecl;
 var
-  AIntf: IZwpTabletV2Listener;
+  AIntf: IWpTabletV2Listener;
 begin
   if AData = nil then Exit;
-  AIntf := IZwpTabletV2Listener(AData^.ListenerUserData);
-  AIntf.zwp_tablet_v2_done(TZwpTabletV2(AData^.PascalObject));
+  AIntf := IWpTabletV2Listener(AData^.ListenerUserData);
+  AIntf.wp_tablet_v2_done(TWpTabletV2(AData^.PascalObject));
 end;
 
-procedure zwp_tablet_v2_removed_Intf(AData: PWLUserData; Azwp_tablet_v2: Pzwp_tablet_v2); cdecl;
+procedure wp_tablet_v2_removed_Intf(AData: PWLUserData; Awp_tablet_v2: Pwp_tablet_v2); cdecl;
 var
-  AIntf: IZwpTabletV2Listener;
+  AIntf: IWpTabletV2Listener;
 begin
   if AData = nil then Exit;
-  AIntf := IZwpTabletV2Listener(AData^.ListenerUserData);
-  AIntf.zwp_tablet_v2_removed(TZwpTabletV2(AData^.PascalObject));
+  AIntf := IWpTabletV2Listener(AData^.ListenerUserData);
+  AIntf.wp_tablet_v2_removed(TWpTabletV2(AData^.PascalObject));
 end;
 
-procedure zwp_tablet_pad_ring_v2_source_Intf(AData: PWLUserData; Azwp_tablet_pad_ring_v2: Pzwp_tablet_pad_ring_v2; ASource: DWord); cdecl;
+procedure wp_tablet_pad_ring_v2_source_Intf(AData: PWLUserData; Awp_tablet_pad_ring_v2: Pwp_tablet_pad_ring_v2; ASource: DWord); cdecl;
 var
-  AIntf: IZwpTabletPadRingV2Listener;
+  AIntf: IWpTabletPadRingV2Listener;
 begin
   if AData = nil then Exit;
-  AIntf := IZwpTabletPadRingV2Listener(AData^.ListenerUserData);
-  AIntf.zwp_tablet_pad_ring_v2_source(TZwpTabletPadRingV2(AData^.PascalObject), ASource);
+  AIntf := IWpTabletPadRingV2Listener(AData^.ListenerUserData);
+  AIntf.wp_tablet_pad_ring_v2_source(TWpTabletPadRingV2(AData^.PascalObject), ASource);
 end;
 
-procedure zwp_tablet_pad_ring_v2_angle_Intf(AData: PWLUserData; Azwp_tablet_pad_ring_v2: Pzwp_tablet_pad_ring_v2; ADegrees: Longint{24.8}); cdecl;
+procedure wp_tablet_pad_ring_v2_angle_Intf(AData: PWLUserData; Awp_tablet_pad_ring_v2: Pwp_tablet_pad_ring_v2; ADegrees: Longint{24.8}); cdecl;
 var
-  AIntf: IZwpTabletPadRingV2Listener;
+  AIntf: IWpTabletPadRingV2Listener;
 begin
   if AData = nil then Exit;
-  AIntf := IZwpTabletPadRingV2Listener(AData^.ListenerUserData);
-  AIntf.zwp_tablet_pad_ring_v2_angle(TZwpTabletPadRingV2(AData^.PascalObject), ADegrees);
+  AIntf := IWpTabletPadRingV2Listener(AData^.ListenerUserData);
+  AIntf.wp_tablet_pad_ring_v2_angle(TWpTabletPadRingV2(AData^.PascalObject), ADegrees);
 end;
 
-procedure zwp_tablet_pad_ring_v2_stop_Intf(AData: PWLUserData; Azwp_tablet_pad_ring_v2: Pzwp_tablet_pad_ring_v2); cdecl;
+procedure wp_tablet_pad_ring_v2_stop_Intf(AData: PWLUserData; Awp_tablet_pad_ring_v2: Pwp_tablet_pad_ring_v2); cdecl;
 var
-  AIntf: IZwpTabletPadRingV2Listener;
+  AIntf: IWpTabletPadRingV2Listener;
 begin
   if AData = nil then Exit;
-  AIntf := IZwpTabletPadRingV2Listener(AData^.ListenerUserData);
-  AIntf.zwp_tablet_pad_ring_v2_stop(TZwpTabletPadRingV2(AData^.PascalObject));
+  AIntf := IWpTabletPadRingV2Listener(AData^.ListenerUserData);
+  AIntf.wp_tablet_pad_ring_v2_stop(TWpTabletPadRingV2(AData^.PascalObject));
 end;
 
-procedure zwp_tablet_pad_ring_v2_frame_Intf(AData: PWLUserData; Azwp_tablet_pad_ring_v2: Pzwp_tablet_pad_ring_v2; ATime: DWord); cdecl;
+procedure wp_tablet_pad_ring_v2_frame_Intf(AData: PWLUserData; Awp_tablet_pad_ring_v2: Pwp_tablet_pad_ring_v2; ATime: DWord); cdecl;
 var
-  AIntf: IZwpTabletPadRingV2Listener;
+  AIntf: IWpTabletPadRingV2Listener;
 begin
   if AData = nil then Exit;
-  AIntf := IZwpTabletPadRingV2Listener(AData^.ListenerUserData);
-  AIntf.zwp_tablet_pad_ring_v2_frame(TZwpTabletPadRingV2(AData^.PascalObject), ATime);
+  AIntf := IWpTabletPadRingV2Listener(AData^.ListenerUserData);
+  AIntf.wp_tablet_pad_ring_v2_frame(TWpTabletPadRingV2(AData^.PascalObject), ATime);
 end;
 
-procedure zwp_tablet_pad_strip_v2_source_Intf(AData: PWLUserData; Azwp_tablet_pad_strip_v2: Pzwp_tablet_pad_strip_v2; ASource: DWord); cdecl;
+procedure wp_tablet_pad_strip_v2_source_Intf(AData: PWLUserData; Awp_tablet_pad_strip_v2: Pwp_tablet_pad_strip_v2; ASource: DWord); cdecl;
 var
-  AIntf: IZwpTabletPadStripV2Listener;
+  AIntf: IWpTabletPadStripV2Listener;
 begin
   if AData = nil then Exit;
-  AIntf := IZwpTabletPadStripV2Listener(AData^.ListenerUserData);
-  AIntf.zwp_tablet_pad_strip_v2_source(TZwpTabletPadStripV2(AData^.PascalObject), ASource);
+  AIntf := IWpTabletPadStripV2Listener(AData^.ListenerUserData);
+  AIntf.wp_tablet_pad_strip_v2_source(TWpTabletPadStripV2(AData^.PascalObject), ASource);
 end;
 
-procedure zwp_tablet_pad_strip_v2_position_Intf(AData: PWLUserData; Azwp_tablet_pad_strip_v2: Pzwp_tablet_pad_strip_v2; APosition: DWord); cdecl;
+procedure wp_tablet_pad_strip_v2_position_Intf(AData: PWLUserData; Awp_tablet_pad_strip_v2: Pwp_tablet_pad_strip_v2; APosition: DWord); cdecl;
 var
-  AIntf: IZwpTabletPadStripV2Listener;
+  AIntf: IWpTabletPadStripV2Listener;
 begin
   if AData = nil then Exit;
-  AIntf := IZwpTabletPadStripV2Listener(AData^.ListenerUserData);
-  AIntf.zwp_tablet_pad_strip_v2_position(TZwpTabletPadStripV2(AData^.PascalObject), APosition);
+  AIntf := IWpTabletPadStripV2Listener(AData^.ListenerUserData);
+  AIntf.wp_tablet_pad_strip_v2_position(TWpTabletPadStripV2(AData^.PascalObject), APosition);
 end;
 
-procedure zwp_tablet_pad_strip_v2_stop_Intf(AData: PWLUserData; Azwp_tablet_pad_strip_v2: Pzwp_tablet_pad_strip_v2); cdecl;
+procedure wp_tablet_pad_strip_v2_stop_Intf(AData: PWLUserData; Awp_tablet_pad_strip_v2: Pwp_tablet_pad_strip_v2); cdecl;
 var
-  AIntf: IZwpTabletPadStripV2Listener;
+  AIntf: IWpTabletPadStripV2Listener;
 begin
   if AData = nil then Exit;
-  AIntf := IZwpTabletPadStripV2Listener(AData^.ListenerUserData);
-  AIntf.zwp_tablet_pad_strip_v2_stop(TZwpTabletPadStripV2(AData^.PascalObject));
+  AIntf := IWpTabletPadStripV2Listener(AData^.ListenerUserData);
+  AIntf.wp_tablet_pad_strip_v2_stop(TWpTabletPadStripV2(AData^.PascalObject));
 end;
 
-procedure zwp_tablet_pad_strip_v2_frame_Intf(AData: PWLUserData; Azwp_tablet_pad_strip_v2: Pzwp_tablet_pad_strip_v2; ATime: DWord); cdecl;
+procedure wp_tablet_pad_strip_v2_frame_Intf(AData: PWLUserData; Awp_tablet_pad_strip_v2: Pwp_tablet_pad_strip_v2; ATime: DWord); cdecl;
 var
-  AIntf: IZwpTabletPadStripV2Listener;
+  AIntf: IWpTabletPadStripV2Listener;
 begin
   if AData = nil then Exit;
-  AIntf := IZwpTabletPadStripV2Listener(AData^.ListenerUserData);
-  AIntf.zwp_tablet_pad_strip_v2_frame(TZwpTabletPadStripV2(AData^.PascalObject), ATime);
+  AIntf := IWpTabletPadStripV2Listener(AData^.ListenerUserData);
+  AIntf.wp_tablet_pad_strip_v2_frame(TWpTabletPadStripV2(AData^.PascalObject), ATime);
 end;
 
-procedure zwp_tablet_pad_group_v2_buttons_Intf(AData: PWLUserData; Azwp_tablet_pad_group_v2: Pzwp_tablet_pad_group_v2; AButtons: Pwl_array); cdecl;
+procedure wp_tablet_pad_group_v2_buttons_Intf(AData: PWLUserData; Awp_tablet_pad_group_v2: Pwp_tablet_pad_group_v2; AButtons: Pwl_array); cdecl;
 var
-  AIntf: IZwpTabletPadGroupV2Listener;
+  AIntf: IWpTabletPadGroupV2Listener;
 begin
   if AData = nil then Exit;
-  AIntf := IZwpTabletPadGroupV2Listener(AData^.ListenerUserData);
-  AIntf.zwp_tablet_pad_group_v2_buttons(TZwpTabletPadGroupV2(AData^.PascalObject), AButtons);
+  AIntf := IWpTabletPadGroupV2Listener(AData^.ListenerUserData);
+  AIntf.wp_tablet_pad_group_v2_buttons(TWpTabletPadGroupV2(AData^.PascalObject), AButtons);
 end;
 
-procedure zwp_tablet_pad_group_v2_ring_Intf(AData: PWLUserData; Azwp_tablet_pad_group_v2: Pzwp_tablet_pad_group_v2; ARing: Pzwp_tablet_pad_ring_v2); cdecl;
+procedure wp_tablet_pad_group_v2_ring_Intf(AData: PWLUserData; Awp_tablet_pad_group_v2: Pwp_tablet_pad_group_v2; ARing: Pwp_tablet_pad_ring_v2); cdecl;
 var
-  AIntf: IZwpTabletPadGroupV2Listener;
+  AIntf: IWpTabletPadGroupV2Listener;
 begin
   if AData = nil then Exit;
-  AIntf := IZwpTabletPadGroupV2Listener(AData^.ListenerUserData);
-  AIntf.zwp_tablet_pad_group_v2_ring(TZwpTabletPadGroupV2(AData^.PascalObject),  TZwpTabletPadRingV2.Create(ARing));
+  AIntf := IWpTabletPadGroupV2Listener(AData^.ListenerUserData);
+  AIntf.wp_tablet_pad_group_v2_ring(TWpTabletPadGroupV2(AData^.PascalObject),  TWpTabletPadRingV2.Create(ARing));
 end;
 
-procedure zwp_tablet_pad_group_v2_strip_Intf(AData: PWLUserData; Azwp_tablet_pad_group_v2: Pzwp_tablet_pad_group_v2; AStrip: Pzwp_tablet_pad_strip_v2); cdecl;
+procedure wp_tablet_pad_group_v2_strip_Intf(AData: PWLUserData; Awp_tablet_pad_group_v2: Pwp_tablet_pad_group_v2; AStrip: Pwp_tablet_pad_strip_v2); cdecl;
 var
-  AIntf: IZwpTabletPadGroupV2Listener;
+  AIntf: IWpTabletPadGroupV2Listener;
 begin
   if AData = nil then Exit;
-  AIntf := IZwpTabletPadGroupV2Listener(AData^.ListenerUserData);
-  AIntf.zwp_tablet_pad_group_v2_strip(TZwpTabletPadGroupV2(AData^.PascalObject),  TZwpTabletPadStripV2.Create(AStrip));
+  AIntf := IWpTabletPadGroupV2Listener(AData^.ListenerUserData);
+  AIntf.wp_tablet_pad_group_v2_strip(TWpTabletPadGroupV2(AData^.PascalObject),  TWpTabletPadStripV2.Create(AStrip));
 end;
 
-procedure zwp_tablet_pad_group_v2_modes_Intf(AData: PWLUserData; Azwp_tablet_pad_group_v2: Pzwp_tablet_pad_group_v2; AModes: DWord); cdecl;
+procedure wp_tablet_pad_group_v2_modes_Intf(AData: PWLUserData; Awp_tablet_pad_group_v2: Pwp_tablet_pad_group_v2; AModes: DWord); cdecl;
 var
-  AIntf: IZwpTabletPadGroupV2Listener;
+  AIntf: IWpTabletPadGroupV2Listener;
 begin
   if AData = nil then Exit;
-  AIntf := IZwpTabletPadGroupV2Listener(AData^.ListenerUserData);
-  AIntf.zwp_tablet_pad_group_v2_modes(TZwpTabletPadGroupV2(AData^.PascalObject), AModes);
+  AIntf := IWpTabletPadGroupV2Listener(AData^.ListenerUserData);
+  AIntf.wp_tablet_pad_group_v2_modes(TWpTabletPadGroupV2(AData^.PascalObject), AModes);
 end;
 
-procedure zwp_tablet_pad_group_v2_done_Intf(AData: PWLUserData; Azwp_tablet_pad_group_v2: Pzwp_tablet_pad_group_v2); cdecl;
+procedure wp_tablet_pad_group_v2_done_Intf(AData: PWLUserData; Awp_tablet_pad_group_v2: Pwp_tablet_pad_group_v2); cdecl;
 var
-  AIntf: IZwpTabletPadGroupV2Listener;
+  AIntf: IWpTabletPadGroupV2Listener;
 begin
   if AData = nil then Exit;
-  AIntf := IZwpTabletPadGroupV2Listener(AData^.ListenerUserData);
-  AIntf.zwp_tablet_pad_group_v2_done(TZwpTabletPadGroupV2(AData^.PascalObject));
+  AIntf := IWpTabletPadGroupV2Listener(AData^.ListenerUserData);
+  AIntf.wp_tablet_pad_group_v2_done(TWpTabletPadGroupV2(AData^.PascalObject));
 end;
 
-procedure zwp_tablet_pad_group_v2_mode_switch_Intf(AData: PWLUserData; Azwp_tablet_pad_group_v2: Pzwp_tablet_pad_group_v2; ATime: DWord; ASerial: DWord; AMode: DWord); cdecl;
+procedure wp_tablet_pad_group_v2_mode_switch_Intf(AData: PWLUserData; Awp_tablet_pad_group_v2: Pwp_tablet_pad_group_v2; ATime: DWord; ASerial: DWord; AMode: DWord); cdecl;
 var
-  AIntf: IZwpTabletPadGroupV2Listener;
+  AIntf: IWpTabletPadGroupV2Listener;
 begin
   if AData = nil then Exit;
-  AIntf := IZwpTabletPadGroupV2Listener(AData^.ListenerUserData);
-  AIntf.zwp_tablet_pad_group_v2_mode_switch(TZwpTabletPadGroupV2(AData^.PascalObject), ATime, ASerial, AMode);
+  AIntf := IWpTabletPadGroupV2Listener(AData^.ListenerUserData);
+  AIntf.wp_tablet_pad_group_v2_mode_switch(TWpTabletPadGroupV2(AData^.PascalObject), ATime, ASerial, AMode);
 end;
 
-procedure zwp_tablet_pad_v2_group_Intf(AData: PWLUserData; Azwp_tablet_pad_v2: Pzwp_tablet_pad_v2; APadGroup: Pzwp_tablet_pad_group_v2); cdecl;
+procedure wp_tablet_pad_v2_group_Intf(AData: PWLUserData; Awp_tablet_pad_v2: Pwp_tablet_pad_v2; APadGroup: Pwp_tablet_pad_group_v2); cdecl;
 var
-  AIntf: IZwpTabletPadV2Listener;
+  AIntf: IWpTabletPadV2Listener;
 begin
   if AData = nil then Exit;
-  AIntf := IZwpTabletPadV2Listener(AData^.ListenerUserData);
-  AIntf.zwp_tablet_pad_v2_group(TZwpTabletPadV2(AData^.PascalObject),  TZwpTabletPadGroupV2.Create(APadGroup));
+  AIntf := IWpTabletPadV2Listener(AData^.ListenerUserData);
+  AIntf.wp_tablet_pad_v2_group(TWpTabletPadV2(AData^.PascalObject),  TWpTabletPadGroupV2.Create(APadGroup));
 end;
 
-procedure zwp_tablet_pad_v2_path_Intf(AData: PWLUserData; Azwp_tablet_pad_v2: Pzwp_tablet_pad_v2; APath: Pchar); cdecl;
+procedure wp_tablet_pad_v2_path_Intf(AData: PWLUserData; Awp_tablet_pad_v2: Pwp_tablet_pad_v2; APath: Pchar); cdecl;
 var
-  AIntf: IZwpTabletPadV2Listener;
+  AIntf: IWpTabletPadV2Listener;
 begin
   if AData = nil then Exit;
-  AIntf := IZwpTabletPadV2Listener(AData^.ListenerUserData);
-  AIntf.zwp_tablet_pad_v2_path(TZwpTabletPadV2(AData^.PascalObject), APath);
+  AIntf := IWpTabletPadV2Listener(AData^.ListenerUserData);
+  AIntf.wp_tablet_pad_v2_path(TWpTabletPadV2(AData^.PascalObject), APath);
 end;
 
-procedure zwp_tablet_pad_v2_buttons_Intf(AData: PWLUserData; Azwp_tablet_pad_v2: Pzwp_tablet_pad_v2; AButtons: DWord); cdecl;
+procedure wp_tablet_pad_v2_buttons_Intf(AData: PWLUserData; Awp_tablet_pad_v2: Pwp_tablet_pad_v2; AButtons: DWord); cdecl;
 var
-  AIntf: IZwpTabletPadV2Listener;
+  AIntf: IWpTabletPadV2Listener;
 begin
   if AData = nil then Exit;
-  AIntf := IZwpTabletPadV2Listener(AData^.ListenerUserData);
-  AIntf.zwp_tablet_pad_v2_buttons(TZwpTabletPadV2(AData^.PascalObject), AButtons);
+  AIntf := IWpTabletPadV2Listener(AData^.ListenerUserData);
+  AIntf.wp_tablet_pad_v2_buttons(TWpTabletPadV2(AData^.PascalObject), AButtons);
 end;
 
-procedure zwp_tablet_pad_v2_done_Intf(AData: PWLUserData; Azwp_tablet_pad_v2: Pzwp_tablet_pad_v2); cdecl;
+procedure wp_tablet_pad_v2_done_Intf(AData: PWLUserData; Awp_tablet_pad_v2: Pwp_tablet_pad_v2); cdecl;
 var
-  AIntf: IZwpTabletPadV2Listener;
+  AIntf: IWpTabletPadV2Listener;
 begin
   if AData = nil then Exit;
-  AIntf := IZwpTabletPadV2Listener(AData^.ListenerUserData);
-  AIntf.zwp_tablet_pad_v2_done(TZwpTabletPadV2(AData^.PascalObject));
+  AIntf := IWpTabletPadV2Listener(AData^.ListenerUserData);
+  AIntf.wp_tablet_pad_v2_done(TWpTabletPadV2(AData^.PascalObject));
 end;
 
-procedure zwp_tablet_pad_v2_button_Intf(AData: PWLUserData; Azwp_tablet_pad_v2: Pzwp_tablet_pad_v2; ATime: DWord; AButton: DWord; AState: DWord); cdecl;
+procedure wp_tablet_pad_v2_button_Intf(AData: PWLUserData; Awp_tablet_pad_v2: Pwp_tablet_pad_v2; ATime: DWord; AButton: DWord; AState: DWord); cdecl;
 var
-  AIntf: IZwpTabletPadV2Listener;
+  AIntf: IWpTabletPadV2Listener;
 begin
   if AData = nil then Exit;
-  AIntf := IZwpTabletPadV2Listener(AData^.ListenerUserData);
-  AIntf.zwp_tablet_pad_v2_button(TZwpTabletPadV2(AData^.PascalObject), ATime, AButton, AState);
+  AIntf := IWpTabletPadV2Listener(AData^.ListenerUserData);
+  AIntf.wp_tablet_pad_v2_button(TWpTabletPadV2(AData^.PascalObject), ATime, AButton, AState);
 end;
 
-procedure zwp_tablet_pad_v2_enter_Intf(AData: PWLUserData; Azwp_tablet_pad_v2: Pzwp_tablet_pad_v2; ASerial: DWord; ATablet: Pzwp_tablet_v2; ASurface: Pwl_surface); cdecl;
+procedure wp_tablet_pad_v2_enter_Intf(AData: PWLUserData; Awp_tablet_pad_v2: Pwp_tablet_pad_v2; ASerial: DWord; ATablet: Pwp_tablet_v2; ASurface: Pwl_surface); cdecl;
 var
-  AIntf: IZwpTabletPadV2Listener;
+  AIntf: IWpTabletPadV2Listener;
 begin
   if AData = nil then Exit;
-  AIntf := IZwpTabletPadV2Listener(AData^.ListenerUserData);
-  AIntf.zwp_tablet_pad_v2_enter(TZwpTabletPadV2(AData^.PascalObject), ASerial,  TZwpTabletV2(TWLProxyObject.WLToObj(ATablet)),  TWlSurface(TWLProxyObject.WLToObj(ASurface)));
+  AIntf := IWpTabletPadV2Listener(AData^.ListenerUserData);
+  AIntf.wp_tablet_pad_v2_enter(TWpTabletPadV2(AData^.PascalObject), ASerial,  TWpTabletV2(TWLProxyObject.WLToObj(ATablet)),  TWlSurface(TWLProxyObject.WLToObj(ASurface)));
 end;
 
-procedure zwp_tablet_pad_v2_leave_Intf(AData: PWLUserData; Azwp_tablet_pad_v2: Pzwp_tablet_pad_v2; ASerial: DWord; ASurface: Pwl_surface); cdecl;
+procedure wp_tablet_pad_v2_leave_Intf(AData: PWLUserData; Awp_tablet_pad_v2: Pwp_tablet_pad_v2; ASerial: DWord; ASurface: Pwl_surface); cdecl;
 var
-  AIntf: IZwpTabletPadV2Listener;
+  AIntf: IWpTabletPadV2Listener;
 begin
   if AData = nil then Exit;
-  AIntf := IZwpTabletPadV2Listener(AData^.ListenerUserData);
-  AIntf.zwp_tablet_pad_v2_leave(TZwpTabletPadV2(AData^.PascalObject), ASerial,  TWlSurface(TWLProxyObject.WLToObj(ASurface)));
+  AIntf := IWpTabletPadV2Listener(AData^.ListenerUserData);
+  AIntf.wp_tablet_pad_v2_leave(TWpTabletPadV2(AData^.PascalObject), ASerial,  TWlSurface(TWLProxyObject.WLToObj(ASurface)));
 end;
 
-procedure zwp_tablet_pad_v2_removed_Intf(AData: PWLUserData; Azwp_tablet_pad_v2: Pzwp_tablet_pad_v2); cdecl;
+procedure wp_tablet_pad_v2_removed_Intf(AData: PWLUserData; Awp_tablet_pad_v2: Pwp_tablet_pad_v2); cdecl;
 var
-  AIntf: IZwpTabletPadV2Listener;
+  AIntf: IWpTabletPadV2Listener;
 begin
   if AData = nil then Exit;
-  AIntf := IZwpTabletPadV2Listener(AData^.ListenerUserData);
-  AIntf.zwp_tablet_pad_v2_removed(TZwpTabletPadV2(AData^.PascalObject));
+  AIntf := IWpTabletPadV2Listener(AData^.ListenerUserData);
+  AIntf.wp_tablet_pad_v2_removed(TWpTabletPadV2(AData^.PascalObject));
 end;
 
 
@@ -911,39 +919,39 @@ const
     (nil),
     (nil),
     (nil),
-    (@zwp_tablet_seat_v2_interface),
+    (@wp_tablet_seat_v2_interface),
     (@wl_seat_interface),
     (nil),
     (@wl_surface_interface),
     (nil),
     (nil),
     (nil),
-    (@zwp_tablet_v2_interface),
+    (@wp_tablet_v2_interface),
     (@wl_surface_interface),
     (nil),
-    (@zwp_tablet_v2_interface),
+    (@wp_tablet_v2_interface),
     (@wl_surface_interface),
     (nil),
     (@wl_surface_interface)
   );
 
-  zwp_tablet_manager_v2_requests: array[0..1] of Twl_message = (
+  wp_tablet_manager_v2_requests: array[0..1] of Twl_message = (
     (name: 'get_tablet_seat'; signature: 'no'; types: @pInterfaces[8]),
     (name: 'destroy'; signature: ''; types: @pInterfaces[0])
   );
-  zwp_tablet_seat_v2_requests: array[0..0] of Twl_message = (
+  wp_tablet_seat_v2_requests: array[0..0] of Twl_message = (
     (name: 'destroy'; signature: ''; types: @pInterfaces[0])
   );
-  zwp_tablet_seat_v2_events: array[0..2] of Twl_message = (
+  wp_tablet_seat_v2_events: array[0..2] of Twl_message = (
     (name: 'tablet_added'; signature: 'n'; types: @pInterfaces[0]),
     (name: 'tool_added'; signature: 'n'; types: @pInterfaces[0]),
     (name: 'pad_added'; signature: 'n'; types: @pInterfaces[0])
   );
-  zwp_tablet_tool_v2_requests: array[0..1] of Twl_message = (
+  wp_tablet_tool_v2_requests: array[0..1] of Twl_message = (
     (name: 'set_cursor'; signature: 'u?oii'; types: @pInterfaces[10]),
     (name: 'destroy'; signature: ''; types: @pInterfaces[0])
   );
-  zwp_tablet_tool_v2_events: array[0..18] of Twl_message = (
+  wp_tablet_tool_v2_events: array[0..18] of Twl_message = (
     (name: 'type'; signature: 'u'; types: @pInterfaces[0]),
     (name: 'hardware_serial'; signature: 'uu'; types: @pInterfaces[0]),
     (name: 'hardware_id_wacom'; signature: 'uu'; types: @pInterfaces[0]),
@@ -964,40 +972,40 @@ const
     (name: 'button'; signature: 'uuu'; types: @pInterfaces[0]),
     (name: 'frame'; signature: 'u'; types: @pInterfaces[0])
   );
-  zwp_tablet_v2_requests: array[0..0] of Twl_message = (
+  wp_tablet_v2_requests: array[0..0] of Twl_message = (
     (name: 'destroy'; signature: ''; types: @pInterfaces[0])
   );
-  zwp_tablet_v2_events: array[0..4] of Twl_message = (
+  wp_tablet_v2_events: array[0..4] of Twl_message = (
     (name: 'name'; signature: 's'; types: @pInterfaces[0]),
     (name: 'id'; signature: 'uu'; types: @pInterfaces[0]),
     (name: 'path'; signature: 's'; types: @pInterfaces[0]),
     (name: 'done'; signature: ''; types: @pInterfaces[0]),
     (name: 'removed'; signature: ''; types: @pInterfaces[0])
   );
-  zwp_tablet_pad_ring_v2_requests: array[0..1] of Twl_message = (
+  wp_tablet_pad_ring_v2_requests: array[0..1] of Twl_message = (
     (name: 'set_feedback'; signature: 'su'; types: @pInterfaces[0]),
     (name: 'destroy'; signature: ''; types: @pInterfaces[0])
   );
-  zwp_tablet_pad_ring_v2_events: array[0..3] of Twl_message = (
+  wp_tablet_pad_ring_v2_events: array[0..3] of Twl_message = (
     (name: 'source'; signature: 'u'; types: @pInterfaces[0]),
     (name: 'angle'; signature: 'f'; types: @pInterfaces[0]),
     (name: 'stop'; signature: ''; types: @pInterfaces[0]),
     (name: 'frame'; signature: 'u'; types: @pInterfaces[0])
   );
-  zwp_tablet_pad_strip_v2_requests: array[0..1] of Twl_message = (
+  wp_tablet_pad_strip_v2_requests: array[0..1] of Twl_message = (
     (name: 'set_feedback'; signature: 'su'; types: @pInterfaces[0]),
     (name: 'destroy'; signature: ''; types: @pInterfaces[0])
   );
-  zwp_tablet_pad_strip_v2_events: array[0..3] of Twl_message = (
+  wp_tablet_pad_strip_v2_events: array[0..3] of Twl_message = (
     (name: 'source'; signature: 'u'; types: @pInterfaces[0]),
     (name: 'position'; signature: 'u'; types: @pInterfaces[0]),
     (name: 'stop'; signature: ''; types: @pInterfaces[0]),
     (name: 'frame'; signature: 'u'; types: @pInterfaces[0])
   );
-  zwp_tablet_pad_group_v2_requests: array[0..0] of Twl_message = (
+  wp_tablet_pad_group_v2_requests: array[0..0] of Twl_message = (
     (name: 'destroy'; signature: ''; types: @pInterfaces[0])
   );
-  zwp_tablet_pad_group_v2_events: array[0..5] of Twl_message = (
+  wp_tablet_pad_group_v2_events: array[0..5] of Twl_message = (
     (name: 'buttons'; signature: 'a'; types: @pInterfaces[0]),
     (name: 'ring'; signature: 'n'; types: @pInterfaces[0]),
     (name: 'strip'; signature: 'n'; types: @pInterfaces[0]),
@@ -1005,11 +1013,11 @@ const
     (name: 'done'; signature: ''; types: @pInterfaces[0]),
     (name: 'mode_switch'; signature: 'uuu'; types: @pInterfaces[0])
   );
-  zwp_tablet_pad_v2_requests: array[0..1] of Twl_message = (
+  wp_tablet_pad_v2_requests: array[0..1] of Twl_message = (
     (name: 'set_feedback'; signature: 'usu'; types: @pInterfaces[0]),
     (name: 'destroy'; signature: ''; types: @pInterfaces[0])
   );
-  zwp_tablet_pad_v2_events: array[0..7] of Twl_message = (
+  wp_tablet_pad_v2_events: array[0..7] of Twl_message = (
     (name: 'group'; signature: 'n'; types: @pInterfaces[0]),
     (name: 'path'; signature: 's'; types: @pInterfaces[0]),
     (name: 'buttons'; signature: 'u'; types: @pInterfaces[0]),
@@ -1021,111 +1029,111 @@ const
   );
 
 initialization
-  Pointer(vIntf_zwp_tablet_seat_v2_Listener.tablet_added) := @zwp_tablet_seat_v2_tablet_added_Intf;
-  Pointer(vIntf_zwp_tablet_seat_v2_Listener.tool_added) := @zwp_tablet_seat_v2_tool_added_Intf;
-  Pointer(vIntf_zwp_tablet_seat_v2_Listener.pad_added) := @zwp_tablet_seat_v2_pad_added_Intf;
-  Pointer(vIntf_zwp_tablet_tool_v2_Listener.type_) := @zwp_tablet_tool_v2_type_Intf;
-  Pointer(vIntf_zwp_tablet_tool_v2_Listener.hardware_serial) := @zwp_tablet_tool_v2_hardware_serial_Intf;
-  Pointer(vIntf_zwp_tablet_tool_v2_Listener.hardware_id_wacom) := @zwp_tablet_tool_v2_hardware_id_wacom_Intf;
-  Pointer(vIntf_zwp_tablet_tool_v2_Listener.capability) := @zwp_tablet_tool_v2_capability_Intf;
-  Pointer(vIntf_zwp_tablet_tool_v2_Listener.done) := @zwp_tablet_tool_v2_done_Intf;
-  Pointer(vIntf_zwp_tablet_tool_v2_Listener.removed) := @zwp_tablet_tool_v2_removed_Intf;
-  Pointer(vIntf_zwp_tablet_tool_v2_Listener.proximity_in) := @zwp_tablet_tool_v2_proximity_in_Intf;
-  Pointer(vIntf_zwp_tablet_tool_v2_Listener.proximity_out) := @zwp_tablet_tool_v2_proximity_out_Intf;
-  Pointer(vIntf_zwp_tablet_tool_v2_Listener.down) := @zwp_tablet_tool_v2_down_Intf;
-  Pointer(vIntf_zwp_tablet_tool_v2_Listener.up) := @zwp_tablet_tool_v2_up_Intf;
-  Pointer(vIntf_zwp_tablet_tool_v2_Listener.motion) := @zwp_tablet_tool_v2_motion_Intf;
-  Pointer(vIntf_zwp_tablet_tool_v2_Listener.pressure) := @zwp_tablet_tool_v2_pressure_Intf;
-  Pointer(vIntf_zwp_tablet_tool_v2_Listener.distance) := @zwp_tablet_tool_v2_distance_Intf;
-  Pointer(vIntf_zwp_tablet_tool_v2_Listener.tilt) := @zwp_tablet_tool_v2_tilt_Intf;
-  Pointer(vIntf_zwp_tablet_tool_v2_Listener.rotation) := @zwp_tablet_tool_v2_rotation_Intf;
-  Pointer(vIntf_zwp_tablet_tool_v2_Listener.slider) := @zwp_tablet_tool_v2_slider_Intf;
-  Pointer(vIntf_zwp_tablet_tool_v2_Listener.wheel) := @zwp_tablet_tool_v2_wheel_Intf;
-  Pointer(vIntf_zwp_tablet_tool_v2_Listener.button) := @zwp_tablet_tool_v2_button_Intf;
-  Pointer(vIntf_zwp_tablet_tool_v2_Listener.frame) := @zwp_tablet_tool_v2_frame_Intf;
-  Pointer(vIntf_zwp_tablet_v2_Listener.name) := @zwp_tablet_v2_name_Intf;
-  Pointer(vIntf_zwp_tablet_v2_Listener.id) := @zwp_tablet_v2_id_Intf;
-  Pointer(vIntf_zwp_tablet_v2_Listener.path) := @zwp_tablet_v2_path_Intf;
-  Pointer(vIntf_zwp_tablet_v2_Listener.done) := @zwp_tablet_v2_done_Intf;
-  Pointer(vIntf_zwp_tablet_v2_Listener.removed) := @zwp_tablet_v2_removed_Intf;
-  Pointer(vIntf_zwp_tablet_pad_ring_v2_Listener.source) := @zwp_tablet_pad_ring_v2_source_Intf;
-  Pointer(vIntf_zwp_tablet_pad_ring_v2_Listener.angle) := @zwp_tablet_pad_ring_v2_angle_Intf;
-  Pointer(vIntf_zwp_tablet_pad_ring_v2_Listener.stop) := @zwp_tablet_pad_ring_v2_stop_Intf;
-  Pointer(vIntf_zwp_tablet_pad_ring_v2_Listener.frame) := @zwp_tablet_pad_ring_v2_frame_Intf;
-  Pointer(vIntf_zwp_tablet_pad_strip_v2_Listener.source) := @zwp_tablet_pad_strip_v2_source_Intf;
-  Pointer(vIntf_zwp_tablet_pad_strip_v2_Listener.position) := @zwp_tablet_pad_strip_v2_position_Intf;
-  Pointer(vIntf_zwp_tablet_pad_strip_v2_Listener.stop) := @zwp_tablet_pad_strip_v2_stop_Intf;
-  Pointer(vIntf_zwp_tablet_pad_strip_v2_Listener.frame) := @zwp_tablet_pad_strip_v2_frame_Intf;
-  Pointer(vIntf_zwp_tablet_pad_group_v2_Listener.buttons) := @zwp_tablet_pad_group_v2_buttons_Intf;
-  Pointer(vIntf_zwp_tablet_pad_group_v2_Listener.ring) := @zwp_tablet_pad_group_v2_ring_Intf;
-  Pointer(vIntf_zwp_tablet_pad_group_v2_Listener.strip) := @zwp_tablet_pad_group_v2_strip_Intf;
-  Pointer(vIntf_zwp_tablet_pad_group_v2_Listener.modes) := @zwp_tablet_pad_group_v2_modes_Intf;
-  Pointer(vIntf_zwp_tablet_pad_group_v2_Listener.done) := @zwp_tablet_pad_group_v2_done_Intf;
-  Pointer(vIntf_zwp_tablet_pad_group_v2_Listener.mode_switch) := @zwp_tablet_pad_group_v2_mode_switch_Intf;
-  Pointer(vIntf_zwp_tablet_pad_v2_Listener.group) := @zwp_tablet_pad_v2_group_Intf;
-  Pointer(vIntf_zwp_tablet_pad_v2_Listener.path) := @zwp_tablet_pad_v2_path_Intf;
-  Pointer(vIntf_zwp_tablet_pad_v2_Listener.buttons) := @zwp_tablet_pad_v2_buttons_Intf;
-  Pointer(vIntf_zwp_tablet_pad_v2_Listener.done) := @zwp_tablet_pad_v2_done_Intf;
-  Pointer(vIntf_zwp_tablet_pad_v2_Listener.button) := @zwp_tablet_pad_v2_button_Intf;
-  Pointer(vIntf_zwp_tablet_pad_v2_Listener.enter) := @zwp_tablet_pad_v2_enter_Intf;
-  Pointer(vIntf_zwp_tablet_pad_v2_Listener.leave) := @zwp_tablet_pad_v2_leave_Intf;
-  Pointer(vIntf_zwp_tablet_pad_v2_Listener.removed) := @zwp_tablet_pad_v2_removed_Intf;
+  Pointer(vIntf_wp_tablet_seat_v2_Listener.tablet_added) := @wp_tablet_seat_v2_tablet_added_Intf;
+  Pointer(vIntf_wp_tablet_seat_v2_Listener.tool_added) := @wp_tablet_seat_v2_tool_added_Intf;
+  Pointer(vIntf_wp_tablet_seat_v2_Listener.pad_added) := @wp_tablet_seat_v2_pad_added_Intf;
+  Pointer(vIntf_wp_tablet_tool_v2_Listener.type_) := @wp_tablet_tool_v2_type_Intf;
+  Pointer(vIntf_wp_tablet_tool_v2_Listener.hardware_serial) := @wp_tablet_tool_v2_hardware_serial_Intf;
+  Pointer(vIntf_wp_tablet_tool_v2_Listener.hardware_id_wacom) := @wp_tablet_tool_v2_hardware_id_wacom_Intf;
+  Pointer(vIntf_wp_tablet_tool_v2_Listener.capability) := @wp_tablet_tool_v2_capability_Intf;
+  Pointer(vIntf_wp_tablet_tool_v2_Listener.done) := @wp_tablet_tool_v2_done_Intf;
+  Pointer(vIntf_wp_tablet_tool_v2_Listener.removed) := @wp_tablet_tool_v2_removed_Intf;
+  Pointer(vIntf_wp_tablet_tool_v2_Listener.proximity_in) := @wp_tablet_tool_v2_proximity_in_Intf;
+  Pointer(vIntf_wp_tablet_tool_v2_Listener.proximity_out) := @wp_tablet_tool_v2_proximity_out_Intf;
+  Pointer(vIntf_wp_tablet_tool_v2_Listener.down) := @wp_tablet_tool_v2_down_Intf;
+  Pointer(vIntf_wp_tablet_tool_v2_Listener.up) := @wp_tablet_tool_v2_up_Intf;
+  Pointer(vIntf_wp_tablet_tool_v2_Listener.motion) := @wp_tablet_tool_v2_motion_Intf;
+  Pointer(vIntf_wp_tablet_tool_v2_Listener.pressure) := @wp_tablet_tool_v2_pressure_Intf;
+  Pointer(vIntf_wp_tablet_tool_v2_Listener.distance) := @wp_tablet_tool_v2_distance_Intf;
+  Pointer(vIntf_wp_tablet_tool_v2_Listener.tilt) := @wp_tablet_tool_v2_tilt_Intf;
+  Pointer(vIntf_wp_tablet_tool_v2_Listener.rotation) := @wp_tablet_tool_v2_rotation_Intf;
+  Pointer(vIntf_wp_tablet_tool_v2_Listener.slider) := @wp_tablet_tool_v2_slider_Intf;
+  Pointer(vIntf_wp_tablet_tool_v2_Listener.wheel) := @wp_tablet_tool_v2_wheel_Intf;
+  Pointer(vIntf_wp_tablet_tool_v2_Listener.button) := @wp_tablet_tool_v2_button_Intf;
+  Pointer(vIntf_wp_tablet_tool_v2_Listener.frame) := @wp_tablet_tool_v2_frame_Intf;
+  Pointer(vIntf_wp_tablet_v2_Listener.name) := @wp_tablet_v2_name_Intf;
+  Pointer(vIntf_wp_tablet_v2_Listener.id) := @wp_tablet_v2_id_Intf;
+  Pointer(vIntf_wp_tablet_v2_Listener.path) := @wp_tablet_v2_path_Intf;
+  Pointer(vIntf_wp_tablet_v2_Listener.done) := @wp_tablet_v2_done_Intf;
+  Pointer(vIntf_wp_tablet_v2_Listener.removed) := @wp_tablet_v2_removed_Intf;
+  Pointer(vIntf_wp_tablet_pad_ring_v2_Listener.source) := @wp_tablet_pad_ring_v2_source_Intf;
+  Pointer(vIntf_wp_tablet_pad_ring_v2_Listener.angle) := @wp_tablet_pad_ring_v2_angle_Intf;
+  Pointer(vIntf_wp_tablet_pad_ring_v2_Listener.stop) := @wp_tablet_pad_ring_v2_stop_Intf;
+  Pointer(vIntf_wp_tablet_pad_ring_v2_Listener.frame) := @wp_tablet_pad_ring_v2_frame_Intf;
+  Pointer(vIntf_wp_tablet_pad_strip_v2_Listener.source) := @wp_tablet_pad_strip_v2_source_Intf;
+  Pointer(vIntf_wp_tablet_pad_strip_v2_Listener.position) := @wp_tablet_pad_strip_v2_position_Intf;
+  Pointer(vIntf_wp_tablet_pad_strip_v2_Listener.stop) := @wp_tablet_pad_strip_v2_stop_Intf;
+  Pointer(vIntf_wp_tablet_pad_strip_v2_Listener.frame) := @wp_tablet_pad_strip_v2_frame_Intf;
+  Pointer(vIntf_wp_tablet_pad_group_v2_Listener.buttons) := @wp_tablet_pad_group_v2_buttons_Intf;
+  Pointer(vIntf_wp_tablet_pad_group_v2_Listener.ring) := @wp_tablet_pad_group_v2_ring_Intf;
+  Pointer(vIntf_wp_tablet_pad_group_v2_Listener.strip) := @wp_tablet_pad_group_v2_strip_Intf;
+  Pointer(vIntf_wp_tablet_pad_group_v2_Listener.modes) := @wp_tablet_pad_group_v2_modes_Intf;
+  Pointer(vIntf_wp_tablet_pad_group_v2_Listener.done) := @wp_tablet_pad_group_v2_done_Intf;
+  Pointer(vIntf_wp_tablet_pad_group_v2_Listener.mode_switch) := @wp_tablet_pad_group_v2_mode_switch_Intf;
+  Pointer(vIntf_wp_tablet_pad_v2_Listener.group) := @wp_tablet_pad_v2_group_Intf;
+  Pointer(vIntf_wp_tablet_pad_v2_Listener.path) := @wp_tablet_pad_v2_path_Intf;
+  Pointer(vIntf_wp_tablet_pad_v2_Listener.buttons) := @wp_tablet_pad_v2_buttons_Intf;
+  Pointer(vIntf_wp_tablet_pad_v2_Listener.done) := @wp_tablet_pad_v2_done_Intf;
+  Pointer(vIntf_wp_tablet_pad_v2_Listener.button) := @wp_tablet_pad_v2_button_Intf;
+  Pointer(vIntf_wp_tablet_pad_v2_Listener.enter) := @wp_tablet_pad_v2_enter_Intf;
+  Pointer(vIntf_wp_tablet_pad_v2_Listener.leave) := @wp_tablet_pad_v2_leave_Intf;
+  Pointer(vIntf_wp_tablet_pad_v2_Listener.removed) := @wp_tablet_pad_v2_removed_Intf;
 
 
-  zwp_tablet_manager_v2_interface.name := 'zwp_tablet_manager_v2';
-  zwp_tablet_manager_v2_interface.version := 1;
-  zwp_tablet_manager_v2_interface.method_count := 2;
-  zwp_tablet_manager_v2_interface.methods := @zwp_tablet_manager_v2_requests;
-  zwp_tablet_manager_v2_interface.event_count := 0;
-  zwp_tablet_manager_v2_interface.events := nil;
+  wp_tablet_manager_v2_interface.name := PChar(WP_TABLET_MANAGER_V2_INTERFACE_NAME);
+  wp_tablet_manager_v2_interface.version := 1;
+  wp_tablet_manager_v2_interface.method_count := 2;
+  wp_tablet_manager_v2_interface.methods := @wp_tablet_manager_v2_requests;
+  wp_tablet_manager_v2_interface.event_count := 0;
+  wp_tablet_manager_v2_interface.events := nil;
 
-  zwp_tablet_seat_v2_interface.name := 'zwp_tablet_seat_v2';
-  zwp_tablet_seat_v2_interface.version := 1;
-  zwp_tablet_seat_v2_interface.method_count := 1;
-  zwp_tablet_seat_v2_interface.methods := @zwp_tablet_seat_v2_requests;
-  zwp_tablet_seat_v2_interface.event_count := 3;
-  zwp_tablet_seat_v2_interface.events := @zwp_tablet_seat_v2_events;
+  wp_tablet_seat_v2_interface.name := PChar(WP_TABLET_SEAT_V2_INTERFACE_NAME);
+  wp_tablet_seat_v2_interface.version := 1;
+  wp_tablet_seat_v2_interface.method_count := 1;
+  wp_tablet_seat_v2_interface.methods := @wp_tablet_seat_v2_requests;
+  wp_tablet_seat_v2_interface.event_count := 3;
+  wp_tablet_seat_v2_interface.events := @wp_tablet_seat_v2_events;
 
-  zwp_tablet_tool_v2_interface.name := 'zwp_tablet_tool_v2';
-  zwp_tablet_tool_v2_interface.version := 1;
-  zwp_tablet_tool_v2_interface.method_count := 2;
-  zwp_tablet_tool_v2_interface.methods := @zwp_tablet_tool_v2_requests;
-  zwp_tablet_tool_v2_interface.event_count := 19;
-  zwp_tablet_tool_v2_interface.events := @zwp_tablet_tool_v2_events;
+  wp_tablet_tool_v2_interface.name := PChar(WP_TABLET_TOOL_V2_INTERFACE_NAME);
+  wp_tablet_tool_v2_interface.version := 1;
+  wp_tablet_tool_v2_interface.method_count := 2;
+  wp_tablet_tool_v2_interface.methods := @wp_tablet_tool_v2_requests;
+  wp_tablet_tool_v2_interface.event_count := 19;
+  wp_tablet_tool_v2_interface.events := @wp_tablet_tool_v2_events;
 
-  zwp_tablet_v2_interface.name := 'zwp_tablet_v2';
-  zwp_tablet_v2_interface.version := 1;
-  zwp_tablet_v2_interface.method_count := 1;
-  zwp_tablet_v2_interface.methods := @zwp_tablet_v2_requests;
-  zwp_tablet_v2_interface.event_count := 5;
-  zwp_tablet_v2_interface.events := @zwp_tablet_v2_events;
+  wp_tablet_v2_interface.name := PChar(WP_TABLET_V2_INTERFACE_NAME);
+  wp_tablet_v2_interface.version := 1;
+  wp_tablet_v2_interface.method_count := 1;
+  wp_tablet_v2_interface.methods := @wp_tablet_v2_requests;
+  wp_tablet_v2_interface.event_count := 5;
+  wp_tablet_v2_interface.events := @wp_tablet_v2_events;
 
-  zwp_tablet_pad_ring_v2_interface.name := 'zwp_tablet_pad_ring_v2';
-  zwp_tablet_pad_ring_v2_interface.version := 1;
-  zwp_tablet_pad_ring_v2_interface.method_count := 2;
-  zwp_tablet_pad_ring_v2_interface.methods := @zwp_tablet_pad_ring_v2_requests;
-  zwp_tablet_pad_ring_v2_interface.event_count := 4;
-  zwp_tablet_pad_ring_v2_interface.events := @zwp_tablet_pad_ring_v2_events;
+  wp_tablet_pad_ring_v2_interface.name := PChar(WP_TABLET_PAD_RING_V2_INTERFACE_NAME);
+  wp_tablet_pad_ring_v2_interface.version := 1;
+  wp_tablet_pad_ring_v2_interface.method_count := 2;
+  wp_tablet_pad_ring_v2_interface.methods := @wp_tablet_pad_ring_v2_requests;
+  wp_tablet_pad_ring_v2_interface.event_count := 4;
+  wp_tablet_pad_ring_v2_interface.events := @wp_tablet_pad_ring_v2_events;
 
-  zwp_tablet_pad_strip_v2_interface.name := 'zwp_tablet_pad_strip_v2';
-  zwp_tablet_pad_strip_v2_interface.version := 1;
-  zwp_tablet_pad_strip_v2_interface.method_count := 2;
-  zwp_tablet_pad_strip_v2_interface.methods := @zwp_tablet_pad_strip_v2_requests;
-  zwp_tablet_pad_strip_v2_interface.event_count := 4;
-  zwp_tablet_pad_strip_v2_interface.events := @zwp_tablet_pad_strip_v2_events;
+  wp_tablet_pad_strip_v2_interface.name := PChar(WP_TABLET_PAD_STRIP_V2_INTERFACE_NAME);
+  wp_tablet_pad_strip_v2_interface.version := 1;
+  wp_tablet_pad_strip_v2_interface.method_count := 2;
+  wp_tablet_pad_strip_v2_interface.methods := @wp_tablet_pad_strip_v2_requests;
+  wp_tablet_pad_strip_v2_interface.event_count := 4;
+  wp_tablet_pad_strip_v2_interface.events := @wp_tablet_pad_strip_v2_events;
 
-  zwp_tablet_pad_group_v2_interface.name := 'zwp_tablet_pad_group_v2';
-  zwp_tablet_pad_group_v2_interface.version := 1;
-  zwp_tablet_pad_group_v2_interface.method_count := 1;
-  zwp_tablet_pad_group_v2_interface.methods := @zwp_tablet_pad_group_v2_requests;
-  zwp_tablet_pad_group_v2_interface.event_count := 6;
-  zwp_tablet_pad_group_v2_interface.events := @zwp_tablet_pad_group_v2_events;
+  wp_tablet_pad_group_v2_interface.name := PChar(WP_TABLET_PAD_GROUP_V2_INTERFACE_NAME);
+  wp_tablet_pad_group_v2_interface.version := 1;
+  wp_tablet_pad_group_v2_interface.method_count := 1;
+  wp_tablet_pad_group_v2_interface.methods := @wp_tablet_pad_group_v2_requests;
+  wp_tablet_pad_group_v2_interface.event_count := 6;
+  wp_tablet_pad_group_v2_interface.events := @wp_tablet_pad_group_v2_events;
 
-  zwp_tablet_pad_v2_interface.name := 'zwp_tablet_pad_v2';
-  zwp_tablet_pad_v2_interface.version := 1;
-  zwp_tablet_pad_v2_interface.method_count := 2;
-  zwp_tablet_pad_v2_interface.methods := @zwp_tablet_pad_v2_requests;
-  zwp_tablet_pad_v2_interface.event_count := 8;
-  zwp_tablet_pad_v2_interface.events := @zwp_tablet_pad_v2_events;
+  wp_tablet_pad_v2_interface.name := PChar(WP_TABLET_PAD_V2_INTERFACE_NAME);
+  wp_tablet_pad_v2_interface.version := 1;
+  wp_tablet_pad_v2_interface.method_count := 2;
+  wp_tablet_pad_v2_interface.methods := @wp_tablet_pad_v2_requests;
+  wp_tablet_pad_v2_interface.event_count := 8;
+  wp_tablet_pad_v2_interface.events := @wp_tablet_pad_v2_events;
 
 end.

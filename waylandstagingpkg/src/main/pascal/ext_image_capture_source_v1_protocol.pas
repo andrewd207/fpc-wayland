@@ -82,8 +82,11 @@ type
 
 var
   ext_image_capture_source_v1_interface: Twl_interface;
+  EXT_IMAGE_CAPTURE_SOURCE_V1_INTERFACE_NAME: String = 'ext_image_capture_source_v1';
   ext_output_image_capture_source_manager_v1_interface: Twl_interface;
+  EXT_OUTPUT_IMAGE_CAPTURE_SOURCE_MANAGER_V1_INTERFACE_NAME: String = 'ext_output_image_capture_source_manager_v1';
   ext_foreign_toplevel_image_capture_source_manager_v1_interface: Twl_interface;
+  EXT_FOREIGN_TOPLEVEL_IMAGE_CAPTURE_SOURCE_MANAGER_V1_INTERFACE_NAME: String = 'ext_foreign_toplevel_image_capture_source_manager_v1';
 
 
 
@@ -192,21 +195,21 @@ const
 initialization
 
 
-  ext_image_capture_source_v1_interface.name := 'ext_image_capture_source_v1';
+  ext_image_capture_source_v1_interface.name := PChar(EXT_IMAGE_CAPTURE_SOURCE_V1_INTERFACE_NAME);
   ext_image_capture_source_v1_interface.version := 1;
   ext_image_capture_source_v1_interface.method_count := 1;
   ext_image_capture_source_v1_interface.methods := @ext_image_capture_source_v1_requests;
   ext_image_capture_source_v1_interface.event_count := 0;
   ext_image_capture_source_v1_interface.events := nil;
 
-  ext_output_image_capture_source_manager_v1_interface.name := 'ext_output_image_capture_source_manager_v1';
+  ext_output_image_capture_source_manager_v1_interface.name := PChar(EXT_OUTPUT_IMAGE_CAPTURE_SOURCE_MANAGER_V1_INTERFACE_NAME);
   ext_output_image_capture_source_manager_v1_interface.version := 1;
   ext_output_image_capture_source_manager_v1_interface.method_count := 2;
   ext_output_image_capture_source_manager_v1_interface.methods := @ext_output_image_capture_source_manager_v1_requests;
   ext_output_image_capture_source_manager_v1_interface.event_count := 0;
   ext_output_image_capture_source_manager_v1_interface.events := nil;
 
-  ext_foreign_toplevel_image_capture_source_manager_v1_interface.name := 'ext_foreign_toplevel_image_capture_source_manager_v1';
+  ext_foreign_toplevel_image_capture_source_manager_v1_interface.name := PChar(EXT_FOREIGN_TOPLEVEL_IMAGE_CAPTURE_SOURCE_MANAGER_V1_INTERFACE_NAME);
   ext_foreign_toplevel_image_capture_source_manager_v1_interface.version := 1;
   ext_foreign_toplevel_image_capture_source_manager_v1_interface.method_count := 2;
   ext_foreign_toplevel_image_capture_source_manager_v1_interface.methods := @ext_foreign_toplevel_image_capture_source_manager_v1_requests;

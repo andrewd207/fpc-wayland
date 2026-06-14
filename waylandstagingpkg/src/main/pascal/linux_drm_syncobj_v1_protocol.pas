@@ -100,8 +100,11 @@ type
 
 var
   wp_linux_drm_syncobj_manager_v1_interface: Twl_interface;
+  WP_LINUX_DRM_SYNCOBJ_MANAGER_V1_INTERFACE_NAME: String = 'wp_linux_drm_syncobj_manager_v1';
   wp_linux_drm_syncobj_timeline_v1_interface: Twl_interface;
+  WP_LINUX_DRM_SYNCOBJ_TIMELINE_V1_INTERFACE_NAME: String = 'wp_linux_drm_syncobj_timeline_v1';
   wp_linux_drm_syncobj_surface_v1_interface: Twl_interface;
+  WP_LINUX_DRM_SYNCOBJ_SURFACE_V1_INTERFACE_NAME: String = 'wp_linux_drm_syncobj_surface_v1';
 
 
 
@@ -228,21 +231,21 @@ const
 initialization
 
 
-  wp_linux_drm_syncobj_manager_v1_interface.name := 'wp_linux_drm_syncobj_manager_v1';
+  wp_linux_drm_syncobj_manager_v1_interface.name := PChar(WP_LINUX_DRM_SYNCOBJ_MANAGER_V1_INTERFACE_NAME);
   wp_linux_drm_syncobj_manager_v1_interface.version := 1;
   wp_linux_drm_syncobj_manager_v1_interface.method_count := 3;
   wp_linux_drm_syncobj_manager_v1_interface.methods := @wp_linux_drm_syncobj_manager_v1_requests;
   wp_linux_drm_syncobj_manager_v1_interface.event_count := 0;
   wp_linux_drm_syncobj_manager_v1_interface.events := nil;
 
-  wp_linux_drm_syncobj_timeline_v1_interface.name := 'wp_linux_drm_syncobj_timeline_v1';
+  wp_linux_drm_syncobj_timeline_v1_interface.name := PChar(WP_LINUX_DRM_SYNCOBJ_TIMELINE_V1_INTERFACE_NAME);
   wp_linux_drm_syncobj_timeline_v1_interface.version := 1;
   wp_linux_drm_syncobj_timeline_v1_interface.method_count := 1;
   wp_linux_drm_syncobj_timeline_v1_interface.methods := @wp_linux_drm_syncobj_timeline_v1_requests;
   wp_linux_drm_syncobj_timeline_v1_interface.event_count := 0;
   wp_linux_drm_syncobj_timeline_v1_interface.events := nil;
 
-  wp_linux_drm_syncobj_surface_v1_interface.name := 'wp_linux_drm_syncobj_surface_v1';
+  wp_linux_drm_syncobj_surface_v1_interface.name := PChar(WP_LINUX_DRM_SYNCOBJ_SURFACE_V1_INTERFACE_NAME);
   wp_linux_drm_syncobj_surface_v1_interface.version := 1;
   wp_linux_drm_syncobj_surface_v1_interface.method_count := 3;
   wp_linux_drm_syncobj_surface_v1_interface.methods := @wp_linux_drm_syncobj_surface_v1_requests;

@@ -85,7 +85,7 @@ type
   public
     destructor Destroy; override;
     function GetPointer(APointer: TWlPointer; AProxyClass: TWLProxyObjectClass = nil {TWpCursorShapeDeviceV1}): TWpCursorShapeDeviceV1;
-    function GetTabletToolV2(ATabletTool: TZwpTabletToolV2; AProxyClass: TWLProxyObjectClass = nil {TWpCursorShapeDeviceV1}): TWpCursorShapeDeviceV1;
+    function GetTabletToolV2(ATabletTool: TWpTabletToolV2; AProxyClass: TWLProxyObjectClass = nil {TWpCursorShapeDeviceV1}): TWpCursorShapeDeviceV1;
     function AddListener(AIntf: IWpCursorShapeManagerV1Listener): LongInt;
   end;
 
@@ -106,7 +106,9 @@ type
 
 var
   wp_cursor_shape_manager_v1_interface: Twl_interface;
+  WP_CURSOR_SHAPE_MANAGER_V1_INTERFACE_NAME: String = 'wp_cursor_shape_manager_v1';
   wp_cursor_shape_device_v1_interface: Twl_interface;
+  WP_CURSOR_SHAPE_DEVICE_V1_INTERFACE_NAME: String = 'wp_cursor_shape_device_v1';
 
 
 
@@ -137,7 +139,7 @@ begin
     Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TWpCursorShapeDeviceV1]);
 end;
 
-function TWpCursorShapeManagerV1.GetTabletToolV2(ATabletTool: TZwpTabletToolV2; AProxyClass: TWLProxyObjectClass = nil {TWpCursorShapeDeviceV1}): TWpCursorShapeDeviceV1;
+function TWpCursorShapeManagerV1.GetTabletToolV2(ATabletTool: TWpTabletToolV2; AProxyClass: TWLProxyObjectClass = nil {TWpCursorShapeDeviceV1}): TWpCursorShapeDeviceV1;
 var
   cursor_shape_device: Pwl_proxy;
 begin
@@ -190,7 +192,7 @@ const
     (@wp_cursor_shape_device_v1_interface),
     (@wl_pointer_interface),
     (@wp_cursor_shape_device_v1_interface),
-    (@zwp_tablet_tool_v2_interface)
+    (@wp_tablet_tool_v2_interface)
   );
 
   wp_cursor_shape_manager_v1_requests: array[0..2] of Twl_message = (
@@ -206,14 +208,14 @@ const
 initialization
 
 
-  wp_cursor_shape_manager_v1_interface.name := 'wp_cursor_shape_manager_v1';
+  wp_cursor_shape_manager_v1_interface.name := PChar(WP_CURSOR_SHAPE_MANAGER_V1_INTERFACE_NAME);
   wp_cursor_shape_manager_v1_interface.version := 2;
   wp_cursor_shape_manager_v1_interface.method_count := 3;
   wp_cursor_shape_manager_v1_interface.methods := @wp_cursor_shape_manager_v1_requests;
   wp_cursor_shape_manager_v1_interface.event_count := 0;
   wp_cursor_shape_manager_v1_interface.events := nil;
 
-  wp_cursor_shape_device_v1_interface.name := 'wp_cursor_shape_device_v1';
+  wp_cursor_shape_device_v1_interface.name := PChar(WP_CURSOR_SHAPE_DEVICE_V1_INTERFACE_NAME);
   wp_cursor_shape_device_v1_interface.version := 2;
   wp_cursor_shape_device_v1_interface.method_count := 2;
   wp_cursor_shape_device_v1_interface.methods := @wp_cursor_shape_device_v1_requests;

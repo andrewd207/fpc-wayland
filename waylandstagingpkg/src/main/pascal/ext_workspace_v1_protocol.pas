@@ -136,8 +136,11 @@ type
 
 var
   ext_workspace_manager_v1_interface: Twl_interface;
+  EXT_WORKSPACE_MANAGER_V1_INTERFACE_NAME: String = 'ext_workspace_manager_v1';
   ext_workspace_group_handle_v1_interface: Twl_interface;
+  EXT_WORKSPACE_GROUP_HANDLE_V1_INTERFACE_NAME: String = 'ext_workspace_group_handle_v1';
   ext_workspace_handle_v1_interface: Twl_interface;
+  EXT_WORKSPACE_HANDLE_V1_INTERFACE_NAME: String = 'ext_workspace_handle_v1';
 
 
 
@@ -436,21 +439,21 @@ initialization
   Pointer(vIntf_ext_workspace_handle_v1_Listener.removed) := @ext_workspace_handle_v1_removed_Intf;
 
 
-  ext_workspace_manager_v1_interface.name := 'ext_workspace_manager_v1';
+  ext_workspace_manager_v1_interface.name := PChar(EXT_WORKSPACE_MANAGER_V1_INTERFACE_NAME);
   ext_workspace_manager_v1_interface.version := 1;
   ext_workspace_manager_v1_interface.method_count := 2;
   ext_workspace_manager_v1_interface.methods := @ext_workspace_manager_v1_requests;
   ext_workspace_manager_v1_interface.event_count := 4;
   ext_workspace_manager_v1_interface.events := @ext_workspace_manager_v1_events;
 
-  ext_workspace_group_handle_v1_interface.name := 'ext_workspace_group_handle_v1';
+  ext_workspace_group_handle_v1_interface.name := PChar(EXT_WORKSPACE_GROUP_HANDLE_V1_INTERFACE_NAME);
   ext_workspace_group_handle_v1_interface.version := 1;
   ext_workspace_group_handle_v1_interface.method_count := 2;
   ext_workspace_group_handle_v1_interface.methods := @ext_workspace_group_handle_v1_requests;
   ext_workspace_group_handle_v1_interface.event_count := 6;
   ext_workspace_group_handle_v1_interface.events := @ext_workspace_group_handle_v1_events;
 
-  ext_workspace_handle_v1_interface.name := 'ext_workspace_handle_v1';
+  ext_workspace_handle_v1_interface.name := PChar(EXT_WORKSPACE_HANDLE_V1_INTERFACE_NAME);
   ext_workspace_handle_v1_interface.version := 1;
   ext_workspace_handle_v1_interface.method_count := 5;
   ext_workspace_handle_v1_interface.methods := @ext_workspace_handle_v1_requests;

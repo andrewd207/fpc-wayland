@@ -278,10 +278,15 @@ type
 
 var
   xdg_wm_base_interface: Twl_interface;
+  XDG_WM_BASE_INTERFACE_NAME: String = 'xdg_wm_base';
   xdg_positioner_interface: Twl_interface;
+  XDG_POSITIONER_INTERFACE_NAME: String = 'xdg_positioner';
   xdg_surface_interface: Twl_interface;
+  XDG_SURFACE_INTERFACE_NAME: String = 'xdg_surface';
   xdg_toplevel_interface: Twl_interface;
+  XDG_TOPLEVEL_INTERFACE_NAME: String = 'xdg_toplevel';
   xdg_popup_interface: Twl_interface;
+  XDG_POPUP_INTERFACE_NAME: String = 'xdg_popup';
 
 
 
@@ -735,35 +740,35 @@ initialization
   Pointer(vIntf_xdg_popup_Listener.repositioned) := @xdg_popup_repositioned_Intf;
 
 
-  xdg_wm_base_interface.name := 'xdg_wm_base';
+  xdg_wm_base_interface.name := PChar(XDG_WM_BASE_INTERFACE_NAME);
   xdg_wm_base_interface.version := 7;
   xdg_wm_base_interface.method_count := 4;
   xdg_wm_base_interface.methods := @xdg_wm_base_requests;
   xdg_wm_base_interface.event_count := 1;
   xdg_wm_base_interface.events := @xdg_wm_base_events;
 
-  xdg_positioner_interface.name := 'xdg_positioner';
+  xdg_positioner_interface.name := PChar(XDG_POSITIONER_INTERFACE_NAME);
   xdg_positioner_interface.version := 7;
   xdg_positioner_interface.method_count := 10;
   xdg_positioner_interface.methods := @xdg_positioner_requests;
   xdg_positioner_interface.event_count := 0;
   xdg_positioner_interface.events := nil;
 
-  xdg_surface_interface.name := 'xdg_surface';
+  xdg_surface_interface.name := PChar(XDG_SURFACE_INTERFACE_NAME);
   xdg_surface_interface.version := 7;
   xdg_surface_interface.method_count := 5;
   xdg_surface_interface.methods := @xdg_surface_requests;
   xdg_surface_interface.event_count := 1;
   xdg_surface_interface.events := @xdg_surface_events;
 
-  xdg_toplevel_interface.name := 'xdg_toplevel';
+  xdg_toplevel_interface.name := PChar(XDG_TOPLEVEL_INTERFACE_NAME);
   xdg_toplevel_interface.version := 7;
   xdg_toplevel_interface.method_count := 14;
   xdg_toplevel_interface.methods := @xdg_toplevel_requests;
   xdg_toplevel_interface.event_count := 4;
   xdg_toplevel_interface.events := @xdg_toplevel_events;
 
-  xdg_popup_interface.name := 'xdg_popup';
+  xdg_popup_interface.name := PChar(XDG_POPUP_INTERFACE_NAME);
   xdg_popup_interface.version := 7;
   xdg_popup_interface.method_count := 3;
   xdg_popup_interface.methods := @xdg_popup_requests;

@@ -70,7 +70,9 @@ type
 
 var
   xdg_wm_dialog_v1_interface: Twl_interface;
+  XDG_WM_DIALOG_V1_INTERFACE_NAME: String = 'xdg_wm_dialog_v1';
   xdg_dialog_v1_interface: Twl_interface;
+  XDG_DIALOG_V1_INTERFACE_NAME: String = 'xdg_dialog_v1';
 
 
 
@@ -160,14 +162,14 @@ const
 initialization
 
 
-  xdg_wm_dialog_v1_interface.name := 'xdg_wm_dialog_v1';
+  xdg_wm_dialog_v1_interface.name := PChar(XDG_WM_DIALOG_V1_INTERFACE_NAME);
   xdg_wm_dialog_v1_interface.version := 1;
   xdg_wm_dialog_v1_interface.method_count := 2;
   xdg_wm_dialog_v1_interface.methods := @xdg_wm_dialog_v1_requests;
   xdg_wm_dialog_v1_interface.event_count := 0;
   xdg_wm_dialog_v1_interface.events := nil;
 
-  xdg_dialog_v1_interface.name := 'xdg_dialog_v1';
+  xdg_dialog_v1_interface.name := PChar(XDG_DIALOG_V1_INTERFACE_NAME);
   xdg_dialog_v1_interface.version := 1;
   xdg_dialog_v1_interface.method_count := 3;
   xdg_dialog_v1_interface.methods := @xdg_dialog_v1_requests;

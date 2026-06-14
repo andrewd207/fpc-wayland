@@ -66,7 +66,9 @@ type
 
 var
   ext_transient_seat_manager_v1_interface: Twl_interface;
+  EXT_TRANSIENT_SEAT_MANAGER_V1_INTERFACE_NAME: String = 'ext_transient_seat_manager_v1';
   ext_transient_seat_v1_interface: Twl_interface;
+  EXT_TRANSIENT_SEAT_V1_INTERFACE_NAME: String = 'ext_transient_seat_v1';
 
 
 
@@ -167,14 +169,14 @@ initialization
   Pointer(vIntf_ext_transient_seat_v1_Listener.denied) := @ext_transient_seat_v1_denied_Intf;
 
 
-  ext_transient_seat_manager_v1_interface.name := 'ext_transient_seat_manager_v1';
+  ext_transient_seat_manager_v1_interface.name := PChar(EXT_TRANSIENT_SEAT_MANAGER_V1_INTERFACE_NAME);
   ext_transient_seat_manager_v1_interface.version := 1;
   ext_transient_seat_manager_v1_interface.method_count := 2;
   ext_transient_seat_manager_v1_interface.methods := @ext_transient_seat_manager_v1_requests;
   ext_transient_seat_manager_v1_interface.event_count := 0;
   ext_transient_seat_manager_v1_interface.events := nil;
 
-  ext_transient_seat_v1_interface.name := 'ext_transient_seat_v1';
+  ext_transient_seat_v1_interface.name := PChar(EXT_TRANSIENT_SEAT_V1_INTERFACE_NAME);
   ext_transient_seat_v1_interface.version := 1;
   ext_transient_seat_v1_interface.method_count := 1;
   ext_transient_seat_v1_interface.methods := @ext_transient_seat_v1_requests;

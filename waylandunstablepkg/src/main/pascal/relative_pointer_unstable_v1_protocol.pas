@@ -10,51 +10,51 @@ uses
 
 
 type
-  Pzwp_relative_pointer_manager_v1 = Pointer;
-  Pzwp_relative_pointer_v1 = Pointer;
-  Pzwp_relative_pointer_manager_v1_listener = ^Tzwp_relative_pointer_manager_v1_listener;
-  Tzwp_relative_pointer_manager_v1_listener = record
+  Pwp_relative_pointer_manager_v1 = Pointer;
+  Pwp_relative_pointer_v1 = Pointer;
+  Pwp_relative_pointer_manager_v1_listener = ^Twp_relative_pointer_manager_v1_listener;
+  Twp_relative_pointer_manager_v1_listener = record
   end;
 
-  Pzwp_relative_pointer_v1_listener = ^Tzwp_relative_pointer_v1_listener;
-  Tzwp_relative_pointer_v1_listener = record
-    relative_motion : procedure(data: Pointer; AZwpRelativePointerV1: Pzwp_relative_pointer_v1; AUtimeHi: DWord; AUtimeLo: DWord; ADx: Longint{24.8}; ADy: Longint{24.8}; ADxUnaccel: Longint{24.8}; ADyUnaccel: Longint{24.8}); cdecl;
-  end;
-
-
-
-  TZwpRelativePointerManagerV1 = class;
-  TZwpRelativePointerV1 = class;
-
-
-  IZwpRelativePointerManagerV1Listener = interface
-  ['IZwpRelativePointerManagerV1Listener']
-  end;
-
-  IZwpRelativePointerV1Listener = interface
-  ['IZwpRelativePointerV1Listener']
-    procedure zwp_relative_pointer_v1_relative_motion(AZwpRelativePointerV1: TZwpRelativePointerV1; AUtimeHi: DWord; AUtimeLo: DWord; ADx: Longint{24.8}; ADy: Longint{24.8}; ADxUnaccel: Longint{24.8}; ADyUnaccel: Longint{24.8});
+  Pwp_relative_pointer_v1_listener = ^Twp_relative_pointer_v1_listener;
+  Twp_relative_pointer_v1_listener = record
+    relative_motion : procedure(data: Pointer; AWpRelativePointerV1: Pwp_relative_pointer_v1; AUtimeHi: DWord; AUtimeLo: DWord; ADx: Longint{24.8}; ADy: Longint{24.8}; ADxUnaccel: Longint{24.8}; ADyUnaccel: Longint{24.8}); cdecl;
   end;
 
 
 
+  TWpRelativePointerManagerV1 = class;
+  TWpRelativePointerV1 = class;
 
-  TZwpRelativePointerManagerV1 = class(TWLProxyObject)
+
+  IWpRelativePointerManagerV1Listener = interface
+  ['IWpRelativePointerManagerV1Listener']
+  end;
+
+  IWpRelativePointerV1Listener = interface
+  ['IWpRelativePointerV1Listener']
+    procedure wp_relative_pointer_v1_relative_motion(AWpRelativePointerV1: TWpRelativePointerV1; AUtimeHi: DWord; AUtimeLo: DWord; ADx: Longint{24.8}; ADy: Longint{24.8}; ADxUnaccel: Longint{24.8}; ADyUnaccel: Longint{24.8});
+  end;
+
+
+
+
+  TWpRelativePointerManagerV1 = class(TWLProxyObject)
   private
     const _DESTROY = 0;
     const _GET_RELATIVE_POINTER = 1;
   public
     destructor Destroy; override;
-    function GetRelativePointer(APointer: TWlPointer; AProxyClass: TWLProxyObjectClass = nil {TZwpRelativePointerV1}): TZwpRelativePointerV1;
-    function AddListener(AIntf: IZwpRelativePointerManagerV1Listener): LongInt;
+    function GetRelativePointer(APointer: TWlPointer; AProxyClass: TWLProxyObjectClass = nil {TWpRelativePointerV1}): TWpRelativePointerV1;
+    function AddListener(AIntf: IWpRelativePointerManagerV1Listener): LongInt;
   end;
 
-  TZwpRelativePointerV1 = class(TWLProxyObject)
+  TWpRelativePointerV1 = class(TWLProxyObject)
   private
     const _DESTROY = 0;
   public
     destructor Destroy; override;
-    function AddListener(AIntf: IZwpRelativePointerV1Listener): LongInt;
+    function AddListener(AIntf: IWpRelativePointerV1Listener): LongInt;
   end;
 
 
@@ -63,65 +63,67 @@ type
 
 
 var
-  zwp_relative_pointer_manager_v1_interface: Twl_interface;
-  zwp_relative_pointer_v1_interface: Twl_interface;
+  wp_relative_pointer_manager_v1_interface: Twl_interface;
+  WP_RELATIVE_POINTER_MANAGER_V1_INTERFACE_NAME: String = 'zwp_relative_pointer_manager_v1';
+  wp_relative_pointer_v1_interface: Twl_interface;
+  WP_RELATIVE_POINTER_V1_INTERFACE_NAME: String = 'zwp_relative_pointer_v1';
 
 
 
 implementation
 
 var
-  vIntf_zwp_relative_pointer_manager_v1_Listener: Tzwp_relative_pointer_manager_v1_listener;
-  vIntf_zwp_relative_pointer_v1_Listener: Tzwp_relative_pointer_v1_listener;
+  vIntf_wp_relative_pointer_manager_v1_Listener: Twp_relative_pointer_manager_v1_listener;
+  vIntf_wp_relative_pointer_v1_Listener: Twp_relative_pointer_v1_listener;
 
 
 
-destructor TZwpRelativePointerManagerV1.Destroy;
+destructor TWpRelativePointerManagerV1.Destroy;
 begin
   wl_proxy_marshal(FProxy, _DESTROY);
   inherited Destroy;
 end;
 
-function TZwpRelativePointerManagerV1.GetRelativePointer(APointer: TWlPointer; AProxyClass: TWLProxyObjectClass = nil {TZwpRelativePointerV1}): TZwpRelativePointerV1;
+function TWpRelativePointerManagerV1.GetRelativePointer(APointer: TWlPointer; AProxyClass: TWLProxyObjectClass = nil {TWpRelativePointerV1}): TWpRelativePointerV1;
 var
   id: Pwl_proxy;
 begin
   id := wl_proxy_marshal_constructor(FProxy,
-      _GET_RELATIVE_POINTER, @zwp_relative_pointer_v1_interface, nil, APointer.Proxy);
+      _GET_RELATIVE_POINTER, @wp_relative_pointer_v1_interface, nil, APointer.Proxy);
   if AProxyClass = nil then
-    AProxyClass := TZwpRelativePointerV1;
-  Result := TZwpRelativePointerV1(AProxyClass.Create(id));
-  if not AProxyClass.InheritsFrom(TZwpRelativePointerV1) then
-    Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TZwpRelativePointerV1]);
+    AProxyClass := TWpRelativePointerV1;
+  Result := TWpRelativePointerV1(AProxyClass.Create(id));
+  if not AProxyClass.InheritsFrom(TWpRelativePointerV1) then
+    Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TWpRelativePointerV1]);
 end;
 
-function TZwpRelativePointerManagerV1.AddListener(AIntf: IZwpRelativePointerManagerV1Listener): LongInt;
+function TWpRelativePointerManagerV1.AddListener(AIntf: IWpRelativePointerManagerV1Listener): LongInt;
 begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
-  Result := wl_proxy_add_listener(FProxy, @vIntf_zwp_relative_pointer_manager_v1_Listener, @FUserDataRec);
+  Result := wl_proxy_add_listener(FProxy, @vIntf_wp_relative_pointer_manager_v1_Listener, @FUserDataRec);
 end;
-destructor TZwpRelativePointerV1.Destroy;
+destructor TWpRelativePointerV1.Destroy;
 begin
   wl_proxy_marshal(FProxy, _DESTROY);
   inherited Destroy;
 end;
 
-function TZwpRelativePointerV1.AddListener(AIntf: IZwpRelativePointerV1Listener): LongInt;
+function TWpRelativePointerV1.AddListener(AIntf: IWpRelativePointerV1Listener): LongInt;
 begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
-  Result := wl_proxy_add_listener(FProxy, @vIntf_zwp_relative_pointer_v1_Listener, @FUserDataRec);
+  Result := wl_proxy_add_listener(FProxy, @vIntf_wp_relative_pointer_v1_Listener, @FUserDataRec);
 end;
 
 
 
 
-procedure zwp_relative_pointer_v1_relative_motion_Intf(AData: PWLUserData; Azwp_relative_pointer_v1: Pzwp_relative_pointer_v1; AUtimeHi: DWord; AUtimeLo: DWord; ADx: Longint{24.8}; ADy: Longint{24.8}; ADxUnaccel: Longint{24.8}; ADyUnaccel: Longint{24.8}); cdecl;
+procedure wp_relative_pointer_v1_relative_motion_Intf(AData: PWLUserData; Awp_relative_pointer_v1: Pwp_relative_pointer_v1; AUtimeHi: DWord; AUtimeLo: DWord; ADx: Longint{24.8}; ADy: Longint{24.8}; ADxUnaccel: Longint{24.8}; ADyUnaccel: Longint{24.8}); cdecl;
 var
-  AIntf: IZwpRelativePointerV1Listener;
+  AIntf: IWpRelativePointerV1Listener;
 begin
   if AData = nil then Exit;
-  AIntf := IZwpRelativePointerV1Listener(AData^.ListenerUserData);
-  AIntf.zwp_relative_pointer_v1_relative_motion(TZwpRelativePointerV1(AData^.PascalObject), AUtimeHi, AUtimeLo, ADx, ADy, ADxUnaccel, ADyUnaccel);
+  AIntf := IWpRelativePointerV1Listener(AData^.ListenerUserData);
+  AIntf.wp_relative_pointer_v1_relative_motion(TWpRelativePointerV1(AData^.PascalObject), AUtimeHi, AUtimeLo, ADx, ADy, ADxUnaccel, ADyUnaccel);
 end;
 
 
@@ -136,37 +138,37 @@ const
     (nil),
     (nil),
     (nil),
-    (@zwp_relative_pointer_v1_interface),
+    (@wp_relative_pointer_v1_interface),
     (@wl_pointer_interface)
   );
 
-  zwp_relative_pointer_manager_v1_requests: array[0..1] of Twl_message = (
+  wp_relative_pointer_manager_v1_requests: array[0..1] of Twl_message = (
     (name: 'destroy'; signature: ''; types: @pInterfaces[0]),
     (name: 'get_relative_pointer'; signature: 'no'; types: @pInterfaces[8])
   );
-  zwp_relative_pointer_v1_requests: array[0..0] of Twl_message = (
+  wp_relative_pointer_v1_requests: array[0..0] of Twl_message = (
     (name: 'destroy'; signature: ''; types: @pInterfaces[0])
   );
-  zwp_relative_pointer_v1_events: array[0..0] of Twl_message = (
+  wp_relative_pointer_v1_events: array[0..0] of Twl_message = (
     (name: 'relative_motion'; signature: 'uuffff'; types: @pInterfaces[0])
   );
 
 initialization
-  Pointer(vIntf_zwp_relative_pointer_v1_Listener.relative_motion) := @zwp_relative_pointer_v1_relative_motion_Intf;
+  Pointer(vIntf_wp_relative_pointer_v1_Listener.relative_motion) := @wp_relative_pointer_v1_relative_motion_Intf;
 
 
-  zwp_relative_pointer_manager_v1_interface.name := 'zwp_relative_pointer_manager_v1';
-  zwp_relative_pointer_manager_v1_interface.version := 1;
-  zwp_relative_pointer_manager_v1_interface.method_count := 2;
-  zwp_relative_pointer_manager_v1_interface.methods := @zwp_relative_pointer_manager_v1_requests;
-  zwp_relative_pointer_manager_v1_interface.event_count := 0;
-  zwp_relative_pointer_manager_v1_interface.events := nil;
+  wp_relative_pointer_manager_v1_interface.name := PChar(WP_RELATIVE_POINTER_MANAGER_V1_INTERFACE_NAME);
+  wp_relative_pointer_manager_v1_interface.version := 1;
+  wp_relative_pointer_manager_v1_interface.method_count := 2;
+  wp_relative_pointer_manager_v1_interface.methods := @wp_relative_pointer_manager_v1_requests;
+  wp_relative_pointer_manager_v1_interface.event_count := 0;
+  wp_relative_pointer_manager_v1_interface.events := nil;
 
-  zwp_relative_pointer_v1_interface.name := 'zwp_relative_pointer_v1';
-  zwp_relative_pointer_v1_interface.version := 1;
-  zwp_relative_pointer_v1_interface.method_count := 1;
-  zwp_relative_pointer_v1_interface.methods := @zwp_relative_pointer_v1_requests;
-  zwp_relative_pointer_v1_interface.event_count := 1;
-  zwp_relative_pointer_v1_interface.events := @zwp_relative_pointer_v1_events;
+  wp_relative_pointer_v1_interface.name := PChar(WP_RELATIVE_POINTER_V1_INTERFACE_NAME);
+  wp_relative_pointer_v1_interface.version := 1;
+  wp_relative_pointer_v1_interface.method_count := 1;
+  wp_relative_pointer_v1_interface.methods := @wp_relative_pointer_v1_requests;
+  wp_relative_pointer_v1_interface.event_count := 1;
+  wp_relative_pointer_v1_interface.events := @wp_relative_pointer_v1_events;
 
 end.
