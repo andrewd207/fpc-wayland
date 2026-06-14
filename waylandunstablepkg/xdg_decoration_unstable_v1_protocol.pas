@@ -6,7 +6,7 @@ unit xdg_decoration_unstable_v1_protocol;
 interface
 
 uses
-  Classes, Sysutils, ctypes, wayland_util, wayland_client_core, wayland_protocol, xdg_shell_unstable_v6_protocol;
+  Classes, Sysutils, ctypes, wayland_util, wayland_client_core, wayland_protocol, xdg_shell_protocol;
 
 
 type
@@ -20,6 +20,7 @@ const
   ZXDG_TOPLEVEL_DECORATION_V1_ERROR_UNCONFIGURED_BUFFER = 0; // xdg_toplevel has a buffer attached before configure
   ZXDG_TOPLEVEL_DECORATION_V1_ERROR_ALREADY_CONSTRUCTED = 1; // xdg_toplevel already has a decoration object
   ZXDG_TOPLEVEL_DECORATION_V1_ERROR_ORPHANED = 2; // xdg_toplevel destroyed before the decoration object
+  ZXDG_TOPLEVEL_DECORATION_V1_ERROR_INVALID_MODE = 3; // invalid mode
   ZXDG_TOPLEVEL_DECORATION_V1_MODE_CLIENT_SIDE = 1; // no server-side window decoration
   ZXDG_TOPLEVEL_DECORATION_V1_MODE_SERVER_SIDE = 2; // server-side window decoration
 
@@ -47,15 +48,13 @@ type
 
 
 
-  { TZxdgDecorationManagerV1 }
-
   TZxdgDecorationManagerV1 = class(TWLProxyObject)
   private
     const _DESTROY = 0;
     const _GET_TOPLEVEL_DECORATION = 1;
   public
     destructor Destroy; override;
-    function GetToplevelDecoration(AToplevel: TZxdgToplevelV6; AProxyClass: TWLProxyObjectClass = nil {TZxdgToplevelDecorationV1}): TZxdgToplevelDecorationV1;
+    function GetToplevelDecoration(AToplevel: TXdgToplevel; AProxyClass: TWLProxyObjectClass = nil {TZxdgToplevelDecorationV1}): TZxdgToplevelDecorationV1;
     function AddListener(AIntf: IZxdgDecorationManagerV1Listener): LongInt;
   end;
 
@@ -96,9 +95,7 @@ begin
   inherited Destroy;
 end;
 
-function TZxdgDecorationManagerV1.GetToplevelDecoration(
-  AToplevel: TZxdgToplevelV6; AProxyClass: TWLProxyObjectClass
-  ): TZxdgToplevelDecorationV1;
+function TZxdgDecorationManagerV1.GetToplevelDecoration(AToplevel: TXdgToplevel; AProxyClass: TWLProxyObjectClass = nil {TZxdgToplevelDecorationV1}): TZxdgToplevelDecorationV1;
 var
   id: Pwl_proxy;
 begin
@@ -163,7 +160,7 @@ const
     (nil),
     (nil),
     (@zxdg_toplevel_decoration_v1_interface),
-    (@zxdg_toplevel_v6_interface)
+    (@xdg_toplevel_interface)
   );
 
   zxdg_decoration_manager_v1_requests: array[0..1] of Twl_message = (

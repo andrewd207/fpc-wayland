@@ -23,10 +23,10 @@ type
   end;
 
 const
-  WP_PRESENTATION_FEEDBACK_KIND_VSYNC = $1; // presentation was vsync'd
-  WP_PRESENTATION_FEEDBACK_KIND_HW_CLOCK = $2; // hardware provided the presentation timestamp
-  WP_PRESENTATION_FEEDBACK_KIND_HW_COMPLETION = $4; // hardware signalled the start of the presentation
-  WP_PRESENTATION_FEEDBACK_KIND_ZERO_COPY = $8; // presentation was done zero-copy
+  WP_PRESENTATION_FEEDBACK_KIND_VSYNC = $1; // 
+  WP_PRESENTATION_FEEDBACK_KIND_HW_CLOCK = $2; // 
+  WP_PRESENTATION_FEEDBACK_KIND_HW_COMPLETION = $4; // 
+  WP_PRESENTATION_FEEDBACK_KIND_ZERO_COPY = $8; // 
 
 type
   Pwp_presentation_feedback_listener = ^Twp_presentation_feedback_listener;
@@ -197,14 +197,14 @@ initialization
 
 
   wp_presentation_interface.name := 'wp_presentation';
-  wp_presentation_interface.version := 1;
+  wp_presentation_interface.version := 2;
   wp_presentation_interface.method_count := 2;
   wp_presentation_interface.methods := @wp_presentation_requests;
   wp_presentation_interface.event_count := 1;
   wp_presentation_interface.events := @wp_presentation_events;
 
   wp_presentation_feedback_interface.name := 'wp_presentation_feedback';
-  wp_presentation_feedback_interface.version := 1;
+  wp_presentation_feedback_interface.version := 2;
   wp_presentation_feedback_interface.method_count := 0;
   wp_presentation_feedback_interface.methods := nil;
   wp_presentation_feedback_interface.event_count := 3;

@@ -9,19 +9,27 @@
         <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)/"/>
       </SearchPaths>
     </CompilerOptions>
-    <Files Count="3">
+    <Files Count="5">
       <Item1>
-        <Filename Value="presentation_time_protocol.pas"/>
-        <UnitName Value="presentation_time_protocol"/>
+        <Filename Value="linux_dmabuf_v1_protocol.pas"/>
+        <UnitName Value="linux_dmabuf_v1_protocol"/>
       </Item1>
       <Item2>
-        <Filename Value="viewporter_protocol.pas"/>
-        <UnitName Value="viewporter_protocol"/>
+        <Filename Value="presentation_time_protocol.pas"/>
+        <UnitName Value="presentation_time_protocol"/>
       </Item2>
       <Item3>
+        <Filename Value="tablet_v2_protocol.pas"/>
+        <UnitName Value="tablet_v2_protocol"/>
+      </Item3>
+      <Item4>
+        <Filename Value="viewporter_protocol.pas"/>
+        <UnitName Value="viewporter_protocol"/>
+      </Item4>
+      <Item5>
         <Filename Value="xdg_shell_protocol.pas"/>
         <UnitName Value="xdg_shell_protocol"/>
-      </Item3>
+      </Item5>
     </Files>
     <RequiredPkgs Count="2">
       <Item1>

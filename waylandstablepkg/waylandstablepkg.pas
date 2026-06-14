@@ -8,8 +8,8 @@ unit WaylandStablePkg;
 interface
 
 uses
-  presentation_time_protocol, viewporter_protocol, xdg_shell_protocol, 
-  LazarusPackageIntf;
+  linux_dmabuf_v1_protocol, presentation_time_protocol, tablet_v2_protocol,
+  viewporter_protocol, xdg_shell_protocol, LazarusPackageIntf;
 
 implementation
 

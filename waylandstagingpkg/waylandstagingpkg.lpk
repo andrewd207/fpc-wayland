@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <Package Version="4">
+    <Name Value="WaylandStagingPkg"/>
+    <Type Value="RunAndDesignTime"/>
+    <CompilerOptions>
+      <Version Value="11"/>
+      <SearchPaths>
+        <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)/"/>
+      </SearchPaths>
+    </CompilerOptions>
+    <Files Count="30">
+      <Item1>
+        <Filename Value="alpha_modifier_v1_protocol.pas"/>
+        <UnitName Value="alpha_modifier_v1_protocol"/>
+      </Item1>
+      <Item2>
+        <Filename Value="color_management_v1_protocol.pas"/>
+        <UnitName Value="color_management_v1_protocol"/>
+      </Item2>
+      <Item3>
+        <Filename Value="color_representation_v1_protocol.pas"/>
+        <UnitName Value="color_representation_v1_protocol"/>
+      </Item3>
+      <Item4>
+        <Filename Value="commit_timing_v1_protocol.pas"/>
+        <UnitName Value="commit_timing_v1_protocol"/>
+      </Item4>
+      <Item5>
+        <Filename Value="content_type_v1_protocol.pas"/>
+        <UnitName Value="content_type_v1_protocol"/>
+      </Item5>
+      <Item6>
+        <Filename Value="cursor_shape_v1_protocol.pas"/>
+        <UnitName Value="cursor_shape_v1_protocol"/>
+      </Item6>
+      <Item7>
+        <Filename Value="drm_lease_v1_protocol.pas"/>
+        <UnitName Value="drm_lease_v1_protocol"/>
+      </Item7>
+      <Item8>
+        <Filename Value="ext_background_effect_v1_protocol.pas"/>
+        <UnitName Value="ext_background_effect_v1_protocol"/>
+      </Item8>
+      <Item9>
+        <Filename Value="ext_data_control_v1_protocol.pas"/>
+        <UnitName Value="ext_data_control_v1_protocol"/>
+      </Item9>
+      <Item10>
+        <Filename Value="ext_foreign_toplevel_list_v1_protocol.pas"/>
+        <UnitName Value="ext_foreign_toplevel_list_v1_protocol"/>
+      </Item10>
+      <Item11>
+        <Filename Value="ext_idle_notify_v1_protocol.pas"/>
+        <UnitName Value="ext_idle_notify_v1_protocol"/>
+      </Item11>
+      <Item12>
+        <Filename Value="ext_image_capture_source_v1_protocol.pas"/>
+        <UnitName Value="ext_image_capture_source_v1_protocol"/>
+      </Item12>
+      <Item13>
+        <Filename Value="ext_image_copy_capture_v1_protocol.pas"/>
+        <UnitName Value="ext_image_copy_capture_v1_protocol"/>
+      </Item13>
+      <Item14>
+        <Filename Value="ext_session_lock_v1_protocol.pas"/>
+        <UnitName Value="ext_session_lock_v1_protocol"/>
+      </Item14>
+      <Item15>
+        <Filename Value="ext_transient_seat_v1_protocol.pas"/>
+        <UnitName Value="ext_transient_seat_v1_protocol"/>
+      </Item15>
+      <Item16>
+        <Filename Value="ext_workspace_v1_protocol.pas"/>
+        <UnitName Value="ext_workspace_v1_protocol"/>
+      </Item16>
+      <Item17>
+        <Filename Value="fifo_v1_protocol.pas"/>
+        <UnitName Value="fifo_v1_protocol"/>
+      </Item17>
+      <Item18>
+        <Filename Value="fractional_scale_v1_protocol.pas"/>
+        <UnitName Value="fractional_scale_v1_protocol"/>
+      </Item18>
+      <Item19>
+        <Filename Value="linux_drm_syncobj_v1_protocol.pas"/>
+        <UnitName Value="linux_drm_syncobj_v1_protocol"/>
+      </Item19>
+      <Item20>
+        <Filename Value="pointer_warp_v1_protocol.pas"/>
+        <UnitName Value="pointer_warp_v1_protocol"/>
+      </Item20>
+      <Item21>
+        <Filename Value="security_context_v1_protocol.pas"/>
+        <UnitName Value="security_context_v1_protocol"/>
+      </Item21>
+      <Item22>
+        <Filename Value="single_pixel_buffer_v1_protocol.pas"/>
+        <UnitName Value="single_pixel_buffer_v1_protocol"/>
+      </Item22>
+      <Item23>
+        <Filename Value="tearing_control_v1_protocol.pas"/>
+        <UnitName Value="tearing_control_v1_protocol"/>
+      </Item23>
+      <Item24>
+        <Filename Value="xdg_activation_v1_protocol.pas"/>
+        <UnitName Value="xdg_activation_v1_protocol"/>
+      </Item24>
+      <Item25>
+        <Filename Value="xdg_dialog_v1_protocol.pas"/>
+        <UnitName Value="xdg_dialog_v1_protocol"/>
+      </Item25>
+      <Item26>
+        <Filename Value="xdg_system_bell_v1_protocol.pas"/>
+        <UnitName Value="xdg_system_bell_v1_protocol"/>
+      </Item26>
+      <Item27>
+        <Filename Value="xdg_toplevel_drag_v1_protocol.pas"/>
+        <UnitName Value="xdg_toplevel_drag_v1_protocol"/>
+      </Item27>
+      <Item28>
+        <Filename Value="xdg_toplevel_icon_v1_protocol.pas"/>
+        <UnitName Value="xdg_toplevel_icon_v1_protocol"/>
+      </Item28>
+      <Item29>
+        <Filename Value="xdg_toplevel_tag_v1_protocol.pas"/>
+        <UnitName Value="xdg_toplevel_tag_v1_protocol"/>
+      </Item29>
+      <Item30>
+        <Filename Value="xwayland_shell_v1_protocol.pas"/>
+        <UnitName Value="xwayland_shell_v1_protocol"/>
+      </Item30>
+    </Files>
+    <RequiredPkgs Count="3">
+      <Item1>
+        <PackageName Value="WaylandStablePkg"/>
+      </Item1>
+      <Item2>
+        <PackageName Value="WaylandPkg"/>
+      </Item2>
+      <Item3>
+        <PackageName Value="FCL"/>
+      </Item3>
+    </RequiredPkgs>
+    <UsageOptions>
+      <UnitPath Value="$(PkgOutDir)"/>
+    </UsageOptions>
+    <PublishOptions>
+      <Version Value="2"/>
+    </PublishOptions>
+  </Package>
+</CONFIG>

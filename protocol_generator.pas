@@ -42,6 +42,12 @@ type
     FProtocol: TProtocol;
     Sections: array[TSection] of TStrings;
     FImplementInterfaceVars: Boolean;
+    FUnitName: String;
+    FUsedUnits: TStringList;     // external units referenced by this protocol
+    FOwnInterfaces: TStringList; // interface names defined in this protocol
+    procedure DoRegisterInterface(Element: TBaseNode; AData: Pointer);
+    procedure DoCollectOwnInterface(Element: TBaseNode; AData: Pointer);
+    procedure NoteInterfaceUse(const AInterface: String);
     function Pascalify(AName: String): String;
 
     function ArgToArg(AArg: TArg; APascalify: Boolean; var ANeedsWrapper: Boolean
@@ -69,10 +75,34 @@ type
 
   public
     constructor Create(AFileName: String);
+    // Pre-pass: record this protocol's interfaces in the global registry under
+    // AUnitName so that other protocols referencing them emit a proper uses clause.
+    procedure RegisterInterfaces(const AUnitName: String);
     procedure Generate(AUnitName: String; Strings: TStrings; ImplementInterfaceVars: Boolean = True);
+    class procedure ClearInterfaceRegistry; static;
   end;
 
 implementation
+
+var
+  // Maps an interface name (e.g. 'zwp_tablet_tool_v2') to the pascal unit that
+  // declares it. Populated via RegisterInterfaces before generation. First
+  // registration wins, so callers register in priority order (stable first) to
+  // resolve interfaces that are duplicated across protocol versions.
+  GIfaceUnit: TStringList;
+
+procedure RegisterIfaceUnit(const AIface, AUnit: String);
+begin
+  if AIface = '' then
+    Exit;
+  if GIfaceUnit.Values[AIface] = '' then
+    GIfaceUnit.Values[AIface] := AUnit;
+end;
+
+function LookupIfaceUnit(const AIface: String): String;
+begin
+  Result := GIfaceUnit.Values[AIface];
+end;
 
 procedure TrimLastChar(AStrings: TStrings);
 var
@@ -505,6 +535,7 @@ begin
             Result :='Pwl_proxy'
           else
           begin
+            NoteInterfaceUse(AInterface);
             if APascalify then
               Result:='T'+ Pascalify(AInterface)
             else
@@ -514,6 +545,7 @@ begin
         end;
       'object':
         begin
+          NoteInterfaceUse(AInterface);
           if APascalify then
             Result:='T'+ Pascalify(AInterface)
           else
@@ -773,7 +805,14 @@ begin
     lWrapperArgs+='; AProxyClass: TWLProxyObjectClass = nil {T'+Pascalify(lReturnVar.&Interface+'}');
   end;
 
-  if lRequest.&Type = 'destructor' then
+  // Only the request literally named "destroy" maps to Pascal's destructor.
+  // An interface can have several destructor-type requests (e.g.
+  // ext_session_lock's "unlock_and_destroy") and a request can be a destructor
+  // while still creating a new object (color-management's "create"). Those keep
+  // their own name and remain a function/procedure; their body still destroys
+  // the proxy (handled below).
+  if (lRequest.&Type = 'destructor') and not Assigned(lReturnVar)
+  and (LowerCase(lRequest.Name) = 'destroy') then
   begin
     lFuncType:='destructor';
     lFuncName:='Destroy';
@@ -840,13 +879,16 @@ begin
     Sections[sClassImpl].Add('  Result := T'+lTypeCast+'(AProxyClass.Create('+lReturnVar.Name+'));');
     Sections[sClassImpl].Add('  if not AProxyClass.InheritsFrom(T'+lTypeCast+') then');
     Sections[sClassImpl].Add('    Raise Exception.CreateFmt(''%s does not inherit from %s'', [AProxyClass.ClassName, T'+lTypeCast+']);');
+    // a destructor that also creates an object consumes (destroys) this proxy
+    if lRequest.&Type = 'destructor' then
+      Sections[sClassImpl].Add('  inherited Destroy;');
   end
   else if lRequest.&Type <> 'destructor' then
   begin
     Sections[sClassImpl].Add('begin');
     Sections[sClassImpl].Add('  wl_proxy_marshal(FProxy, '+UpperCase('_'+Element.Name)+lArgs);
   end;
-  if lRequest.&Type = 'destructor' then
+  if (lRequest.&Type = 'destructor') and not Assigned(lReturnVar) then
   begin
     lInterface.DestructorDefined := True;
     Sections[sClassImpl].Add('begin');
@@ -950,6 +992,49 @@ begin
 
 end;
 
+procedure TGenerator.DoRegisterInterface(Element: TBaseNode; AData: Pointer);
+begin
+  RegisterIfaceUnit(TInterface(Element).Name, FUnitName);
+end;
+
+procedure TGenerator.DoCollectOwnInterface(Element: TBaseNode; AData: Pointer);
+begin
+  FOwnInterfaces.Add(TInterface(Element).Name);
+end;
+
+procedure TGenerator.RegisterInterfaces(const AUnitName: String);
+begin
+  FUnitName := AUnitName;
+  FProtocol.ForEachInterface(@DoRegisterInterface, nil);
+end;
+
+class procedure TGenerator.ClearInterfaceRegistry; static;
+begin
+  GIfaceUnit.Clear;
+end;
+
+// Record that the unit being generated references AInterface. If that interface
+// is declared in another unit (and not in this one), remember to emit a uses
+// clause for it. Interfaces defined in this protocol, or provided by the units
+// already in the base uses clause, are ignored.
+procedure TGenerator.NoteInterfaceUse(const AInterface: String);
+var
+  lUnit: String;
+begin
+  if (AInterface = '') or (FUsedUnits = nil) then
+    Exit;
+  if FOwnInterfaces.IndexOf(AInterface) >= 0 then
+    Exit;
+  lUnit := LookupIfaceUnit(AInterface);
+  if (lUnit = '') or (lUnit = FUnitName) then
+    Exit;
+  if (lUnit = 'wayland_protocol') or (lUnit = 'wayland_util')
+  or (lUnit = 'wayland_client_core') then
+    Exit;
+  if FUsedUnits.IndexOf(lUnit) < 0 then
+    FUsedUnits.Add(lUnit);
+end;
+
 procedure TGenerator.Generate(AUnitName: String; Strings: TStrings;
   ImplementInterfaceVars: Boolean);
 var
@@ -957,6 +1042,14 @@ var
   i: Integer;
 begin
   FImplementInterfaceVars:=ImplementInterfaceVars;
+  FUnitName := AUnitName;
+  FUsedUnits := TStringList.Create;
+  FOwnInterfaces := TStringList.Create;
+
+  // record this protocol's own interfaces so references to them are not mistaken
+  // for cross-unit references (the same interface name can appear in multiple
+  // protocol versions).
+  FProtocol.ForEachInterface(@DoCollectOwnInterface, nil);
 
   for i := 0 to 7 do
     Sections[sInterfacePointers].Add('    (nil),');
@@ -984,6 +1077,9 @@ begin
       lUses := '  Classes, Sysutils, ctypes, wayland_util, wayland_client_core'
     else
       lUses := '  Classes, Sysutils, ctypes, wayland_util, wayland_client_core, wayland_protocol';
+    // append any cross-protocol units referenced by this unit's arguments
+    for i := 0 to FUsedUnits.Count-1 do
+      lUses := lUses + ', ' + FUsedUnits[i];
     Strings.Add(lUses +';');
     Strings.Add('');
     Strings.Add('');
@@ -1055,7 +1151,17 @@ begin
     Strings.Add('end.');
 
   end;
+
+  FreeAndNil(FUsedUnits);
+  FreeAndNil(FOwnInterfaces);
 end;
+
+initialization
+  GIfaceUnit := TStringList.Create;
+  GIfaceUnit.CaseSensitive := True;
+
+finalization
+  GIfaceUnit.Free;
 
 end.
 

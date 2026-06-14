@@ -34,8 +34,9 @@ type
   Pwl_subsurface = Pointer;
 const
   WL_DISPLAY_ERROR_INVALID_OBJECT = 0; // server couldn't find object
-  WL_DISPLAY_ERROR_INVALID_METHOD = 1; // method doesn't exist on the specified interface
+  WL_DISPLAY_ERROR_INVALID_METHOD = 1; // method doesn't exist on the specified interface or malformed request
   WL_DISPLAY_ERROR_NO_MEMORY = 2; // server is out of memory
+  WL_DISPLAY_ERROR_IMPLEMENTATION = 3; // implementation error in compositor
 
 type
   Pwl_display_listener = ^Twl_display_listener;
@@ -125,6 +126,56 @@ const
   WL_SHM_FORMAT_YVU422 = $36315659; // 3 plane YCbCr format, 2x1 subsampled Cr (1) and Cb (2) planes
   WL_SHM_FORMAT_YUV444 = $34325559; // 3 plane YCbCr format, non-subsampled Cb (1) and Cr (2) planes
   WL_SHM_FORMAT_YVU444 = $34325659; // 3 plane YCbCr format, non-subsampled Cr (1) and Cb (2) planes
+  WL_SHM_FORMAT_R8 = $20203852; // [7:0] R
+  WL_SHM_FORMAT_R16 = $20363152; // [15:0] R little endian
+  WL_SHM_FORMAT_RG88 = $38384752; // [15:0] R:G 8:8 little endian
+  WL_SHM_FORMAT_GR88 = $38385247; // [15:0] G:R 8:8 little endian
+  WL_SHM_FORMAT_RG1616 = $32334752; // [31:0] R:G 16:16 little endian
+  WL_SHM_FORMAT_GR1616 = $32335247; // [31:0] G:R 16:16 little endian
+  WL_SHM_FORMAT_XRGB16161616F = $48345258; // [63:0] x:R:G:B 16:16:16:16 little endian
+  WL_SHM_FORMAT_XBGR16161616F = $48344258; // [63:0] x:B:G:R 16:16:16:16 little endian
+  WL_SHM_FORMAT_ARGB16161616F = $48345241; // [63:0] A:R:G:B 16:16:16:16 little endian
+  WL_SHM_FORMAT_ABGR16161616F = $48344241; // [63:0] A:B:G:R 16:16:16:16 little endian
+  WL_SHM_FORMAT_XYUV8888 = $56555958; // [31:0] X:Y:Cb:Cr 8:8:8:8 little endian
+  WL_SHM_FORMAT_VUY888 = $34325556; // [23:0] Cr:Cb:Y 8:8:8 little endian
+  WL_SHM_FORMAT_VUY101010 = $30335556; // Y followed by U then V, 10:10:10. Non-linear modifier only
+  WL_SHM_FORMAT_Y210 = $30313259; // [63:0] Cr0:0:Y1:0:Cb0:0:Y0:0 10:6:10:6:10:6:10:6 little endian per 2 Y pixels
+  WL_SHM_FORMAT_Y212 = $32313259; // [63:0] Cr0:0:Y1:0:Cb0:0:Y0:0 12:4:12:4:12:4:12:4 little endian per 2 Y pixels
+  WL_SHM_FORMAT_Y216 = $36313259; // [63:0] Cr0:Y1:Cb0:Y0 16:16:16:16 little endian per 2 Y pixels
+  WL_SHM_FORMAT_Y410 = $30313459; // [31:0] A:Cr:Y:Cb 2:10:10:10 little endian
+  WL_SHM_FORMAT_Y412 = $32313459; // [63:0] A:0:Cr:0:Y:0:Cb:0 12:4:12:4:12:4:12:4 little endian
+  WL_SHM_FORMAT_Y416 = $36313459; // [63:0] A:Cr:Y:Cb 16:16:16:16 little endian
+  WL_SHM_FORMAT_XVYU2101010 = $30335658; // [31:0] X:Cr:Y:Cb 2:10:10:10 little endian
+  WL_SHM_FORMAT_XVYU12_16161616 = $36335658; // [63:0] X:0:Cr:0:Y:0:Cb:0 12:4:12:4:12:4:12:4 little endian
+  WL_SHM_FORMAT_XVYU16161616 = $38345658; // [63:0] X:Cr:Y:Cb 16:16:16:16 little endian
+  WL_SHM_FORMAT_Y0L0 = $304c3059; // [63:0]   A3:A2:Y3:0:Cr0:0:Y2:0:A1:A0:Y1:0:Cb0:0:Y0:0  1:1:8:2:8:2:8:2:1:1:8:2:8:2:8:2 little endian
+  WL_SHM_FORMAT_X0L0 = $304c3058; // [63:0]   X3:X2:Y3:0:Cr0:0:Y2:0:X1:X0:Y1:0:Cb0:0:Y0:0  1:1:8:2:8:2:8:2:1:1:8:2:8:2:8:2 little endian
+  WL_SHM_FORMAT_Y0L2 = $324c3059; // [63:0]   A3:A2:Y3:Cr0:Y2:A1:A0:Y1:Cb0:Y0  1:1:10:10:10:1:1:10:10:10 little endian
+  WL_SHM_FORMAT_X0L2 = $324c3058; // [63:0]   X3:X2:Y3:Cr0:Y2:X1:X0:Y1:Cb0:Y0  1:1:10:10:10:1:1:10:10:10 little endian
+  WL_SHM_FORMAT_YUV420_8BIT = $38305559; // 
+  WL_SHM_FORMAT_YUV420_10BIT = $30315559; // 
+  WL_SHM_FORMAT_XRGB8888_A8 = $38415258; // 
+  WL_SHM_FORMAT_XBGR8888_A8 = $38414258; // 
+  WL_SHM_FORMAT_RGBX8888_A8 = $38415852; // 
+  WL_SHM_FORMAT_BGRX8888_A8 = $38415842; // 
+  WL_SHM_FORMAT_RGB888_A8 = $38413852; // 
+  WL_SHM_FORMAT_BGR888_A8 = $38413842; // 
+  WL_SHM_FORMAT_RGB565_A8 = $38413552; // 
+  WL_SHM_FORMAT_BGR565_A8 = $38413542; // 
+  WL_SHM_FORMAT_NV24 = $3432564e; // non-subsampled Cr:Cb plane
+  WL_SHM_FORMAT_NV42 = $3234564e; // non-subsampled Cb:Cr plane
+  WL_SHM_FORMAT_P210 = $30313250; // 2x1 subsampled Cr:Cb plane, 10 bit per channel
+  WL_SHM_FORMAT_P010 = $30313050; // 2x2 subsampled Cr:Cb plane 10 bits per channel
+  WL_SHM_FORMAT_P012 = $32313050; // 2x2 subsampled Cr:Cb plane 12 bits per channel
+  WL_SHM_FORMAT_P016 = $36313050; // 2x2 subsampled Cr:Cb plane 16 bits per channel
+  WL_SHM_FORMAT_AXBXGXRX106106106106 = $30314241; // [63:0] A:x:B:x:G:x:R:x 10:6:10:6:10:6:10:6 little endian
+  WL_SHM_FORMAT_NV15 = $3531564e; // 2x2 subsampled Cr:Cb plane
+  WL_SHM_FORMAT_Q410 = $30313451; // 
+  WL_SHM_FORMAT_Q401 = $31303451; // 
+  WL_SHM_FORMAT_XRGB16161616 = $38345258; // [63:0] x:R:G:B 16:16:16:16 little endian
+  WL_SHM_FORMAT_XBGR16161616 = $38344258; // [63:0] x:B:G:R 16:16:16:16 little endian
+  WL_SHM_FORMAT_ARGB16161616 = $38345241; // [63:0] A:R:G:B 16:16:16:16 little endian
+  WL_SHM_FORMAT_ABGR16161616 = $38344241; // [63:0] A:B:G:R 16:16:16:16 little endian
 
 type
   Pwl_shm_listener = ^Twl_shm_listener;
@@ -226,18 +277,24 @@ type
 const
   WL_SURFACE_ERROR_INVALID_SCALE = 0; // buffer scale value is invalid
   WL_SURFACE_ERROR_INVALID_TRANSFORM = 1; // buffer transform value is invalid
+  WL_SURFACE_ERROR_INVALID_SIZE = 2; // buffer size is invalid
+  WL_SURFACE_ERROR_INVALID_OFFSET = 3; // buffer offset is invalid
+  WL_SURFACE_ERROR_DEFUNCT_ROLE_OBJECT = 4; // surface was destroyed before its role object
 
 type
   Pwl_surface_listener = ^Twl_surface_listener;
   Twl_surface_listener = record
     enter : procedure(data: Pointer; AWlSurface: Pwl_surface; AOutput: Pwl_output); cdecl;
     leave : procedure(data: Pointer; AWlSurface: Pwl_surface; AOutput: Pwl_output); cdecl;
+    preferred_buffer_scale : procedure(data: Pointer; AWlSurface: Pwl_surface; AFactor: LongInt); cdecl;
+    preferred_buffer_transform : procedure(data: Pointer; AWlSurface: Pwl_surface; ATransform: DWord); cdecl;
   end;
 
 const
   WL_SEAT_CAPABILITY_POINTER = 1; // the seat has pointer devices
   WL_SEAT_CAPABILITY_KEYBOARD = 2; // the seat has one or more keyboards
   WL_SEAT_CAPABILITY_TOUCH = 4; // the seat has touch devices
+  WL_SEAT_ERROR_MISSING_CAPABILITY = 0; // get_pointer, get_keyboard or get_touch called on seat without the matching capability
 
 type
   Pwl_seat_listener = ^Twl_seat_listener;
@@ -256,6 +313,8 @@ const
   WL_POINTER_AXIS_SOURCE_FINGER = 1; // finger on a touch surface
   WL_POINTER_AXIS_SOURCE_CONTINUOUS = 2; // continuous coordinate space
   WL_POINTER_AXIS_SOURCE_WHEEL_TILT = 3; // a physical wheel tilt
+  WL_POINTER_AXIS_RELATIVE_DIRECTION_IDENTICAL = 0; // physical motion matches axis direction
+  WL_POINTER_AXIS_RELATIVE_DIRECTION_INVERTED = 1; // physical motion is the inverse of the axis direction
 
 type
   Pwl_pointer_listener = ^Twl_pointer_listener;
@@ -269,11 +328,13 @@ type
     axis_source : procedure(data: Pointer; AWlPointer: Pwl_pointer; AAxisSource: DWord); cdecl;
     axis_stop : procedure(data: Pointer; AWlPointer: Pwl_pointer; ATime: DWord; AAxis: DWord); cdecl;
     axis_discrete : procedure(data: Pointer; AWlPointer: Pwl_pointer; AAxis: DWord; ADiscrete: LongInt); cdecl;
+    axis_value120 : procedure(data: Pointer; AWlPointer: Pwl_pointer; AAxis: DWord; AValue120: LongInt); cdecl;
+    axis_relative_direction : procedure(data: Pointer; AWlPointer: Pwl_pointer; AAxis: DWord; ADirection: DWord); cdecl;
   end;
 
 const
   WL_KEYBOARD_KEYMAP_FORMAT_NO_KEYMAP = 0; // no keymap; client must understand how to interpret the raw keycode
-  WL_KEYBOARD_KEYMAP_FORMAT_XKB_V1 = 1; // libxkbcommon compatible; to determine the xkb keycode, clients must add 8 to the key event keycode
+  WL_KEYBOARD_KEYMAP_FORMAT_XKB_V1 = 1; // libxkbcommon compatible, null-terminated string; to determine the xkb keycode, clients must add 8 to the key event keycode
   WL_KEYBOARD_KEY_STATE_RELEASED = 0; // key is not pressed
   WL_KEYBOARD_KEY_STATE_PRESSED = 1; // key is pressed
 
@@ -324,6 +385,8 @@ type
     mode : procedure(data: Pointer; AWlOutput: Pwl_output; AFlags: DWord; AWidth: LongInt; AHeight: LongInt; ARefresh: LongInt); cdecl;
     done : procedure(data: Pointer; AWlOutput: Pwl_output); cdecl;
     scale : procedure(data: Pointer; AWlOutput: Pwl_output; AFactor: LongInt); cdecl;
+    name : procedure(data: Pointer; AWlOutput: Pwl_output; AName: Pchar); cdecl;
+    description : procedure(data: Pointer; AWlOutput: Pwl_output; ADescription: Pchar); cdecl;
   end;
 
   Pwl_region_listener = ^Twl_region_listener;
@@ -332,6 +395,7 @@ type
 
 const
   WL_SUBCOMPOSITOR_ERROR_BAD_SURFACE = 0; // the to-be sub-surface is invalid
+  WL_SUBCOMPOSITOR_ERROR_BAD_PARENT = 1; // the to-be sub-surface parent is invalid
 
 type
   Pwl_subcompositor_listener = ^Twl_subcompositor_listener;
@@ -453,6 +517,8 @@ type
   ['IWlSurfaceListener']
     procedure wl_surface_enter(AWlSurface: TWlSurface; AOutput: TWlOutput);
     procedure wl_surface_leave(AWlSurface: TWlSurface; AOutput: TWlOutput);
+    procedure wl_surface_preferred_buffer_scale(AWlSurface: TWlSurface; AFactor: LongInt);
+    procedure wl_surface_preferred_buffer_transform(AWlSurface: TWlSurface; ATransform: DWord);
   end;
 
   IWlSeatListener = interface
@@ -472,6 +538,8 @@ type
     procedure wl_pointer_axis_source(AWlPointer: TWlPointer; AAxisSource: DWord);
     procedure wl_pointer_axis_stop(AWlPointer: TWlPointer; ATime: DWord; AAxis: DWord);
     procedure wl_pointer_axis_discrete(AWlPointer: TWlPointer; AAxis: DWord; ADiscrete: LongInt);
+    procedure wl_pointer_axis_value120(AWlPointer: TWlPointer; AAxis: DWord; AValue120: LongInt);
+    procedure wl_pointer_axis_relative_direction(AWlPointer: TWlPointer; AAxis: DWord; ADirection: DWord);
   end;
 
   IWlKeyboardListener = interface
@@ -501,6 +569,8 @@ type
     procedure wl_output_mode(AWlOutput: TWlOutput; AFlags: DWord; AWidth: LongInt; AHeight: LongInt; ARefresh: LongInt);
     procedure wl_output_done(AWlOutput: TWlOutput);
     procedure wl_output_scale(AWlOutput: TWlOutput; AFactor: LongInt);
+    procedure wl_output_name(AWlOutput: TWlOutput; AName: String);
+    procedure wl_output_description(AWlOutput: TWlOutput; ADescription: String);
   end;
 
   IWlRegionListener = interface
@@ -614,7 +684,7 @@ type
   public
     procedure StartDrag(ASource: TWlDataSource; AOrigin: TWlSurface; AIcon: TWlSurface; ASerial: DWord);
     procedure SetSelection(ASource: TWlDataSource; ASerial: DWord);
-    destructor Destroy; override;
+    procedure Release;
     function AddListener(AIntf: IWlDataDeviceListener): LongInt;
   end;
 
@@ -674,6 +744,7 @@ type
     const _SET_BUFFER_TRANSFORM = 7;
     const _SET_BUFFER_SCALE = 8;
     const _DAMAGE_BUFFER = 9;
+    const _OFFSET = 10;
   public
     destructor Destroy; override;
     procedure Attach(ABuffer: TWlBuffer; AX: LongInt; AY: LongInt);
@@ -685,6 +756,7 @@ type
     procedure SetBufferTransform(ATransform: LongInt);
     procedure SetBufferScale(AScale: LongInt);
     procedure DamageBuffer(AX: LongInt; AY: LongInt; AWidth: LongInt; AHeight: LongInt);
+    procedure Offset(AX: LongInt; AY: LongInt);
     function AddListener(AIntf: IWlSurfaceListener): LongInt;
   end;
 
@@ -698,7 +770,7 @@ type
     function GetPointer(AProxyClass: TWLProxyObjectClass = nil {TWlPointer}): TWlPointer;
     function GetKeyboard(AProxyClass: TWLProxyObjectClass = nil {TWlKeyboard}): TWlKeyboard;
     function GetTouch(AProxyClass: TWLProxyObjectClass = nil {TWlTouch}): TWlTouch;
-    destructor Destroy; override;
+    procedure Release;
     function AddListener(AIntf: IWlSeatListener): LongInt;
   end;
 
@@ -708,7 +780,7 @@ type
     const _RELEASE = 1;
   public
     procedure SetCursor(ASerial: DWord; ASurface: TWlSurface; AHotspotX: LongInt; AHotspotY: LongInt);
-    destructor Destroy; override;
+    procedure Release;
     function AddListener(AIntf: IWlPointerListener): LongInt;
   end;
 
@@ -716,7 +788,7 @@ type
   private
     const _RELEASE = 0;
   public
-    destructor Destroy; override;
+    procedure Release;
     function AddListener(AIntf: IWlKeyboardListener): LongInt;
   end;
 
@@ -724,7 +796,7 @@ type
   private
     const _RELEASE = 0;
   public
-    destructor Destroy; override;
+    procedure Release;
     function AddListener(AIntf: IWlTouchListener): LongInt;
   end;
 
@@ -732,7 +804,7 @@ type
   private
     const _RELEASE = 0;
   public
-    destructor Destroy; override;
+    procedure Release;
     function AddListener(AIntf: IWlOutputListener): LongInt;
   end;
 
@@ -1033,7 +1105,7 @@ begin
   wl_proxy_marshal(FProxy, _SET_SELECTION, ASource.Proxy, ASerial);
 end;
 
-destructor TWlDataDevice.Destroy;
+procedure TWlDataDevice.Release;
 begin
   wl_proxy_marshal(FProxy, _RELEASE);
   inherited Destroy;
@@ -1207,6 +1279,11 @@ begin
   wl_proxy_marshal(FProxy, _DAMAGE_BUFFER, AX, AY, AWidth, AHeight);
 end;
 
+procedure TWlSurface.Offset(AX: LongInt; AY: LongInt);
+begin
+  wl_proxy_marshal(FProxy, _OFFSET, AX, AY);
+end;
+
 function TWlSurface.AddListener(AIntf: IWlSurfaceListener): LongInt;
 begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
@@ -1251,7 +1328,7 @@ begin
     Raise Exception.CreateFmt('%s does not inherit from %s', [AProxyClass.ClassName, TWlTouch]);
 end;
 
-destructor TWlSeat.Destroy;
+procedure TWlSeat.Release;
 begin
   wl_proxy_marshal(FProxy, _RELEASE);
   inherited Destroy;
@@ -1267,7 +1344,7 @@ begin
   wl_proxy_marshal(FProxy, _SET_CURSOR, ASerial, ASurface.Proxy, AHotspotX, AHotspotY);
 end;
 
-destructor TWlPointer.Destroy;
+procedure TWlPointer.Release;
 begin
   wl_proxy_marshal(FProxy, _RELEASE);
   inherited Destroy;
@@ -1278,7 +1355,7 @@ begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
   Result := wl_proxy_add_listener(FProxy, @vIntf_wl_pointer_Listener, @FUserDataRec);
 end;
-destructor TWlKeyboard.Destroy;
+procedure TWlKeyboard.Release;
 begin
   wl_proxy_marshal(FProxy, _RELEASE);
   inherited Destroy;
@@ -1289,7 +1366,7 @@ begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
   Result := wl_proxy_add_listener(FProxy, @vIntf_wl_keyboard_Listener, @FUserDataRec);
 end;
-destructor TWlTouch.Destroy;
+procedure TWlTouch.Release;
 begin
   wl_proxy_marshal(FProxy, _RELEASE);
   inherited Destroy;
@@ -1300,7 +1377,7 @@ begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
   Result := wl_proxy_add_listener(FProxy, @vIntf_wl_touch_Listener, @FUserDataRec);
 end;
-destructor TWlOutput.Destroy;
+procedure TWlOutput.Release;
 begin
   wl_proxy_marshal(FProxy, _RELEASE);
   inherited Destroy;
@@ -1639,6 +1716,24 @@ begin
   AIntf.wl_surface_leave(TWlSurface(AData^.PascalObject),  TWlOutput(TWLProxyObject.WLToObj(AOutput)));
 end;
 
+procedure wl_surface_preferred_buffer_scale_Intf(AData: PWLUserData; Awl_surface: Pwl_surface; AFactor: LongInt); cdecl;
+var
+  AIntf: IWlSurfaceListener;
+begin
+  if AData = nil then Exit;
+  AIntf := IWlSurfaceListener(AData^.ListenerUserData);
+  AIntf.wl_surface_preferred_buffer_scale(TWlSurface(AData^.PascalObject), AFactor);
+end;
+
+procedure wl_surface_preferred_buffer_transform_Intf(AData: PWLUserData; Awl_surface: Pwl_surface; ATransform: DWord); cdecl;
+var
+  AIntf: IWlSurfaceListener;
+begin
+  if AData = nil then Exit;
+  AIntf := IWlSurfaceListener(AData^.ListenerUserData);
+  AIntf.wl_surface_preferred_buffer_transform(TWlSurface(AData^.PascalObject), ATransform);
+end;
+
 procedure wl_seat_capabilities_Intf(AData: PWLUserData; Awl_seat: Pwl_seat; ACapabilities: DWord); cdecl;
 var
   AIntf: IWlSeatListener;
@@ -1736,6 +1831,24 @@ begin
   if AData = nil then Exit;
   AIntf := IWlPointerListener(AData^.ListenerUserData);
   AIntf.wl_pointer_axis_discrete(TWlPointer(AData^.PascalObject), AAxis, ADiscrete);
+end;
+
+procedure wl_pointer_axis_value120_Intf(AData: PWLUserData; Awl_pointer: Pwl_pointer; AAxis: DWord; AValue120: LongInt); cdecl;
+var
+  AIntf: IWlPointerListener;
+begin
+  if AData = nil then Exit;
+  AIntf := IWlPointerListener(AData^.ListenerUserData);
+  AIntf.wl_pointer_axis_value120(TWlPointer(AData^.PascalObject), AAxis, AValue120);
+end;
+
+procedure wl_pointer_axis_relative_direction_Intf(AData: PWLUserData; Awl_pointer: Pwl_pointer; AAxis: DWord; ADirection: DWord); cdecl;
+var
+  AIntf: IWlPointerListener;
+begin
+  if AData = nil then Exit;
+  AIntf := IWlPointerListener(AData^.ListenerUserData);
+  AIntf.wl_pointer_axis_relative_direction(TWlPointer(AData^.PascalObject), AAxis, ADirection);
 end;
 
 procedure wl_keyboard_keymap_Intf(AData: PWLUserData; Awl_keyboard: Pwl_keyboard; AFormat: DWord; AFd: LongInt{fd}; ASize: DWord); cdecl;
@@ -1889,6 +2002,24 @@ begin
   if AData = nil then Exit;
   AIntf := IWlOutputListener(AData^.ListenerUserData);
   AIntf.wl_output_scale(TWlOutput(AData^.PascalObject), AFactor);
+end;
+
+procedure wl_output_name_Intf(AData: PWLUserData; Awl_output: Pwl_output; AName: Pchar); cdecl;
+var
+  AIntf: IWlOutputListener;
+begin
+  if AData = nil then Exit;
+  AIntf := IWlOutputListener(AData^.ListenerUserData);
+  AIntf.wl_output_name(TWlOutput(AData^.PascalObject), AName);
+end;
+
+procedure wl_output_description_Intf(AData: PWLUserData; Awl_output: Pwl_output; ADescription: Pchar); cdecl;
+var
+  AIntf: IWlOutputListener;
+begin
+  if AData = nil then Exit;
+  AIntf := IWlOutputListener(AData^.ListenerUserData);
+  AIntf.wl_output_description(TWlOutput(AData^.PascalObject), ADescription);
 end;
 
 
@@ -2092,7 +2223,7 @@ const
     (name: 'configure'; signature: 'uii'; types: @pInterfaces[0]),
     (name: 'popup_done'; signature: ''; types: @pInterfaces[0])
   );
-  wl_surface_requests: array[0..9] of Twl_message = (
+  wl_surface_requests: array[0..10] of Twl_message = (
     (name: 'destroy'; signature: ''; types: @pInterfaces[0]),
     (name: 'attach'; signature: '?oii'; types: @pInterfaces[57]),
     (name: 'damage'; signature: 'iiii'; types: @pInterfaces[0]),
@@ -2102,11 +2233,14 @@ const
     (name: 'commit'; signature: ''; types: @pInterfaces[0]),
     (name: 'set_buffer_transform'; signature: '2i'; types: @pInterfaces[0]),
     (name: 'set_buffer_scale'; signature: '3i'; types: @pInterfaces[0]),
-    (name: 'damage_buffer'; signature: '4iiii'; types: @pInterfaces[0])
+    (name: 'damage_buffer'; signature: '4iiii'; types: @pInterfaces[0]),
+    (name: 'offset'; signature: '5ii'; types: @pInterfaces[0])
   );
-  wl_surface_events: array[0..1] of Twl_message = (
+  wl_surface_events: array[0..3] of Twl_message = (
     (name: 'enter'; signature: 'o'; types: @pInterfaces[63]),
-    (name: 'leave'; signature: 'o'; types: @pInterfaces[64])
+    (name: 'leave'; signature: 'o'; types: @pInterfaces[64]),
+    (name: 'preferred_buffer_scale'; signature: '6i'; types: @pInterfaces[0]),
+    (name: 'preferred_buffer_transform'; signature: '6u'; types: @pInterfaces[0])
   );
   wl_seat_requests: array[0..3] of Twl_message = (
     (name: 'get_pointer'; signature: 'n'; types: @pInterfaces[65]),
@@ -2122,7 +2256,7 @@ const
     (name: 'set_cursor'; signature: 'u?oii'; types: @pInterfaces[68]),
     (name: 'release'; signature: '3'; types: @pInterfaces[0])
   );
-  wl_pointer_events: array[0..8] of Twl_message = (
+  wl_pointer_events: array[0..10] of Twl_message = (
     (name: 'enter'; signature: 'uoff'; types: @pInterfaces[72]),
     (name: 'leave'; signature: 'uo'; types: @pInterfaces[76]),
     (name: 'motion'; signature: 'uff'; types: @pInterfaces[0]),
@@ -2131,7 +2265,9 @@ const
     (name: 'frame'; signature: '5'; types: @pInterfaces[0]),
     (name: 'axis_source'; signature: '5u'; types: @pInterfaces[0]),
     (name: 'axis_stop'; signature: '5uu'; types: @pInterfaces[0]),
-    (name: 'axis_discrete'; signature: '5ui'; types: @pInterfaces[0])
+    (name: 'axis_discrete'; signature: '5ui'; types: @pInterfaces[0]),
+    (name: 'axis_value120'; signature: '8ui'; types: @pInterfaces[0]),
+    (name: 'axis_relative_direction'; signature: '9uu'; types: @pInterfaces[0])
   );
   wl_keyboard_requests: array[0..0] of Twl_message = (
     (name: 'release'; signature: '3'; types: @pInterfaces[0])
@@ -2159,11 +2295,13 @@ const
   wl_output_requests: array[0..0] of Twl_message = (
     (name: 'release'; signature: '3'; types: @pInterfaces[0])
   );
-  wl_output_events: array[0..3] of Twl_message = (
+  wl_output_events: array[0..5] of Twl_message = (
     (name: 'geometry'; signature: 'iiiiissi'; types: @pInterfaces[0]),
     (name: 'mode'; signature: 'uiii'; types: @pInterfaces[0]),
     (name: 'done'; signature: '2'; types: @pInterfaces[0]),
-    (name: 'scale'; signature: '2i'; types: @pInterfaces[0])
+    (name: 'scale'; signature: '2i'; types: @pInterfaces[0]),
+    (name: 'name'; signature: '4s'; types: @pInterfaces[0]),
+    (name: 'description'; signature: '4s'; types: @pInterfaces[0])
   );
   wl_region_requests: array[0..2] of Twl_message = (
     (name: 'destroy'; signature: ''; types: @pInterfaces[0]),
@@ -2211,6 +2349,8 @@ initialization
   Pointer(vIntf_wl_shell_surface_Listener.popup_done) := @wl_shell_surface_popup_done_Intf;
   Pointer(vIntf_wl_surface_Listener.enter) := @wl_surface_enter_Intf;
   Pointer(vIntf_wl_surface_Listener.leave) := @wl_surface_leave_Intf;
+  Pointer(vIntf_wl_surface_Listener.preferred_buffer_scale) := @wl_surface_preferred_buffer_scale_Intf;
+  Pointer(vIntf_wl_surface_Listener.preferred_buffer_transform) := @wl_surface_preferred_buffer_transform_Intf;
   Pointer(vIntf_wl_seat_Listener.capabilities) := @wl_seat_capabilities_Intf;
   Pointer(vIntf_wl_seat_Listener.name) := @wl_seat_name_Intf;
   Pointer(vIntf_wl_pointer_Listener.enter) := @wl_pointer_enter_Intf;
@@ -2222,6 +2362,8 @@ initialization
   Pointer(vIntf_wl_pointer_Listener.axis_source) := @wl_pointer_axis_source_Intf;
   Pointer(vIntf_wl_pointer_Listener.axis_stop) := @wl_pointer_axis_stop_Intf;
   Pointer(vIntf_wl_pointer_Listener.axis_discrete) := @wl_pointer_axis_discrete_Intf;
+  Pointer(vIntf_wl_pointer_Listener.axis_value120) := @wl_pointer_axis_value120_Intf;
+  Pointer(vIntf_wl_pointer_Listener.axis_relative_direction) := @wl_pointer_axis_relative_direction_Intf;
   Pointer(vIntf_wl_keyboard_Listener.keymap) := @wl_keyboard_keymap_Intf;
   Pointer(vIntf_wl_keyboard_Listener.enter) := @wl_keyboard_enter_Intf;
   Pointer(vIntf_wl_keyboard_Listener.leave) := @wl_keyboard_leave_Intf;
@@ -2239,6 +2381,8 @@ initialization
   Pointer(vIntf_wl_output_Listener.mode) := @wl_output_mode_Intf;
   Pointer(vIntf_wl_output_Listener.done) := @wl_output_done_Intf;
   Pointer(vIntf_wl_output_Listener.scale) := @wl_output_scale_Intf;
+  Pointer(vIntf_wl_output_Listener.name) := @wl_output_name_Intf;
+  Pointer(vIntf_wl_output_Listener.description) := @wl_output_description_Intf;
 
 
   wl_display_interface.name := 'wl_display';
@@ -2263,7 +2407,7 @@ initialization
   wl_callback_interface.events := @wl_callback_events;
 
   wl_compositor_interface.name := 'wl_compositor';
-  wl_compositor_interface.version := 4;
+  wl_compositor_interface.version := 6;
   wl_compositor_interface.method_count := 2;
   wl_compositor_interface.methods := @wl_compositor_requests;
   wl_compositor_interface.event_count := 0;
@@ -2333,45 +2477,45 @@ initialization
   wl_shell_surface_interface.events := @wl_shell_surface_events;
 
   wl_surface_interface.name := 'wl_surface';
-  wl_surface_interface.version := 4;
-  wl_surface_interface.method_count := 10;
+  wl_surface_interface.version := 6;
+  wl_surface_interface.method_count := 11;
   wl_surface_interface.methods := @wl_surface_requests;
-  wl_surface_interface.event_count := 2;
+  wl_surface_interface.event_count := 4;
   wl_surface_interface.events := @wl_surface_events;
 
   wl_seat_interface.name := 'wl_seat';
-  wl_seat_interface.version := 7;
+  wl_seat_interface.version := 9;
   wl_seat_interface.method_count := 4;
   wl_seat_interface.methods := @wl_seat_requests;
   wl_seat_interface.event_count := 2;
   wl_seat_interface.events := @wl_seat_events;
 
   wl_pointer_interface.name := 'wl_pointer';
-  wl_pointer_interface.version := 7;
+  wl_pointer_interface.version := 9;
   wl_pointer_interface.method_count := 2;
   wl_pointer_interface.methods := @wl_pointer_requests;
-  wl_pointer_interface.event_count := 9;
+  wl_pointer_interface.event_count := 11;
   wl_pointer_interface.events := @wl_pointer_events;
 
   wl_keyboard_interface.name := 'wl_keyboard';
-  wl_keyboard_interface.version := 7;
+  wl_keyboard_interface.version := 9;
   wl_keyboard_interface.method_count := 1;
   wl_keyboard_interface.methods := @wl_keyboard_requests;
   wl_keyboard_interface.event_count := 6;
   wl_keyboard_interface.events := @wl_keyboard_events;
 
   wl_touch_interface.name := 'wl_touch';
-  wl_touch_interface.version := 7;
+  wl_touch_interface.version := 9;
   wl_touch_interface.method_count := 1;
   wl_touch_interface.methods := @wl_touch_requests;
   wl_touch_interface.event_count := 7;
   wl_touch_interface.events := @wl_touch_events;
 
   wl_output_interface.name := 'wl_output';
-  wl_output_interface.version := 3;
+  wl_output_interface.version := 4;
   wl_output_interface.method_count := 1;
   wl_output_interface.methods := @wl_output_requests;
-  wl_output_interface.event_count := 4;
+  wl_output_interface.event_count := 6;
   wl_output_interface.events := @wl_output_events;
 
   wl_region_interface.name := 'wl_region';

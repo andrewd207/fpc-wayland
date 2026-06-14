@@ -1,4 +1,4 @@
-unit linux_dmabuf_unstable_v1_protocol;
+unit linux_dmabuf_v1_protocol;
 
 {$mode objfpc} {$H+}
 {$interfaces corba}

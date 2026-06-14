@@ -14,6 +14,10 @@ type
   Pzxdg_importer_v2 = Pointer;
   Pzxdg_exported_v2 = Pointer;
   Pzxdg_imported_v2 = Pointer;
+const
+  ZXDG_EXPORTER_V2_ERROR_INVALID_SURFACE = 0; // surface is not an xdg_toplevel
+
+type
   Pzxdg_exporter_v2_listener = ^Tzxdg_exporter_v2_listener;
   Tzxdg_exporter_v2_listener = record
   end;
@@ -27,6 +31,10 @@ type
     handle : procedure(data: Pointer; AZxdgExportedV2: Pzxdg_exported_v2; AHandle: Pchar); cdecl;
   end;
 
+const
+  ZXDG_IMPORTED_V2_ERROR_INVALID_SURFACE = 0; // surface is not an xdg_toplevel
+
+type
   Pzxdg_imported_v2_listener = ^Tzxdg_imported_v2_listener;
   Tzxdg_imported_v2_listener = record
     destroyed : procedure(data: Pointer; AZxdgImportedV2: Pzxdg_imported_v2); cdecl;

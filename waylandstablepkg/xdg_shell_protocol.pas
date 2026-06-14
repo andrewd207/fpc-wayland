@@ -22,6 +22,7 @@ const
   XDG_WM_BASE_ERROR_INVALID_POPUP_PARENT = 3; // the client specified an invalid popup parent surface
   XDG_WM_BASE_ERROR_INVALID_SURFACE_STATE = 4; // the client provided an invalid surface state
   XDG_WM_BASE_ERROR_INVALID_POSITIONER = 5; // the client provided an invalid positioner
+  XDG_WM_BASE_ERROR_UNRESPONSIVE = 6; // the client didn?t respond to a ping event in time
 
 type
   Pxdg_wm_base_listener = ^Txdg_wm_base_listener;
@@ -63,9 +64,12 @@ type
   end;
 
 const
-  XDG_SURFACE_ERROR_NOT_CONSTRUCTED = 1; // 
-  XDG_SURFACE_ERROR_ALREADY_CONSTRUCTED = 2; // 
-  XDG_SURFACE_ERROR_UNCONFIGURED_BUFFER = 3; // 
+  XDG_SURFACE_ERROR_NOT_CONSTRUCTED = 1; // Surface was not fully constructed
+  XDG_SURFACE_ERROR_ALREADY_CONSTRUCTED = 2; // Surface was already constructed
+  XDG_SURFACE_ERROR_UNCONFIGURED_BUFFER = 3; // Attaching a buffer to an unconfigured surface
+  XDG_SURFACE_ERROR_INVALID_SERIAL = 4; // Invalid serial number when acking a configure event
+  XDG_SURFACE_ERROR_INVALID_SIZE = 5; // Width or height was zero or negative
+  XDG_SURFACE_ERROR_DEFUNCT_ROLE_OBJECT = 6; // Surface was destroyed before its role object
 
 type
   Pxdg_surface_listener = ^Txdg_surface_listener;
@@ -74,6 +78,9 @@ type
   end;
 
 const
+  XDG_TOPLEVEL_ERROR_INVALID_RESIZE_EDGE = 0; // provided value is         not a valid variant of the resize_edge enum
+  XDG_TOPLEVEL_ERROR_INVALID_PARENT = 1; // invalid parent toplevel
+  XDG_TOPLEVEL_ERROR_INVALID_SIZE = 2; // client provided an invalid min or max size
   XDG_TOPLEVEL_RESIZE_EDGE_NONE = 0; // 
   XDG_TOPLEVEL_RESIZE_EDGE_TOP = 1; // 
   XDG_TOPLEVEL_RESIZE_EDGE_BOTTOM = 2; // 
@@ -91,12 +98,23 @@ const
   XDG_TOPLEVEL_STATE_TILED_RIGHT = 6; // 
   XDG_TOPLEVEL_STATE_TILED_TOP = 7; // 
   XDG_TOPLEVEL_STATE_TILED_BOTTOM = 8; // 
+  XDG_TOPLEVEL_STATE_SUSPENDED = 9; // 
+  XDG_TOPLEVEL_STATE_CONSTRAINED_LEFT = 10; // 
+  XDG_TOPLEVEL_STATE_CONSTRAINED_RIGHT = 11; // 
+  XDG_TOPLEVEL_STATE_CONSTRAINED_TOP = 12; // 
+  XDG_TOPLEVEL_STATE_CONSTRAINED_BOTTOM = 13; // 
+  XDG_TOPLEVEL_WM_CAPABILITIES_WINDOW_MENU = 1; // show_window_menu is available
+  XDG_TOPLEVEL_WM_CAPABILITIES_MAXIMIZE = 2; // set_maximized and unset_maximized are available
+  XDG_TOPLEVEL_WM_CAPABILITIES_FULLSCREEN = 3; // set_fullscreen and unset_fullscreen are available
+  XDG_TOPLEVEL_WM_CAPABILITIES_MINIMIZE = 4; // set_minimized is available
 
 type
   Pxdg_toplevel_listener = ^Txdg_toplevel_listener;
   Txdg_toplevel_listener = record
     configure : procedure(data: Pointer; AXdgToplevel: Pxdg_toplevel; AWidth: LongInt; AHeight: LongInt; AStates: Pwl_array); cdecl;
     close : procedure(data: Pointer; AXdgToplevel: Pxdg_toplevel); cdecl;
+    configure_bounds : procedure(data: Pointer; AXdgToplevel: Pxdg_toplevel; AWidth: LongInt; AHeight: LongInt); cdecl;
+    wm_capabilities : procedure(data: Pointer; AXdgToplevel: Pxdg_toplevel; ACapabilities: Pwl_array); cdecl;
   end;
 
 const
@@ -107,6 +125,7 @@ type
   Txdg_popup_listener = record
     configure : procedure(data: Pointer; AXdgPopup: Pxdg_popup; AX: LongInt; AY: LongInt; AWidth: LongInt; AHeight: LongInt); cdecl;
     popup_done : procedure(data: Pointer; AXdgPopup: Pxdg_popup); cdecl;
+    repositioned : procedure(data: Pointer; AXdgPopup: Pxdg_popup; AToken: DWord); cdecl;
   end;
 
 
@@ -136,12 +155,15 @@ type
   ['IXdgToplevelListener']
     procedure xdg_toplevel_configure(AXdgToplevel: TXdgToplevel; AWidth: LongInt; AHeight: LongInt; AStates: Pwl_array);
     procedure xdg_toplevel_close(AXdgToplevel: TXdgToplevel);
+    procedure xdg_toplevel_configure_bounds(AXdgToplevel: TXdgToplevel; AWidth: LongInt; AHeight: LongInt);
+    procedure xdg_toplevel_wm_capabilities(AXdgToplevel: TXdgToplevel; ACapabilities: Pwl_array);
   end;
 
   IXdgPopupListener = interface
   ['IXdgPopupListener']
     procedure xdg_popup_configure(AXdgPopup: TXdgPopup; AX: LongInt; AY: LongInt; AWidth: LongInt; AHeight: LongInt);
     procedure xdg_popup_popup_done(AXdgPopup: TXdgPopup);
+    procedure xdg_popup_repositioned(AXdgPopup: TXdgPopup; AToken: DWord);
   end;
 
 
@@ -170,6 +192,9 @@ type
     const _SET_GRAVITY = 4;
     const _SET_CONSTRAINT_ADJUSTMENT = 5;
     const _SET_OFFSET = 6;
+    const _SET_REACTIVE = 7;
+    const _SET_PARENT_SIZE = 8;
+    const _SET_PARENT_CONFIGURE = 9;
   public
     destructor Destroy; override;
     procedure SetSize(AWidth: LongInt; AHeight: LongInt);
@@ -178,6 +203,9 @@ type
     procedure SetGravity(AGravity: DWord);
     procedure SetConstraintAdjustment(AConstraintAdjustment: DWord);
     procedure SetOffset(AX: LongInt; AY: LongInt);
+    procedure SetReactive;
+    procedure SetParentSize(AParentWidth: LongInt; AParentHeight: LongInt);
+    procedure SetParentConfigure(ASerial: DWord);
     function AddListener(AIntf: IXdgPositionerListener): LongInt;
   end;
 
@@ -235,9 +263,11 @@ type
   private
     const _DESTROY = 0;
     const _GRAB = 1;
+    const _REPOSITION = 2;
   public
     destructor Destroy; override;
     procedure Grab(ASeat: TWlSeat; ASerial: DWord);
+    procedure Reposition(APositioner: TXdgPositioner; AToken: DWord);
     function AddListener(AIntf: IXdgPopupListener): LongInt;
   end;
 
@@ -342,6 +372,21 @@ end;
 procedure TXdgPositioner.SetOffset(AX: LongInt; AY: LongInt);
 begin
   wl_proxy_marshal(FProxy, _SET_OFFSET, AX, AY);
+end;
+
+procedure TXdgPositioner.SetReactive;
+begin
+  wl_proxy_marshal(FProxy, _SET_REACTIVE);
+end;
+
+procedure TXdgPositioner.SetParentSize(AParentWidth: LongInt; AParentHeight: LongInt);
+begin
+  wl_proxy_marshal(FProxy, _SET_PARENT_SIZE, AParentWidth, AParentHeight);
+end;
+
+procedure TXdgPositioner.SetParentConfigure(ASerial: DWord);
+begin
+  wl_proxy_marshal(FProxy, _SET_PARENT_CONFIGURE, ASerial);
 end;
 
 function TXdgPositioner.AddListener(AIntf: IXdgPositionerListener): LongInt;
@@ -483,6 +528,11 @@ begin
   wl_proxy_marshal(FProxy, _GRAB, ASeat.Proxy, ASerial);
 end;
 
+procedure TXdgPopup.Reposition(APositioner: TXdgPositioner; AToken: DWord);
+begin
+  wl_proxy_marshal(FProxy, _REPOSITION, APositioner.Proxy, AToken);
+end;
+
 function TXdgPopup.AddListener(AIntf: IXdgPopupListener): LongInt;
 begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
@@ -528,6 +578,24 @@ begin
   AIntf.xdg_toplevel_close(TXdgToplevel(AData^.PascalObject));
 end;
 
+procedure xdg_toplevel_configure_bounds_Intf(AData: PWLUserData; Axdg_toplevel: Pxdg_toplevel; AWidth: LongInt; AHeight: LongInt); cdecl;
+var
+  AIntf: IXdgToplevelListener;
+begin
+  if AData = nil then Exit;
+  AIntf := IXdgToplevelListener(AData^.ListenerUserData);
+  AIntf.xdg_toplevel_configure_bounds(TXdgToplevel(AData^.PascalObject), AWidth, AHeight);
+end;
+
+procedure xdg_toplevel_wm_capabilities_Intf(AData: PWLUserData; Axdg_toplevel: Pxdg_toplevel; ACapabilities: Pwl_array); cdecl;
+var
+  AIntf: IXdgToplevelListener;
+begin
+  if AData = nil then Exit;
+  AIntf := IXdgToplevelListener(AData^.ListenerUserData);
+  AIntf.xdg_toplevel_wm_capabilities(TXdgToplevel(AData^.PascalObject), ACapabilities);
+end;
+
 procedure xdg_popup_configure_Intf(AData: PWLUserData; Axdg_popup: Pxdg_popup; AX: LongInt; AY: LongInt; AWidth: LongInt; AHeight: LongInt); cdecl;
 var
   AIntf: IXdgPopupListener;
@@ -546,10 +614,19 @@ begin
   AIntf.xdg_popup_popup_done(TXdgPopup(AData^.PascalObject));
 end;
 
+procedure xdg_popup_repositioned_Intf(AData: PWLUserData; Axdg_popup: Pxdg_popup; AToken: DWord); cdecl;
+var
+  AIntf: IXdgPopupListener;
+begin
+  if AData = nil then Exit;
+  AIntf := IXdgPopupListener(AData^.ListenerUserData);
+  AIntf.xdg_popup_repositioned(TXdgPopup(AData^.PascalObject), AToken);
+end;
+
 
 
 const
-  pInterfaces: array[0..27] of Pwl_interface = (
+  pInterfaces: array[0..29] of Pwl_interface = (
     (nil),
     (nil),
     (nil),
@@ -577,6 +654,8 @@ const
     (nil),
     (@wl_output_interface),
     (@wl_seat_interface),
+    (nil),
+    (@xdg_positioner_interface),
     (nil)
   );
 
@@ -589,14 +668,17 @@ const
   xdg_wm_base_events: array[0..0] of Twl_message = (
     (name: 'ping'; signature: 'u'; types: @pInterfaces[0])
   );
-  xdg_positioner_requests: array[0..6] of Twl_message = (
+  xdg_positioner_requests: array[0..9] of Twl_message = (
     (name: 'destroy'; signature: ''; types: @pInterfaces[0]),
     (name: 'set_size'; signature: 'ii'; types: @pInterfaces[0]),
     (name: 'set_anchor_rect'; signature: 'iiii'; types: @pInterfaces[0]),
     (name: 'set_anchor'; signature: 'u'; types: @pInterfaces[0]),
     (name: 'set_gravity'; signature: 'u'; types: @pInterfaces[0]),
     (name: 'set_constraint_adjustment'; signature: 'u'; types: @pInterfaces[0]),
-    (name: 'set_offset'; signature: 'ii'; types: @pInterfaces[0])
+    (name: 'set_offset'; signature: 'ii'; types: @pInterfaces[0]),
+    (name: 'set_reactive'; signature: '3'; types: @pInterfaces[0]),
+    (name: 'set_parent_size'; signature: '3ii'; types: @pInterfaces[0]),
+    (name: 'set_parent_configure'; signature: '3u'; types: @pInterfaces[0])
   );
   xdg_surface_requests: array[0..4] of Twl_message = (
     (name: 'destroy'; signature: ''; types: @pInterfaces[0]),
@@ -624,17 +706,21 @@ const
     (name: 'unset_fullscreen'; signature: ''; types: @pInterfaces[0]),
     (name: 'set_minimized'; signature: ''; types: @pInterfaces[0])
   );
-  xdg_toplevel_events: array[0..1] of Twl_message = (
+  xdg_toplevel_events: array[0..3] of Twl_message = (
     (name: 'configure'; signature: 'iia'; types: @pInterfaces[0]),
-    (name: 'close'; signature: ''; types: @pInterfaces[0])
+    (name: 'close'; signature: ''; types: @pInterfaces[0]),
+    (name: 'configure_bounds'; signature: '4ii'; types: @pInterfaces[0]),
+    (name: 'wm_capabilities'; signature: '5a'; types: @pInterfaces[0])
   );
-  xdg_popup_requests: array[0..1] of Twl_message = (
+  xdg_popup_requests: array[0..2] of Twl_message = (
     (name: 'destroy'; signature: ''; types: @pInterfaces[0]),
-    (name: 'grab'; signature: 'ou'; types: @pInterfaces[26])
+    (name: 'grab'; signature: 'ou'; types: @pInterfaces[26]),
+    (name: 'reposition'; signature: '3ou'; types: @pInterfaces[28])
   );
-  xdg_popup_events: array[0..1] of Twl_message = (
+  xdg_popup_events: array[0..2] of Twl_message = (
     (name: 'configure'; signature: 'iiii'; types: @pInterfaces[0]),
-    (name: 'popup_done'; signature: ''; types: @pInterfaces[0])
+    (name: 'popup_done'; signature: ''; types: @pInterfaces[0]),
+    (name: 'repositioned'; signature: '3u'; types: @pInterfaces[0])
   );
 
 initialization
@@ -642,43 +728,46 @@ initialization
   Pointer(vIntf_xdg_surface_Listener.configure) := @xdg_surface_configure_Intf;
   Pointer(vIntf_xdg_toplevel_Listener.configure) := @xdg_toplevel_configure_Intf;
   Pointer(vIntf_xdg_toplevel_Listener.close) := @xdg_toplevel_close_Intf;
+  Pointer(vIntf_xdg_toplevel_Listener.configure_bounds) := @xdg_toplevel_configure_bounds_Intf;
+  Pointer(vIntf_xdg_toplevel_Listener.wm_capabilities) := @xdg_toplevel_wm_capabilities_Intf;
   Pointer(vIntf_xdg_popup_Listener.configure) := @xdg_popup_configure_Intf;
   Pointer(vIntf_xdg_popup_Listener.popup_done) := @xdg_popup_popup_done_Intf;
+  Pointer(vIntf_xdg_popup_Listener.repositioned) := @xdg_popup_repositioned_Intf;
 
 
   xdg_wm_base_interface.name := 'xdg_wm_base';
-  xdg_wm_base_interface.version := 2;
+  xdg_wm_base_interface.version := 7;
   xdg_wm_base_interface.method_count := 4;
   xdg_wm_base_interface.methods := @xdg_wm_base_requests;
   xdg_wm_base_interface.event_count := 1;
   xdg_wm_base_interface.events := @xdg_wm_base_events;
 
   xdg_positioner_interface.name := 'xdg_positioner';
-  xdg_positioner_interface.version := 2;
-  xdg_positioner_interface.method_count := 7;
+  xdg_positioner_interface.version := 7;
+  xdg_positioner_interface.method_count := 10;
   xdg_positioner_interface.methods := @xdg_positioner_requests;
   xdg_positioner_interface.event_count := 0;
   xdg_positioner_interface.events := nil;
 
   xdg_surface_interface.name := 'xdg_surface';
-  xdg_surface_interface.version := 2;
+  xdg_surface_interface.version := 7;
   xdg_surface_interface.method_count := 5;
   xdg_surface_interface.methods := @xdg_surface_requests;
   xdg_surface_interface.event_count := 1;
   xdg_surface_interface.events := @xdg_surface_events;
 
   xdg_toplevel_interface.name := 'xdg_toplevel';
-  xdg_toplevel_interface.version := 2;
+  xdg_toplevel_interface.version := 7;
   xdg_toplevel_interface.method_count := 14;
   xdg_toplevel_interface.methods := @xdg_toplevel_requests;
-  xdg_toplevel_interface.event_count := 2;
+  xdg_toplevel_interface.event_count := 4;
   xdg_toplevel_interface.events := @xdg_toplevel_events;
 
   xdg_popup_interface.name := 'xdg_popup';
-  xdg_popup_interface.version := 2;
-  xdg_popup_interface.method_count := 2;
+  xdg_popup_interface.version := 7;
+  xdg_popup_interface.method_count := 3;
   xdg_popup_interface.methods := @xdg_popup_requests;
-  xdg_popup_interface.event_count := 2;
+  xdg_popup_interface.event_count := 3;
   xdg_popup_interface.events := @xdg_popup_events;
 
 end.

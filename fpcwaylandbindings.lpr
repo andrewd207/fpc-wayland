@@ -62,15 +62,30 @@ begin
 
 end;
 
+function UnitNameOf(AFile: String): String;
+begin
+  Result := ChangeFileExt(ExtractFileName(AFile), '') + '_protocol';
+  Result := StringReplace(Result, '-', '_', [rfReplaceAll]);
+end;
+
+// Pass 1: record every interface a protocol declares in the global registry so
+// that protocols referencing them across units emit a correct uses clause.
+procedure registerbinding(AFile: String);
+var
+  g: TGenerator;
+begin
+  g := TGenerator.Create(AFile);
+  g.RegisterInterfaces(UnitNameOf(AFile));
+  g.Free;
+end;
+
 procedure createbinding(AFile: String; OutDir: String);
 var
   g: TGenerator;
   out_unit: TStrings;
   lName: String;
 begin
-  lName := ExtractFileName(AFile);
-  lName := ChangeFileExt(lName, '') +'_protocol';
-  lName := StringReplace(lName, '-', '_', [rfReplaceAll]);
+  lName := UnitNameOf(AFile);
   out_unit := TStringList.Create;
   g := TGenerator.Create(AFile);
   g.Generate(lname, out_unit, True);
@@ -79,15 +94,38 @@ begin
   g.Free;
 end;
 
+const
+  WaylandXml   = '/usr/share/wayland/wayland.xml';
+  StableDir    = '/usr/share/wayland-protocols/stable/';
+  StagingDir   = '/usr/share/wayland-protocols/staging/';
+  UnstableDir  = '/usr/share/wayland-protocols/unstable/';
+
 begin
-  Createbinding('/usr/local/share/wayland/wayland.xml', 'waylandpkg/');
+  // Pass 1: build the interface -> unit registry. Order matters: the first unit
+  // to claim an interface name wins, so stable protocols are registered before
+  // staging/unstable to resolve interfaces duplicated across versions.
+  List := TStringList.Create;
+  registerbinding(WaylandXml);
+  GatherProtocols(StableDir);
+  GatherProtocols(StagingDir);
+  GatherProtocols(UnstableDir);
+  for Protocol in List do
+    registerbinding(Protocol);
+  List.Free;
+
+  // Pass 2: generate the units.
+  Createbinding(WaylandXml, 'waylandpkg/');
 
   List := TStringList.Create;
-  GatherProtocols('/usr/local/share/wayland-protocols/stable/');
+  GatherProtocols(StableDir);
   for Protocol in list do
     Createbinding(Protocol, 'waylandstablepkg/');
   list.Clear;
-  GatherProtocols('/usr/local/share/wayland-protocols/unstable/');
+  GatherProtocols(StagingDir);
+  for Protocol in list do
+    Createbinding(Protocol, 'waylandstagingpkg/');
+  list.Clear;
+  GatherProtocols(UnstableDir);
   for Protocol in list do
     Createbinding(Protocol, 'waylandunstablepkg/');
   List.free;

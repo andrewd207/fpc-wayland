@@ -1,0 +1,18 @@
+# Build output
+lib/
+*.ppu
+*.o
+*.compiled
+*.or
+*.a
+
+# Lazarus / IDE session & cache files
+*.lps
+backup/
+packagefiles.xml
+
+# Compiled generator binary
+/fpcwaylandbindings
+
+# Local protocol checkout used by the generator
+/wayland-protocols/
