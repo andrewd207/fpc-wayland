@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+  <name>fpc-wayland</name>
+  <version>1.0.0</version>
+  <author>Andrew Haines</author>
+  <license>GPL-2.0-or-later</license>
+  <description>Free Pascal bindings for Wayland and the wayland-protocols, plus a generator that produces them from the protocol XML.</description>
+
+  <build>
+    <packaging>pom</packaging>
+  </build>
+
+  <modules>
+    <module>waylandpkg</module>
+    <module>waylandstablepkg</module>
+    <module>waylandstagingpkg</module>
+    <module>waylandunstablepkg</module>
+    <module>supportpkg</module>
+    <module>tools/generator</module>
+  </modules>
+</project>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+  <name>generator</name>
+  <version>1.0.0</version>
+  <author>Andrew Haines</author>
+  <license>GPL-2.0-or-later</license>
+  <description>Generates the Free Pascal Wayland protocol bindings from the wayland-protocols XML.</description>
+
+  <build>
+    <projectType>application</projectType>
+    <mainSource>fpcwaylandbindings.lpr</mainSource>
+    <executableName>fpcwaylandbindings</executableName>
+  </build>
+</project>

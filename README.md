@@ -14,11 +14,39 @@ There are five packages:
 4. **WaylandUnstablePkg** — the older "unstable" (`zwp_*`/`zxdg_*`) protocols.
 5. **WaylandSupportPkg** — bindings for libxkbcommon and libharfbuzz.
 
-`WaylandStablePkg`, `WaylandStagingPkg` and `WaylandUnstablePkg` depend on
-`WaylandPkg`; the staging and unstable packages also depend on
-`WaylandStablePkg` because some of their protocols reference stabilized
+`waylandstablepkg`, `waylandstagingpkg` and `waylandunstablepkg` depend on
+`waylandpkg`; the staging and unstable packages also depend on
+`waylandstablepkg` because some of their protocols reference stabilized
 interfaces (e.g. cursor-shape uses `zwp_tablet_tool_v2`, xdg-decoration uses
 `xdg_toplevel`).
+
+## Layout
+
+The repository is a [PasBuild](https://github.com/graemeg/PasBuild) multi-module
+project. The root `project.xml` is an aggregate (`packaging=pom`) that lists the
+module directories; each module keeps its Pascal sources under
+`src/main/pascal/`:
+
+```
+project.xml                 aggregate (pom)
+waylandpkg/                 library module  + Lazarus .lpk
+waylandstablepkg/           library module  + Lazarus .lpk
+waylandstagingpkg/          library module  + Lazarus .lpk
+waylandunstablepkg/         library module  + Lazarus .lpk
+supportpkg/                 library module  + Lazarus .lpk
+tools/generator/            application module (the bindings generator)
+```
+
+The Lazarus `.lpk` package files are kept in place (their file references point
+at `src/main/pascal/`), so the packages can still be opened/built from Lazarus.
+
+## Building
+
+```sh
+pasbuild compile --all        # build every module in dependency order
+pasbuild dependency-tree      # show the module graph
+pasbuild compile -m waylandstagingpkg
+```
 
 ## Regenerating the bindings
 
@@ -28,15 +56,17 @@ The generator reads the protocol XML installed on the system:
 - `/usr/share/wayland-protocols/{stable,staging,unstable}/` (from the
   `wayland-protocols` package)
 
-Build and run the generator from the repository root:
+Build the generator and run it from the repository root:
 
 ```sh
-fpc -Fuwaylandpkg fpcwaylandbindings.lpr
-./fpcwaylandbindings
+pasbuild compile -m generator
+./tools/generator/target/fpcwaylandbindings
 ```
 
-This writes the `*_protocol.pas` units into `waylandpkg/`,
-`waylandstablepkg/`, `waylandstagingpkg/` and `waylandunstablepkg/`.
+It writes the `*_protocol.pas` units into each package's `src/main/pascal/`
+directory. The generated tree root defaults to the current directory; pass an
+alternate root as the first argument
+(`fpcwaylandbindings /path/to/checkout`).
 
 The generator runs in two passes: the first builds a registry mapping every
 interface name to the unit that declares it, so that the second pass can emit
@@ -45,6 +75,6 @@ one protocol version (for example the unstable and stabilized tablet), the
 stable unit wins; registration order in `fpcwaylandbindings.lpr`
 (stable → staging → unstable) controls that priority.
 
-> Note: the package manifests (`*.lpk` / `*.pkg.pas`) are not produced by the
-> generator. If the set of generated units changes, update the corresponding
-> package's file list accordingly.
+> Note: the package manifests (`*.lpk`) are not produced by the generator. If
+> the set of generated units changes, update the corresponding package's file
+> list (and `<units>` in its `project.xml`) accordingly.

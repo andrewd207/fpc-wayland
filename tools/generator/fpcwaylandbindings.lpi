@@ -27,15 +27,15 @@
     </RunParams>
     <Units Count="3">
       <Unit0>
-        <Filename Value="fpcwaylandbindings.lpr"/>
+        <Filename Value="src/main/pascal/fpcwaylandbindings.lpr"/>
         <IsPartOfProject Value="True"/>
       </Unit0>
       <Unit1>
-        <Filename Value="wayland_xml.pas"/>
+        <Filename Value="src/main/pascal/wayland_xml.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit1>
       <Unit2>
-        <Filename Value="protocol_generator.pas"/>
+        <Filename Value="src/main/pascal/protocol_generator.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit2>
     </Units>

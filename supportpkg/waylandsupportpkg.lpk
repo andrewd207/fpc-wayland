@@ -11,19 +11,19 @@
     </CompilerOptions>
     <Files Count="4">
       <Item1>
-        <Filename Value="libharfbuzz.pas"/>
+        <Filename Value="src/main/pascal/libharfbuzz.pas"/>
         <UnitName Value="libharfbuzz"/>
       </Item1>
       <Item2>
-        <Filename Value="libxkbcommon.pas"/>
+        <Filename Value="src/main/pascal/libxkbcommon.pas"/>
         <UnitName Value="libxkbcommon"/>
       </Item2>
       <Item3>
-        <Filename Value="libxkbcommon-keys.inc"/>
+        <Filename Value="src/main/pascal/libxkbcommon-keys.inc"/>
         <Type Value="Include"/>
       </Item3>
       <Item4>
-        <Filename Value="xkb_classes.pas"/>
+        <Filename Value="src/main/pascal/xkb_classes.pas"/>
         <UnitName Value="xkb_classes"/>
       </Item4>
     </Files>

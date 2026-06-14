@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+  <name>waylandunstablepkg</name>
+  <version>1.0.0</version>
+  <author>Andrew Haines</author>
+  <license>GPL-2.0-or-later</license>
+
+  <moduleDependencies>
+    <module>../waylandstablepkg</module>
+    <module>../waylandpkg</module>
+  </moduleDependencies>
+
+  <build>
+    <packaging>library</packaging>
+  </build>
+
+  <units>
+    <unit>fullscreen_shell_unstable_v1_protocol</unit>
+    <unit>idle_inhibit_unstable_v1_protocol</unit>
+    <unit>input_method_unstable_v1_protocol</unit>
+    <unit>input_timestamps_unstable_v1_protocol</unit>
+    <unit>keyboard_shortcuts_inhibit_unstable_v1_protocol</unit>
+    <unit>linux_dmabuf_unstable_v1_protocol</unit>
+    <unit>linux_explicit_synchronization_unstable_v1_protocol</unit>
+    <unit>pointer_constraints_unstable_v1_protocol</unit>
+    <unit>pointer_gestures_unstable_v1_protocol</unit>
+    <unit>primary_selection_unstable_v1_protocol</unit>
+    <unit>relative_pointer_unstable_v1_protocol</unit>
+    <unit>tablet_unstable_v1_protocol</unit>
+    <unit>tablet_unstable_v2_protocol</unit>
+    <unit>text_input_unstable_v1_protocol</unit>
+    <unit>text_input_unstable_v3_protocol</unit>
+    <unit>xdg_decoration_unstable_v1_protocol</unit>
+    <unit>xdg_foreign_unstable_v1_protocol</unit>
+    <unit>xdg_foreign_unstable_v2_protocol</unit>
+    <unit>xdg_output_unstable_v1_protocol</unit>
+    <unit>xdg_shell_unstable_v5_protocol</unit>
+    <unit>xdg_shell_unstable_v6_protocol</unit>
+    <unit>xwayland_keyboard_grab_unstable_v1_protocol</unit>
+  </units>
+</project>

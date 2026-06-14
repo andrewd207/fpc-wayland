@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+  <name>waylandstablepkg</name>
+  <version>1.0.0</version>
+  <author>Andrew Haines</author>
+  <license>GPL-2.0-or-later</license>
+
+  <moduleDependencies>
+    <module>../waylandpkg</module>
+  </moduleDependencies>
+
+  <build>
+    <packaging>library</packaging>
+  </build>
+
+  <units>
+    <unit>linux_dmabuf_v1_protocol</unit>
+    <unit>presentation_time_protocol</unit>
+    <unit>tablet_v2_protocol</unit>
+    <unit>viewporter_protocol</unit>
+    <unit>xdg_shell_protocol</unit>
+  </units>
+</project>

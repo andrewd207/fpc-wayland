@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+  <name>waylandstagingpkg</name>
+  <version>1.0.0</version>
+  <author>Andrew Haines</author>
+  <license>GPL-2.0-or-later</license>
+
+  <moduleDependencies>
+    <module>../waylandstablepkg</module>
+    <module>../waylandpkg</module>
+  </moduleDependencies>
+
+  <build>
+    <packaging>library</packaging>
+  </build>
+
+  <units>
+    <unit>alpha_modifier_v1_protocol</unit>
+    <unit>color_management_v1_protocol</unit>
+    <unit>color_representation_v1_protocol</unit>
+    <unit>commit_timing_v1_protocol</unit>
+    <unit>content_type_v1_protocol</unit>
+    <unit>cursor_shape_v1_protocol</unit>
+    <unit>drm_lease_v1_protocol</unit>
+    <unit>ext_background_effect_v1_protocol</unit>
+    <unit>ext_data_control_v1_protocol</unit>
+    <unit>ext_foreign_toplevel_list_v1_protocol</unit>
+    <unit>ext_idle_notify_v1_protocol</unit>
+    <unit>ext_image_capture_source_v1_protocol</unit>
+    <unit>ext_image_copy_capture_v1_protocol</unit>
+    <unit>ext_session_lock_v1_protocol</unit>
+    <unit>ext_transient_seat_v1_protocol</unit>
+    <unit>ext_workspace_v1_protocol</unit>
+    <unit>fifo_v1_protocol</unit>
+    <unit>fractional_scale_v1_protocol</unit>
+    <unit>linux_drm_syncobj_v1_protocol</unit>
+    <unit>pointer_warp_v1_protocol</unit>
+    <unit>security_context_v1_protocol</unit>
+    <unit>single_pixel_buffer_v1_protocol</unit>
+    <unit>tearing_control_v1_protocol</unit>
+    <unit>xdg_activation_v1_protocol</unit>
+    <unit>xdg_dialog_v1_protocol</unit>
+    <unit>xdg_system_bell_v1_protocol</unit>
+    <unit>xdg_toplevel_drag_v1_protocol</unit>
+    <unit>xdg_toplevel_icon_v1_protocol</unit>
+    <unit>xdg_toplevel_tag_v1_protocol</unit>
+    <unit>xwayland_shell_v1_protocol</unit>
+  </units>
+</project>

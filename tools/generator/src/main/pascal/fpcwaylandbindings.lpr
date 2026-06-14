@@ -100,7 +100,20 @@ const
   StagingDir   = '/usr/share/wayland-protocols/staging/';
   UnstableDir  = '/usr/share/wayland-protocols/unstable/';
 
+  // Generated units land in each package module's PasBuild source directory.
+  PkgSub       = '/src/main/pascal/';
+
+var
+  // repository root that contains the package module directories; defaults to
+  // the current directory, override with the first command line argument.
+  Root: String;
+
 begin
+  if ParamCount >= 1 then
+    Root := IncludeTrailingPathDelimiter(ParamStr(1))
+  else
+    Root := '';
+
   // Pass 1: build the interface -> unit registry. Order matters: the first unit
   // to claim an interface name wins, so stable protocols are registered before
   // staging/unstable to resolve interfaces duplicated across versions.
@@ -114,20 +127,20 @@ begin
   List.Free;
 
   // Pass 2: generate the units.
-  Createbinding(WaylandXml, 'waylandpkg/');
+  Createbinding(WaylandXml, Root+'waylandpkg'+PkgSub);
 
   List := TStringList.Create;
   GatherProtocols(StableDir);
   for Protocol in list do
-    Createbinding(Protocol, 'waylandstablepkg/');
+    Createbinding(Protocol, Root+'waylandstablepkg'+PkgSub);
   list.Clear;
   GatherProtocols(StagingDir);
   for Protocol in list do
-    Createbinding(Protocol, 'waylandstagingpkg/');
+    Createbinding(Protocol, Root+'waylandstagingpkg'+PkgSub);
   list.Clear;
   GatherProtocols(UnstableDir);
   for Protocol in list do
-    Createbinding(Protocol, 'waylandunstablepkg/');
+    Createbinding(Protocol, Root+'waylandunstablepkg'+PkgSub);
   List.free;
 
 

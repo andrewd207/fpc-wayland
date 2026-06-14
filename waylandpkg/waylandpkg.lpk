@@ -11,31 +11,31 @@
     </CompilerOptions>
     <Files Count="7">
       <Item1>
-        <Filename Value="wayland_cursor.pas"/>
+        <Filename Value="src/main/pascal/wayland_cursor.pas"/>
         <UnitName Value="wayland_cursor"/>
       </Item1>
       <Item2>
-        <Filename Value="wayland_protocol.pas"/>
+        <Filename Value="src/main/pascal/wayland_protocol.pas"/>
         <UnitName Value="wayland_protocol"/>
       </Item2>
       <Item3>
-        <Filename Value="wayland_shared_buffer.pas"/>
+        <Filename Value="src/main/pascal/wayland_shared_buffer.pas"/>
         <UnitName Value="wayland_shared_buffer"/>
       </Item3>
       <Item4>
-        <Filename Value="wayland_util.pas"/>
+        <Filename Value="src/main/pascal/wayland_util.pas"/>
         <UnitName Value="wayland_util"/>
       </Item4>
       <Item5>
-        <Filename Value="wayland_client.pas"/>
+        <Filename Value="src/main/pascal/wayland_client.pas"/>
         <UnitName Value="wayland_client"/>
       </Item5>
       <Item6>
-        <Filename Value="wayland_client_core.pas"/>
+        <Filename Value="src/main/pascal/wayland_client_core.pas"/>
         <UnitName Value="wayland_client_core"/>
       </Item6>
       <Item7>
-        <Filename Value="wayland_egl.pas"/>
+        <Filename Value="src/main/pascal/wayland_egl.pas"/>
         <UnitName Value="wayland_egl"/>
       </Item7>
     </Files>

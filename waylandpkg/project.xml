@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+  <name>waylandpkg</name>
+  <version>1.0.0</version>
+  <author>Andrew Haines</author>
+  <license>GPL-2.0-or-later</license>
+  <description>Free Pascal bindings for libwayland (client, cursor, egl) and the core wayland protocol.</description>
+
+  <build>
+    <packaging>library</packaging>
+  </build>
+
+  <units>
+    <unit>wayland_util</unit>
+    <unit>wayland_client_core</unit>
+    <unit>wayland_client</unit>
+    <unit>wayland_protocol</unit>
+    <unit>wayland_cursor</unit>
+    <unit>wayland_egl</unit>
+    <unit>wayland_shared_buffer</unit>
+  </units>
+</project>
