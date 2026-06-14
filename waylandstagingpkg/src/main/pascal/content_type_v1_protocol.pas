@@ -49,6 +49,8 @@ type
 
 
   TWpContentTypeManagerV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
     const _GET_SURFACE_CONTENT_TYPE = 1;
@@ -59,6 +61,8 @@ type
   end;
 
   TWpContentTypeV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
     const _SET_CONTENT_TYPE = 1;
@@ -70,6 +74,7 @@ type
 
 
 
+procedure InitInterfaces;
 
 
 
@@ -86,8 +91,15 @@ implementation
 var
   vIntf_wp_content_type_manager_v1_Listener: Twp_content_type_manager_v1_listener;
   vIntf_wp_content_type_v1_Listener: Twp_content_type_v1_listener;
+  vInterfacesRegistered: Boolean = False;
 
 
+
+constructor TWpContentTypeManagerV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
 
 destructor TWpContentTypeManagerV1.Destroy;
 begin
@@ -113,6 +125,12 @@ begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
   Result := wl_proxy_add_listener(FProxy, @vIntf_wp_content_type_manager_v1_Listener, @FUserDataRec);
 end;
+constructor TWpContentTypeV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
+
 destructor TWpContentTypeV1.Destroy;
 begin
   wl_proxy_marshal(FProxy, _DESTROY);
@@ -158,7 +176,10 @@ const
     (name: 'set_content_type'; signature: 'u'; types: @pInterfaces[0])
   );
 
-initialization
+procedure InitInterfaces;
+begin
+  if vInterfacesRegistered then Exit;
+  vInterfacesRegistered := True;
 
 
   wp_content_type_manager_v1_interface.name := PChar(WP_CONTENT_TYPE_MANAGER_V1_INTERFACE_NAME);
@@ -174,5 +195,7 @@ initialization
   wp_content_type_v1_interface.methods := @wp_content_type_v1_requests;
   wp_content_type_v1_interface.event_count := 0;
   wp_content_type_v1_interface.events := nil;
+
+end;
 
 end.

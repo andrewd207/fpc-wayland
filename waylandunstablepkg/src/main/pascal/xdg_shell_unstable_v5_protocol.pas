@@ -80,6 +80,8 @@ type
 
 
   TXdgShell = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
     const _USE_UNSTABLE_VERSION = 1;
@@ -96,6 +98,8 @@ type
   end;
 
   TXdgSurface = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
     const _SET_PARENT = 1;
@@ -130,6 +134,8 @@ type
   end;
 
   TXdgPopup = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
   public
@@ -139,6 +145,7 @@ type
 
 
 
+procedure InitInterfaces;
 
 
 
@@ -158,8 +165,15 @@ var
   vIntf_xdg_shell_Listener: Txdg_shell_listener;
   vIntf_xdg_surface_Listener: Txdg_surface_listener;
   vIntf_xdg_popup_Listener: Txdg_popup_listener;
+  vInterfacesRegistered: Boolean = False;
 
 
+
+constructor TXdgShell.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
 
 destructor TXdgShell.Destroy;
 begin
@@ -208,6 +222,12 @@ begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
   Result := wl_proxy_add_listener(FProxy, @vIntf_xdg_shell_Listener, @FUserDataRec);
 end;
+constructor TXdgSurface.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
+
 destructor TXdgSurface.Destroy;
 begin
   wl_proxy_marshal(FProxy, _DESTROY);
@@ -284,6 +304,12 @@ begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
   Result := wl_proxy_add_listener(FProxy, @vIntf_xdg_surface_Listener, @FUserDataRec);
 end;
+constructor TXdgPopup.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
+
 destructor TXdgPopup.Destroy;
 begin
   wl_proxy_marshal(FProxy, _DESTROY);
@@ -406,7 +432,10 @@ const
     (name: 'popup_done'; signature: ''; types: @pInterfaces[0])
   );
 
-initialization
+procedure InitInterfaces;
+begin
+  if vInterfacesRegistered then Exit;
+  vInterfacesRegistered := True;
   Pointer(vIntf_xdg_shell_Listener.ping) := @xdg_shell_ping_Intf;
   Pointer(vIntf_xdg_surface_Listener.configure) := @xdg_surface_configure_Intf;
   Pointer(vIntf_xdg_surface_Listener.close) := @xdg_surface_close_Intf;
@@ -433,5 +462,7 @@ initialization
   xdg_popup_interface.methods := @xdg_popup_requests;
   xdg_popup_interface.event_count := 1;
   xdg_popup_interface.events := @xdg_popup_events;
+
+end;
 
 end.

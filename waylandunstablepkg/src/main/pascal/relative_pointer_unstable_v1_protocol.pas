@@ -40,6 +40,8 @@ type
 
 
   TWpRelativePointerManagerV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
     const _GET_RELATIVE_POINTER = 1;
@@ -50,6 +52,8 @@ type
   end;
 
   TWpRelativePointerV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
   public
@@ -59,6 +63,7 @@ type
 
 
 
+procedure InitInterfaces;
 
 
 
@@ -75,8 +80,15 @@ implementation
 var
   vIntf_wp_relative_pointer_manager_v1_Listener: Twp_relative_pointer_manager_v1_listener;
   vIntf_wp_relative_pointer_v1_Listener: Twp_relative_pointer_v1_listener;
+  vInterfacesRegistered: Boolean = False;
 
 
+
+constructor TWpRelativePointerManagerV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
 
 destructor TWpRelativePointerManagerV1.Destroy;
 begin
@@ -102,6 +114,12 @@ begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
   Result := wl_proxy_add_listener(FProxy, @vIntf_wp_relative_pointer_manager_v1_Listener, @FUserDataRec);
 end;
+constructor TWpRelativePointerV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
+
 destructor TWpRelativePointerV1.Destroy;
 begin
   wl_proxy_marshal(FProxy, _DESTROY);
@@ -153,7 +171,10 @@ const
     (name: 'relative_motion'; signature: 'uuffff'; types: @pInterfaces[0])
   );
 
-initialization
+procedure InitInterfaces;
+begin
+  if vInterfacesRegistered then Exit;
+  vInterfacesRegistered := True;
   Pointer(vIntf_wp_relative_pointer_v1_Listener.relative_motion) := @wp_relative_pointer_v1_relative_motion_Intf;
 
 
@@ -170,5 +191,7 @@ initialization
   wp_relative_pointer_v1_interface.methods := @wp_relative_pointer_v1_requests;
   wp_relative_pointer_v1_interface.event_count := 1;
   wp_relative_pointer_v1_interface.events := @wp_relative_pointer_v1_events;
+
+end;
 
 end.

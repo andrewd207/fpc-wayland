@@ -170,6 +170,8 @@ type
 
 
   TXdgWmBase = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
     const _CREATE_POSITIONER = 1;
@@ -184,6 +186,8 @@ type
   end;
 
   TXdgPositioner = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
     const _SET_SIZE = 1;
@@ -210,6 +214,8 @@ type
   end;
 
   TXdgSurface = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
     const _GET_TOPLEVEL = 1;
@@ -226,6 +232,8 @@ type
   end;
 
   TXdgToplevel = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
     const _SET_PARENT = 1;
@@ -260,6 +268,8 @@ type
   end;
 
   TXdgPopup = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
     const _GRAB = 1;
@@ -273,6 +283,7 @@ type
 
 
 
+procedure InitInterfaces;
 
 
 
@@ -298,8 +309,15 @@ var
   vIntf_xdg_surface_Listener: Txdg_surface_listener;
   vIntf_xdg_toplevel_Listener: Txdg_toplevel_listener;
   vIntf_xdg_popup_Listener: Txdg_popup_listener;
+  vInterfacesRegistered: Boolean = False;
 
 
+
+constructor TXdgWmBase.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
 
 destructor TXdgWmBase.Destroy;
 begin
@@ -343,6 +361,12 @@ begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
   Result := wl_proxy_add_listener(FProxy, @vIntf_xdg_wm_base_Listener, @FUserDataRec);
 end;
+constructor TXdgPositioner.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
+
 destructor TXdgPositioner.Destroy;
 begin
   wl_proxy_marshal(FProxy, _DESTROY);
@@ -399,6 +423,12 @@ begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
   Result := wl_proxy_add_listener(FProxy, @vIntf_xdg_positioner_Listener, @FUserDataRec);
 end;
+constructor TXdgSurface.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
+
 destructor TXdgSurface.Destroy;
 begin
   wl_proxy_marshal(FProxy, _DESTROY);
@@ -446,6 +476,12 @@ begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
   Result := wl_proxy_add_listener(FProxy, @vIntf_xdg_surface_Listener, @FUserDataRec);
 end;
+constructor TXdgToplevel.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
+
 destructor TXdgToplevel.Destroy;
 begin
   wl_proxy_marshal(FProxy, _DESTROY);
@@ -522,6 +558,12 @@ begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
   Result := wl_proxy_add_listener(FProxy, @vIntf_xdg_toplevel_Listener, @FUserDataRec);
 end;
+constructor TXdgPopup.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
+
 destructor TXdgPopup.Destroy;
 begin
   wl_proxy_marshal(FProxy, _DESTROY);
@@ -728,7 +770,10 @@ const
     (name: 'repositioned'; signature: '3u'; types: @pInterfaces[0])
   );
 
-initialization
+procedure InitInterfaces;
+begin
+  if vInterfacesRegistered then Exit;
+  vInterfacesRegistered := True;
   Pointer(vIntf_xdg_wm_base_Listener.ping) := @xdg_wm_base_ping_Intf;
   Pointer(vIntf_xdg_surface_Listener.configure) := @xdg_surface_configure_Intf;
   Pointer(vIntf_xdg_toplevel_Listener.configure) := @xdg_toplevel_configure_Intf;
@@ -774,5 +819,7 @@ initialization
   xdg_popup_interface.methods := @xdg_popup_requests;
   xdg_popup_interface.event_count := 3;
   xdg_popup_interface.events := @xdg_popup_events;
+
+end;
 
 end.

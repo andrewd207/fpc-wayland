@@ -88,6 +88,8 @@ type
 
 
   TWpLinuxDmabufV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
     const _CREATE_PARAMS = 1;
@@ -102,6 +104,8 @@ type
   end;
 
   TWpLinuxBufferParamsV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
     const _ADD = 1;
@@ -116,6 +120,8 @@ type
   end;
 
   TWpLinuxDmabufFeedbackV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
   public
@@ -125,6 +131,7 @@ type
 
 
 
+procedure InitInterfaces;
 
 
 
@@ -144,8 +151,15 @@ var
   vIntf_wp_linux_dmabuf_v1_Listener: Twp_linux_dmabuf_v1_listener;
   vIntf_wp_linux_buffer_params_v1_Listener: Twp_linux_buffer_params_v1_listener;
   vIntf_wp_linux_dmabuf_feedback_v1_Listener: Twp_linux_dmabuf_feedback_v1_listener;
+  vInterfacesRegistered: Boolean = False;
 
 
+
+constructor TWpLinuxDmabufV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
 
 destructor TWpLinuxDmabufV1.Destroy;
 begin
@@ -197,6 +211,12 @@ begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
   Result := wl_proxy_add_listener(FProxy, @vIntf_wp_linux_dmabuf_v1_Listener, @FUserDataRec);
 end;
+constructor TWpLinuxBufferParamsV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
+
 destructor TWpLinuxBufferParamsV1.Destroy;
 begin
   wl_proxy_marshal(FProxy, _DESTROY);
@@ -231,6 +251,12 @@ begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
   Result := wl_proxy_add_listener(FProxy, @vIntf_wp_linux_buffer_params_v1_Listener, @FUserDataRec);
 end;
+constructor TWpLinuxDmabufFeedbackV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
+
 destructor TWpLinuxDmabufFeedbackV1.Destroy;
 begin
   wl_proxy_marshal(FProxy, _DESTROY);
@@ -401,7 +427,10 @@ const
     (name: 'tranche_flags'; signature: 'u'; types: @pInterfaces[0])
   );
 
-initialization
+procedure InitInterfaces;
+begin
+  if vInterfacesRegistered then Exit;
+  vInterfacesRegistered := True;
   Pointer(vIntf_wp_linux_dmabuf_v1_Listener.format) := @wp_linux_dmabuf_v1_format_Intf;
   Pointer(vIntf_wp_linux_dmabuf_v1_Listener.modifier) := @wp_linux_dmabuf_v1_modifier_Intf;
   Pointer(vIntf_wp_linux_buffer_params_v1_Listener.created) := @wp_linux_buffer_params_v1_created_Intf;
@@ -435,5 +464,7 @@ initialization
   wp_linux_dmabuf_feedback_v1_interface.methods := @wp_linux_dmabuf_feedback_v1_requests;
   wp_linux_dmabuf_feedback_v1_interface.event_count := 7;
   wp_linux_dmabuf_feedback_v1_interface.events := @wp_linux_dmabuf_feedback_v1_events;
+
+end;
 
 end.

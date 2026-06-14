@@ -38,6 +38,8 @@ type
 
 
   TWpXwaylandKeyboardGrabManagerV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
     const _GRAB_KEYBOARD = 1;
@@ -48,6 +50,8 @@ type
   end;
 
   TWpXwaylandKeyboardGrabV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
   public
@@ -57,6 +61,7 @@ type
 
 
 
+procedure InitInterfaces;
 
 
 
@@ -73,8 +78,15 @@ implementation
 var
   vIntf_wp_xwayland_keyboard_grab_manager_v1_Listener: Twp_xwayland_keyboard_grab_manager_v1_listener;
   vIntf_wp_xwayland_keyboard_grab_v1_Listener: Twp_xwayland_keyboard_grab_v1_listener;
+  vInterfacesRegistered: Boolean = False;
 
 
+
+constructor TWpXwaylandKeyboardGrabManagerV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
 
 destructor TWpXwaylandKeyboardGrabManagerV1.Destroy;
 begin
@@ -100,6 +112,12 @@ begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
   Result := wl_proxy_add_listener(FProxy, @vIntf_wp_xwayland_keyboard_grab_manager_v1_Listener, @FUserDataRec);
 end;
+constructor TWpXwaylandKeyboardGrabV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
+
 destructor TWpXwaylandKeyboardGrabV1.Destroy;
 begin
   wl_proxy_marshal(FProxy, _DESTROY);
@@ -140,7 +158,10 @@ const
     (name: 'destroy'; signature: ''; types: @pInterfaces[0])
   );
 
-initialization
+procedure InitInterfaces;
+begin
+  if vInterfacesRegistered then Exit;
+  vInterfacesRegistered := True;
 
 
   wp_xwayland_keyboard_grab_manager_v1_interface.name := PChar(WP_XWAYLAND_KEYBOARD_GRAB_MANAGER_V1_INTERFACE_NAME);
@@ -156,5 +177,7 @@ initialization
   wp_xwayland_keyboard_grab_v1_interface.methods := @wp_xwayland_keyboard_grab_v1_requests;
   wp_xwayland_keyboard_grab_v1_interface.event_count := 0;
   wp_xwayland_keyboard_grab_v1_interface.events := nil;
+
+end;
 
 end.

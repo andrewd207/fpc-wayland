@@ -42,6 +42,8 @@ type
 
 
   TXdgWmDialogV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
     const _GET_XDG_DIALOG = 1;
@@ -52,6 +54,8 @@ type
   end;
 
   TXdgDialogV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
     const _SET_MODAL = 1;
@@ -65,6 +69,7 @@ type
 
 
 
+procedure InitInterfaces;
 
 
 
@@ -81,8 +86,15 @@ implementation
 var
   vIntf_xdg_wm_dialog_v1_Listener: Txdg_wm_dialog_v1_listener;
   vIntf_xdg_dialog_v1_Listener: Txdg_dialog_v1_listener;
+  vInterfacesRegistered: Boolean = False;
 
 
+
+constructor TXdgWmDialogV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
 
 destructor TXdgWmDialogV1.Destroy;
 begin
@@ -108,6 +120,12 @@ begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
   Result := wl_proxy_add_listener(FProxy, @vIntf_xdg_wm_dialog_v1_Listener, @FUserDataRec);
 end;
+constructor TXdgDialogV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
+
 destructor TXdgDialogV1.Destroy;
 begin
   wl_proxy_marshal(FProxy, _DESTROY);
@@ -159,7 +177,10 @@ const
     (name: 'unset_modal'; signature: ''; types: @pInterfaces[0])
   );
 
-initialization
+procedure InitInterfaces;
+begin
+  if vInterfacesRegistered then Exit;
+  vInterfacesRegistered := True;
 
 
   xdg_wm_dialog_v1_interface.name := PChar(XDG_WM_DIALOG_V1_INTERFACE_NAME);
@@ -175,5 +196,7 @@ initialization
   xdg_dialog_v1_interface.methods := @xdg_dialog_v1_requests;
   xdg_dialog_v1_interface.event_count := 0;
   xdg_dialog_v1_interface.events := nil;
+
+end;
 
 end.

@@ -74,6 +74,8 @@ type
 
 
   TWpPointerGesturesV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _GET_SWIPE_GESTURE = 0;
     const _GET_PINCH_GESTURE = 1;
@@ -88,6 +90,8 @@ type
   end;
 
   TWpPointerGestureSwipeV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
   public
@@ -96,6 +100,8 @@ type
   end;
 
   TWpPointerGesturePinchV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
   public
@@ -104,6 +110,8 @@ type
   end;
 
   TWpPointerGestureHoldV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
   public
@@ -113,6 +121,7 @@ type
 
 
 
+procedure InitInterfaces;
 
 
 
@@ -135,8 +144,15 @@ var
   vIntf_wp_pointer_gesture_swipe_v1_Listener: Twp_pointer_gesture_swipe_v1_listener;
   vIntf_wp_pointer_gesture_pinch_v1_Listener: Twp_pointer_gesture_pinch_v1_listener;
   vIntf_wp_pointer_gesture_hold_v1_Listener: Twp_pointer_gesture_hold_v1_listener;
+  vInterfacesRegistered: Boolean = False;
 
 
+
+constructor TWpPointerGesturesV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
 
 function TWpPointerGesturesV1.GetSwipeGesture(APointer: TWlPointer; AProxyClass: TWLProxyObjectClass = nil {TWpPointerGestureSwipeV1}): TWpPointerGestureSwipeV1;
 var
@@ -188,6 +204,12 @@ begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
   Result := wl_proxy_add_listener(FProxy, @vIntf_wp_pointer_gestures_v1_Listener, @FUserDataRec);
 end;
+constructor TWpPointerGestureSwipeV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
+
 destructor TWpPointerGestureSwipeV1.Destroy;
 begin
   wl_proxy_marshal(FProxy, _DESTROY);
@@ -199,6 +221,12 @@ begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
   Result := wl_proxy_add_listener(FProxy, @vIntf_wp_pointer_gesture_swipe_v1_Listener, @FUserDataRec);
 end;
+constructor TWpPointerGesturePinchV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
+
 destructor TWpPointerGesturePinchV1.Destroy;
 begin
   wl_proxy_marshal(FProxy, _DESTROY);
@@ -210,6 +238,12 @@ begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
   Result := wl_proxy_add_listener(FProxy, @vIntf_wp_pointer_gesture_pinch_v1_Listener, @FUserDataRec);
 end;
+constructor TWpPointerGestureHoldV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
+
 destructor TWpPointerGestureHoldV1.Destroy;
 begin
   wl_proxy_marshal(FProxy, _DESTROY);
@@ -359,7 +393,10 @@ const
     (name: 'end'; signature: '3uui'; types: @pInterfaces[0])
   );
 
-initialization
+procedure InitInterfaces;
+begin
+  if vInterfacesRegistered then Exit;
+  vInterfacesRegistered := True;
   Pointer(vIntf_wp_pointer_gesture_swipe_v1_Listener.begin_) := @wp_pointer_gesture_swipe_v1_begin_Intf;
   Pointer(vIntf_wp_pointer_gesture_swipe_v1_Listener.update) := @wp_pointer_gesture_swipe_v1_update_Intf;
   Pointer(vIntf_wp_pointer_gesture_swipe_v1_Listener.end_) := @wp_pointer_gesture_swipe_v1_end_Intf;
@@ -397,5 +434,7 @@ initialization
   wp_pointer_gesture_hold_v1_interface.methods := @wp_pointer_gesture_hold_v1_requests;
   wp_pointer_gesture_hold_v1_interface.event_count := 2;
   wp_pointer_gesture_hold_v1_interface.events := @wp_pointer_gesture_hold_v1_events;
+
+end;
 
 end.

@@ -80,6 +80,8 @@ type
 
 
   TWpTextInputV3 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
     const _ENABLE = 1;
@@ -102,6 +104,8 @@ type
   end;
 
   TWpTextInputManagerV3 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
     const _GET_TEXT_INPUT = 1;
@@ -113,6 +117,7 @@ type
 
 
 
+procedure InitInterfaces;
 
 
 
@@ -129,8 +134,15 @@ implementation
 var
   vIntf_wp_text_input_v3_Listener: Twp_text_input_v3_listener;
   vIntf_wp_text_input_manager_v3_Listener: Twp_text_input_manager_v3_listener;
+  vInterfacesRegistered: Boolean = False;
 
 
+
+constructor TWpTextInputV3.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
 
 destructor TWpTextInputV3.Destroy;
 begin
@@ -178,6 +190,12 @@ begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
   Result := wl_proxy_add_listener(FProxy, @vIntf_wp_text_input_v3_Listener, @FUserDataRec);
 end;
+constructor TWpTextInputManagerV3.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
+
 destructor TWpTextInputManagerV3.Destroy;
 begin
   wl_proxy_marshal(FProxy, _DESTROY);
@@ -301,7 +319,10 @@ const
     (name: 'get_text_input'; signature: 'no'; types: @pInterfaces[10])
   );
 
-initialization
+procedure InitInterfaces;
+begin
+  if vInterfacesRegistered then Exit;
+  vInterfacesRegistered := True;
   Pointer(vIntf_wp_text_input_v3_Listener.enter) := @wp_text_input_v3_enter_Intf;
   Pointer(vIntf_wp_text_input_v3_Listener.leave) := @wp_text_input_v3_leave_Intf;
   Pointer(vIntf_wp_text_input_v3_Listener.preedit_string) := @wp_text_input_v3_preedit_string_Intf;
@@ -323,5 +344,7 @@ initialization
   wp_text_input_manager_v3_interface.methods := @wp_text_input_manager_v3_requests;
   wp_text_input_manager_v3_interface.event_count := 0;
   wp_text_input_manager_v3_interface.events := nil;
+
+end;
 
 end.

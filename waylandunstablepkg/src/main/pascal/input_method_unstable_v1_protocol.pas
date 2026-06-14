@@ -78,6 +78,8 @@ type
 
 
   TWpInputMethodContextV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
     const _COMMIT_STRING = 1;
@@ -112,10 +114,14 @@ type
   end;
 
   TWpInputMethodV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
     function AddListener(AIntf: IWpInputMethodV1Listener): LongInt;
   end;
 
   TWpInputPanelV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _GET_INPUT_PANEL_SURFACE = 0;
   public
@@ -124,6 +130,8 @@ type
   end;
 
   TWpInputPanelSurfaceV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _SET_TOPLEVEL = 0;
     const _SET_OVERLAY_PANEL = 1;
@@ -135,6 +143,7 @@ type
 
 
 
+procedure InitInterfaces;
 
 
 
@@ -157,8 +166,15 @@ var
   vIntf_wp_input_method_v1_Listener: Twp_input_method_v1_listener;
   vIntf_wp_input_panel_v1_Listener: Twp_input_panel_v1_listener;
   vIntf_wp_input_panel_surface_v1_Listener: Twp_input_panel_surface_v1_listener;
+  vInterfacesRegistered: Boolean = False;
 
 
+
+constructor TWpInputMethodContextV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
 
 destructor TWpInputMethodContextV1.Destroy;
 begin
@@ -244,11 +260,23 @@ begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
   Result := wl_proxy_add_listener(FProxy, @vIntf_wp_input_method_context_v1_Listener, @FUserDataRec);
 end;
+constructor TWpInputMethodV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
+
 function TWpInputMethodV1.AddListener(AIntf: IWpInputMethodV1Listener): LongInt;
 begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
   Result := wl_proxy_add_listener(FProxy, @vIntf_wp_input_method_v1_Listener, @FUserDataRec);
 end;
+constructor TWpInputPanelV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
+
 function TWpInputPanelV1.GetInputPanelSurface(ASurface: TWlSurface; AProxyClass: TWLProxyObjectClass = nil {TWpInputPanelSurfaceV1}): TWpInputPanelSurfaceV1;
 var
   id: Pwl_proxy;
@@ -267,6 +295,12 @@ begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
   Result := wl_proxy_add_listener(FProxy, @vIntf_wp_input_panel_v1_Listener, @FUserDataRec);
 end;
+constructor TWpInputPanelSurfaceV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
+
 procedure TWpInputPanelSurfaceV1.SetToplevel(AOutput: TWlOutput; APosition: DWord);
 begin
   wl_proxy_marshal(FProxy, _SET_TOPLEVEL, AOutput.Proxy, APosition);
@@ -414,7 +448,10 @@ const
     (name: 'set_overlay_panel'; signature: ''; types: @pInterfaces[0])
   );
 
-initialization
+procedure InitInterfaces;
+begin
+  if vInterfacesRegistered then Exit;
+  vInterfacesRegistered := True;
   Pointer(vIntf_wp_input_method_context_v1_Listener.surrounding_text) := @wp_input_method_context_v1_surrounding_text_Intf;
   Pointer(vIntf_wp_input_method_context_v1_Listener.reset) := @wp_input_method_context_v1_reset_Intf;
   Pointer(vIntf_wp_input_method_context_v1_Listener.content_type) := @wp_input_method_context_v1_content_type_Intf;
@@ -452,5 +489,7 @@ initialization
   wp_input_panel_surface_v1_interface.methods := @wp_input_panel_surface_v1_requests;
   wp_input_panel_surface_v1_interface.event_count := 0;
   wp_input_panel_surface_v1_interface.events := nil;
+
+end;
 
 end.

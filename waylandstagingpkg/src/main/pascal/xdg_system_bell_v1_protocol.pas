@@ -28,6 +28,8 @@ type
 
 
   TXdgSystemBellV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
     const _RING = 1;
@@ -39,6 +41,7 @@ type
 
 
 
+procedure InitInterfaces;
 
 
 
@@ -52,8 +55,15 @@ implementation
 
 var
   vIntf_xdg_system_bell_v1_Listener: Txdg_system_bell_v1_listener;
+  vInterfacesRegistered: Boolean = False;
 
 
+
+constructor TXdgSystemBellV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
 
 destructor TXdgSystemBellV1.Destroy;
 begin
@@ -95,7 +105,10 @@ const
     (name: 'ring'; signature: '?o'; types: @pInterfaces[8])
   );
 
-initialization
+procedure InitInterfaces;
+begin
+  if vInterfacesRegistered then Exit;
+  vInterfacesRegistered := True;
 
 
   xdg_system_bell_v1_interface.name := PChar(XDG_SYSTEM_BELL_V1_INTERFACE_NAME);
@@ -104,5 +117,7 @@ initialization
   xdg_system_bell_v1_interface.methods := @xdg_system_bell_v1_requests;
   xdg_system_bell_v1_interface.event_count := 0;
   xdg_system_bell_v1_interface.events := nil;
+
+end;
 
 end.

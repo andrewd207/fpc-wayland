@@ -48,6 +48,8 @@ type
 
 
   TExtImageCaptureSourceV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
   public
@@ -56,6 +58,8 @@ type
   end;
 
   TExtOutputImageCaptureSourceManagerV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _CREATE_SOURCE = 0;
     const _DESTROY = 1;
@@ -66,6 +70,8 @@ type
   end;
 
   TExtForeignToplevelImageCaptureSourceManagerV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _CREATE_SOURCE = 0;
     const _DESTROY = 1;
@@ -77,6 +83,7 @@ type
 
 
 
+procedure InitInterfaces;
 
 
 
@@ -96,8 +103,15 @@ var
   vIntf_ext_image_capture_source_v1_Listener: Text_image_capture_source_v1_listener;
   vIntf_ext_output_image_capture_source_manager_v1_Listener: Text_output_image_capture_source_manager_v1_listener;
   vIntf_ext_foreign_toplevel_image_capture_source_manager_v1_Listener: Text_foreign_toplevel_image_capture_source_manager_v1_listener;
+  vInterfacesRegistered: Boolean = False;
 
 
+
+constructor TExtImageCaptureSourceV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
 
 destructor TExtImageCaptureSourceV1.Destroy;
 begin
@@ -110,6 +124,12 @@ begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
   Result := wl_proxy_add_listener(FProxy, @vIntf_ext_image_capture_source_v1_Listener, @FUserDataRec);
 end;
+constructor TExtOutputImageCaptureSourceManagerV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
+
 function TExtOutputImageCaptureSourceManagerV1.CreateSource(AOutput: TWlOutput; AProxyClass: TWLProxyObjectClass = nil {TExtImageCaptureSourceV1}): TExtImageCaptureSourceV1;
 var
   source: Pwl_proxy;
@@ -134,6 +154,12 @@ begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
   Result := wl_proxy_add_listener(FProxy, @vIntf_ext_output_image_capture_source_manager_v1_Listener, @FUserDataRec);
 end;
+constructor TExtForeignToplevelImageCaptureSourceManagerV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
+
 function TExtForeignToplevelImageCaptureSourceManagerV1.CreateSource(AToplevelHandle: TExtForeignToplevelHandleV1; AProxyClass: TWLProxyObjectClass = nil {TExtImageCaptureSourceV1}): TExtImageCaptureSourceV1;
 var
   source: Pwl_proxy;
@@ -192,7 +218,10 @@ const
     (name: 'destroy'; signature: ''; types: @pInterfaces[0])
   );
 
-initialization
+procedure InitInterfaces;
+begin
+  if vInterfacesRegistered then Exit;
+  vInterfacesRegistered := True;
 
 
   ext_image_capture_source_v1_interface.name := PChar(EXT_IMAGE_CAPTURE_SOURCE_V1_INTERFACE_NAME);
@@ -215,5 +244,7 @@ initialization
   ext_foreign_toplevel_image_capture_source_manager_v1_interface.methods := @ext_foreign_toplevel_image_capture_source_manager_v1_requests;
   ext_foreign_toplevel_image_capture_source_manager_v1_interface.event_count := 0;
   ext_foreign_toplevel_image_capture_source_manager_v1_interface.events := nil;
+
+end;
 
 end.

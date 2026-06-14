@@ -28,6 +28,8 @@ type
 
 
   TWpPointerWarpV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
     const _WARP_POINTER = 1;
@@ -39,6 +41,7 @@ type
 
 
 
+procedure InitInterfaces;
 
 
 
@@ -52,8 +55,15 @@ implementation
 
 var
   vIntf_wp_pointer_warp_v1_Listener: Twp_pointer_warp_v1_listener;
+  vInterfacesRegistered: Boolean = False;
 
 
+
+constructor TWpPointerWarpV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
 
 destructor TWpPointerWarpV1.Destroy;
 begin
@@ -99,7 +109,10 @@ const
     (name: 'warp_pointer'; signature: 'ooffu'; types: @pInterfaces[8])
   );
 
-initialization
+procedure InitInterfaces;
+begin
+  if vInterfacesRegistered then Exit;
+  vInterfacesRegistered := True;
 
 
   wp_pointer_warp_v1_interface.name := PChar(WP_POINTER_WARP_V1_INTERFACE_NAME);
@@ -108,5 +121,7 @@ initialization
   wp_pointer_warp_v1_interface.methods := @wp_pointer_warp_v1_requests;
   wp_pointer_warp_v1_interface.event_count := 0;
   wp_pointer_warp_v1_interface.events := nil;
+
+end;
 
 end.

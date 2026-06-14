@@ -62,6 +62,8 @@ type
 
 
   TWpPointerConstraintsV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
     const _LOCK_POINTER = 1;
@@ -74,6 +76,8 @@ type
   end;
 
   TWpLockedPointerV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
     const _SET_CURSOR_POSITION_HINT = 1;
@@ -86,6 +90,8 @@ type
   end;
 
   TWpConfinedPointerV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
     const _SET_REGION = 1;
@@ -97,6 +103,7 @@ type
 
 
 
+procedure InitInterfaces;
 
 
 
@@ -116,8 +123,15 @@ var
   vIntf_wp_pointer_constraints_v1_Listener: Twp_pointer_constraints_v1_listener;
   vIntf_wp_locked_pointer_v1_Listener: Twp_locked_pointer_v1_listener;
   vIntf_wp_confined_pointer_v1_Listener: Twp_confined_pointer_v1_listener;
+  vInterfacesRegistered: Boolean = False;
 
 
+
+constructor TWpPointerConstraintsV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
 
 destructor TWpPointerConstraintsV1.Destroy;
 begin
@@ -156,6 +170,12 @@ begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
   Result := wl_proxy_add_listener(FProxy, @vIntf_wp_pointer_constraints_v1_Listener, @FUserDataRec);
 end;
+constructor TWpLockedPointerV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
+
 destructor TWpLockedPointerV1.Destroy;
 begin
   wl_proxy_marshal(FProxy, _DESTROY);
@@ -177,6 +197,12 @@ begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
   Result := wl_proxy_add_listener(FProxy, @vIntf_wp_locked_pointer_v1_Listener, @FUserDataRec);
 end;
+constructor TWpConfinedPointerV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
+
 destructor TWpConfinedPointerV1.Destroy;
 begin
   wl_proxy_marshal(FProxy, _DESTROY);
@@ -282,7 +308,10 @@ const
     (name: 'unconfined'; signature: ''; types: @pInterfaces[0])
   );
 
-initialization
+procedure InitInterfaces;
+begin
+  if vInterfacesRegistered then Exit;
+  vInterfacesRegistered := True;
   Pointer(vIntf_wp_locked_pointer_v1_Listener.locked) := @wp_locked_pointer_v1_locked_Intf;
   Pointer(vIntf_wp_locked_pointer_v1_Listener.unlocked) := @wp_locked_pointer_v1_unlocked_Intf;
   Pointer(vIntf_wp_confined_pointer_v1_Listener.confined) := @wp_confined_pointer_v1_confined_Intf;
@@ -309,5 +338,7 @@ initialization
   wp_confined_pointer_v1_interface.methods := @wp_confined_pointer_v1_requests;
   wp_confined_pointer_v1_interface.event_count := 2;
   wp_confined_pointer_v1_interface.events := @wp_confined_pointer_v1_events;
+
+end;
 
 end.

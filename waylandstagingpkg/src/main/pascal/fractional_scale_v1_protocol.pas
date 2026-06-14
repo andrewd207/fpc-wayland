@@ -44,6 +44,8 @@ type
 
 
   TWpFractionalScaleManagerV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
     const _GET_FRACTIONAL_SCALE = 1;
@@ -54,6 +56,8 @@ type
   end;
 
   TWpFractionalScaleV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
   public
@@ -63,6 +67,7 @@ type
 
 
 
+procedure InitInterfaces;
 
 
 
@@ -79,8 +84,15 @@ implementation
 var
   vIntf_wp_fractional_scale_manager_v1_Listener: Twp_fractional_scale_manager_v1_listener;
   vIntf_wp_fractional_scale_v1_Listener: Twp_fractional_scale_v1_listener;
+  vInterfacesRegistered: Boolean = False;
 
 
+
+constructor TWpFractionalScaleManagerV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
 
 destructor TWpFractionalScaleManagerV1.Destroy;
 begin
@@ -106,6 +118,12 @@ begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
   Result := wl_proxy_add_listener(FProxy, @vIntf_wp_fractional_scale_manager_v1_Listener, @FUserDataRec);
 end;
+constructor TWpFractionalScaleV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
+
 destructor TWpFractionalScaleV1.Destroy;
 begin
   wl_proxy_marshal(FProxy, _DESTROY);
@@ -157,7 +175,10 @@ const
     (name: 'preferred_scale'; signature: 'u'; types: @pInterfaces[0])
   );
 
-initialization
+procedure InitInterfaces;
+begin
+  if vInterfacesRegistered then Exit;
+  vInterfacesRegistered := True;
   Pointer(vIntf_wp_fractional_scale_v1_Listener.preferred_scale) := @wp_fractional_scale_v1_preferred_scale_Intf;
 
 
@@ -174,5 +195,7 @@ initialization
   wp_fractional_scale_v1_interface.methods := @wp_fractional_scale_v1_requests;
   wp_fractional_scale_v1_interface.event_count := 1;
   wp_fractional_scale_v1_interface.events := @wp_fractional_scale_v1_events;
+
+end;
 
 end.

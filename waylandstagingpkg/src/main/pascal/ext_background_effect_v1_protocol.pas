@@ -49,6 +49,8 @@ type
 
 
   TExtBackgroundEffectManagerV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
     const _GET_BACKGROUND_EFFECT = 1;
@@ -59,6 +61,8 @@ type
   end;
 
   TExtBackgroundEffectSurfaceV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
     const _SET_BLUR_REGION = 1;
@@ -70,6 +74,7 @@ type
 
 
 
+procedure InitInterfaces;
 
 
 
@@ -86,8 +91,15 @@ implementation
 var
   vIntf_ext_background_effect_manager_v1_Listener: Text_background_effect_manager_v1_listener;
   vIntf_ext_background_effect_surface_v1_Listener: Text_background_effect_surface_v1_listener;
+  vInterfacesRegistered: Boolean = False;
 
 
+
+constructor TExtBackgroundEffectManagerV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
 
 destructor TExtBackgroundEffectManagerV1.Destroy;
 begin
@@ -113,6 +125,12 @@ begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
   Result := wl_proxy_add_listener(FProxy, @vIntf_ext_background_effect_manager_v1_Listener, @FUserDataRec);
 end;
+constructor TExtBackgroundEffectSurfaceV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
+
 destructor TExtBackgroundEffectSurfaceV1.Destroy;
 begin
   wl_proxy_marshal(FProxy, _DESTROY);
@@ -171,7 +189,10 @@ const
     (name: 'set_blur_region'; signature: '?o'; types: @pInterfaces[10])
   );
 
-initialization
+procedure InitInterfaces;
+begin
+  if vInterfacesRegistered then Exit;
+  vInterfacesRegistered := True;
   Pointer(vIntf_ext_background_effect_manager_v1_Listener.capabilities) := @ext_background_effect_manager_v1_capabilities_Intf;
 
 
@@ -188,5 +209,7 @@ initialization
   ext_background_effect_surface_v1_interface.methods := @ext_background_effect_surface_v1_requests;
   ext_background_effect_surface_v1_interface.event_count := 0;
   ext_background_effect_surface_v1_interface.events := nil;
+
+end;
 
 end.

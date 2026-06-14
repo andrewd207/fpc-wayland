@@ -47,6 +47,8 @@ type
 
 
   TXwaylandShellV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
     const _GET_XWAYLAND_SURFACE = 1;
@@ -57,6 +59,8 @@ type
   end;
 
   TXwaylandSurfaceV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _SET_SERIAL = 0;
     const _DESTROY = 1;
@@ -68,6 +72,7 @@ type
 
 
 
+procedure InitInterfaces;
 
 
 
@@ -84,8 +89,15 @@ implementation
 var
   vIntf_xwayland_shell_v1_Listener: Txwayland_shell_v1_listener;
   vIntf_xwayland_surface_v1_Listener: Txwayland_surface_v1_listener;
+  vInterfacesRegistered: Boolean = False;
 
 
+
+constructor TXwaylandShellV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
 
 destructor TXwaylandShellV1.Destroy;
 begin
@@ -111,6 +123,12 @@ begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
   Result := wl_proxy_add_listener(FProxy, @vIntf_xwayland_shell_v1_Listener, @FUserDataRec);
 end;
+constructor TXwaylandSurfaceV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
+
 procedure TXwaylandSurfaceV1.SetSerial(ASerialLo: DWord; ASerialHi: DWord);
 begin
   wl_proxy_marshal(FProxy, _SET_SERIAL, ASerialLo, ASerialHi);
@@ -156,7 +174,10 @@ const
     (name: 'destroy'; signature: ''; types: @pInterfaces[0])
   );
 
-initialization
+procedure InitInterfaces;
+begin
+  if vInterfacesRegistered then Exit;
+  vInterfacesRegistered := True;
 
 
   xwayland_shell_v1_interface.name := PChar(XWAYLAND_SHELL_V1_INTERFACE_NAME);
@@ -172,5 +193,7 @@ initialization
   xwayland_surface_v1_interface.methods := @xwayland_surface_v1_requests;
   xwayland_surface_v1_interface.event_count := 0;
   xwayland_surface_v1_interface.events := nil;
+
+end;
 
 end.

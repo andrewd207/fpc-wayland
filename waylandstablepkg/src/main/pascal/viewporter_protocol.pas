@@ -49,6 +49,8 @@ type
 
 
   TWpViewporter = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
     const _GET_VIEWPORT = 1;
@@ -59,6 +61,8 @@ type
   end;
 
   TWpViewport = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
     const _SET_SOURCE = 1;
@@ -72,6 +76,7 @@ type
 
 
 
+procedure InitInterfaces;
 
 
 
@@ -88,8 +93,15 @@ implementation
 var
   vIntf_wp_viewporter_Listener: Twp_viewporter_listener;
   vIntf_wp_viewport_Listener: Twp_viewport_listener;
+  vInterfacesRegistered: Boolean = False;
 
 
+
+constructor TWpViewporter.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
 
 destructor TWpViewporter.Destroy;
 begin
@@ -115,6 +127,12 @@ begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
   Result := wl_proxy_add_listener(FProxy, @vIntf_wp_viewporter_Listener, @FUserDataRec);
 end;
+constructor TWpViewport.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
+
 destructor TWpViewport.Destroy;
 begin
   wl_proxy_marshal(FProxy, _DESTROY);
@@ -166,7 +184,10 @@ const
     (name: 'set_destination'; signature: 'ii'; types: @pInterfaces[0])
   );
 
-initialization
+procedure InitInterfaces;
+begin
+  if vInterfacesRegistered then Exit;
+  vInterfacesRegistered := True;
 
 
   wp_viewporter_interface.name := PChar(WP_VIEWPORTER_INTERFACE_NAME);
@@ -182,5 +203,7 @@ initialization
   wp_viewport_interface.methods := @wp_viewport_requests;
   wp_viewport_interface.event_count := 0;
   wp_viewport_interface.events := nil;
+
+end;
 
 end.

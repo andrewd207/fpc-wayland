@@ -47,6 +47,8 @@ type
 
 
   TWpTearingControlManagerV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
     const _GET_TEARING_CONTROL = 1;
@@ -57,6 +59,8 @@ type
   end;
 
   TWpTearingControlV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _SET_PRESENTATION_HINT = 0;
     const _DESTROY = 1;
@@ -68,6 +72,7 @@ type
 
 
 
+procedure InitInterfaces;
 
 
 
@@ -84,8 +89,15 @@ implementation
 var
   vIntf_wp_tearing_control_manager_v1_Listener: Twp_tearing_control_manager_v1_listener;
   vIntf_wp_tearing_control_v1_Listener: Twp_tearing_control_v1_listener;
+  vInterfacesRegistered: Boolean = False;
 
 
+
+constructor TWpTearingControlManagerV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
 
 destructor TWpTearingControlManagerV1.Destroy;
 begin
@@ -111,6 +123,12 @@ begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
   Result := wl_proxy_add_listener(FProxy, @vIntf_wp_tearing_control_manager_v1_Listener, @FUserDataRec);
 end;
+constructor TWpTearingControlV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
+
 procedure TWpTearingControlV1.SetPresentationHint(AHint: DWord);
 begin
   wl_proxy_marshal(FProxy, _SET_PRESENTATION_HINT, AHint);
@@ -156,7 +174,10 @@ const
     (name: 'destroy'; signature: ''; types: @pInterfaces[0])
   );
 
-initialization
+procedure InitInterfaces;
+begin
+  if vInterfacesRegistered then Exit;
+  vInterfacesRegistered := True;
 
 
   wp_tearing_control_manager_v1_interface.name := PChar(WP_TEARING_CONTROL_MANAGER_V1_INTERFACE_NAME);
@@ -172,5 +193,7 @@ initialization
   wp_tearing_control_v1_interface.methods := @wp_tearing_control_v1_requests;
   wp_tearing_control_v1_interface.event_count := 0;
   wp_tearing_control_v1_interface.events := nil;
+
+end;
 
 end.

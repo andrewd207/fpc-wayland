@@ -65,6 +65,8 @@ type
 
 
   TWpLinuxExplicitSynchronizationV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
     const _GET_SYNCHRONIZATION = 1;
@@ -75,6 +77,8 @@ type
   end;
 
   TWpLinuxSurfaceSynchronizationV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
     const _SET_ACQUIRE_FENCE = 1;
@@ -87,11 +91,14 @@ type
   end;
 
   TWpLinuxBufferReleaseV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
     function AddListener(AIntf: IWpLinuxBufferReleaseV1Listener): LongInt;
   end;
 
 
 
+procedure InitInterfaces;
 
 
 
@@ -111,8 +118,15 @@ var
   vIntf_wp_linux_explicit_synchronization_v1_Listener: Twp_linux_explicit_synchronization_v1_listener;
   vIntf_wp_linux_surface_synchronization_v1_Listener: Twp_linux_surface_synchronization_v1_listener;
   vIntf_wp_linux_buffer_release_v1_Listener: Twp_linux_buffer_release_v1_listener;
+  vInterfacesRegistered: Boolean = False;
 
 
+
+constructor TWpLinuxExplicitSynchronizationV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
 
 destructor TWpLinuxExplicitSynchronizationV1.Destroy;
 begin
@@ -138,6 +152,12 @@ begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
   Result := wl_proxy_add_listener(FProxy, @vIntf_wp_linux_explicit_synchronization_v1_Listener, @FUserDataRec);
 end;
+constructor TWpLinuxSurfaceSynchronizationV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
+
 destructor TWpLinuxSurfaceSynchronizationV1.Destroy;
 begin
   wl_proxy_marshal(FProxy, _DESTROY);
@@ -167,6 +187,12 @@ begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
   Result := wl_proxy_add_listener(FProxy, @vIntf_wp_linux_surface_synchronization_v1_Listener, @FUserDataRec);
 end;
+constructor TWpLinuxBufferReleaseV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
+
 function TWpLinuxBufferReleaseV1.AddListener(AIntf: IWpLinuxBufferReleaseV1Listener): LongInt;
 begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
@@ -225,7 +251,10 @@ const
     (name: 'immediate_release'; signature: ''; types: @pInterfaces[0])
   );
 
-initialization
+procedure InitInterfaces;
+begin
+  if vInterfacesRegistered then Exit;
+  vInterfacesRegistered := True;
   Pointer(vIntf_wp_linux_buffer_release_v1_Listener.fenced_release) := @wp_linux_buffer_release_v1_fenced_release_Intf;
   Pointer(vIntf_wp_linux_buffer_release_v1_Listener.immediate_release) := @wp_linux_buffer_release_v1_immediate_release_Intf;
 
@@ -250,5 +279,7 @@ initialization
   wp_linux_buffer_release_v1_interface.methods := nil;
   wp_linux_buffer_release_v1_interface.event_count := 2;
   wp_linux_buffer_release_v1_interface.events := @wp_linux_buffer_release_v1_events;
+
+end;
 
 end.

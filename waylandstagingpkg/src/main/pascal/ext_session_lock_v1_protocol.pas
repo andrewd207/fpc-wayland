@@ -69,6 +69,8 @@ type
 
 
   TExtSessionLockManagerV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
     const _LOCK = 1;
@@ -79,6 +81,8 @@ type
   end;
 
   TExtSessionLockV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
     const _GET_LOCK_SURFACE = 1;
@@ -91,6 +95,8 @@ type
   end;
 
   TExtSessionLockSurfaceV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
     const _ACK_CONFIGURE = 1;
@@ -102,6 +108,7 @@ type
 
 
 
+procedure InitInterfaces;
 
 
 
@@ -121,8 +128,15 @@ var
   vIntf_ext_session_lock_manager_v1_Listener: Text_session_lock_manager_v1_listener;
   vIntf_ext_session_lock_v1_Listener: Text_session_lock_v1_listener;
   vIntf_ext_session_lock_surface_v1_Listener: Text_session_lock_surface_v1_listener;
+  vInterfacesRegistered: Boolean = False;
 
 
+
+constructor TExtSessionLockManagerV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
 
 destructor TExtSessionLockManagerV1.Destroy;
 begin
@@ -148,6 +162,12 @@ begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
   Result := wl_proxy_add_listener(FProxy, @vIntf_ext_session_lock_manager_v1_Listener, @FUserDataRec);
 end;
+constructor TExtSessionLockV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
+
 destructor TExtSessionLockV1.Destroy;
 begin
   wl_proxy_marshal(FProxy, _DESTROY);
@@ -178,6 +198,12 @@ begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
   Result := wl_proxy_add_listener(FProxy, @vIntf_ext_session_lock_v1_Listener, @FUserDataRec);
 end;
+constructor TExtSessionLockSurfaceV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
+
 destructor TExtSessionLockSurfaceV1.Destroy;
 begin
   wl_proxy_marshal(FProxy, _DESTROY);
@@ -264,7 +290,10 @@ const
     (name: 'configure'; signature: 'uuu'; types: @pInterfaces[0])
   );
 
-initialization
+procedure InitInterfaces;
+begin
+  if vInterfacesRegistered then Exit;
+  vInterfacesRegistered := True;
   Pointer(vIntf_ext_session_lock_v1_Listener.locked) := @ext_session_lock_v1_locked_Intf;
   Pointer(vIntf_ext_session_lock_v1_Listener.finished) := @ext_session_lock_v1_finished_Intf;
   Pointer(vIntf_ext_session_lock_surface_v1_Listener.configure) := @ext_session_lock_surface_v1_configure_Intf;
@@ -290,5 +319,7 @@ initialization
   ext_session_lock_surface_v1_interface.methods := @ext_session_lock_surface_v1_requests;
   ext_session_lock_surface_v1_interface.event_count := 1;
   ext_session_lock_surface_v1_interface.events := @ext_session_lock_surface_v1_events;
+
+end;
 
 end.

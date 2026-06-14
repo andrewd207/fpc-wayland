@@ -28,6 +28,8 @@ type
 
 
   TWpSinglePixelBufferManagerV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
     const _CREATE_U32_RGBA_BUFFER = 1;
@@ -39,6 +41,7 @@ type
 
 
 
+procedure InitInterfaces;
 
 
 
@@ -52,8 +55,15 @@ implementation
 
 var
   vIntf_wp_single_pixel_buffer_manager_v1_Listener: Twp_single_pixel_buffer_manager_v1_listener;
+  vInterfacesRegistered: Boolean = False;
 
 
+
+constructor TWpSinglePixelBufferManagerV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
 
 destructor TWpSinglePixelBufferManagerV1.Destroy;
 begin
@@ -107,7 +117,10 @@ const
     (name: 'create_u32_rgba_buffer'; signature: 'nuuuu'; types: @pInterfaces[8])
   );
 
-initialization
+procedure InitInterfaces;
+begin
+  if vInterfacesRegistered then Exit;
+  vInterfacesRegistered := True;
 
 
   wp_single_pixel_buffer_manager_v1_interface.name := PChar(WP_SINGLE_PIXEL_BUFFER_MANAGER_V1_INTERFACE_NAME);
@@ -116,5 +129,7 @@ initialization
   wp_single_pixel_buffer_manager_v1_interface.methods := @wp_single_pixel_buffer_manager_v1_requests;
   wp_single_pixel_buffer_manager_v1_interface.event_count := 0;
   wp_single_pixel_buffer_manager_v1_interface.events := nil;
+
+end;
 
 end.

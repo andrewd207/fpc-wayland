@@ -46,6 +46,8 @@ type
 
 
   TWpFifoManagerV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
     const _GET_FIFO = 1;
@@ -56,6 +58,8 @@ type
   end;
 
   TWpFifoV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _SET_BARRIER = 0;
     const _WAIT_BARRIER = 1;
@@ -69,6 +73,7 @@ type
 
 
 
+procedure InitInterfaces;
 
 
 
@@ -85,8 +90,15 @@ implementation
 var
   vIntf_wp_fifo_manager_v1_Listener: Twp_fifo_manager_v1_listener;
   vIntf_wp_fifo_v1_Listener: Twp_fifo_v1_listener;
+  vInterfacesRegistered: Boolean = False;
 
 
+
+constructor TWpFifoManagerV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
 
 destructor TWpFifoManagerV1.Destroy;
 begin
@@ -112,6 +124,12 @@ begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
   Result := wl_proxy_add_listener(FProxy, @vIntf_wp_fifo_manager_v1_Listener, @FUserDataRec);
 end;
+constructor TWpFifoV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
+
 procedure TWpFifoV1.SetBarrier;
 begin
   wl_proxy_marshal(FProxy, _SET_BARRIER);
@@ -163,7 +181,10 @@ const
     (name: 'destroy'; signature: ''; types: @pInterfaces[0])
   );
 
-initialization
+procedure InitInterfaces;
+begin
+  if vInterfacesRegistered then Exit;
+  vInterfacesRegistered := True;
 
 
   wp_fifo_manager_v1_interface.name := PChar(WP_FIFO_MANAGER_V1_INTERFACE_NAME);
@@ -179,5 +200,7 @@ initialization
   wp_fifo_v1_interface.methods := @wp_fifo_v1_requests;
   wp_fifo_v1_interface.event_count := 0;
   wp_fifo_v1_interface.events := nil;
+
+end;
 
 end.

@@ -48,6 +48,8 @@ type
 
 
   TXdgOutputManagerV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
     const _GET_XDG_OUTPUT = 1;
@@ -58,6 +60,8 @@ type
   end;
 
   TXdgOutputV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
   public
@@ -67,6 +71,7 @@ type
 
 
 
+procedure InitInterfaces;
 
 
 
@@ -83,8 +88,15 @@ implementation
 var
   vIntf_xdg_output_manager_v1_Listener: Txdg_output_manager_v1_listener;
   vIntf_xdg_output_v1_Listener: Txdg_output_v1_listener;
+  vInterfacesRegistered: Boolean = False;
 
 
+
+constructor TXdgOutputManagerV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
 
 destructor TXdgOutputManagerV1.Destroy;
 begin
@@ -110,6 +122,12 @@ begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
   Result := wl_proxy_add_listener(FProxy, @vIntf_xdg_output_manager_v1_Listener, @FUserDataRec);
 end;
+constructor TXdgOutputV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
+
 destructor TXdgOutputV1.Destroy;
 begin
   wl_proxy_marshal(FProxy, _DESTROY);
@@ -201,7 +219,10 @@ const
     (name: 'description'; signature: '2s'; types: @pInterfaces[0])
   );
 
-initialization
+procedure InitInterfaces;
+begin
+  if vInterfacesRegistered then Exit;
+  vInterfacesRegistered := True;
   Pointer(vIntf_xdg_output_v1_Listener.logical_position) := @xdg_output_v1_logical_position_Intf;
   Pointer(vIntf_xdg_output_v1_Listener.logical_size) := @xdg_output_v1_logical_size_Intf;
   Pointer(vIntf_xdg_output_v1_Listener.done) := @xdg_output_v1_done_Intf;
@@ -222,5 +243,7 @@ initialization
   xdg_output_v1_interface.methods := @xdg_output_v1_requests;
   xdg_output_v1_interface.event_count := 5;
   xdg_output_v1_interface.events := @xdg_output_v1_events;
+
+end;
 
 end.

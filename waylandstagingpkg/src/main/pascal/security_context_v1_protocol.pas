@@ -49,6 +49,8 @@ type
 
 
   TWpSecurityContextManagerV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
     const _CREATE_LISTENER = 1;
@@ -59,6 +61,8 @@ type
   end;
 
   TWpSecurityContextV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
     const _SET_SANDBOX_ENGINE = 1;
@@ -76,6 +80,7 @@ type
 
 
 
+procedure InitInterfaces;
 
 
 
@@ -92,8 +97,15 @@ implementation
 var
   vIntf_wp_security_context_manager_v1_Listener: Twp_security_context_manager_v1_listener;
   vIntf_wp_security_context_v1_Listener: Twp_security_context_v1_listener;
+  vInterfacesRegistered: Boolean = False;
 
 
+
+constructor TWpSecurityContextManagerV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
 
 destructor TWpSecurityContextManagerV1.Destroy;
 begin
@@ -119,6 +131,12 @@ begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
   Result := wl_proxy_add_listener(FProxy, @vIntf_wp_security_context_manager_v1_Listener, @FUserDataRec);
 end;
+constructor TWpSecurityContextV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
+
 destructor TWpSecurityContextV1.Destroy;
 begin
   wl_proxy_marshal(FProxy, _DESTROY);
@@ -183,7 +201,10 @@ const
     (name: 'commit'; signature: ''; types: @pInterfaces[0])
   );
 
-initialization
+procedure InitInterfaces;
+begin
+  if vInterfacesRegistered then Exit;
+  vInterfacesRegistered := True;
 
 
   wp_security_context_manager_v1_interface.name := PChar(WP_SECURITY_CONTEXT_MANAGER_V1_INTERFACE_NAME);
@@ -199,5 +220,7 @@ initialization
   wp_security_context_v1_interface.methods := @wp_security_context_v1_requests;
   wp_security_context_v1_interface.event_count := 0;
   wp_security_context_v1_interface.events := nil;
+
+end;
 
 end.

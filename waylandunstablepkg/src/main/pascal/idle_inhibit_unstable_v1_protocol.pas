@@ -38,6 +38,8 @@ type
 
 
   TWpIdleInhibitManagerV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
     const _CREATE_INHIBITOR = 1;
@@ -48,6 +50,8 @@ type
   end;
 
   TWpIdleInhibitorV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
   public
@@ -57,6 +61,7 @@ type
 
 
 
+procedure InitInterfaces;
 
 
 
@@ -73,8 +78,15 @@ implementation
 var
   vIntf_wp_idle_inhibit_manager_v1_Listener: Twp_idle_inhibit_manager_v1_listener;
   vIntf_wp_idle_inhibitor_v1_Listener: Twp_idle_inhibitor_v1_listener;
+  vInterfacesRegistered: Boolean = False;
 
 
+
+constructor TWpIdleInhibitManagerV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
 
 destructor TWpIdleInhibitManagerV1.Destroy;
 begin
@@ -100,6 +112,12 @@ begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
   Result := wl_proxy_add_listener(FProxy, @vIntf_wp_idle_inhibit_manager_v1_Listener, @FUserDataRec);
 end;
+constructor TWpIdleInhibitorV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
+
 destructor TWpIdleInhibitorV1.Destroy;
 begin
   wl_proxy_marshal(FProxy, _DESTROY);
@@ -139,7 +157,10 @@ const
     (name: 'destroy'; signature: ''; types: @pInterfaces[0])
   );
 
-initialization
+procedure InitInterfaces;
+begin
+  if vInterfacesRegistered then Exit;
+  vInterfacesRegistered := True;
 
 
   wp_idle_inhibit_manager_v1_interface.name := PChar(WP_IDLE_INHIBIT_MANAGER_V1_INTERFACE_NAME);
@@ -155,5 +176,7 @@ initialization
   wp_idle_inhibitor_v1_interface.methods := @wp_idle_inhibitor_v1_requests;
   wp_idle_inhibitor_v1_interface.event_count := 0;
   wp_idle_inhibitor_v1_interface.events := nil;
+
+end;
 
 end.

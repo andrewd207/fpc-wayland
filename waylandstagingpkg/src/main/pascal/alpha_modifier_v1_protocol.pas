@@ -46,6 +46,8 @@ type
 
 
   TWpAlphaModifierV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
     const _GET_SURFACE = 1;
@@ -56,6 +58,8 @@ type
   end;
 
   TWpAlphaModifierSurfaceV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
     const _SET_MULTIPLIER = 1;
@@ -67,6 +71,7 @@ type
 
 
 
+procedure InitInterfaces;
 
 
 
@@ -83,8 +88,15 @@ implementation
 var
   vIntf_wp_alpha_modifier_v1_Listener: Twp_alpha_modifier_v1_listener;
   vIntf_wp_alpha_modifier_surface_v1_Listener: Twp_alpha_modifier_surface_v1_listener;
+  vInterfacesRegistered: Boolean = False;
 
 
+
+constructor TWpAlphaModifierV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
 
 destructor TWpAlphaModifierV1.Destroy;
 begin
@@ -110,6 +122,12 @@ begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
   Result := wl_proxy_add_listener(FProxy, @vIntf_wp_alpha_modifier_v1_Listener, @FUserDataRec);
 end;
+constructor TWpAlphaModifierSurfaceV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
+
 destructor TWpAlphaModifierSurfaceV1.Destroy;
 begin
   wl_proxy_marshal(FProxy, _DESTROY);
@@ -155,7 +173,10 @@ const
     (name: 'set_multiplier'; signature: 'u'; types: @pInterfaces[0])
   );
 
-initialization
+procedure InitInterfaces;
+begin
+  if vInterfacesRegistered then Exit;
+  vInterfacesRegistered := True;
 
 
   wp_alpha_modifier_v1_interface.name := PChar(WP_ALPHA_MODIFIER_V1_INTERFACE_NAME);
@@ -171,5 +192,7 @@ initialization
   wp_alpha_modifier_surface_v1_interface.methods := @wp_alpha_modifier_surface_v1_requests;
   wp_alpha_modifier_surface_v1_interface.event_count := 0;
   wp_alpha_modifier_surface_v1_interface.events := nil;
+
+end;
 
 end.

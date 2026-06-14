@@ -68,6 +68,8 @@ type
 
 
   TWpPrimarySelectionDeviceManagerV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _CREATE_SOURCE = 0;
     const _GET_DEVICE = 1;
@@ -80,6 +82,8 @@ type
   end;
 
   TWpPrimarySelectionDeviceV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _SET_SELECTION = 0;
     const _DESTROY = 1;
@@ -90,6 +94,8 @@ type
   end;
 
   TWpPrimarySelectionOfferV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _RECEIVE = 0;
     const _DESTROY = 1;
@@ -100,6 +106,8 @@ type
   end;
 
   TWpPrimarySelectionSourceV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _OFFER = 0;
     const _DESTROY = 1;
@@ -111,6 +119,7 @@ type
 
 
 
+procedure InitInterfaces;
 
 
 
@@ -133,8 +142,15 @@ var
   vIntf_wp_primary_selection_device_v1_Listener: Twp_primary_selection_device_v1_listener;
   vIntf_wp_primary_selection_offer_v1_Listener: Twp_primary_selection_offer_v1_listener;
   vIntf_wp_primary_selection_source_v1_Listener: Twp_primary_selection_source_v1_listener;
+  vInterfacesRegistered: Boolean = False;
 
 
+
+constructor TWpPrimarySelectionDeviceManagerV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
 
 function TWpPrimarySelectionDeviceManagerV1.CreateSource(AProxyClass: TWLProxyObjectClass = nil {TWpPrimarySelectionSourceV1}): TWpPrimarySelectionSourceV1;
 var
@@ -173,6 +189,12 @@ begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
   Result := wl_proxy_add_listener(FProxy, @vIntf_wp_primary_selection_device_manager_v1_Listener, @FUserDataRec);
 end;
+constructor TWpPrimarySelectionDeviceV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
+
 procedure TWpPrimarySelectionDeviceV1.SetSelection(ASource: TWpPrimarySelectionSourceV1; ASerial: DWord);
 begin
   wl_proxy_marshal(FProxy, _SET_SELECTION, ASource.Proxy, ASerial);
@@ -189,6 +211,12 @@ begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
   Result := wl_proxy_add_listener(FProxy, @vIntf_wp_primary_selection_device_v1_Listener, @FUserDataRec);
 end;
+constructor TWpPrimarySelectionOfferV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
+
 procedure TWpPrimarySelectionOfferV1.Receive(AMimeType: String; AFd: LongInt{fd});
 begin
   wl_proxy_marshal(FProxy, _RECEIVE, PChar(AMimeType), AFd);
@@ -205,6 +233,12 @@ begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
   Result := wl_proxy_add_listener(FProxy, @vIntf_wp_primary_selection_offer_v1_Listener, @FUserDataRec);
 end;
+constructor TWpPrimarySelectionSourceV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
+
 procedure TWpPrimarySelectionSourceV1.Offer(AMimeType: String);
 begin
   wl_proxy_marshal(FProxy, _OFFER, PChar(AMimeType));
@@ -319,7 +353,10 @@ const
     (name: 'cancelled'; signature: ''; types: @pInterfaces[0])
   );
 
-initialization
+procedure InitInterfaces;
+begin
+  if vInterfacesRegistered then Exit;
+  vInterfacesRegistered := True;
   Pointer(vIntf_wp_primary_selection_device_v1_Listener.data_offer) := @wp_primary_selection_device_v1_data_offer_Intf;
   Pointer(vIntf_wp_primary_selection_device_v1_Listener.selection) := @wp_primary_selection_device_v1_selection_Intf;
   Pointer(vIntf_wp_primary_selection_offer_v1_Listener.offer) := @wp_primary_selection_offer_v1_offer_Intf;
@@ -354,5 +391,7 @@ initialization
   wp_primary_selection_source_v1_interface.methods := @wp_primary_selection_source_v1_requests;
   wp_primary_selection_source_v1_interface.event_count := 2;
   wp_primary_selection_source_v1_interface.events := @wp_primary_selection_source_v1_events;
+
+end;
 
 end.

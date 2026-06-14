@@ -58,6 +58,8 @@ type
 
 
   TWpPresentation = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
     const _FEEDBACK = 1;
@@ -68,11 +70,14 @@ type
   end;
 
   TWpPresentationFeedback = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
     function AddListener(AIntf: IWpPresentationFeedbackListener): LongInt;
   end;
 
 
 
+procedure InitInterfaces;
 
 
 
@@ -89,8 +94,15 @@ implementation
 var
   vIntf_wp_presentation_Listener: Twp_presentation_listener;
   vIntf_wp_presentation_feedback_Listener: Twp_presentation_feedback_listener;
+  vInterfacesRegistered: Boolean = False;
 
 
+
+constructor TWpPresentation.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
 
 destructor TWpPresentation.Destroy;
 begin
@@ -116,6 +128,12 @@ begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
   Result := wl_proxy_add_listener(FProxy, @vIntf_wp_presentation_Listener, @FUserDataRec);
 end;
+constructor TWpPresentationFeedback.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
+
 function TWpPresentationFeedback.AddListener(AIntf: IWpPresentationFeedbackListener): LongInt;
 begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
@@ -191,7 +209,10 @@ const
     (name: 'discarded'; signature: ''; types: @pInterfaces[0])
   );
 
-initialization
+procedure InitInterfaces;
+begin
+  if vInterfacesRegistered then Exit;
+  vInterfacesRegistered := True;
   Pointer(vIntf_wp_presentation_Listener.clock_id) := @wp_presentation_clock_id_Intf;
   Pointer(vIntf_wp_presentation_feedback_Listener.sync_output) := @wp_presentation_feedback_sync_output_Intf;
   Pointer(vIntf_wp_presentation_feedback_Listener.presented) := @wp_presentation_feedback_presented_Intf;
@@ -211,5 +232,7 @@ initialization
   wp_presentation_feedback_interface.methods := nil;
   wp_presentation_feedback_interface.event_count := 3;
   wp_presentation_feedback_interface.events := @wp_presentation_feedback_events;
+
+end;
 
 end.

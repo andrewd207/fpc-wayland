@@ -58,6 +58,8 @@ type
 
 
   TWpFullscreenShellV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _RELEASE = 0;
     const _PRESENT_SURFACE = 1;
@@ -70,11 +72,14 @@ type
   end;
 
   TWpFullscreenShellModeFeedbackV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
     function AddListener(AIntf: IWpFullscreenShellModeFeedbackV1Listener): LongInt;
   end;
 
 
 
+procedure InitInterfaces;
 
 
 
@@ -91,8 +96,15 @@ implementation
 var
   vIntf_wp_fullscreen_shell_v1_Listener: Twp_fullscreen_shell_v1_listener;
   vIntf_wp_fullscreen_shell_mode_feedback_v1_Listener: Twp_fullscreen_shell_mode_feedback_v1_listener;
+  vInterfacesRegistered: Boolean = False;
 
 
+
+constructor TWpFullscreenShellV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
 
 procedure TWpFullscreenShellV1.Release;
 begin
@@ -123,6 +135,12 @@ begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
   Result := wl_proxy_add_listener(FProxy, @vIntf_wp_fullscreen_shell_v1_Listener, @FUserDataRec);
 end;
+constructor TWpFullscreenShellModeFeedbackV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
+
 function TWpFullscreenShellModeFeedbackV1.AddListener(AIntf: IWpFullscreenShellModeFeedbackV1Listener): LongInt;
 begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
@@ -203,7 +221,10 @@ const
     (name: 'present_cancelled'; signature: ''; types: @pInterfaces[0])
   );
 
-initialization
+procedure InitInterfaces;
+begin
+  if vInterfacesRegistered then Exit;
+  vInterfacesRegistered := True;
   Pointer(vIntf_wp_fullscreen_shell_v1_Listener.capability) := @wp_fullscreen_shell_v1_capability_Intf;
   Pointer(vIntf_wp_fullscreen_shell_mode_feedback_v1_Listener.mode_successful) := @wp_fullscreen_shell_mode_feedback_v1_mode_successful_Intf;
   Pointer(vIntf_wp_fullscreen_shell_mode_feedback_v1_Listener.mode_failed) := @wp_fullscreen_shell_mode_feedback_v1_mode_failed_Intf;
@@ -223,5 +244,7 @@ initialization
   wp_fullscreen_shell_mode_feedback_v1_interface.methods := nil;
   wp_fullscreen_shell_mode_feedback_v1_interface.event_count := 3;
   wp_fullscreen_shell_mode_feedback_v1_interface.events := @wp_fullscreen_shell_mode_feedback_v1_events;
+
+end;
 
 end.

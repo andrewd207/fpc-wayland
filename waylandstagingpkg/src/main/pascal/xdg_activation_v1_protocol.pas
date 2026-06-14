@@ -44,6 +44,8 @@ type
 
 
   TXdgActivationV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
     const _GET_ACTIVATION_TOKEN = 1;
@@ -56,6 +58,8 @@ type
   end;
 
   TXdgActivationTokenV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _SET_SERIAL = 0;
     const _SET_APP_ID = 1;
@@ -73,6 +77,7 @@ type
 
 
 
+procedure InitInterfaces;
 
 
 
@@ -89,8 +94,15 @@ implementation
 var
   vIntf_xdg_activation_v1_Listener: Txdg_activation_v1_listener;
   vIntf_xdg_activation_token_v1_Listener: Txdg_activation_token_v1_listener;
+  vInterfacesRegistered: Boolean = False;
 
 
+
+constructor TXdgActivationV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
 
 destructor TXdgActivationV1.Destroy;
 begin
@@ -121,6 +133,12 @@ begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
   Result := wl_proxy_add_listener(FProxy, @vIntf_xdg_activation_v1_Listener, @FUserDataRec);
 end;
+constructor TXdgActivationTokenV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
+
 procedure TXdgActivationTokenV1.SetSerial(ASerial: DWord; ASeat: TWlSeat);
 begin
   wl_proxy_marshal(FProxy, _SET_SERIAL, ASerial, ASeat.Proxy);
@@ -201,7 +219,10 @@ const
     (name: 'done'; signature: 's'; types: @pInterfaces[0])
   );
 
-initialization
+procedure InitInterfaces;
+begin
+  if vInterfacesRegistered then Exit;
+  vInterfacesRegistered := True;
   Pointer(vIntf_xdg_activation_token_v1_Listener.done) := @xdg_activation_token_v1_done_Intf;
 
 
@@ -218,5 +239,7 @@ initialization
   xdg_activation_token_v1_interface.methods := @xdg_activation_token_v1_requests;
   xdg_activation_token_v1_interface.event_count := 1;
   xdg_activation_token_v1_interface.events := @xdg_activation_token_v1_events;
+
+end;
 
 end.

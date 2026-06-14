@@ -589,6 +589,8 @@ type
 
 
   TWlDisplay = class(TWlDisplayBase)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _SYNC = 0;
     const _GET_REGISTRY = 1;
@@ -599,6 +601,8 @@ type
   end;
 
   TWlRegistry = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _BIND = 0;
   public
@@ -607,10 +611,14 @@ type
   end;
 
   TWlCallback = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
     function AddListener(AIntf: IWlCallbackListener): LongInt;
   end;
 
   TWlCompositor = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _CREATE_SURFACE = 0;
     const _CREATE_REGION = 1;
@@ -621,6 +629,8 @@ type
   end;
 
   TWlShmPool = class(TWlShmPoolBase)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _CREATE_BUFFER = 0;
     const _DESTROY = 1;
@@ -633,6 +643,8 @@ type
   end;
 
   TWlShm = class(TWlShmBase)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _CREATE_POOL = 0;
   public
@@ -641,6 +653,8 @@ type
   end;
 
   TWlBuffer = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
   public
@@ -649,6 +663,8 @@ type
   end;
 
   TWlDataOffer = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _ACCEPT = 0;
     const _RECEIVE = 1;
@@ -665,6 +681,8 @@ type
   end;
 
   TWlDataSource = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _OFFER = 0;
     const _DESTROY = 1;
@@ -677,6 +695,8 @@ type
   end;
 
   TWlDataDevice = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _START_DRAG = 0;
     const _SET_SELECTION = 1;
@@ -689,6 +709,8 @@ type
   end;
 
   TWlDataDeviceManager = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _CREATE_DATA_SOURCE = 0;
     const _GET_DATA_DEVICE = 1;
@@ -699,6 +721,8 @@ type
   end;
 
   TWlShell = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _GET_SHELL_SURFACE = 0;
   public
@@ -707,6 +731,8 @@ type
   end;
 
   TWlShellSurface = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _PONG = 0;
     const _MOVE = 1;
@@ -733,6 +759,8 @@ type
   end;
 
   TWlSurface = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
     const _ATTACH = 1;
@@ -761,6 +789,8 @@ type
   end;
 
   TWlSeat = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _GET_POINTER = 0;
     const _GET_KEYBOARD = 1;
@@ -775,6 +805,8 @@ type
   end;
 
   TWlPointer = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _SET_CURSOR = 0;
     const _RELEASE = 1;
@@ -785,6 +817,8 @@ type
   end;
 
   TWlKeyboard = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _RELEASE = 0;
   public
@@ -793,6 +827,8 @@ type
   end;
 
   TWlTouch = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _RELEASE = 0;
   public
@@ -801,6 +837,8 @@ type
   end;
 
   TWlOutput = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _RELEASE = 0;
   public
@@ -809,6 +847,8 @@ type
   end;
 
   TWlRegion = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
     const _ADD = 1;
@@ -821,6 +861,8 @@ type
   end;
 
   TWlSubcompositor = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
     const _GET_SUBSURFACE = 1;
@@ -831,6 +873,8 @@ type
   end;
 
   TWlSubsurface = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
     const _SET_POSITION = 1;
@@ -850,6 +894,7 @@ type
 
 
 
+procedure InitInterfaces;
 
 
 
@@ -926,8 +971,15 @@ var
   vIntf_wl_region_Listener: Twl_region_listener;
   vIntf_wl_subcompositor_Listener: Twl_subcompositor_listener;
   vIntf_wl_subsurface_Listener: Twl_subsurface_listener;
+  vInterfacesRegistered: Boolean = False;
 
 
+
+constructor TWlDisplay.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
 
 function TWlDisplay.Sync(AProxyClass: TWLProxyObjectClass = nil {TWlCallback}): TWlCallback;
 var
@@ -960,6 +1012,12 @@ begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
   Result := wl_proxy_add_listener(FProxy, @vIntf_wl_display_Listener, @FUserDataRec);
 end;
+constructor TWlRegistry.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
+
 function TWlRegistry.Bind(AName: DWord; AInterface: Pwl_interface; AVersion: LongInt): Pwl_proxy;
 begin
   Result := wl_proxy_marshal_constructor_versioned(FProxy,
@@ -971,11 +1029,23 @@ begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
   Result := wl_proxy_add_listener(FProxy, @vIntf_wl_registry_Listener, @FUserDataRec);
 end;
+constructor TWlCallback.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
+
 function TWlCallback.AddListener(AIntf: IWlCallbackListener): LongInt;
 begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
   Result := wl_proxy_add_listener(FProxy, @vIntf_wl_callback_Listener, @FUserDataRec);
 end;
+constructor TWlCompositor.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
+
 function TWlCompositor.CreateSurface(AProxyClass: TWLProxyObjectClass = nil {TWlSurface}): TWlSurface;
 var
   id: Pwl_proxy;
@@ -1007,6 +1077,12 @@ begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
   Result := wl_proxy_add_listener(FProxy, @vIntf_wl_compositor_Listener, @FUserDataRec);
 end;
+constructor TWlShmPool.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
+
 function TWlShmPool.CreateBuffer(AOffset: LongInt; AWidth: LongInt; AHeight: LongInt; AStride: LongInt; AFormat: DWord; AProxyClass: TWLProxyObjectClass = nil {TWlBuffer}): TWlBuffer;
 var
   id: Pwl_proxy;
@@ -1036,6 +1112,12 @@ begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
   Result := wl_proxy_add_listener(FProxy, @vIntf_wl_shm_pool_Listener, @FUserDataRec);
 end;
+constructor TWlShm.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
+
 function TWlShm.CreatePool(AFd: LongInt{fd}; ASize: LongInt; AProxyClass: TWLProxyObjectClass = nil {TWlShmPool}): TWlShmPool;
 var
   id: Pwl_proxy;
@@ -1054,6 +1136,12 @@ begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
   Result := wl_proxy_add_listener(FProxy, @vIntf_wl_shm_Listener, @FUserDataRec);
 end;
+constructor TWlBuffer.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
+
 destructor TWlBuffer.Destroy;
 begin
   wl_proxy_marshal(FProxy, _DESTROY);
@@ -1065,6 +1153,12 @@ begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
   Result := wl_proxy_add_listener(FProxy, @vIntf_wl_buffer_Listener, @FUserDataRec);
 end;
+constructor TWlDataOffer.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
+
 procedure TWlDataOffer.Accept(ASerial: DWord; AMimeType: String);
 begin
   wl_proxy_marshal(FProxy, _ACCEPT, ASerial, PChar(AMimeType));
@@ -1096,6 +1190,12 @@ begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
   Result := wl_proxy_add_listener(FProxy, @vIntf_wl_data_offer_Listener, @FUserDataRec);
 end;
+constructor TWlDataSource.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
+
 procedure TWlDataSource.Offer(AMimeType: String);
 begin
   wl_proxy_marshal(FProxy, _OFFER, PChar(AMimeType));
@@ -1117,6 +1217,12 @@ begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
   Result := wl_proxy_add_listener(FProxy, @vIntf_wl_data_source_Listener, @FUserDataRec);
 end;
+constructor TWlDataDevice.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
+
 procedure TWlDataDevice.StartDrag(ASource: TWlDataSource; AOrigin: TWlSurface; AIcon: TWlSurface; ASerial: DWord);
 begin
   wl_proxy_marshal(FProxy, _START_DRAG, ASource.Proxy, AOrigin.Proxy, AIcon.Proxy, ASerial);
@@ -1138,6 +1244,12 @@ begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
   Result := wl_proxy_add_listener(FProxy, @vIntf_wl_data_device_Listener, @FUserDataRec);
 end;
+constructor TWlDataDeviceManager.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
+
 function TWlDataDeviceManager.CreateDataSource(AProxyClass: TWLProxyObjectClass = nil {TWlDataSource}): TWlDataSource;
 var
   id: Pwl_proxy;
@@ -1169,6 +1281,12 @@ begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
   Result := wl_proxy_add_listener(FProxy, @vIntf_wl_data_device_manager_Listener, @FUserDataRec);
 end;
+constructor TWlShell.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
+
 function TWlShell.GetShellSurface(ASurface: TWlSurface; AProxyClass: TWLProxyObjectClass = nil {TWlShellSurface}): TWlShellSurface;
 var
   id: Pwl_proxy;
@@ -1187,6 +1305,12 @@ begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
   Result := wl_proxy_add_listener(FProxy, @vIntf_wl_shell_Listener, @FUserDataRec);
 end;
+constructor TWlShellSurface.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
+
 procedure TWlShellSurface.Pong(ASerial: DWord);
 begin
   wl_proxy_marshal(FProxy, _PONG, ASerial);
@@ -1242,6 +1366,12 @@ begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
   Result := wl_proxy_add_listener(FProxy, @vIntf_wl_shell_surface_Listener, @FUserDataRec);
 end;
+constructor TWlSurface.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
+
 destructor TWlSurface.Destroy;
 begin
   wl_proxy_marshal(FProxy, _DESTROY);
@@ -1311,6 +1441,12 @@ begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
   Result := wl_proxy_add_listener(FProxy, @vIntf_wl_surface_Listener, @FUserDataRec);
 end;
+constructor TWlSeat.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
+
 function TWlSeat.GetPointer(AProxyClass: TWLProxyObjectClass = nil {TWlPointer}): TWlPointer;
 var
   id: Pwl_proxy;
@@ -1361,6 +1497,12 @@ begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
   Result := wl_proxy_add_listener(FProxy, @vIntf_wl_seat_Listener, @FUserDataRec);
 end;
+constructor TWlPointer.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
+
 procedure TWlPointer.SetCursor(ASerial: DWord; ASurface: TWlSurface; AHotspotX: LongInt; AHotspotY: LongInt);
 begin
   wl_proxy_marshal(FProxy, _SET_CURSOR, ASerial, ASurface.Proxy, AHotspotX, AHotspotY);
@@ -1377,6 +1519,12 @@ begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
   Result := wl_proxy_add_listener(FProxy, @vIntf_wl_pointer_Listener, @FUserDataRec);
 end;
+constructor TWlKeyboard.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
+
 procedure TWlKeyboard.Release;
 begin
   wl_proxy_marshal(FProxy, _RELEASE);
@@ -1388,6 +1536,12 @@ begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
   Result := wl_proxy_add_listener(FProxy, @vIntf_wl_keyboard_Listener, @FUserDataRec);
 end;
+constructor TWlTouch.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
+
 procedure TWlTouch.Release;
 begin
   wl_proxy_marshal(FProxy, _RELEASE);
@@ -1399,6 +1553,12 @@ begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
   Result := wl_proxy_add_listener(FProxy, @vIntf_wl_touch_Listener, @FUserDataRec);
 end;
+constructor TWlOutput.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
+
 procedure TWlOutput.Release;
 begin
   wl_proxy_marshal(FProxy, _RELEASE);
@@ -1410,6 +1570,12 @@ begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
   Result := wl_proxy_add_listener(FProxy, @vIntf_wl_output_Listener, @FUserDataRec);
 end;
+constructor TWlRegion.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
+
 destructor TWlRegion.Destroy;
 begin
   wl_proxy_marshal(FProxy, _DESTROY);
@@ -1431,6 +1597,12 @@ begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
   Result := wl_proxy_add_listener(FProxy, @vIntf_wl_region_Listener, @FUserDataRec);
 end;
+constructor TWlSubcompositor.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
+
 destructor TWlSubcompositor.Destroy;
 begin
   wl_proxy_marshal(FProxy, _DESTROY);
@@ -1455,6 +1627,12 @@ begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
   Result := wl_proxy_add_listener(FProxy, @vIntf_wl_subcompositor_Listener, @FUserDataRec);
 end;
+constructor TWlSubsurface.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
+
 destructor TWlSubsurface.Destroy;
 begin
   wl_proxy_marshal(FProxy, _DESTROY);
@@ -2343,7 +2521,10 @@ const
     (name: 'set_desync'; signature: ''; types: @pInterfaces[0])
   );
 
-initialization
+procedure InitInterfaces;
+begin
+  if vInterfacesRegistered then Exit;
+  vInterfacesRegistered := True;
   Pointer(vIntf_wl_display_Listener.error) := @wl_display_error_Intf;
   Pointer(vIntf_wl_display_Listener.delete_id) := @wl_display_delete_id_Intf;
   Pointer(vIntf_wl_registry_Listener.global) := @wl_registry_global_Intf;
@@ -2560,5 +2741,7 @@ initialization
   wl_subsurface_interface.methods := @wl_subsurface_requests;
   wl_subsurface_interface.event_count := 0;
   wl_subsurface_interface.events := nil;
+
+end;
 
 end.

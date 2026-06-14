@@ -62,6 +62,8 @@ type
 
 
   TXdgExporterV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
     const _EXPORT = 1;
@@ -72,6 +74,8 @@ type
   end;
 
   TXdgImporterV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
     const _IMPORT = 1;
@@ -82,6 +86,8 @@ type
   end;
 
   TXdgExportedV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
   public
@@ -90,6 +96,8 @@ type
   end;
 
   TXdgImportedV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
     const _SET_PARENT_OF = 1;
@@ -101,6 +109,7 @@ type
 
 
 
+procedure InitInterfaces;
 
 
 
@@ -123,8 +132,15 @@ var
   vIntf_xdg_importer_v1_Listener: Txdg_importer_v1_listener;
   vIntf_xdg_exported_v1_Listener: Txdg_exported_v1_listener;
   vIntf_xdg_imported_v1_Listener: Txdg_imported_v1_listener;
+  vInterfacesRegistered: Boolean = False;
 
 
+
+constructor TXdgExporterV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
 
 destructor TXdgExporterV1.Destroy;
 begin
@@ -150,6 +166,12 @@ begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
   Result := wl_proxy_add_listener(FProxy, @vIntf_xdg_exporter_v1_Listener, @FUserDataRec);
 end;
+constructor TXdgImporterV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
+
 destructor TXdgImporterV1.Destroy;
 begin
   wl_proxy_marshal(FProxy, _DESTROY);
@@ -174,6 +196,12 @@ begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
   Result := wl_proxy_add_listener(FProxy, @vIntf_xdg_importer_v1_Listener, @FUserDataRec);
 end;
+constructor TXdgExportedV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
+
 destructor TXdgExportedV1.Destroy;
 begin
   wl_proxy_marshal(FProxy, _DESTROY);
@@ -185,6 +213,12 @@ begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
   Result := wl_proxy_add_listener(FProxy, @vIntf_xdg_exported_v1_Listener, @FUserDataRec);
 end;
+constructor TXdgImportedV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
+
 destructor TXdgImportedV1.Destroy;
 begin
   wl_proxy_marshal(FProxy, _DESTROY);
@@ -264,7 +298,10 @@ const
     (name: 'destroyed'; signature: ''; types: @pInterfaces[0])
   );
 
-initialization
+procedure InitInterfaces;
+begin
+  if vInterfacesRegistered then Exit;
+  vInterfacesRegistered := True;
   Pointer(vIntf_xdg_exported_v1_Listener.handle) := @xdg_exported_v1_handle_Intf;
   Pointer(vIntf_xdg_imported_v1_Listener.destroyed) := @xdg_imported_v1_destroyed_Intf;
 
@@ -296,5 +333,7 @@ initialization
   xdg_imported_v1_interface.methods := @xdg_imported_v1_requests;
   xdg_imported_v1_interface.event_count := 1;
   xdg_imported_v1_interface.events := @xdg_imported_v1_events;
+
+end;
 
 end.

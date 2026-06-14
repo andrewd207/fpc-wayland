@@ -62,6 +62,8 @@ type
 
 
   TWpLinuxDrmSyncobjManagerV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
     const _GET_SURFACE = 1;
@@ -74,6 +76,8 @@ type
   end;
 
   TWpLinuxDrmSyncobjTimelineV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
   public
@@ -82,6 +86,8 @@ type
   end;
 
   TWpLinuxDrmSyncobjSurfaceV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
     const _SET_ACQUIRE_POINT = 1;
@@ -95,6 +101,7 @@ type
 
 
 
+procedure InitInterfaces;
 
 
 
@@ -114,8 +121,15 @@ var
   vIntf_wp_linux_drm_syncobj_manager_v1_Listener: Twp_linux_drm_syncobj_manager_v1_listener;
   vIntf_wp_linux_drm_syncobj_timeline_v1_Listener: Twp_linux_drm_syncobj_timeline_v1_listener;
   vIntf_wp_linux_drm_syncobj_surface_v1_Listener: Twp_linux_drm_syncobj_surface_v1_listener;
+  vInterfacesRegistered: Boolean = False;
 
 
+
+constructor TWpLinuxDrmSyncobjManagerV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
 
 destructor TWpLinuxDrmSyncobjManagerV1.Destroy;
 begin
@@ -154,6 +168,12 @@ begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
   Result := wl_proxy_add_listener(FProxy, @vIntf_wp_linux_drm_syncobj_manager_v1_Listener, @FUserDataRec);
 end;
+constructor TWpLinuxDrmSyncobjTimelineV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
+
 destructor TWpLinuxDrmSyncobjTimelineV1.Destroy;
 begin
   wl_proxy_marshal(FProxy, _DESTROY);
@@ -165,6 +185,12 @@ begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
   Result := wl_proxy_add_listener(FProxy, @vIntf_wp_linux_drm_syncobj_timeline_v1_Listener, @FUserDataRec);
 end;
+constructor TWpLinuxDrmSyncobjSurfaceV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
+
 destructor TWpLinuxDrmSyncobjSurfaceV1.Destroy;
 begin
   wl_proxy_marshal(FProxy, _DESTROY);
@@ -228,7 +254,10 @@ const
     (name: 'set_release_point'; signature: 'ouu'; types: @pInterfaces[15])
   );
 
-initialization
+procedure InitInterfaces;
+begin
+  if vInterfacesRegistered then Exit;
+  vInterfacesRegistered := True;
 
 
   wp_linux_drm_syncobj_manager_v1_interface.name := PChar(WP_LINUX_DRM_SYNCOBJ_MANAGER_V1_INTERFACE_NAME);
@@ -251,5 +280,7 @@ initialization
   wp_linux_drm_syncobj_surface_v1_interface.methods := @wp_linux_drm_syncobj_surface_v1_requests;
   wp_linux_drm_syncobj_surface_v1_interface.event_count := 0;
   wp_linux_drm_syncobj_surface_v1_interface.events := nil;
+
+end;
 
 end.

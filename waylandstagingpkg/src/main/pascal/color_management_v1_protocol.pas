@@ -216,6 +216,8 @@ type
 
 
   TWpColorManagerV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
     const _GET_OUTPUT = 1;
@@ -236,6 +238,8 @@ type
   end;
 
   TWpColorManagementOutputV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
     const _GET_IMAGE_DESCRIPTION = 1;
@@ -246,6 +250,8 @@ type
   end;
 
   TWpColorManagementSurfaceV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
     const _SET_IMAGE_DESCRIPTION = 1;
@@ -258,6 +264,8 @@ type
   end;
 
   TWpColorManagementSurfaceFeedbackV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
     const _GET_PREFERRED = 1;
@@ -270,6 +278,8 @@ type
   end;
 
   TWpImageDescriptionCreatorIccV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _CREATE = 0;
     const _SET_ICC_FILE = 1;
@@ -280,6 +290,8 @@ type
   end;
 
   TWpImageDescriptionCreatorParamsV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _CREATE = 0;
     const _SET_TF_NAMED = 1;
@@ -306,6 +318,8 @@ type
   end;
 
   TWpImageDescriptionV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
     const _GET_INFORMATION = 1;
@@ -316,11 +330,14 @@ type
   end;
 
   TWpImageDescriptionInfoV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
     function AddListener(AIntf: IWpImageDescriptionInfoV1Listener): LongInt;
   end;
 
 
 
+procedure InitInterfaces;
 
 
 
@@ -355,8 +372,15 @@ var
   vIntf_wp_image_description_creator_params_v1_Listener: Twp_image_description_creator_params_v1_listener;
   vIntf_wp_image_description_v1_Listener: Twp_image_description_v1_listener;
   vIntf_wp_image_description_info_v1_Listener: Twp_image_description_info_v1_listener;
+  vInterfacesRegistered: Boolean = False;
 
 
+
+constructor TWpColorManagerV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
 
 destructor TWpColorManagerV1.Destroy;
 begin
@@ -447,6 +471,12 @@ begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
   Result := wl_proxy_add_listener(FProxy, @vIntf_wp_color_manager_v1_Listener, @FUserDataRec);
 end;
+constructor TWpColorManagementOutputV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
+
 destructor TWpColorManagementOutputV1.Destroy;
 begin
   wl_proxy_marshal(FProxy, _DESTROY);
@@ -471,6 +501,12 @@ begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
   Result := wl_proxy_add_listener(FProxy, @vIntf_wp_color_management_output_v1_Listener, @FUserDataRec);
 end;
+constructor TWpColorManagementSurfaceV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
+
 destructor TWpColorManagementSurfaceV1.Destroy;
 begin
   wl_proxy_marshal(FProxy, _DESTROY);
@@ -492,6 +528,12 @@ begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
   Result := wl_proxy_add_listener(FProxy, @vIntf_wp_color_management_surface_v1_Listener, @FUserDataRec);
 end;
+constructor TWpColorManagementSurfaceFeedbackV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
+
 destructor TWpColorManagementSurfaceFeedbackV1.Destroy;
 begin
   wl_proxy_marshal(FProxy, _DESTROY);
@@ -529,6 +571,12 @@ begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
   Result := wl_proxy_add_listener(FProxy, @vIntf_wp_color_management_surface_feedback_v1_Listener, @FUserDataRec);
 end;
+constructor TWpImageDescriptionCreatorIccV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
+
 function TWpImageDescriptionCreatorIccV1.Create(AProxyClass: TWLProxyObjectClass = nil {TWpImageDescriptionV1}): TWpImageDescriptionV1;
 var
   image_description: Pwl_proxy;
@@ -553,6 +601,12 @@ begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
   Result := wl_proxy_add_listener(FProxy, @vIntf_wp_image_description_creator_icc_v1_Listener, @FUserDataRec);
 end;
+constructor TWpImageDescriptionCreatorParamsV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
+
 function TWpImageDescriptionCreatorParamsV1.Create(AProxyClass: TWLProxyObjectClass = nil {TWpImageDescriptionV1}): TWpImageDescriptionV1;
 var
   image_description: Pwl_proxy;
@@ -617,6 +671,12 @@ begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
   Result := wl_proxy_add_listener(FProxy, @vIntf_wp_image_description_creator_params_v1_Listener, @FUserDataRec);
 end;
+constructor TWpImageDescriptionV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
+
 destructor TWpImageDescriptionV1.Destroy;
 begin
   wl_proxy_marshal(FProxy, _DESTROY);
@@ -641,6 +701,12 @@ begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
   Result := wl_proxy_add_listener(FProxy, @vIntf_wp_image_description_v1_Listener, @FUserDataRec);
 end;
+constructor TWpImageDescriptionInfoV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
+
 function TWpImageDescriptionInfoV1.AddListener(AIntf: IWpImageDescriptionInfoV1Listener): LongInt;
 begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
@@ -935,7 +1001,10 @@ const
     (name: 'target_max_fall'; signature: 'u'; types: @pInterfaces[0])
   );
 
-initialization
+procedure InitInterfaces;
+begin
+  if vInterfacesRegistered then Exit;
+  vInterfacesRegistered := True;
   Pointer(vIntf_wp_color_manager_v1_Listener.supported_intent) := @wp_color_manager_v1_supported_intent_Intf;
   Pointer(vIntf_wp_color_manager_v1_Listener.supported_feature) := @wp_color_manager_v1_supported_feature_Intf;
   Pointer(vIntf_wp_color_manager_v1_Listener.supported_tf_named) := @wp_color_manager_v1_supported_tf_named_Intf;
@@ -1013,5 +1082,7 @@ initialization
   wp_image_description_info_v1_interface.methods := nil;
   wp_image_description_info_v1_interface.event_count := 11;
   wp_image_description_info_v1_interface.events := @wp_image_description_info_v1_events;
+
+end;
 
 end.

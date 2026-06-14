@@ -86,6 +86,8 @@ type
 
 
   TWpDrmLeaseDeviceV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _CREATE_LEASE_REQUEST = 0;
     const _RELEASE = 1;
@@ -96,6 +98,8 @@ type
   end;
 
   TWpDrmLeaseConnectorV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
   public
@@ -104,6 +108,8 @@ type
   end;
 
   TWpDrmLeaseRequestV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _REQUEST_CONNECTOR = 0;
     const _SUBMIT = 1;
@@ -114,6 +120,8 @@ type
   end;
 
   TWpDrmLeaseV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
   public
@@ -123,6 +131,7 @@ type
 
 
 
+procedure InitInterfaces;
 
 
 
@@ -145,8 +154,15 @@ var
   vIntf_wp_drm_lease_connector_v1_Listener: Twp_drm_lease_connector_v1_listener;
   vIntf_wp_drm_lease_request_v1_Listener: Twp_drm_lease_request_v1_listener;
   vIntf_wp_drm_lease_v1_Listener: Twp_drm_lease_v1_listener;
+  vInterfacesRegistered: Boolean = False;
 
 
+
+constructor TWpDrmLeaseDeviceV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
 
 function TWpDrmLeaseDeviceV1.CreateLeaseRequest(AProxyClass: TWLProxyObjectClass = nil {TWpDrmLeaseRequestV1}): TWpDrmLeaseRequestV1;
 var
@@ -171,6 +187,12 @@ begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
   Result := wl_proxy_add_listener(FProxy, @vIntf_wp_drm_lease_device_v1_Listener, @FUserDataRec);
 end;
+constructor TWpDrmLeaseConnectorV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
+
 destructor TWpDrmLeaseConnectorV1.Destroy;
 begin
   wl_proxy_marshal(FProxy, _DESTROY);
@@ -182,6 +204,12 @@ begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
   Result := wl_proxy_add_listener(FProxy, @vIntf_wp_drm_lease_connector_v1_Listener, @FUserDataRec);
 end;
+constructor TWpDrmLeaseRequestV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
+
 procedure TWpDrmLeaseRequestV1.RequestConnector(AConnector: TWpDrmLeaseConnectorV1);
 begin
   wl_proxy_marshal(FProxy, _REQUEST_CONNECTOR, AConnector.Proxy);
@@ -206,6 +234,12 @@ begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
   Result := wl_proxy_add_listener(FProxy, @vIntf_wp_drm_lease_request_v1_Listener, @FUserDataRec);
 end;
+constructor TWpDrmLeaseV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
+
 destructor TWpDrmLeaseV1.Destroy;
 begin
   wl_proxy_marshal(FProxy, _DESTROY);
@@ -369,7 +403,10 @@ const
     (name: 'finished'; signature: ''; types: @pInterfaces[0])
   );
 
-initialization
+procedure InitInterfaces;
+begin
+  if vInterfacesRegistered then Exit;
+  vInterfacesRegistered := True;
   Pointer(vIntf_wp_drm_lease_device_v1_Listener.drm_fd) := @wp_drm_lease_device_v1_drm_fd_Intf;
   Pointer(vIntf_wp_drm_lease_device_v1_Listener.connector) := @wp_drm_lease_device_v1_connector_Intf;
   Pointer(vIntf_wp_drm_lease_device_v1_Listener.done) := @wp_drm_lease_device_v1_done_Intf;
@@ -410,5 +447,7 @@ initialization
   wp_drm_lease_v1_interface.methods := @wp_drm_lease_v1_requests;
   wp_drm_lease_v1_interface.event_count := 2;
   wp_drm_lease_v1_interface.events := @wp_drm_lease_v1_events;
+
+end;
 
 end.

@@ -130,6 +130,8 @@ type
 
 
   TWpTabletManagerV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _GET_TABLET_SEAT = 0;
     const _DESTROY = 1;
@@ -140,6 +142,8 @@ type
   end;
 
   TWpTabletSeatV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
   public
@@ -148,6 +152,8 @@ type
   end;
 
   TWpTabletToolV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _SET_CURSOR = 0;
     const _DESTROY = 1;
@@ -158,6 +164,8 @@ type
   end;
 
   TWpTabletV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
   public
@@ -167,6 +175,7 @@ type
 
 
 
+procedure InitInterfaces;
 
 
 
@@ -189,8 +198,15 @@ var
   vIntf_wp_tablet_seat_v1_Listener: Twp_tablet_seat_v1_listener;
   vIntf_wp_tablet_tool_v1_Listener: Twp_tablet_tool_v1_listener;
   vIntf_wp_tablet_v1_Listener: Twp_tablet_v1_listener;
+  vInterfacesRegistered: Boolean = False;
 
 
+
+constructor TWpTabletManagerV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
 
 function TWpTabletManagerV1.GetTabletSeat(ASeat: TWlSeat; AProxyClass: TWLProxyObjectClass = nil {TWpTabletSeatV1}): TWpTabletSeatV1;
 var
@@ -216,6 +232,12 @@ begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
   Result := wl_proxy_add_listener(FProxy, @vIntf_wp_tablet_manager_v1_Listener, @FUserDataRec);
 end;
+constructor TWpTabletSeatV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
+
 destructor TWpTabletSeatV1.Destroy;
 begin
   wl_proxy_marshal(FProxy, _DESTROY);
@@ -227,6 +249,12 @@ begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
   Result := wl_proxy_add_listener(FProxy, @vIntf_wp_tablet_seat_v1_Listener, @FUserDataRec);
 end;
+constructor TWpTabletToolV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
+
 procedure TWpTabletToolV1.SetCursor(ASerial: DWord; ASurface: TWlSurface; AHotspotX: LongInt; AHotspotY: LongInt);
 begin
   wl_proxy_marshal(FProxy, _SET_CURSOR, ASerial, ASurface.Proxy, AHotspotX, AHotspotY);
@@ -243,6 +271,12 @@ begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
   Result := wl_proxy_add_listener(FProxy, @vIntf_wp_tablet_tool_v1_Listener, @FUserDataRec);
 end;
+constructor TWpTabletV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
+
 destructor TWpTabletV1.Destroy;
 begin
   wl_proxy_marshal(FProxy, _DESTROY);
@@ -562,7 +596,10 @@ const
     (name: 'removed'; signature: ''; types: @pInterfaces[0])
   );
 
-initialization
+procedure InitInterfaces;
+begin
+  if vInterfacesRegistered then Exit;
+  vInterfacesRegistered := True;
   Pointer(vIntf_wp_tablet_seat_v1_Listener.tablet_added) := @wp_tablet_seat_v1_tablet_added_Intf;
   Pointer(vIntf_wp_tablet_seat_v1_Listener.tool_added) := @wp_tablet_seat_v1_tool_added_Intf;
   Pointer(vIntf_wp_tablet_tool_v1_Listener.type_) := @wp_tablet_tool_v1_type_Intf;
@@ -618,5 +655,7 @@ initialization
   wp_tablet_v1_interface.methods := @wp_tablet_v1_requests;
   wp_tablet_v1_interface.event_count := 5;
   wp_tablet_v1_interface.events := @wp_tablet_v1_events;
+
+end;
 
 end.

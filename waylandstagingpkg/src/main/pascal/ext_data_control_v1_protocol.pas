@@ -80,6 +80,8 @@ type
 
 
   TExtDataControlManagerV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _CREATE_DATA_SOURCE = 0;
     const _GET_DATA_DEVICE = 1;
@@ -92,6 +94,8 @@ type
   end;
 
   TExtDataControlDeviceV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _SET_SELECTION = 0;
     const _DESTROY = 1;
@@ -104,6 +108,8 @@ type
   end;
 
   TExtDataControlSourceV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _OFFER = 0;
     const _DESTROY = 1;
@@ -114,6 +120,8 @@ type
   end;
 
   TExtDataControlOfferV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _RECEIVE = 0;
     const _DESTROY = 1;
@@ -125,6 +133,7 @@ type
 
 
 
+procedure InitInterfaces;
 
 
 
@@ -147,8 +156,15 @@ var
   vIntf_ext_data_control_device_v1_Listener: Text_data_control_device_v1_listener;
   vIntf_ext_data_control_source_v1_Listener: Text_data_control_source_v1_listener;
   vIntf_ext_data_control_offer_v1_Listener: Text_data_control_offer_v1_listener;
+  vInterfacesRegistered: Boolean = False;
 
 
+
+constructor TExtDataControlManagerV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
 
 function TExtDataControlManagerV1.CreateDataSource(AProxyClass: TWLProxyObjectClass = nil {TExtDataControlSourceV1}): TExtDataControlSourceV1;
 var
@@ -187,6 +203,12 @@ begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
   Result := wl_proxy_add_listener(FProxy, @vIntf_ext_data_control_manager_v1_Listener, @FUserDataRec);
 end;
+constructor TExtDataControlDeviceV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
+
 procedure TExtDataControlDeviceV1.SetSelection(ASource: TExtDataControlSourceV1);
 begin
   wl_proxy_marshal(FProxy, _SET_SELECTION, ASource.Proxy);
@@ -208,6 +230,12 @@ begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
   Result := wl_proxy_add_listener(FProxy, @vIntf_ext_data_control_device_v1_Listener, @FUserDataRec);
 end;
+constructor TExtDataControlSourceV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
+
 procedure TExtDataControlSourceV1.Offer(AMimeType: String);
 begin
   wl_proxy_marshal(FProxy, _OFFER, PChar(AMimeType));
@@ -224,6 +252,12 @@ begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
   Result := wl_proxy_add_listener(FProxy, @vIntf_ext_data_control_source_v1_Listener, @FUserDataRec);
 end;
+constructor TExtDataControlOfferV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
+
 procedure TExtDataControlOfferV1.Receive(AMimeType: String; AFd: LongInt{fd});
 begin
   wl_proxy_marshal(FProxy, _RECEIVE, PChar(AMimeType), AFd);
@@ -360,7 +394,10 @@ const
     (name: 'offer'; signature: 's'; types: @pInterfaces[0])
   );
 
-initialization
+procedure InitInterfaces;
+begin
+  if vInterfacesRegistered then Exit;
+  vInterfacesRegistered := True;
   Pointer(vIntf_ext_data_control_device_v1_Listener.data_offer) := @ext_data_control_device_v1_data_offer_Intf;
   Pointer(vIntf_ext_data_control_device_v1_Listener.selection) := @ext_data_control_device_v1_selection_Intf;
   Pointer(vIntf_ext_data_control_device_v1_Listener.finished) := @ext_data_control_device_v1_finished_Intf;
@@ -397,5 +434,7 @@ initialization
   ext_data_control_offer_v1_interface.methods := @ext_data_control_offer_v1_requests;
   ext_data_control_offer_v1_interface.event_count := 1;
   ext_data_control_offer_v1_interface.events := @ext_data_control_offer_v1_events;
+
+end;
 
 end.

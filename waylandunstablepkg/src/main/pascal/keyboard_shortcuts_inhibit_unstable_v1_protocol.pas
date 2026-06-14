@@ -46,6 +46,8 @@ type
 
 
   TWpKeyboardShortcutsInhibitManagerV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
     const _INHIBIT_SHORTCUTS = 1;
@@ -56,6 +58,8 @@ type
   end;
 
   TWpKeyboardShortcutsInhibitorV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
   public
@@ -65,6 +69,7 @@ type
 
 
 
+procedure InitInterfaces;
 
 
 
@@ -81,8 +86,15 @@ implementation
 var
   vIntf_wp_keyboard_shortcuts_inhibit_manager_v1_Listener: Twp_keyboard_shortcuts_inhibit_manager_v1_listener;
   vIntf_wp_keyboard_shortcuts_inhibitor_v1_Listener: Twp_keyboard_shortcuts_inhibitor_v1_listener;
+  vInterfacesRegistered: Boolean = False;
 
 
+
+constructor TWpKeyboardShortcutsInhibitManagerV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
 
 destructor TWpKeyboardShortcutsInhibitManagerV1.Destroy;
 begin
@@ -108,6 +120,12 @@ begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
   Result := wl_proxy_add_listener(FProxy, @vIntf_wp_keyboard_shortcuts_inhibit_manager_v1_Listener, @FUserDataRec);
 end;
+constructor TWpKeyboardShortcutsInhibitorV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
+
 destructor TWpKeyboardShortcutsInhibitorV1.Destroy;
 begin
   wl_proxy_marshal(FProxy, _DESTROY);
@@ -170,7 +188,10 @@ const
     (name: 'inactive'; signature: ''; types: @pInterfaces[0])
   );
 
-initialization
+procedure InitInterfaces;
+begin
+  if vInterfacesRegistered then Exit;
+  vInterfacesRegistered := True;
   Pointer(vIntf_wp_keyboard_shortcuts_inhibitor_v1_Listener.active) := @wp_keyboard_shortcuts_inhibitor_v1_active_Intf;
   Pointer(vIntf_wp_keyboard_shortcuts_inhibitor_v1_Listener.inactive) := @wp_keyboard_shortcuts_inhibitor_v1_inactive_Intf;
 
@@ -188,5 +209,7 @@ initialization
   wp_keyboard_shortcuts_inhibitor_v1_interface.methods := @wp_keyboard_shortcuts_inhibitor_v1_requests;
   wp_keyboard_shortcuts_inhibitor_v1_interface.event_count := 2;
   wp_keyboard_shortcuts_inhibitor_v1_interface.events := @wp_keyboard_shortcuts_inhibitor_v1_events;
+
+end;
 
 end.

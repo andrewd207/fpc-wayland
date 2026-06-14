@@ -94,6 +94,8 @@ type
 
 
   TExtWorkspaceManagerV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _COMMIT = 0;
     const _STOP = 1;
@@ -104,6 +106,8 @@ type
   end;
 
   TExtWorkspaceGroupHandleV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _CREATE_WORKSPACE = 0;
     const _DESTROY = 1;
@@ -114,6 +118,8 @@ type
   end;
 
   TExtWorkspaceHandleV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
     const _ACTIVATE = 1;
@@ -131,6 +137,7 @@ type
 
 
 
+procedure InitInterfaces;
 
 
 
@@ -150,8 +157,15 @@ var
   vIntf_ext_workspace_manager_v1_Listener: Text_workspace_manager_v1_listener;
   vIntf_ext_workspace_group_handle_v1_Listener: Text_workspace_group_handle_v1_listener;
   vIntf_ext_workspace_handle_v1_Listener: Text_workspace_handle_v1_listener;
+  vInterfacesRegistered: Boolean = False;
 
 
+
+constructor TExtWorkspaceManagerV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
 
 procedure TExtWorkspaceManagerV1.Commit;
 begin
@@ -168,6 +182,12 @@ begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
   Result := wl_proxy_add_listener(FProxy, @vIntf_ext_workspace_manager_v1_Listener, @FUserDataRec);
 end;
+constructor TExtWorkspaceGroupHandleV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
+
 procedure TExtWorkspaceGroupHandleV1.CreateWorkspace(AWorkspace: String);
 begin
   wl_proxy_marshal(FProxy, _CREATE_WORKSPACE, PChar(AWorkspace));
@@ -184,6 +204,12 @@ begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
   Result := wl_proxy_add_listener(FProxy, @vIntf_ext_workspace_group_handle_v1_Listener, @FUserDataRec);
 end;
+constructor TExtWorkspaceHandleV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
+
 destructor TExtWorkspaceHandleV1.Destroy;
 begin
   wl_proxy_marshal(FProxy, _DESTROY);
@@ -420,7 +446,10 @@ const
     (name: 'removed'; signature: ''; types: @pInterfaces[0])
   );
 
-initialization
+procedure InitInterfaces;
+begin
+  if vInterfacesRegistered then Exit;
+  vInterfacesRegistered := True;
   Pointer(vIntf_ext_workspace_manager_v1_Listener.workspace_group) := @ext_workspace_manager_v1_workspace_group_Intf;
   Pointer(vIntf_ext_workspace_manager_v1_Listener.workspace) := @ext_workspace_manager_v1_workspace_Intf;
   Pointer(vIntf_ext_workspace_manager_v1_Listener.done) := @ext_workspace_manager_v1_done_Intf;
@@ -459,5 +488,7 @@ initialization
   ext_workspace_handle_v1_interface.methods := @ext_workspace_handle_v1_requests;
   ext_workspace_handle_v1_interface.event_count := 6;
   ext_workspace_handle_v1_interface.events := @ext_workspace_handle_v1_events;
+
+end;
 
 end.

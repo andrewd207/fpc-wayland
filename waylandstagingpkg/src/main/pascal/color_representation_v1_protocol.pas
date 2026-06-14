@@ -74,6 +74,8 @@ type
 
 
   TWpColorRepresentationManagerV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
     const _GET_SURFACE = 1;
@@ -84,6 +86,8 @@ type
   end;
 
   TWpColorRepresentationSurfaceV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
     const _SET_ALPHA_MODE = 1;
@@ -99,6 +103,7 @@ type
 
 
 
+procedure InitInterfaces;
 
 
 
@@ -115,8 +120,15 @@ implementation
 var
   vIntf_wp_color_representation_manager_v1_Listener: Twp_color_representation_manager_v1_listener;
   vIntf_wp_color_representation_surface_v1_Listener: Twp_color_representation_surface_v1_listener;
+  vInterfacesRegistered: Boolean = False;
 
 
+
+constructor TWpColorRepresentationManagerV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
 
 destructor TWpColorRepresentationManagerV1.Destroy;
 begin
@@ -142,6 +154,12 @@ begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
   Result := wl_proxy_add_listener(FProxy, @vIntf_wp_color_representation_manager_v1_Listener, @FUserDataRec);
 end;
+constructor TWpColorRepresentationSurfaceV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
+
 destructor TWpColorRepresentationSurfaceV1.Destroy;
 begin
   wl_proxy_marshal(FProxy, _DESTROY);
@@ -231,7 +249,10 @@ const
     (name: 'set_chroma_location'; signature: 'u'; types: @pInterfaces[0])
   );
 
-initialization
+procedure InitInterfaces;
+begin
+  if vInterfacesRegistered then Exit;
+  vInterfacesRegistered := True;
   Pointer(vIntf_wp_color_representation_manager_v1_Listener.supported_alpha_mode) := @wp_color_representation_manager_v1_supported_alpha_mode_Intf;
   Pointer(vIntf_wp_color_representation_manager_v1_Listener.supported_coefficients_and_ranges) := @wp_color_representation_manager_v1_supported_coefficients_and_ranges_Intf;
   Pointer(vIntf_wp_color_representation_manager_v1_Listener.done) := @wp_color_representation_manager_v1_done_Intf;
@@ -250,5 +271,7 @@ initialization
   wp_color_representation_surface_v1_interface.methods := @wp_color_representation_surface_v1_requests;
   wp_color_representation_surface_v1_interface.event_count := 0;
   wp_color_representation_surface_v1_interface.events := nil;
+
+end;
 
 end.

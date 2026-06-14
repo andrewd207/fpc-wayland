@@ -48,6 +48,8 @@ type
 
 
   TXdgToplevelIconManagerV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
     const _CREATE_ICON = 1;
@@ -60,6 +62,8 @@ type
   end;
 
   TXdgToplevelIconV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
     const _SET_NAME = 1;
@@ -73,6 +77,7 @@ type
 
 
 
+procedure InitInterfaces;
 
 
 
@@ -89,8 +94,15 @@ implementation
 var
   vIntf_xdg_toplevel_icon_manager_v1_Listener: Txdg_toplevel_icon_manager_v1_listener;
   vIntf_xdg_toplevel_icon_v1_Listener: Txdg_toplevel_icon_v1_listener;
+  vInterfacesRegistered: Boolean = False;
 
 
+
+constructor TXdgToplevelIconManagerV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
 
 destructor TXdgToplevelIconManagerV1.Destroy;
 begin
@@ -121,6 +133,12 @@ begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
   Result := wl_proxy_add_listener(FProxy, @vIntf_xdg_toplevel_icon_manager_v1_Listener, @FUserDataRec);
 end;
+constructor TXdgToplevelIconV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
+
 destructor TXdgToplevelIconV1.Destroy;
 begin
   wl_proxy_marshal(FProxy, _DESTROY);
@@ -198,7 +216,10 @@ const
     (name: 'add_buffer'; signature: 'oi'; types: @pInterfaces[11])
   );
 
-initialization
+procedure InitInterfaces;
+begin
+  if vInterfacesRegistered then Exit;
+  vInterfacesRegistered := True;
   Pointer(vIntf_xdg_toplevel_icon_manager_v1_Listener.icon_size) := @xdg_toplevel_icon_manager_v1_icon_size_Intf;
   Pointer(vIntf_xdg_toplevel_icon_manager_v1_Listener.done) := @xdg_toplevel_icon_manager_v1_done_Intf;
 
@@ -216,5 +237,7 @@ initialization
   xdg_toplevel_icon_v1_interface.methods := @xdg_toplevel_icon_v1_requests;
   xdg_toplevel_icon_v1_interface.event_count := 0;
   xdg_toplevel_icon_v1_interface.events := nil;
+
+end;
 
 end.

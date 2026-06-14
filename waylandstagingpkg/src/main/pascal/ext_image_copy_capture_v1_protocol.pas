@@ -110,6 +110,8 @@ type
 
 
   TExtImageCopyCaptureManagerV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _CREATE_SESSION = 0;
     const _CREATE_POINTER_CURSOR_SESSION = 1;
@@ -122,6 +124,8 @@ type
   end;
 
   TExtImageCopyCaptureSessionV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _CREATE_FRAME = 0;
     const _DESTROY = 1;
@@ -132,6 +136,8 @@ type
   end;
 
   TExtImageCopyCaptureFrameV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
     const _ATTACH_BUFFER = 1;
@@ -146,6 +152,8 @@ type
   end;
 
   TExtImageCopyCaptureCursorSessionV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
     const _GET_CAPTURE_SESSION = 1;
@@ -157,6 +165,7 @@ type
 
 
 
+procedure InitInterfaces;
 
 
 
@@ -179,8 +188,15 @@ var
   vIntf_ext_image_copy_capture_session_v1_Listener: Text_image_copy_capture_session_v1_listener;
   vIntf_ext_image_copy_capture_frame_v1_Listener: Text_image_copy_capture_frame_v1_listener;
   vIntf_ext_image_copy_capture_cursor_session_v1_Listener: Text_image_copy_capture_cursor_session_v1_listener;
+  vInterfacesRegistered: Boolean = False;
 
 
+
+constructor TExtImageCopyCaptureManagerV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
 
 function TExtImageCopyCaptureManagerV1.CreateSession(ASource: TExtImageCaptureSourceV1; AOptions: DWord; AProxyClass: TWLProxyObjectClass = nil {TExtImageCopyCaptureSessionV1}): TExtImageCopyCaptureSessionV1;
 var
@@ -219,6 +235,12 @@ begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
   Result := wl_proxy_add_listener(FProxy, @vIntf_ext_image_copy_capture_manager_v1_Listener, @FUserDataRec);
 end;
+constructor TExtImageCopyCaptureSessionV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
+
 function TExtImageCopyCaptureSessionV1.CreateFrame(AProxyClass: TWLProxyObjectClass = nil {TExtImageCopyCaptureFrameV1}): TExtImageCopyCaptureFrameV1;
 var
   frame: Pwl_proxy;
@@ -243,6 +265,12 @@ begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
   Result := wl_proxy_add_listener(FProxy, @vIntf_ext_image_copy_capture_session_v1_Listener, @FUserDataRec);
 end;
+constructor TExtImageCopyCaptureFrameV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
+
 destructor TExtImageCopyCaptureFrameV1.Destroy;
 begin
   wl_proxy_marshal(FProxy, _DESTROY);
@@ -269,6 +297,12 @@ begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
   Result := wl_proxy_add_listener(FProxy, @vIntf_ext_image_copy_capture_frame_v1_Listener, @FUserDataRec);
 end;
+constructor TExtImageCopyCaptureCursorSessionV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
+
 destructor TExtImageCopyCaptureCursorSessionV1.Destroy;
 begin
   wl_proxy_marshal(FProxy, _DESTROY);
@@ -496,7 +530,10 @@ const
     (name: 'hotspot'; signature: 'ii'; types: @pInterfaces[0])
   );
 
-initialization
+procedure InitInterfaces;
+begin
+  if vInterfacesRegistered then Exit;
+  vInterfacesRegistered := True;
   Pointer(vIntf_ext_image_copy_capture_session_v1_Listener.buffer_size) := @ext_image_copy_capture_session_v1_buffer_size_Intf;
   Pointer(vIntf_ext_image_copy_capture_session_v1_Listener.shm_format) := @ext_image_copy_capture_session_v1_shm_format_Intf;
   Pointer(vIntf_ext_image_copy_capture_session_v1_Listener.dmabuf_device) := @ext_image_copy_capture_session_v1_dmabuf_device_Intf;
@@ -541,5 +578,7 @@ initialization
   ext_image_copy_capture_cursor_session_v1_interface.methods := @ext_image_copy_capture_cursor_session_v1_requests;
   ext_image_copy_capture_cursor_session_v1_interface.event_count := 4;
   ext_image_copy_capture_cursor_session_v1_interface.events := @ext_image_copy_capture_cursor_session_v1_events;
+
+end;
 
 end.

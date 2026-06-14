@@ -78,6 +78,8 @@ type
 
 
   TWpCursorShapeManagerV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
     const _GET_POINTER = 1;
@@ -90,6 +92,8 @@ type
   end;
 
   TWpCursorShapeDeviceV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
     const _SET_SHAPE = 1;
@@ -101,6 +105,7 @@ type
 
 
 
+procedure InitInterfaces;
 
 
 
@@ -117,8 +122,15 @@ implementation
 var
   vIntf_wp_cursor_shape_manager_v1_Listener: Twp_cursor_shape_manager_v1_listener;
   vIntf_wp_cursor_shape_device_v1_Listener: Twp_cursor_shape_device_v1_listener;
+  vInterfacesRegistered: Boolean = False;
 
 
+
+constructor TWpCursorShapeManagerV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
 
 destructor TWpCursorShapeManagerV1.Destroy;
 begin
@@ -157,6 +169,12 @@ begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
   Result := wl_proxy_add_listener(FProxy, @vIntf_wp_cursor_shape_manager_v1_Listener, @FUserDataRec);
 end;
+constructor TWpCursorShapeDeviceV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
+
 destructor TWpCursorShapeDeviceV1.Destroy;
 begin
   wl_proxy_marshal(FProxy, _DESTROY);
@@ -205,7 +223,10 @@ const
     (name: 'set_shape'; signature: 'uu'; types: @pInterfaces[0])
   );
 
-initialization
+procedure InitInterfaces;
+begin
+  if vInterfacesRegistered then Exit;
+  vInterfacesRegistered := True;
 
 
   wp_cursor_shape_manager_v1_interface.name := PChar(WP_CURSOR_SHAPE_MANAGER_V1_INTERFACE_NAME);
@@ -221,5 +242,7 @@ initialization
   wp_cursor_shape_device_v1_interface.methods := @wp_cursor_shape_device_v1_requests;
   wp_cursor_shape_device_v1_interface.event_count := 0;
   wp_cursor_shape_device_v1_interface.events := nil;
+
+end;
 
 end.

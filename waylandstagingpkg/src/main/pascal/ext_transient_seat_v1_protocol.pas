@@ -42,6 +42,8 @@ type
 
 
   TExtTransientSeatManagerV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _CREATE = 0;
     const _DESTROY = 1;
@@ -52,6 +54,8 @@ type
   end;
 
   TExtTransientSeatV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
   public
@@ -61,6 +65,7 @@ type
 
 
 
+procedure InitInterfaces;
 
 
 
@@ -77,8 +82,15 @@ implementation
 var
   vIntf_ext_transient_seat_manager_v1_Listener: Text_transient_seat_manager_v1_listener;
   vIntf_ext_transient_seat_v1_Listener: Text_transient_seat_v1_listener;
+  vInterfacesRegistered: Boolean = False;
 
 
+
+constructor TExtTransientSeatManagerV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
 
 function TExtTransientSeatManagerV1.Create(AProxyClass: TWLProxyObjectClass = nil {TExtTransientSeatV1}): TExtTransientSeatV1;
 var
@@ -104,6 +116,12 @@ begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
   Result := wl_proxy_add_listener(FProxy, @vIntf_ext_transient_seat_manager_v1_Listener, @FUserDataRec);
 end;
+constructor TExtTransientSeatV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
+
 destructor TExtTransientSeatV1.Destroy;
 begin
   wl_proxy_marshal(FProxy, _DESTROY);
@@ -164,7 +182,10 @@ const
     (name: 'denied'; signature: ''; types: @pInterfaces[0])
   );
 
-initialization
+procedure InitInterfaces;
+begin
+  if vInterfacesRegistered then Exit;
+  vInterfacesRegistered := True;
   Pointer(vIntf_ext_transient_seat_v1_Listener.ready) := @ext_transient_seat_v1_ready_Intf;
   Pointer(vIntf_ext_transient_seat_v1_Listener.denied) := @ext_transient_seat_v1_denied_Intf;
 
@@ -182,5 +203,7 @@ initialization
   ext_transient_seat_v1_interface.methods := @ext_transient_seat_v1_requests;
   ext_transient_seat_v1_interface.event_count := 2;
   ext_transient_seat_v1_interface.events := @ext_transient_seat_v1_events;
+
+end;
 
 end.

@@ -52,6 +52,8 @@ type
 
 
   TExtForeignToplevelListV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _STOP = 0;
     const _DESTROY = 1;
@@ -62,6 +64,8 @@ type
   end;
 
   TExtForeignToplevelHandleV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
   public
@@ -71,6 +75,7 @@ type
 
 
 
+procedure InitInterfaces;
 
 
 
@@ -87,8 +92,15 @@ implementation
 var
   vIntf_ext_foreign_toplevel_list_v1_Listener: Text_foreign_toplevel_list_v1_listener;
   vIntf_ext_foreign_toplevel_handle_v1_Listener: Text_foreign_toplevel_handle_v1_listener;
+  vInterfacesRegistered: Boolean = False;
 
 
+
+constructor TExtForeignToplevelListV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
 
 procedure TExtForeignToplevelListV1.Stop;
 begin
@@ -106,6 +118,12 @@ begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
   Result := wl_proxy_add_listener(FProxy, @vIntf_ext_foreign_toplevel_list_v1_Listener, @FUserDataRec);
 end;
+constructor TExtForeignToplevelHandleV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
+
 destructor TExtForeignToplevelHandleV1.Destroy;
 begin
   wl_proxy_marshal(FProxy, _DESTROY);
@@ -217,7 +235,10 @@ const
     (name: 'identifier'; signature: 's'; types: @pInterfaces[0])
   );
 
-initialization
+procedure InitInterfaces;
+begin
+  if vInterfacesRegistered then Exit;
+  vInterfacesRegistered := True;
   Pointer(vIntf_ext_foreign_toplevel_list_v1_Listener.toplevel) := @ext_foreign_toplevel_list_v1_toplevel_Intf;
   Pointer(vIntf_ext_foreign_toplevel_list_v1_Listener.finished) := @ext_foreign_toplevel_list_v1_finished_Intf;
   Pointer(vIntf_ext_foreign_toplevel_handle_v1_Listener.closed) := @ext_foreign_toplevel_handle_v1_closed_Intf;
@@ -240,5 +261,7 @@ initialization
   ext_foreign_toplevel_handle_v1_interface.methods := @ext_foreign_toplevel_handle_v1_requests;
   ext_foreign_toplevel_handle_v1_interface.event_count := 5;
   ext_foreign_toplevel_handle_v1_interface.events := @ext_foreign_toplevel_handle_v1_events;
+
+end;
 
 end.

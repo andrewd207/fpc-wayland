@@ -42,6 +42,8 @@ type
 
 
   TExtIdleNotifierV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
     const _GET_IDLE_NOTIFICATION = 1;
@@ -54,6 +56,8 @@ type
   end;
 
   TExtIdleNotificationV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
   public
@@ -63,6 +67,7 @@ type
 
 
 
+procedure InitInterfaces;
 
 
 
@@ -79,8 +84,15 @@ implementation
 var
   vIntf_ext_idle_notifier_v1_Listener: Text_idle_notifier_v1_listener;
   vIntf_ext_idle_notification_v1_Listener: Text_idle_notification_v1_listener;
+  vInterfacesRegistered: Boolean = False;
 
 
+
+constructor TExtIdleNotifierV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
 
 destructor TExtIdleNotifierV1.Destroy;
 begin
@@ -119,6 +131,12 @@ begin
   FUserDataRec.ListenerUserData := Pointer(AIntf);
   Result := wl_proxy_add_listener(FProxy, @vIntf_ext_idle_notifier_v1_Listener, @FUserDataRec);
 end;
+constructor TExtIdleNotificationV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
+
 destructor TExtIdleNotificationV1.Destroy;
 begin
   wl_proxy_marshal(FProxy, _DESTROY);
@@ -185,7 +203,10 @@ const
     (name: 'resumed'; signature: ''; types: @pInterfaces[0])
   );
 
-initialization
+procedure InitInterfaces;
+begin
+  if vInterfacesRegistered then Exit;
+  vInterfacesRegistered := True;
   Pointer(vIntf_ext_idle_notification_v1_Listener.idled) := @ext_idle_notification_v1_idled_Intf;
   Pointer(vIntf_ext_idle_notification_v1_Listener.resumed) := @ext_idle_notification_v1_resumed_Intf;
 
@@ -203,5 +224,7 @@ initialization
   ext_idle_notification_v1_interface.methods := @ext_idle_notification_v1_requests;
   ext_idle_notification_v1_interface.event_count := 2;
   ext_idle_notification_v1_interface.events := @ext_idle_notification_v1_events;
+
+end;
 
 end.

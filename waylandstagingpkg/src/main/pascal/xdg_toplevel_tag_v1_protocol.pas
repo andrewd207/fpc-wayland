@@ -28,6 +28,8 @@ type
 
 
   TXdgToplevelTagManagerV1 = class(TWLProxyObject)
+  public
+    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
     const _SET_TOPLEVEL_TAG = 1;
@@ -41,6 +43,7 @@ type
 
 
 
+procedure InitInterfaces;
 
 
 
@@ -54,8 +57,15 @@ implementation
 
 var
   vIntf_xdg_toplevel_tag_manager_v1_Listener: Txdg_toplevel_tag_manager_v1_listener;
+  vInterfacesRegistered: Boolean = False;
 
 
+
+constructor TXdgToplevelTagManagerV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
+begin
+  InitInterfaces;
+  inherited Create(AProxy, AOwnsProxy);
+end;
 
 destructor TXdgToplevelTagManagerV1.Destroy;
 begin
@@ -106,7 +116,10 @@ const
     (name: 'set_toplevel_description'; signature: 'os'; types: @pInterfaces[10])
   );
 
-initialization
+procedure InitInterfaces;
+begin
+  if vInterfacesRegistered then Exit;
+  vInterfacesRegistered := True;
 
 
   xdg_toplevel_tag_manager_v1_interface.name := PChar(XDG_TOPLEVEL_TAG_MANAGER_V1_INTERFACE_NAME);
@@ -115,5 +128,7 @@ initialization
   xdg_toplevel_tag_manager_v1_interface.methods := @xdg_toplevel_tag_manager_v1_requests;
   xdg_toplevel_tag_manager_v1_interface.event_count := 0;
   xdg_toplevel_tag_manager_v1_interface.events := nil;
+
+end;
 
 end.

@@ -127,6 +127,11 @@ end;
 
 constructor TDisplay.Create;
 begin
+  // The relative-pointer manager is bound as a registry global (before any
+  // object of that unit exists), so register its interfaces up front. The
+  // wayland core interfaces are registered when TWlDisplay is constructed.
+  relative_pointer_unstable_v1_protocol.InitInterfaces;
+
   FDisplay := TWlDisplay(TWlDisplay.Connect(''));
   FRegistry := FDisplay.GetRegistry;
   FRegistry.AddListener(Self);

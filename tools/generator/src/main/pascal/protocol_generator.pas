@@ -159,6 +159,16 @@ begin
   Sections[sClassForward].Add('  T'+Pascalify(StripZ(Element.Name))+' = class;');
   Sections[sClasses].Add('');
   Sections[sClasses].Add('  T'+Pascalify(StripZ(Element.Name))+' = class('+lParentClass+')');
+  // every constructor registers this unit's interfaces (once), so overriding a
+  // *_INTERFACE_NAME before creating any object takes effect.
+  Sections[sClasses].Add('  public');
+  Sections[sClasses].Add('    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;');
+  Sections[sClassImpl].Add('constructor T'+Pascalify(StripZ(Element.Name))+'.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);');
+  Sections[sClassImpl].Add('begin');
+  Sections[sClassImpl].Add('  InitInterfaces;');
+  Sections[sClassImpl].Add('  inherited Create(AProxy, AOwnsProxy);');
+  Sections[sClassImpl].Add('end;');
+  Sections[sClassImpl].Add('');
 
   if Element.HasRequests then
   begin
@@ -1075,6 +1085,12 @@ begin
   FProtocol.ForEachInterface(@DeclareInterfaceTypes, nil);
 
   FProtocol.ForEachInterface(TForEachHandler(@HandleInterface), nil);
+
+  // per-unit registration entry point (declared in the interface so consumers
+  // can call <unit>.InitInterfaces after overriding a *_INTERFACE_NAME).
+  Sections[sFuncs].Add('procedure InitInterfaces;');
+  Sections[sPrivateVar].Add('  vInterfacesRegistered: Boolean = False;');
+
   //WriteLn(Sections[sConst].Text);
   WriteLn(Sections[sFuncs].Text);
   WriteLn(Sections[sTypes].Text);
@@ -1160,10 +1176,18 @@ begin
       Strings.Add('');
     end;
 
-    Strings.Add('initialization');
+    // Registration is deferred out of the initialization section into this
+    // procedure (called once from every class constructor) so that consumers
+    // can override a *_INTERFACE_NAME before any object of the unit is created.
+    Strings.Add('procedure InitInterfaces;');
+    Strings.Add('begin');
+    Strings.Add('  if vInterfacesRegistered then Exit;');
+    Strings.Add('  vInterfacesRegistered := True;');
     Strings.AddStrings(Sections[sListenerBind].Text);
     Strings.Add('');
     Strings.AddStrings(Sections[sInit]);
+    Strings.Add('end;');
+    Strings.Add('');
 
     Strings.Add('end.');
 
