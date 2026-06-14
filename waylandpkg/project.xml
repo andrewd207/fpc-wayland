@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project>
-  <name>waylandpkg</name>
+  <name>wayland</name>
   <version>1.0.0</version>
   <author>Andrew Haines</author>
   <license>GPL-2.0-or-later</license>
