@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+  <name>waylandcreatewindow</name>
+  <version>1.0.0</version>
+  <author>Andrew Haines</author>
+  <license>GPL-2.0-or-later</license>
+
+  <moduleDependencies>
+    <module>../../waylandpkg</module>
+    <module>../../waylandunstablepkg</module>
+  </moduleDependencies>
+
+  <build>
+    <projectType>application</projectType>
+    <mainSource>waylandcreatewindow.lpr</mainSource>
+    <executableName>waylandcreatewindow</executableName>
+  </build>
+</project>

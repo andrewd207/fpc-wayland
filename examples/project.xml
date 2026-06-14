@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+  <name>examples</name>
+  <build>
+    <packaging>pom</packaging>
+  </build>
+  <modules>
+    <module>waylandfindcompositor</module>
+    <module>waylandcreatesurface</module>
+    <module>waylandcreatewindow</module>
+    <module>waylandtest</module>
+  </modules>
+</project>

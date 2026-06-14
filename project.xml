@@ -17,5 +17,6 @@
     <module>waylandunstablepkg</module>
     <module>supportpkg</module>
     <module>tools/generator</module>
+    <module>examples</module>
   </modules>
 </project>
