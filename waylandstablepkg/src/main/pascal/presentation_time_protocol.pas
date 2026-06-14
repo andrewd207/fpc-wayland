@@ -59,6 +59,8 @@ type
 
   TWpPresentation = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpPresentation;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
@@ -71,13 +73,14 @@ type
 
   TWpPresentationFeedback = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpPresentationFeedback;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
     function AddListener(AIntf: IWpPresentationFeedbackListener): LongInt;
   end;
 
 
 
-procedure InitInterfaces;
 
 
 
@@ -92,16 +95,23 @@ var
 implementation
 
 var
+  vwp_presentation_registered: Boolean = False;
   vIntf_wp_presentation_Listener: Twp_presentation_listener;
+  vwp_presentation_feedback_registered: Boolean = False;
   vIntf_wp_presentation_feedback_Listener: Twp_presentation_feedback_listener;
-  vInterfacesRegistered: Boolean = False;
 
 
 
 constructor TWpPresentation.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TWpPresentation.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpPresentation;
+begin
+  RegisterInterface;
+  Result := TWpPresentation.Create(ARegistry.Bind(AName, @wp_presentation_interface, AVersion));
 end;
 
 destructor TWpPresentation.Destroy;
@@ -114,6 +124,7 @@ function TWpPresentation.Feedback(ASurface: TWlSurface; AProxyClass: TWLProxyObj
 var
   callback: Pwl_proxy;
 begin
+  TWpPresentationFeedback.RegisterInterface;
   callback := wl_proxy_marshal_constructor(FProxy,
       _FEEDBACK, @wp_presentation_feedback_interface, nil, ASurface.Proxy);
   if AProxyClass = nil then
@@ -130,8 +141,14 @@ begin
 end;
 constructor TWpPresentationFeedback.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TWpPresentationFeedback.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpPresentationFeedback;
+begin
+  RegisterInterface;
+  Result := TWpPresentationFeedback.Create(ARegistry.Bind(AName, @wp_presentation_feedback_interface, AVersion));
 end;
 
 function TWpPresentationFeedback.AddListener(AIntf: IWpPresentationFeedbackListener): LongInt;
@@ -209,30 +226,33 @@ const
     (name: 'discarded'; signature: ''; types: @pInterfaces[0])
   );
 
-procedure InitInterfaces;
+class procedure TWpPresentation.RegisterInterface;
 begin
-  if vInterfacesRegistered then Exit;
-  vInterfacesRegistered := True;
+  if vwp_presentation_registered then Exit;
+  vwp_presentation_registered := True;
   Pointer(vIntf_wp_presentation_Listener.clock_id) := @wp_presentation_clock_id_Intf;
-  Pointer(vIntf_wp_presentation_feedback_Listener.sync_output) := @wp_presentation_feedback_sync_output_Intf;
-  Pointer(vIntf_wp_presentation_feedback_Listener.presented) := @wp_presentation_feedback_presented_Intf;
-  Pointer(vIntf_wp_presentation_feedback_Listener.discarded) := @wp_presentation_feedback_discarded_Intf;
-
-
   wp_presentation_interface.name := PChar(WP_PRESENTATION_INTERFACE_NAME);
   wp_presentation_interface.version := 2;
   wp_presentation_interface.method_count := 2;
   wp_presentation_interface.methods := @wp_presentation_requests;
   wp_presentation_interface.event_count := 1;
   wp_presentation_interface.events := @wp_presentation_events;
+end;
 
+class procedure TWpPresentationFeedback.RegisterInterface;
+begin
+  if vwp_presentation_feedback_registered then Exit;
+  vwp_presentation_feedback_registered := True;
+  Pointer(vIntf_wp_presentation_feedback_Listener.sync_output) := @wp_presentation_feedback_sync_output_Intf;
+  Pointer(vIntf_wp_presentation_feedback_Listener.presented) := @wp_presentation_feedback_presented_Intf;
+  Pointer(vIntf_wp_presentation_feedback_Listener.discarded) := @wp_presentation_feedback_discarded_Intf;
   wp_presentation_feedback_interface.name := PChar(WP_PRESENTATION_FEEDBACK_INTERFACE_NAME);
   wp_presentation_feedback_interface.version := 2;
   wp_presentation_feedback_interface.method_count := 0;
   wp_presentation_feedback_interface.methods := nil;
   wp_presentation_feedback_interface.event_count := 3;
   wp_presentation_feedback_interface.events := @wp_presentation_feedback_events;
-
 end;
+
 
 end.

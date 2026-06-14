@@ -95,6 +95,8 @@ type
 
   TExtWorkspaceManagerV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TExtWorkspaceManagerV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _COMMIT = 0;
@@ -107,6 +109,8 @@ type
 
   TExtWorkspaceGroupHandleV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TExtWorkspaceGroupHandleV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _CREATE_WORKSPACE = 0;
@@ -119,6 +123,8 @@ type
 
   TExtWorkspaceHandleV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TExtWorkspaceHandleV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
@@ -137,7 +143,6 @@ type
 
 
 
-procedure InitInterfaces;
 
 
 
@@ -154,17 +159,25 @@ var
 implementation
 
 var
+  vext_workspace_manager_v1_registered: Boolean = False;
   vIntf_ext_workspace_manager_v1_Listener: Text_workspace_manager_v1_listener;
+  vext_workspace_group_handle_v1_registered: Boolean = False;
   vIntf_ext_workspace_group_handle_v1_Listener: Text_workspace_group_handle_v1_listener;
+  vext_workspace_handle_v1_registered: Boolean = False;
   vIntf_ext_workspace_handle_v1_Listener: Text_workspace_handle_v1_listener;
-  vInterfacesRegistered: Boolean = False;
 
 
 
 constructor TExtWorkspaceManagerV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TExtWorkspaceManagerV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TExtWorkspaceManagerV1;
+begin
+  RegisterInterface;
+  Result := TExtWorkspaceManagerV1.Create(ARegistry.Bind(AName, @ext_workspace_manager_v1_interface, AVersion));
 end;
 
 procedure TExtWorkspaceManagerV1.Commit;
@@ -184,8 +197,14 @@ begin
 end;
 constructor TExtWorkspaceGroupHandleV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TExtWorkspaceGroupHandleV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TExtWorkspaceGroupHandleV1;
+begin
+  RegisterInterface;
+  Result := TExtWorkspaceGroupHandleV1.Create(ARegistry.Bind(AName, @ext_workspace_group_handle_v1_interface, AVersion));
 end;
 
 procedure TExtWorkspaceGroupHandleV1.CreateWorkspace(AWorkspace: String);
@@ -206,8 +225,14 @@ begin
 end;
 constructor TExtWorkspaceHandleV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TExtWorkspaceHandleV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TExtWorkspaceHandleV1;
+begin
+  RegisterInterface;
+  Result := TExtWorkspaceHandleV1.Create(ARegistry.Bind(AName, @ext_workspace_handle_v1_interface, AVersion));
 end;
 
 destructor TExtWorkspaceHandleV1.Destroy;
@@ -446,49 +471,57 @@ const
     (name: 'removed'; signature: ''; types: @pInterfaces[0])
   );
 
-procedure InitInterfaces;
+class procedure TExtWorkspaceManagerV1.RegisterInterface;
 begin
-  if vInterfacesRegistered then Exit;
-  vInterfacesRegistered := True;
+  if vext_workspace_manager_v1_registered then Exit;
+  vext_workspace_manager_v1_registered := True;
   Pointer(vIntf_ext_workspace_manager_v1_Listener.workspace_group) := @ext_workspace_manager_v1_workspace_group_Intf;
   Pointer(vIntf_ext_workspace_manager_v1_Listener.workspace) := @ext_workspace_manager_v1_workspace_Intf;
   Pointer(vIntf_ext_workspace_manager_v1_Listener.done) := @ext_workspace_manager_v1_done_Intf;
   Pointer(vIntf_ext_workspace_manager_v1_Listener.finished) := @ext_workspace_manager_v1_finished_Intf;
-  Pointer(vIntf_ext_workspace_group_handle_v1_Listener.capabilities) := @ext_workspace_group_handle_v1_capabilities_Intf;
-  Pointer(vIntf_ext_workspace_group_handle_v1_Listener.output_enter) := @ext_workspace_group_handle_v1_output_enter_Intf;
-  Pointer(vIntf_ext_workspace_group_handle_v1_Listener.output_leave) := @ext_workspace_group_handle_v1_output_leave_Intf;
-  Pointer(vIntf_ext_workspace_group_handle_v1_Listener.workspace_enter) := @ext_workspace_group_handle_v1_workspace_enter_Intf;
-  Pointer(vIntf_ext_workspace_group_handle_v1_Listener.workspace_leave) := @ext_workspace_group_handle_v1_workspace_leave_Intf;
-  Pointer(vIntf_ext_workspace_group_handle_v1_Listener.removed) := @ext_workspace_group_handle_v1_removed_Intf;
-  Pointer(vIntf_ext_workspace_handle_v1_Listener.id) := @ext_workspace_handle_v1_id_Intf;
-  Pointer(vIntf_ext_workspace_handle_v1_Listener.name) := @ext_workspace_handle_v1_name_Intf;
-  Pointer(vIntf_ext_workspace_handle_v1_Listener.coordinates) := @ext_workspace_handle_v1_coordinates_Intf;
-  Pointer(vIntf_ext_workspace_handle_v1_Listener.state) := @ext_workspace_handle_v1_state_Intf;
-  Pointer(vIntf_ext_workspace_handle_v1_Listener.capabilities) := @ext_workspace_handle_v1_capabilities_Intf;
-  Pointer(vIntf_ext_workspace_handle_v1_Listener.removed) := @ext_workspace_handle_v1_removed_Intf;
-
-
   ext_workspace_manager_v1_interface.name := PChar(EXT_WORKSPACE_MANAGER_V1_INTERFACE_NAME);
   ext_workspace_manager_v1_interface.version := 1;
   ext_workspace_manager_v1_interface.method_count := 2;
   ext_workspace_manager_v1_interface.methods := @ext_workspace_manager_v1_requests;
   ext_workspace_manager_v1_interface.event_count := 4;
   ext_workspace_manager_v1_interface.events := @ext_workspace_manager_v1_events;
+end;
 
+class procedure TExtWorkspaceGroupHandleV1.RegisterInterface;
+begin
+  if vext_workspace_group_handle_v1_registered then Exit;
+  vext_workspace_group_handle_v1_registered := True;
+  Pointer(vIntf_ext_workspace_group_handle_v1_Listener.capabilities) := @ext_workspace_group_handle_v1_capabilities_Intf;
+  Pointer(vIntf_ext_workspace_group_handle_v1_Listener.output_enter) := @ext_workspace_group_handle_v1_output_enter_Intf;
+  Pointer(vIntf_ext_workspace_group_handle_v1_Listener.output_leave) := @ext_workspace_group_handle_v1_output_leave_Intf;
+  Pointer(vIntf_ext_workspace_group_handle_v1_Listener.workspace_enter) := @ext_workspace_group_handle_v1_workspace_enter_Intf;
+  Pointer(vIntf_ext_workspace_group_handle_v1_Listener.workspace_leave) := @ext_workspace_group_handle_v1_workspace_leave_Intf;
+  Pointer(vIntf_ext_workspace_group_handle_v1_Listener.removed) := @ext_workspace_group_handle_v1_removed_Intf;
   ext_workspace_group_handle_v1_interface.name := PChar(EXT_WORKSPACE_GROUP_HANDLE_V1_INTERFACE_NAME);
   ext_workspace_group_handle_v1_interface.version := 1;
   ext_workspace_group_handle_v1_interface.method_count := 2;
   ext_workspace_group_handle_v1_interface.methods := @ext_workspace_group_handle_v1_requests;
   ext_workspace_group_handle_v1_interface.event_count := 6;
   ext_workspace_group_handle_v1_interface.events := @ext_workspace_group_handle_v1_events;
+end;
 
+class procedure TExtWorkspaceHandleV1.RegisterInterface;
+begin
+  if vext_workspace_handle_v1_registered then Exit;
+  vext_workspace_handle_v1_registered := True;
+  Pointer(vIntf_ext_workspace_handle_v1_Listener.id) := @ext_workspace_handle_v1_id_Intf;
+  Pointer(vIntf_ext_workspace_handle_v1_Listener.name) := @ext_workspace_handle_v1_name_Intf;
+  Pointer(vIntf_ext_workspace_handle_v1_Listener.coordinates) := @ext_workspace_handle_v1_coordinates_Intf;
+  Pointer(vIntf_ext_workspace_handle_v1_Listener.state) := @ext_workspace_handle_v1_state_Intf;
+  Pointer(vIntf_ext_workspace_handle_v1_Listener.capabilities) := @ext_workspace_handle_v1_capabilities_Intf;
+  Pointer(vIntf_ext_workspace_handle_v1_Listener.removed) := @ext_workspace_handle_v1_removed_Intf;
   ext_workspace_handle_v1_interface.name := PChar(EXT_WORKSPACE_HANDLE_V1_INTERFACE_NAME);
   ext_workspace_handle_v1_interface.version := 1;
   ext_workspace_handle_v1_interface.method_count := 5;
   ext_workspace_handle_v1_interface.methods := @ext_workspace_handle_v1_requests;
   ext_workspace_handle_v1_interface.event_count := 6;
   ext_workspace_handle_v1_interface.events := @ext_workspace_handle_v1_events;
-
 end;
+
 
 end.

@@ -63,6 +63,8 @@ type
 
   TWpPointerConstraintsV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpPointerConstraintsV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
@@ -77,6 +79,8 @@ type
 
   TWpLockedPointerV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpLockedPointerV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
@@ -91,6 +95,8 @@ type
 
   TWpConfinedPointerV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpConfinedPointerV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
@@ -103,7 +109,6 @@ type
 
 
 
-procedure InitInterfaces;
 
 
 
@@ -120,17 +125,25 @@ var
 implementation
 
 var
+  vwp_pointer_constraints_v1_registered: Boolean = False;
   vIntf_wp_pointer_constraints_v1_Listener: Twp_pointer_constraints_v1_listener;
+  vwp_locked_pointer_v1_registered: Boolean = False;
   vIntf_wp_locked_pointer_v1_Listener: Twp_locked_pointer_v1_listener;
+  vwp_confined_pointer_v1_registered: Boolean = False;
   vIntf_wp_confined_pointer_v1_Listener: Twp_confined_pointer_v1_listener;
-  vInterfacesRegistered: Boolean = False;
 
 
 
 constructor TWpPointerConstraintsV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TWpPointerConstraintsV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpPointerConstraintsV1;
+begin
+  RegisterInterface;
+  Result := TWpPointerConstraintsV1.Create(ARegistry.Bind(AName, @wp_pointer_constraints_v1_interface, AVersion));
 end;
 
 destructor TWpPointerConstraintsV1.Destroy;
@@ -143,6 +156,7 @@ function TWpPointerConstraintsV1.LockPointer(ASurface: TWlSurface; APointer: TWl
 var
   id: Pwl_proxy;
 begin
+  TWpLockedPointerV1.RegisterInterface;
   id := wl_proxy_marshal_constructor(FProxy,
       _LOCK_POINTER, @wp_locked_pointer_v1_interface, nil, ASurface.Proxy, APointer.Proxy, ARegion.Proxy, ALifetime);
   if AProxyClass = nil then
@@ -156,6 +170,7 @@ function TWpPointerConstraintsV1.ConfinePointer(ASurface: TWlSurface; APointer: 
 var
   id: Pwl_proxy;
 begin
+  TWpConfinedPointerV1.RegisterInterface;
   id := wl_proxy_marshal_constructor(FProxy,
       _CONFINE_POINTER, @wp_confined_pointer_v1_interface, nil, ASurface.Proxy, APointer.Proxy, ARegion.Proxy, ALifetime);
   if AProxyClass = nil then
@@ -172,8 +187,14 @@ begin
 end;
 constructor TWpLockedPointerV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TWpLockedPointerV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpLockedPointerV1;
+begin
+  RegisterInterface;
+  Result := TWpLockedPointerV1.Create(ARegistry.Bind(AName, @wp_locked_pointer_v1_interface, AVersion));
 end;
 
 destructor TWpLockedPointerV1.Destroy;
@@ -199,8 +220,14 @@ begin
 end;
 constructor TWpConfinedPointerV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TWpConfinedPointerV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpConfinedPointerV1;
+begin
+  RegisterInterface;
+  Result := TWpConfinedPointerV1.Create(ARegistry.Bind(AName, @wp_confined_pointer_v1_interface, AVersion));
 end;
 
 destructor TWpConfinedPointerV1.Destroy;
@@ -308,37 +335,45 @@ const
     (name: 'unconfined'; signature: ''; types: @pInterfaces[0])
   );
 
-procedure InitInterfaces;
+class procedure TWpPointerConstraintsV1.RegisterInterface;
 begin
-  if vInterfacesRegistered then Exit;
-  vInterfacesRegistered := True;
-  Pointer(vIntf_wp_locked_pointer_v1_Listener.locked) := @wp_locked_pointer_v1_locked_Intf;
-  Pointer(vIntf_wp_locked_pointer_v1_Listener.unlocked) := @wp_locked_pointer_v1_unlocked_Intf;
-  Pointer(vIntf_wp_confined_pointer_v1_Listener.confined) := @wp_confined_pointer_v1_confined_Intf;
-  Pointer(vIntf_wp_confined_pointer_v1_Listener.unconfined) := @wp_confined_pointer_v1_unconfined_Intf;
-
-
+  if vwp_pointer_constraints_v1_registered then Exit;
+  vwp_pointer_constraints_v1_registered := True;
   wp_pointer_constraints_v1_interface.name := PChar(WP_POINTER_CONSTRAINTS_V1_INTERFACE_NAME);
   wp_pointer_constraints_v1_interface.version := 1;
   wp_pointer_constraints_v1_interface.method_count := 3;
   wp_pointer_constraints_v1_interface.methods := @wp_pointer_constraints_v1_requests;
   wp_pointer_constraints_v1_interface.event_count := 0;
   wp_pointer_constraints_v1_interface.events := nil;
+end;
 
+class procedure TWpLockedPointerV1.RegisterInterface;
+begin
+  if vwp_locked_pointer_v1_registered then Exit;
+  vwp_locked_pointer_v1_registered := True;
+  Pointer(vIntf_wp_locked_pointer_v1_Listener.locked) := @wp_locked_pointer_v1_locked_Intf;
+  Pointer(vIntf_wp_locked_pointer_v1_Listener.unlocked) := @wp_locked_pointer_v1_unlocked_Intf;
   wp_locked_pointer_v1_interface.name := PChar(WP_LOCKED_POINTER_V1_INTERFACE_NAME);
   wp_locked_pointer_v1_interface.version := 1;
   wp_locked_pointer_v1_interface.method_count := 3;
   wp_locked_pointer_v1_interface.methods := @wp_locked_pointer_v1_requests;
   wp_locked_pointer_v1_interface.event_count := 2;
   wp_locked_pointer_v1_interface.events := @wp_locked_pointer_v1_events;
+end;
 
+class procedure TWpConfinedPointerV1.RegisterInterface;
+begin
+  if vwp_confined_pointer_v1_registered then Exit;
+  vwp_confined_pointer_v1_registered := True;
+  Pointer(vIntf_wp_confined_pointer_v1_Listener.confined) := @wp_confined_pointer_v1_confined_Intf;
+  Pointer(vIntf_wp_confined_pointer_v1_Listener.unconfined) := @wp_confined_pointer_v1_unconfined_Intf;
   wp_confined_pointer_v1_interface.name := PChar(WP_CONFINED_POINTER_V1_INTERFACE_NAME);
   wp_confined_pointer_v1_interface.version := 1;
   wp_confined_pointer_v1_interface.method_count := 2;
   wp_confined_pointer_v1_interface.methods := @wp_confined_pointer_v1_requests;
   wp_confined_pointer_v1_interface.event_count := 2;
   wp_confined_pointer_v1_interface.events := @wp_confined_pointer_v1_events;
-
 end;
+
 
 end.

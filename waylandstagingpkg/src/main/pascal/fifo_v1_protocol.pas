@@ -47,6 +47,8 @@ type
 
   TWpFifoManagerV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpFifoManagerV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
@@ -59,6 +61,8 @@ type
 
   TWpFifoV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpFifoV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _SET_BARRIER = 0;
@@ -73,7 +77,6 @@ type
 
 
 
-procedure InitInterfaces;
 
 
 
@@ -88,16 +91,23 @@ var
 implementation
 
 var
+  vwp_fifo_manager_v1_registered: Boolean = False;
   vIntf_wp_fifo_manager_v1_Listener: Twp_fifo_manager_v1_listener;
+  vwp_fifo_v1_registered: Boolean = False;
   vIntf_wp_fifo_v1_Listener: Twp_fifo_v1_listener;
-  vInterfacesRegistered: Boolean = False;
 
 
 
 constructor TWpFifoManagerV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TWpFifoManagerV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpFifoManagerV1;
+begin
+  RegisterInterface;
+  Result := TWpFifoManagerV1.Create(ARegistry.Bind(AName, @wp_fifo_manager_v1_interface, AVersion));
 end;
 
 destructor TWpFifoManagerV1.Destroy;
@@ -110,6 +120,7 @@ function TWpFifoManagerV1.GetFifo(ASurface: TWlSurface; AProxyClass: TWLProxyObj
 var
   id: Pwl_proxy;
 begin
+  TWpFifoV1.RegisterInterface;
   id := wl_proxy_marshal_constructor(FProxy,
       _GET_FIFO, @wp_fifo_v1_interface, nil, ASurface.Proxy);
   if AProxyClass = nil then
@@ -126,8 +137,14 @@ begin
 end;
 constructor TWpFifoV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TWpFifoV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpFifoV1;
+begin
+  RegisterInterface;
+  Result := TWpFifoV1.Create(ARegistry.Bind(AName, @wp_fifo_v1_interface, AVersion));
 end;
 
 procedure TWpFifoV1.SetBarrier;
@@ -181,26 +198,29 @@ const
     (name: 'destroy'; signature: ''; types: @pInterfaces[0])
   );
 
-procedure InitInterfaces;
+class procedure TWpFifoManagerV1.RegisterInterface;
 begin
-  if vInterfacesRegistered then Exit;
-  vInterfacesRegistered := True;
-
-
+  if vwp_fifo_manager_v1_registered then Exit;
+  vwp_fifo_manager_v1_registered := True;
   wp_fifo_manager_v1_interface.name := PChar(WP_FIFO_MANAGER_V1_INTERFACE_NAME);
   wp_fifo_manager_v1_interface.version := 1;
   wp_fifo_manager_v1_interface.method_count := 2;
   wp_fifo_manager_v1_interface.methods := @wp_fifo_manager_v1_requests;
   wp_fifo_manager_v1_interface.event_count := 0;
   wp_fifo_manager_v1_interface.events := nil;
+end;
 
+class procedure TWpFifoV1.RegisterInterface;
+begin
+  if vwp_fifo_v1_registered then Exit;
+  vwp_fifo_v1_registered := True;
   wp_fifo_v1_interface.name := PChar(WP_FIFO_V1_INTERFACE_NAME);
   wp_fifo_v1_interface.version := 1;
   wp_fifo_v1_interface.method_count := 3;
   wp_fifo_v1_interface.methods := @wp_fifo_v1_requests;
   wp_fifo_v1_interface.event_count := 0;
   wp_fifo_v1_interface.events := nil;
-
 end;
+
 
 end.

@@ -89,6 +89,8 @@ type
 
   TWpLinuxDmabufV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpLinuxDmabufV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
@@ -105,6 +107,8 @@ type
 
   TWpLinuxBufferParamsV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpLinuxBufferParamsV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
@@ -121,6 +125,8 @@ type
 
   TWpLinuxDmabufFeedbackV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpLinuxDmabufFeedbackV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
@@ -131,7 +137,6 @@ type
 
 
 
-procedure InitInterfaces;
 
 
 
@@ -148,17 +153,25 @@ var
 implementation
 
 var
+  vwp_linux_dmabuf_v1_registered: Boolean = False;
   vIntf_wp_linux_dmabuf_v1_Listener: Twp_linux_dmabuf_v1_listener;
+  vwp_linux_buffer_params_v1_registered: Boolean = False;
   vIntf_wp_linux_buffer_params_v1_Listener: Twp_linux_buffer_params_v1_listener;
+  vwp_linux_dmabuf_feedback_v1_registered: Boolean = False;
   vIntf_wp_linux_dmabuf_feedback_v1_Listener: Twp_linux_dmabuf_feedback_v1_listener;
-  vInterfacesRegistered: Boolean = False;
 
 
 
 constructor TWpLinuxDmabufV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TWpLinuxDmabufV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpLinuxDmabufV1;
+begin
+  RegisterInterface;
+  Result := TWpLinuxDmabufV1.Create(ARegistry.Bind(AName, @wp_linux_dmabuf_v1_interface, AVersion));
 end;
 
 destructor TWpLinuxDmabufV1.Destroy;
@@ -171,6 +184,7 @@ function TWpLinuxDmabufV1.CreateParams(AProxyClass: TWLProxyObjectClass = nil {T
 var
   params_id: Pwl_proxy;
 begin
+  TWpLinuxBufferParamsV1.RegisterInterface;
   params_id := wl_proxy_marshal_constructor(FProxy,
       _CREATE_PARAMS, @wp_linux_buffer_params_v1_interface, nil);
   if AProxyClass = nil then
@@ -184,6 +198,7 @@ function TWpLinuxDmabufV1.GetDefaultFeedback(AProxyClass: TWLProxyObjectClass = 
 var
   id: Pwl_proxy;
 begin
+  TWpLinuxDmabufFeedbackV1.RegisterInterface;
   id := wl_proxy_marshal_constructor(FProxy,
       _GET_DEFAULT_FEEDBACK, @wp_linux_dmabuf_feedback_v1_interface, nil);
   if AProxyClass = nil then
@@ -197,6 +212,7 @@ function TWpLinuxDmabufV1.GetSurfaceFeedback(ASurface: TWlSurface; AProxyClass: 
 var
   id: Pwl_proxy;
 begin
+  TWpLinuxDmabufFeedbackV1.RegisterInterface;
   id := wl_proxy_marshal_constructor(FProxy,
       _GET_SURFACE_FEEDBACK, @wp_linux_dmabuf_feedback_v1_interface, nil, ASurface.Proxy);
   if AProxyClass = nil then
@@ -213,8 +229,14 @@ begin
 end;
 constructor TWpLinuxBufferParamsV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TWpLinuxBufferParamsV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpLinuxBufferParamsV1;
+begin
+  RegisterInterface;
+  Result := TWpLinuxBufferParamsV1.Create(ARegistry.Bind(AName, @wp_linux_buffer_params_v1_interface, AVersion));
 end;
 
 destructor TWpLinuxBufferParamsV1.Destroy;
@@ -237,6 +259,7 @@ function TWpLinuxBufferParamsV1.CreateImmed(AWidth: LongInt; AHeight: LongInt; A
 var
   buffer_id: Pwl_proxy;
 begin
+  TWlBuffer.RegisterInterface;
   buffer_id := wl_proxy_marshal_constructor(FProxy,
       _CREATE_IMMED, @wl_buffer_interface, nil, AWidth, AHeight, AFormat, AFlags);
   if AProxyClass = nil then
@@ -253,8 +276,14 @@ begin
 end;
 constructor TWpLinuxDmabufFeedbackV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TWpLinuxDmabufFeedbackV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpLinuxDmabufFeedbackV1;
+begin
+  RegisterInterface;
+  Result := TWpLinuxDmabufFeedbackV1.Create(ARegistry.Bind(AName, @wp_linux_dmabuf_feedback_v1_interface, AVersion));
 end;
 
 destructor TWpLinuxDmabufFeedbackV1.Destroy;
@@ -427,14 +456,38 @@ const
     (name: 'tranche_flags'; signature: 'u'; types: @pInterfaces[0])
   );
 
-procedure InitInterfaces;
+class procedure TWpLinuxDmabufV1.RegisterInterface;
 begin
-  if vInterfacesRegistered then Exit;
-  vInterfacesRegistered := True;
+  if vwp_linux_dmabuf_v1_registered then Exit;
+  vwp_linux_dmabuf_v1_registered := True;
   Pointer(vIntf_wp_linux_dmabuf_v1_Listener.format) := @wp_linux_dmabuf_v1_format_Intf;
   Pointer(vIntf_wp_linux_dmabuf_v1_Listener.modifier) := @wp_linux_dmabuf_v1_modifier_Intf;
+  wp_linux_dmabuf_v1_interface.name := PChar(WP_LINUX_DMABUF_V1_INTERFACE_NAME);
+  wp_linux_dmabuf_v1_interface.version := 5;
+  wp_linux_dmabuf_v1_interface.method_count := 4;
+  wp_linux_dmabuf_v1_interface.methods := @wp_linux_dmabuf_v1_requests;
+  wp_linux_dmabuf_v1_interface.event_count := 2;
+  wp_linux_dmabuf_v1_interface.events := @wp_linux_dmabuf_v1_events;
+end;
+
+class procedure TWpLinuxBufferParamsV1.RegisterInterface;
+begin
+  if vwp_linux_buffer_params_v1_registered then Exit;
+  vwp_linux_buffer_params_v1_registered := True;
   Pointer(vIntf_wp_linux_buffer_params_v1_Listener.created) := @wp_linux_buffer_params_v1_created_Intf;
   Pointer(vIntf_wp_linux_buffer_params_v1_Listener.failed) := @wp_linux_buffer_params_v1_failed_Intf;
+  wp_linux_buffer_params_v1_interface.name := PChar(WP_LINUX_BUFFER_PARAMS_V1_INTERFACE_NAME);
+  wp_linux_buffer_params_v1_interface.version := 5;
+  wp_linux_buffer_params_v1_interface.method_count := 4;
+  wp_linux_buffer_params_v1_interface.methods := @wp_linux_buffer_params_v1_requests;
+  wp_linux_buffer_params_v1_interface.event_count := 2;
+  wp_linux_buffer_params_v1_interface.events := @wp_linux_buffer_params_v1_events;
+end;
+
+class procedure TWpLinuxDmabufFeedbackV1.RegisterInterface;
+begin
+  if vwp_linux_dmabuf_feedback_v1_registered then Exit;
+  vwp_linux_dmabuf_feedback_v1_registered := True;
   Pointer(vIntf_wp_linux_dmabuf_feedback_v1_Listener.done) := @wp_linux_dmabuf_feedback_v1_done_Intf;
   Pointer(vIntf_wp_linux_dmabuf_feedback_v1_Listener.format_table) := @wp_linux_dmabuf_feedback_v1_format_table_Intf;
   Pointer(vIntf_wp_linux_dmabuf_feedback_v1_Listener.main_device) := @wp_linux_dmabuf_feedback_v1_main_device_Intf;
@@ -442,29 +495,13 @@ begin
   Pointer(vIntf_wp_linux_dmabuf_feedback_v1_Listener.tranche_target_device) := @wp_linux_dmabuf_feedback_v1_tranche_target_device_Intf;
   Pointer(vIntf_wp_linux_dmabuf_feedback_v1_Listener.tranche_formats) := @wp_linux_dmabuf_feedback_v1_tranche_formats_Intf;
   Pointer(vIntf_wp_linux_dmabuf_feedback_v1_Listener.tranche_flags) := @wp_linux_dmabuf_feedback_v1_tranche_flags_Intf;
-
-
-  wp_linux_dmabuf_v1_interface.name := PChar(WP_LINUX_DMABUF_V1_INTERFACE_NAME);
-  wp_linux_dmabuf_v1_interface.version := 5;
-  wp_linux_dmabuf_v1_interface.method_count := 4;
-  wp_linux_dmabuf_v1_interface.methods := @wp_linux_dmabuf_v1_requests;
-  wp_linux_dmabuf_v1_interface.event_count := 2;
-  wp_linux_dmabuf_v1_interface.events := @wp_linux_dmabuf_v1_events;
-
-  wp_linux_buffer_params_v1_interface.name := PChar(WP_LINUX_BUFFER_PARAMS_V1_INTERFACE_NAME);
-  wp_linux_buffer_params_v1_interface.version := 5;
-  wp_linux_buffer_params_v1_interface.method_count := 4;
-  wp_linux_buffer_params_v1_interface.methods := @wp_linux_buffer_params_v1_requests;
-  wp_linux_buffer_params_v1_interface.event_count := 2;
-  wp_linux_buffer_params_v1_interface.events := @wp_linux_buffer_params_v1_events;
-
   wp_linux_dmabuf_feedback_v1_interface.name := PChar(WP_LINUX_DMABUF_FEEDBACK_V1_INTERFACE_NAME);
   wp_linux_dmabuf_feedback_v1_interface.version := 5;
   wp_linux_dmabuf_feedback_v1_interface.method_count := 1;
   wp_linux_dmabuf_feedback_v1_interface.methods := @wp_linux_dmabuf_feedback_v1_requests;
   wp_linux_dmabuf_feedback_v1_interface.event_count := 7;
   wp_linux_dmabuf_feedback_v1_interface.events := @wp_linux_dmabuf_feedback_v1_events;
-
 end;
+
 
 end.

@@ -31,7 +31,7 @@ type
 
   { TGenerator }
 
-  TSection = (sPrivateConst, sClassForward, sClasses, sTypes, sFuncs, sVars, sImplementation, sInterfacePointers, sPrivateVar, sListenerDecl, sListenerImpl, sListenerBind, sClassImpl ,sRequestandEvents, sInit, sFinalize);
+  TSection = (sPrivateConst, sClassForward, sClasses, sTypes, sFuncs, sVars, sImplementation, sInterfacePointers, sPrivateVar, sListenerDecl, sListenerImpl, sListenerBind, sClassImpl ,sRequestandEvents, sInit, sRegisterImpl, sFinalize);
 
 
 
@@ -136,15 +136,18 @@ procedure TGenerator.HandleInterface(Element: TInterface);
 var
   lLine: String;
   lInterfaceVar: String;
-  lRequestCount, lEventCount, lIndex: Integer;
+  lRequestCount, lEventCount, lIndex, lBindStart, i: Integer;
   lEventConstName: String = 'nil';
   lRequestConstName: String = 'nil';
   lParentClass: String;
+  lClass, lRegVar: String;
 begin
   // global vars :(
 
   DeclareInterfaceVars(Element, nil);
   lInterfaceVar := StripZ(Element.Name)+'_interface';
+  lClass := 'T'+Pascalify(StripZ(Element.Name));
+  lRegVar := 'v'+StripZ(Element.Name)+'_registered';
 
   case Element.Name of
     'wl_display'  : lParentClass:='TWlDisplayBase';
@@ -156,17 +159,30 @@ begin
   end;
 
   //Sections[sClassForward].Add('  T'+Pascalify(Element.Name)+'Class = class of T'+Pascalify(Element.Name)+';');
-  Sections[sClassForward].Add('  T'+Pascalify(StripZ(Element.Name))+' = class;');
+  Sections[sClassForward].Add('  '+lClass+' = class;');
   Sections[sClasses].Add('');
-  Sections[sClasses].Add('  T'+Pascalify(StripZ(Element.Name))+' = class('+lParentClass+')');
-  // every constructor registers this unit's interfaces (once), so overriding a
-  // *_INTERFACE_NAME before creating any object takes effect.
+  Sections[sClasses].Add('  '+lClass+' = class('+lParentClass+')');
+  // RegisterInterface populates this interface's wl_interface struct from its
+  // (overridable) *_INTERFACE_NAME var, once. It is virtual so a descendant can
+  // override the name. Every constructor calls it, so creating any object
+  // registers its interface; Bind and child-creating requests call it too.
   Sections[sClasses].Add('  public');
+  Sections[sClasses].Add('    class procedure RegisterInterface; virtual;');
+  Sections[sClasses].Add('    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): '+lClass+';');
   Sections[sClasses].Add('    constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;');
-  Sections[sClassImpl].Add('constructor T'+Pascalify(StripZ(Element.Name))+'.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);');
+  // per-interface registration guard (class vars are shared with descendants, so use a unit var)
+  Sections[sPrivateVar].Add('  '+lRegVar+': Boolean = False;');
+
+  Sections[sClassImpl].Add('constructor '+lClass+'.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);');
   Sections[sClassImpl].Add('begin');
-  Sections[sClassImpl].Add('  InitInterfaces;');
+  Sections[sClassImpl].Add('  RegisterInterface;');
   Sections[sClassImpl].Add('  inherited Create(AProxy, AOwnsProxy);');
+  Sections[sClassImpl].Add('end;');
+  Sections[sClassImpl].Add('');
+  Sections[sClassImpl].Add('class function '+lClass+'.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): '+lClass+';');
+  Sections[sClassImpl].Add('begin');
+  Sections[sClassImpl].Add('  RegisterInterface;');
+  Sections[sClassImpl].Add('  Result := '+lClass+'.Create(ARegistry.Bind(AName, @'+lInterfaceVar+', AVersion));');
   Sections[sClassImpl].Add('end;');
   Sections[sClassImpl].Add('');
 
@@ -184,7 +200,8 @@ begin
 
   Sections[sClasses].Add('  end;');
 
-  // handles events
+  // handles events; capture the listener-bind lines it emits for this interface
+  lBindStart := Sections[sListenerBind].Count;
   GenerateListener(Element);
 
   if FImplementInterfaceVars then
@@ -218,13 +235,23 @@ begin
       lEventConstName := '@'+lEventConstName;
     end;
 
-    Sections[sInit].Add(Format('  %s.name := PChar(%s);',  [lInterfaceVar, InterfaceNameVar(Element.Name)]));
-    Sections[sInit].Add(Format('  %s.version := %s;',      [lInterfaceVar, Element.Version]));
-    Sections[sInit].Add(Format('  %s.method_count := %d;', [lInterfaceVar, lRequestCount]));
-    Sections[sInit].Add(Format('  %s.methods := %s;',      [lInterfaceVar, lRequestConstName]));
-    Sections[sInit].Add(Format('  %s.event_count := %d;',  [lInterfaceVar, lEventCount]));
-    Sections[sInit].Add(Format('  %s.events := %s;',       [lInterfaceVar, lEventConstName]));
-    Sections[sInit].Add('');
+    // emit this interface's RegisterInterface body (guard + listener binds for
+    // this interface + the wl_interface struct setup). Placed in sRegisterImpl,
+    // which is emitted after the const arrays and listener wrappers it references.
+    Sections[sRegisterImpl].Add('class procedure '+lClass+'.RegisterInterface;');
+    Sections[sRegisterImpl].Add('begin');
+    Sections[sRegisterImpl].Add('  if '+lRegVar+' then Exit;');
+    Sections[sRegisterImpl].Add('  '+lRegVar+' := True;');
+    for i := lBindStart to Sections[sListenerBind].Count-1 do
+      Sections[sRegisterImpl].Add(Sections[sListenerBind][i]);
+    Sections[sRegisterImpl].Add(Format('  %s.name := PChar(%s);',  [lInterfaceVar, InterfaceNameVar(Element.Name)]));
+    Sections[sRegisterImpl].Add(Format('  %s.version := %s;',      [lInterfaceVar, Element.Version]));
+    Sections[sRegisterImpl].Add(Format('  %s.method_count := %d;', [lInterfaceVar, lRequestCount]));
+    Sections[sRegisterImpl].Add(Format('  %s.methods := %s;',      [lInterfaceVar, lRequestConstName]));
+    Sections[sRegisterImpl].Add(Format('  %s.event_count := %d;',  [lInterfaceVar, lEventCount]));
+    Sections[sRegisterImpl].Add(Format('  %s.events := %s;',       [lInterfaceVar, lEventConstName]));
+    Sections[sRegisterImpl].Add('end;');
+    Sections[sRegisterImpl].Add('');
   end;
 
 
@@ -899,6 +926,8 @@ begin
     Sections[sClassImpl].Add('var');
     Sections[sClassImpl].Add('  '+lReturnVar.Name+': Pwl_proxy;');
     Sections[sClassImpl].Add('begin');
+    // the created object's interface must be registered before libwayland uses it
+    Sections[sClassImpl].Add('  T'+lTypeCast+'.RegisterInterface;');
     Sections[sClassImpl].Add('  '+lReturnVar.Name+' := wl_proxy_marshal_constructor(FProxy,' );
     Sections[sClassImpl].Add('      '+UpperCase('_'+Element.Name)+', @'+ StripZ(lReturnVar.&Interface)+'_interface, nil'+lArgs);
     Sections[sClassImpl].Add('  if AProxyClass = nil then');
@@ -1086,11 +1115,6 @@ begin
 
   FProtocol.ForEachInterface(TForEachHandler(@HandleInterface), nil);
 
-  // per-unit registration entry point (declared in the interface so consumers
-  // can call <unit>.InitInterfaces after overriding a *_INTERFACE_NAME).
-  Sections[sFuncs].Add('procedure InitInterfaces;');
-  Sections[sPrivateVar].Add('  vInterfacesRegistered: Boolean = False;');
-
   //WriteLn(Sections[sConst].Text);
   WriteLn(Sections[sFuncs].Text);
   WriteLn(Sections[sTypes].Text);
@@ -1176,17 +1200,10 @@ begin
       Strings.Add('');
     end;
 
-    // Registration is deferred out of the initialization section into this
-    // procedure (called once from every class constructor) so that consumers
-    // can override a *_INTERFACE_NAME before any object of the unit is created.
-    Strings.Add('procedure InitInterfaces;');
-    Strings.Add('begin');
-    Strings.Add('  if vInterfacesRegistered then Exit;');
-    Strings.Add('  vInterfacesRegistered := True;');
-    Strings.AddStrings(Sections[sListenerBind].Text);
-    Strings.Add('');
-    Strings.AddStrings(Sections[sInit]);
-    Strings.Add('end;');
+    // per-class RegisterInterface implementations (registration is deferred out
+    // of any initialization section so consumers can override a *_INTERFACE_NAME
+    // before the first object of a unit is created).
+    Strings.AddStrings(Sections[sRegisterImpl]);
     Strings.Add('');
 
     Strings.Add('end.');

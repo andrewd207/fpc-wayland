@@ -29,6 +29,8 @@ type
 
   TWpPointerWarpV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpPointerWarpV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
@@ -41,7 +43,6 @@ type
 
 
 
-procedure InitInterfaces;
 
 
 
@@ -54,15 +55,21 @@ var
 implementation
 
 var
+  vwp_pointer_warp_v1_registered: Boolean = False;
   vIntf_wp_pointer_warp_v1_Listener: Twp_pointer_warp_v1_listener;
-  vInterfacesRegistered: Boolean = False;
 
 
 
 constructor TWpPointerWarpV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TWpPointerWarpV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpPointerWarpV1;
+begin
+  RegisterInterface;
+  Result := TWpPointerWarpV1.Create(ARegistry.Bind(AName, @wp_pointer_warp_v1_interface, AVersion));
 end;
 
 destructor TWpPointerWarpV1.Destroy;
@@ -109,19 +116,17 @@ const
     (name: 'warp_pointer'; signature: 'ooffu'; types: @pInterfaces[8])
   );
 
-procedure InitInterfaces;
+class procedure TWpPointerWarpV1.RegisterInterface;
 begin
-  if vInterfacesRegistered then Exit;
-  vInterfacesRegistered := True;
-
-
+  if vwp_pointer_warp_v1_registered then Exit;
+  vwp_pointer_warp_v1_registered := True;
   wp_pointer_warp_v1_interface.name := PChar(WP_POINTER_WARP_V1_INTERFACE_NAME);
   wp_pointer_warp_v1_interface.version := 1;
   wp_pointer_warp_v1_interface.method_count := 2;
   wp_pointer_warp_v1_interface.methods := @wp_pointer_warp_v1_requests;
   wp_pointer_warp_v1_interface.event_count := 0;
   wp_pointer_warp_v1_interface.events := nil;
-
 end;
+
 
 end.

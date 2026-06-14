@@ -39,6 +39,8 @@ type
 
   TWpIdleInhibitManagerV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpIdleInhibitManagerV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
@@ -51,6 +53,8 @@ type
 
   TWpIdleInhibitorV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpIdleInhibitorV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
@@ -61,7 +65,6 @@ type
 
 
 
-procedure InitInterfaces;
 
 
 
@@ -76,16 +79,23 @@ var
 implementation
 
 var
+  vwp_idle_inhibit_manager_v1_registered: Boolean = False;
   vIntf_wp_idle_inhibit_manager_v1_Listener: Twp_idle_inhibit_manager_v1_listener;
+  vwp_idle_inhibitor_v1_registered: Boolean = False;
   vIntf_wp_idle_inhibitor_v1_Listener: Twp_idle_inhibitor_v1_listener;
-  vInterfacesRegistered: Boolean = False;
 
 
 
 constructor TWpIdleInhibitManagerV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TWpIdleInhibitManagerV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpIdleInhibitManagerV1;
+begin
+  RegisterInterface;
+  Result := TWpIdleInhibitManagerV1.Create(ARegistry.Bind(AName, @wp_idle_inhibit_manager_v1_interface, AVersion));
 end;
 
 destructor TWpIdleInhibitManagerV1.Destroy;
@@ -98,6 +108,7 @@ function TWpIdleInhibitManagerV1.CreateInhibitor(ASurface: TWlSurface; AProxyCla
 var
   id: Pwl_proxy;
 begin
+  TWpIdleInhibitorV1.RegisterInterface;
   id := wl_proxy_marshal_constructor(FProxy,
       _CREATE_INHIBITOR, @wp_idle_inhibitor_v1_interface, nil, ASurface.Proxy);
   if AProxyClass = nil then
@@ -114,8 +125,14 @@ begin
 end;
 constructor TWpIdleInhibitorV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TWpIdleInhibitorV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpIdleInhibitorV1;
+begin
+  RegisterInterface;
+  Result := TWpIdleInhibitorV1.Create(ARegistry.Bind(AName, @wp_idle_inhibitor_v1_interface, AVersion));
 end;
 
 destructor TWpIdleInhibitorV1.Destroy;
@@ -157,26 +174,29 @@ const
     (name: 'destroy'; signature: ''; types: @pInterfaces[0])
   );
 
-procedure InitInterfaces;
+class procedure TWpIdleInhibitManagerV1.RegisterInterface;
 begin
-  if vInterfacesRegistered then Exit;
-  vInterfacesRegistered := True;
-
-
+  if vwp_idle_inhibit_manager_v1_registered then Exit;
+  vwp_idle_inhibit_manager_v1_registered := True;
   wp_idle_inhibit_manager_v1_interface.name := PChar(WP_IDLE_INHIBIT_MANAGER_V1_INTERFACE_NAME);
   wp_idle_inhibit_manager_v1_interface.version := 1;
   wp_idle_inhibit_manager_v1_interface.method_count := 2;
   wp_idle_inhibit_manager_v1_interface.methods := @wp_idle_inhibit_manager_v1_requests;
   wp_idle_inhibit_manager_v1_interface.event_count := 0;
   wp_idle_inhibit_manager_v1_interface.events := nil;
+end;
 
+class procedure TWpIdleInhibitorV1.RegisterInterface;
+begin
+  if vwp_idle_inhibitor_v1_registered then Exit;
+  vwp_idle_inhibitor_v1_registered := True;
   wp_idle_inhibitor_v1_interface.name := PChar(WP_IDLE_INHIBITOR_V1_INTERFACE_NAME);
   wp_idle_inhibitor_v1_interface.version := 1;
   wp_idle_inhibitor_v1_interface.method_count := 1;
   wp_idle_inhibitor_v1_interface.methods := @wp_idle_inhibitor_v1_requests;
   wp_idle_inhibitor_v1_interface.event_count := 0;
   wp_idle_inhibitor_v1_interface.events := nil;
-
 end;
+
 
 end.

@@ -45,6 +45,8 @@ type
 
   TWpFractionalScaleManagerV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpFractionalScaleManagerV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
@@ -57,6 +59,8 @@ type
 
   TWpFractionalScaleV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpFractionalScaleV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
@@ -67,7 +71,6 @@ type
 
 
 
-procedure InitInterfaces;
 
 
 
@@ -82,16 +85,23 @@ var
 implementation
 
 var
+  vwp_fractional_scale_manager_v1_registered: Boolean = False;
   vIntf_wp_fractional_scale_manager_v1_Listener: Twp_fractional_scale_manager_v1_listener;
+  vwp_fractional_scale_v1_registered: Boolean = False;
   vIntf_wp_fractional_scale_v1_Listener: Twp_fractional_scale_v1_listener;
-  vInterfacesRegistered: Boolean = False;
 
 
 
 constructor TWpFractionalScaleManagerV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TWpFractionalScaleManagerV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpFractionalScaleManagerV1;
+begin
+  RegisterInterface;
+  Result := TWpFractionalScaleManagerV1.Create(ARegistry.Bind(AName, @wp_fractional_scale_manager_v1_interface, AVersion));
 end;
 
 destructor TWpFractionalScaleManagerV1.Destroy;
@@ -104,6 +114,7 @@ function TWpFractionalScaleManagerV1.GetFractionalScale(ASurface: TWlSurface; AP
 var
   id: Pwl_proxy;
 begin
+  TWpFractionalScaleV1.RegisterInterface;
   id := wl_proxy_marshal_constructor(FProxy,
       _GET_FRACTIONAL_SCALE, @wp_fractional_scale_v1_interface, nil, ASurface.Proxy);
   if AProxyClass = nil then
@@ -120,8 +131,14 @@ begin
 end;
 constructor TWpFractionalScaleV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TWpFractionalScaleV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpFractionalScaleV1;
+begin
+  RegisterInterface;
+  Result := TWpFractionalScaleV1.Create(ARegistry.Bind(AName, @wp_fractional_scale_v1_interface, AVersion));
 end;
 
 destructor TWpFractionalScaleV1.Destroy;
@@ -175,27 +192,30 @@ const
     (name: 'preferred_scale'; signature: 'u'; types: @pInterfaces[0])
   );
 
-procedure InitInterfaces;
+class procedure TWpFractionalScaleManagerV1.RegisterInterface;
 begin
-  if vInterfacesRegistered then Exit;
-  vInterfacesRegistered := True;
-  Pointer(vIntf_wp_fractional_scale_v1_Listener.preferred_scale) := @wp_fractional_scale_v1_preferred_scale_Intf;
-
-
+  if vwp_fractional_scale_manager_v1_registered then Exit;
+  vwp_fractional_scale_manager_v1_registered := True;
   wp_fractional_scale_manager_v1_interface.name := PChar(WP_FRACTIONAL_SCALE_MANAGER_V1_INTERFACE_NAME);
   wp_fractional_scale_manager_v1_interface.version := 1;
   wp_fractional_scale_manager_v1_interface.method_count := 2;
   wp_fractional_scale_manager_v1_interface.methods := @wp_fractional_scale_manager_v1_requests;
   wp_fractional_scale_manager_v1_interface.event_count := 0;
   wp_fractional_scale_manager_v1_interface.events := nil;
+end;
 
+class procedure TWpFractionalScaleV1.RegisterInterface;
+begin
+  if vwp_fractional_scale_v1_registered then Exit;
+  vwp_fractional_scale_v1_registered := True;
+  Pointer(vIntf_wp_fractional_scale_v1_Listener.preferred_scale) := @wp_fractional_scale_v1_preferred_scale_Intf;
   wp_fractional_scale_v1_interface.name := PChar(WP_FRACTIONAL_SCALE_V1_INTERFACE_NAME);
   wp_fractional_scale_v1_interface.version := 1;
   wp_fractional_scale_v1_interface.method_count := 1;
   wp_fractional_scale_v1_interface.methods := @wp_fractional_scale_v1_requests;
   wp_fractional_scale_v1_interface.event_count := 1;
   wp_fractional_scale_v1_interface.events := @wp_fractional_scale_v1_events;
-
 end;
+
 
 end.

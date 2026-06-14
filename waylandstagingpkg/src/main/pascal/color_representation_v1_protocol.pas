@@ -75,6 +75,8 @@ type
 
   TWpColorRepresentationManagerV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpColorRepresentationManagerV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
@@ -87,6 +89,8 @@ type
 
   TWpColorRepresentationSurfaceV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpColorRepresentationSurfaceV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
@@ -103,7 +107,6 @@ type
 
 
 
-procedure InitInterfaces;
 
 
 
@@ -118,16 +121,23 @@ var
 implementation
 
 var
+  vwp_color_representation_manager_v1_registered: Boolean = False;
   vIntf_wp_color_representation_manager_v1_Listener: Twp_color_representation_manager_v1_listener;
+  vwp_color_representation_surface_v1_registered: Boolean = False;
   vIntf_wp_color_representation_surface_v1_Listener: Twp_color_representation_surface_v1_listener;
-  vInterfacesRegistered: Boolean = False;
 
 
 
 constructor TWpColorRepresentationManagerV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TWpColorRepresentationManagerV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpColorRepresentationManagerV1;
+begin
+  RegisterInterface;
+  Result := TWpColorRepresentationManagerV1.Create(ARegistry.Bind(AName, @wp_color_representation_manager_v1_interface, AVersion));
 end;
 
 destructor TWpColorRepresentationManagerV1.Destroy;
@@ -140,6 +150,7 @@ function TWpColorRepresentationManagerV1.GetSurface(ASurface: TWlSurface; AProxy
 var
   id: Pwl_proxy;
 begin
+  TWpColorRepresentationSurfaceV1.RegisterInterface;
   id := wl_proxy_marshal_constructor(FProxy,
       _GET_SURFACE, @wp_color_representation_surface_v1_interface, nil, ASurface.Proxy);
   if AProxyClass = nil then
@@ -156,8 +167,14 @@ begin
 end;
 constructor TWpColorRepresentationSurfaceV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TWpColorRepresentationSurfaceV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpColorRepresentationSurfaceV1;
+begin
+  RegisterInterface;
+  Result := TWpColorRepresentationSurfaceV1.Create(ARegistry.Bind(AName, @wp_color_representation_surface_v1_interface, AVersion));
 end;
 
 destructor TWpColorRepresentationSurfaceV1.Destroy;
@@ -249,29 +266,32 @@ const
     (name: 'set_chroma_location'; signature: 'u'; types: @pInterfaces[0])
   );
 
-procedure InitInterfaces;
+class procedure TWpColorRepresentationManagerV1.RegisterInterface;
 begin
-  if vInterfacesRegistered then Exit;
-  vInterfacesRegistered := True;
+  if vwp_color_representation_manager_v1_registered then Exit;
+  vwp_color_representation_manager_v1_registered := True;
   Pointer(vIntf_wp_color_representation_manager_v1_Listener.supported_alpha_mode) := @wp_color_representation_manager_v1_supported_alpha_mode_Intf;
   Pointer(vIntf_wp_color_representation_manager_v1_Listener.supported_coefficients_and_ranges) := @wp_color_representation_manager_v1_supported_coefficients_and_ranges_Intf;
   Pointer(vIntf_wp_color_representation_manager_v1_Listener.done) := @wp_color_representation_manager_v1_done_Intf;
-
-
   wp_color_representation_manager_v1_interface.name := PChar(WP_COLOR_REPRESENTATION_MANAGER_V1_INTERFACE_NAME);
   wp_color_representation_manager_v1_interface.version := 1;
   wp_color_representation_manager_v1_interface.method_count := 2;
   wp_color_representation_manager_v1_interface.methods := @wp_color_representation_manager_v1_requests;
   wp_color_representation_manager_v1_interface.event_count := 3;
   wp_color_representation_manager_v1_interface.events := @wp_color_representation_manager_v1_events;
+end;
 
+class procedure TWpColorRepresentationSurfaceV1.RegisterInterface;
+begin
+  if vwp_color_representation_surface_v1_registered then Exit;
+  vwp_color_representation_surface_v1_registered := True;
   wp_color_representation_surface_v1_interface.name := PChar(WP_COLOR_REPRESENTATION_SURFACE_V1_INTERFACE_NAME);
   wp_color_representation_surface_v1_interface.version := 1;
   wp_color_representation_surface_v1_interface.method_count := 4;
   wp_color_representation_surface_v1_interface.methods := @wp_color_representation_surface_v1_requests;
   wp_color_representation_surface_v1_interface.event_count := 0;
   wp_color_representation_surface_v1_interface.events := nil;
-
 end;
+
 
 end.

@@ -79,6 +79,8 @@ type
 
   TWpCursorShapeManagerV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpCursorShapeManagerV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
@@ -93,6 +95,8 @@ type
 
   TWpCursorShapeDeviceV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpCursorShapeDeviceV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
@@ -105,7 +109,6 @@ type
 
 
 
-procedure InitInterfaces;
 
 
 
@@ -120,16 +123,23 @@ var
 implementation
 
 var
+  vwp_cursor_shape_manager_v1_registered: Boolean = False;
   vIntf_wp_cursor_shape_manager_v1_Listener: Twp_cursor_shape_manager_v1_listener;
+  vwp_cursor_shape_device_v1_registered: Boolean = False;
   vIntf_wp_cursor_shape_device_v1_Listener: Twp_cursor_shape_device_v1_listener;
-  vInterfacesRegistered: Boolean = False;
 
 
 
 constructor TWpCursorShapeManagerV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TWpCursorShapeManagerV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpCursorShapeManagerV1;
+begin
+  RegisterInterface;
+  Result := TWpCursorShapeManagerV1.Create(ARegistry.Bind(AName, @wp_cursor_shape_manager_v1_interface, AVersion));
 end;
 
 destructor TWpCursorShapeManagerV1.Destroy;
@@ -142,6 +152,7 @@ function TWpCursorShapeManagerV1.GetPointer(APointer: TWlPointer; AProxyClass: T
 var
   cursor_shape_device: Pwl_proxy;
 begin
+  TWpCursorShapeDeviceV1.RegisterInterface;
   cursor_shape_device := wl_proxy_marshal_constructor(FProxy,
       _GET_POINTER, @wp_cursor_shape_device_v1_interface, nil, APointer.Proxy);
   if AProxyClass = nil then
@@ -155,6 +166,7 @@ function TWpCursorShapeManagerV1.GetTabletToolV2(ATabletTool: TWpTabletToolV2; A
 var
   cursor_shape_device: Pwl_proxy;
 begin
+  TWpCursorShapeDeviceV1.RegisterInterface;
   cursor_shape_device := wl_proxy_marshal_constructor(FProxy,
       _GET_TABLET_TOOL_V2, @wp_cursor_shape_device_v1_interface, nil, ATabletTool.Proxy);
   if AProxyClass = nil then
@@ -171,8 +183,14 @@ begin
 end;
 constructor TWpCursorShapeDeviceV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TWpCursorShapeDeviceV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpCursorShapeDeviceV1;
+begin
+  RegisterInterface;
+  Result := TWpCursorShapeDeviceV1.Create(ARegistry.Bind(AName, @wp_cursor_shape_device_v1_interface, AVersion));
 end;
 
 destructor TWpCursorShapeDeviceV1.Destroy;
@@ -223,26 +241,29 @@ const
     (name: 'set_shape'; signature: 'uu'; types: @pInterfaces[0])
   );
 
-procedure InitInterfaces;
+class procedure TWpCursorShapeManagerV1.RegisterInterface;
 begin
-  if vInterfacesRegistered then Exit;
-  vInterfacesRegistered := True;
-
-
+  if vwp_cursor_shape_manager_v1_registered then Exit;
+  vwp_cursor_shape_manager_v1_registered := True;
   wp_cursor_shape_manager_v1_interface.name := PChar(WP_CURSOR_SHAPE_MANAGER_V1_INTERFACE_NAME);
   wp_cursor_shape_manager_v1_interface.version := 2;
   wp_cursor_shape_manager_v1_interface.method_count := 3;
   wp_cursor_shape_manager_v1_interface.methods := @wp_cursor_shape_manager_v1_requests;
   wp_cursor_shape_manager_v1_interface.event_count := 0;
   wp_cursor_shape_manager_v1_interface.events := nil;
+end;
 
+class procedure TWpCursorShapeDeviceV1.RegisterInterface;
+begin
+  if vwp_cursor_shape_device_v1_registered then Exit;
+  vwp_cursor_shape_device_v1_registered := True;
   wp_cursor_shape_device_v1_interface.name := PChar(WP_CURSOR_SHAPE_DEVICE_V1_INTERFACE_NAME);
   wp_cursor_shape_device_v1_interface.version := 2;
   wp_cursor_shape_device_v1_interface.method_count := 2;
   wp_cursor_shape_device_v1_interface.methods := @wp_cursor_shape_device_v1_requests;
   wp_cursor_shape_device_v1_interface.event_count := 0;
   wp_cursor_shape_device_v1_interface.events := nil;
-
 end;
+
 
 end.

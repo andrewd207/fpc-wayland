@@ -43,6 +43,8 @@ type
 
   TExtIdleNotifierV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TExtIdleNotifierV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
@@ -57,6 +59,8 @@ type
 
   TExtIdleNotificationV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TExtIdleNotificationV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
@@ -67,7 +71,6 @@ type
 
 
 
-procedure InitInterfaces;
 
 
 
@@ -82,16 +85,23 @@ var
 implementation
 
 var
+  vext_idle_notifier_v1_registered: Boolean = False;
   vIntf_ext_idle_notifier_v1_Listener: Text_idle_notifier_v1_listener;
+  vext_idle_notification_v1_registered: Boolean = False;
   vIntf_ext_idle_notification_v1_Listener: Text_idle_notification_v1_listener;
-  vInterfacesRegistered: Boolean = False;
 
 
 
 constructor TExtIdleNotifierV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TExtIdleNotifierV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TExtIdleNotifierV1;
+begin
+  RegisterInterface;
+  Result := TExtIdleNotifierV1.Create(ARegistry.Bind(AName, @ext_idle_notifier_v1_interface, AVersion));
 end;
 
 destructor TExtIdleNotifierV1.Destroy;
@@ -104,6 +114,7 @@ function TExtIdleNotifierV1.GetIdleNotification(ATimeout: DWord; ASeat: TWlSeat;
 var
   id: Pwl_proxy;
 begin
+  TExtIdleNotificationV1.RegisterInterface;
   id := wl_proxy_marshal_constructor(FProxy,
       _GET_IDLE_NOTIFICATION, @ext_idle_notification_v1_interface, nil, ATimeout, ASeat.Proxy);
   if AProxyClass = nil then
@@ -117,6 +128,7 @@ function TExtIdleNotifierV1.GetInputIdleNotification(ATimeout: DWord; ASeat: TWl
 var
   id: Pwl_proxy;
 begin
+  TExtIdleNotificationV1.RegisterInterface;
   id := wl_proxy_marshal_constructor(FProxy,
       _GET_INPUT_IDLE_NOTIFICATION, @ext_idle_notification_v1_interface, nil, ATimeout, ASeat.Proxy);
   if AProxyClass = nil then
@@ -133,8 +145,14 @@ begin
 end;
 constructor TExtIdleNotificationV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TExtIdleNotificationV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TExtIdleNotificationV1;
+begin
+  RegisterInterface;
+  Result := TExtIdleNotificationV1.Create(ARegistry.Bind(AName, @ext_idle_notification_v1_interface, AVersion));
 end;
 
 destructor TExtIdleNotificationV1.Destroy;
@@ -203,28 +221,31 @@ const
     (name: 'resumed'; signature: ''; types: @pInterfaces[0])
   );
 
-procedure InitInterfaces;
+class procedure TExtIdleNotifierV1.RegisterInterface;
 begin
-  if vInterfacesRegistered then Exit;
-  vInterfacesRegistered := True;
-  Pointer(vIntf_ext_idle_notification_v1_Listener.idled) := @ext_idle_notification_v1_idled_Intf;
-  Pointer(vIntf_ext_idle_notification_v1_Listener.resumed) := @ext_idle_notification_v1_resumed_Intf;
-
-
+  if vext_idle_notifier_v1_registered then Exit;
+  vext_idle_notifier_v1_registered := True;
   ext_idle_notifier_v1_interface.name := PChar(EXT_IDLE_NOTIFIER_V1_INTERFACE_NAME);
   ext_idle_notifier_v1_interface.version := 2;
   ext_idle_notifier_v1_interface.method_count := 3;
   ext_idle_notifier_v1_interface.methods := @ext_idle_notifier_v1_requests;
   ext_idle_notifier_v1_interface.event_count := 0;
   ext_idle_notifier_v1_interface.events := nil;
+end;
 
+class procedure TExtIdleNotificationV1.RegisterInterface;
+begin
+  if vext_idle_notification_v1_registered then Exit;
+  vext_idle_notification_v1_registered := True;
+  Pointer(vIntf_ext_idle_notification_v1_Listener.idled) := @ext_idle_notification_v1_idled_Intf;
+  Pointer(vIntf_ext_idle_notification_v1_Listener.resumed) := @ext_idle_notification_v1_resumed_Intf;
   ext_idle_notification_v1_interface.name := PChar(EXT_IDLE_NOTIFICATION_V1_INTERFACE_NAME);
   ext_idle_notification_v1_interface.version := 2;
   ext_idle_notification_v1_interface.method_count := 1;
   ext_idle_notification_v1_interface.methods := @ext_idle_notification_v1_requests;
   ext_idle_notification_v1_interface.event_count := 2;
   ext_idle_notification_v1_interface.events := @ext_idle_notification_v1_events;
-
 end;
+
 
 end.

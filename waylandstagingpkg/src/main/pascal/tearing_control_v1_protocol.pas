@@ -48,6 +48,8 @@ type
 
   TWpTearingControlManagerV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpTearingControlManagerV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
@@ -60,6 +62,8 @@ type
 
   TWpTearingControlV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpTearingControlV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _SET_PRESENTATION_HINT = 0;
@@ -72,7 +76,6 @@ type
 
 
 
-procedure InitInterfaces;
 
 
 
@@ -87,16 +90,23 @@ var
 implementation
 
 var
+  vwp_tearing_control_manager_v1_registered: Boolean = False;
   vIntf_wp_tearing_control_manager_v1_Listener: Twp_tearing_control_manager_v1_listener;
+  vwp_tearing_control_v1_registered: Boolean = False;
   vIntf_wp_tearing_control_v1_Listener: Twp_tearing_control_v1_listener;
-  vInterfacesRegistered: Boolean = False;
 
 
 
 constructor TWpTearingControlManagerV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TWpTearingControlManagerV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpTearingControlManagerV1;
+begin
+  RegisterInterface;
+  Result := TWpTearingControlManagerV1.Create(ARegistry.Bind(AName, @wp_tearing_control_manager_v1_interface, AVersion));
 end;
 
 destructor TWpTearingControlManagerV1.Destroy;
@@ -109,6 +119,7 @@ function TWpTearingControlManagerV1.GetTearingControl(ASurface: TWlSurface; APro
 var
   id: Pwl_proxy;
 begin
+  TWpTearingControlV1.RegisterInterface;
   id := wl_proxy_marshal_constructor(FProxy,
       _GET_TEARING_CONTROL, @wp_tearing_control_v1_interface, nil, ASurface.Proxy);
   if AProxyClass = nil then
@@ -125,8 +136,14 @@ begin
 end;
 constructor TWpTearingControlV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TWpTearingControlV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpTearingControlV1;
+begin
+  RegisterInterface;
+  Result := TWpTearingControlV1.Create(ARegistry.Bind(AName, @wp_tearing_control_v1_interface, AVersion));
 end;
 
 procedure TWpTearingControlV1.SetPresentationHint(AHint: DWord);
@@ -174,26 +191,29 @@ const
     (name: 'destroy'; signature: ''; types: @pInterfaces[0])
   );
 
-procedure InitInterfaces;
+class procedure TWpTearingControlManagerV1.RegisterInterface;
 begin
-  if vInterfacesRegistered then Exit;
-  vInterfacesRegistered := True;
-
-
+  if vwp_tearing_control_manager_v1_registered then Exit;
+  vwp_tearing_control_manager_v1_registered := True;
   wp_tearing_control_manager_v1_interface.name := PChar(WP_TEARING_CONTROL_MANAGER_V1_INTERFACE_NAME);
   wp_tearing_control_manager_v1_interface.version := 1;
   wp_tearing_control_manager_v1_interface.method_count := 2;
   wp_tearing_control_manager_v1_interface.methods := @wp_tearing_control_manager_v1_requests;
   wp_tearing_control_manager_v1_interface.event_count := 0;
   wp_tearing_control_manager_v1_interface.events := nil;
+end;
 
+class procedure TWpTearingControlV1.RegisterInterface;
+begin
+  if vwp_tearing_control_v1_registered then Exit;
+  vwp_tearing_control_v1_registered := True;
   wp_tearing_control_v1_interface.name := PChar(WP_TEARING_CONTROL_V1_INTERFACE_NAME);
   wp_tearing_control_v1_interface.version := 1;
   wp_tearing_control_v1_interface.method_count := 2;
   wp_tearing_control_v1_interface.methods := @wp_tearing_control_v1_requests;
   wp_tearing_control_v1_interface.event_count := 0;
   wp_tearing_control_v1_interface.events := nil;
-
 end;
+
 
 end.

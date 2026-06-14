@@ -48,6 +48,8 @@ type
 
   TXdgToplevelDragManagerV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TXdgToplevelDragManagerV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
@@ -60,6 +62,8 @@ type
 
   TXdgToplevelDragV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TXdgToplevelDragV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
@@ -72,7 +76,6 @@ type
 
 
 
-procedure InitInterfaces;
 
 
 
@@ -87,16 +90,23 @@ var
 implementation
 
 var
+  vxdg_toplevel_drag_manager_v1_registered: Boolean = False;
   vIntf_xdg_toplevel_drag_manager_v1_Listener: Txdg_toplevel_drag_manager_v1_listener;
+  vxdg_toplevel_drag_v1_registered: Boolean = False;
   vIntf_xdg_toplevel_drag_v1_Listener: Txdg_toplevel_drag_v1_listener;
-  vInterfacesRegistered: Boolean = False;
 
 
 
 constructor TXdgToplevelDragManagerV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TXdgToplevelDragManagerV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TXdgToplevelDragManagerV1;
+begin
+  RegisterInterface;
+  Result := TXdgToplevelDragManagerV1.Create(ARegistry.Bind(AName, @xdg_toplevel_drag_manager_v1_interface, AVersion));
 end;
 
 destructor TXdgToplevelDragManagerV1.Destroy;
@@ -109,6 +119,7 @@ function TXdgToplevelDragManagerV1.GetXdgToplevelDrag(ADataSource: TWlDataSource
 var
   id: Pwl_proxy;
 begin
+  TXdgToplevelDragV1.RegisterInterface;
   id := wl_proxy_marshal_constructor(FProxy,
       _GET_XDG_TOPLEVEL_DRAG, @xdg_toplevel_drag_v1_interface, nil, ADataSource.Proxy);
   if AProxyClass = nil then
@@ -125,8 +136,14 @@ begin
 end;
 constructor TXdgToplevelDragV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TXdgToplevelDragV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TXdgToplevelDragV1;
+begin
+  RegisterInterface;
+  Result := TXdgToplevelDragV1.Create(ARegistry.Bind(AName, @xdg_toplevel_drag_v1_interface, AVersion));
 end;
 
 destructor TXdgToplevelDragV1.Destroy;
@@ -177,26 +194,29 @@ const
     (name: 'attach'; signature: 'oii'; types: @pInterfaces[10])
   );
 
-procedure InitInterfaces;
+class procedure TXdgToplevelDragManagerV1.RegisterInterface;
 begin
-  if vInterfacesRegistered then Exit;
-  vInterfacesRegistered := True;
-
-
+  if vxdg_toplevel_drag_manager_v1_registered then Exit;
+  vxdg_toplevel_drag_manager_v1_registered := True;
   xdg_toplevel_drag_manager_v1_interface.name := PChar(XDG_TOPLEVEL_DRAG_MANAGER_V1_INTERFACE_NAME);
   xdg_toplevel_drag_manager_v1_interface.version := 1;
   xdg_toplevel_drag_manager_v1_interface.method_count := 2;
   xdg_toplevel_drag_manager_v1_interface.methods := @xdg_toplevel_drag_manager_v1_requests;
   xdg_toplevel_drag_manager_v1_interface.event_count := 0;
   xdg_toplevel_drag_manager_v1_interface.events := nil;
+end;
 
+class procedure TXdgToplevelDragV1.RegisterInterface;
+begin
+  if vxdg_toplevel_drag_v1_registered then Exit;
+  vxdg_toplevel_drag_v1_registered := True;
   xdg_toplevel_drag_v1_interface.name := PChar(XDG_TOPLEVEL_DRAG_V1_INTERFACE_NAME);
   xdg_toplevel_drag_v1_interface.version := 1;
   xdg_toplevel_drag_v1_interface.method_count := 2;
   xdg_toplevel_drag_v1_interface.methods := @xdg_toplevel_drag_v1_requests;
   xdg_toplevel_drag_v1_interface.event_count := 0;
   xdg_toplevel_drag_v1_interface.events := nil;
-
 end;
+
 
 end.

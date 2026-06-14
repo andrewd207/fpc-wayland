@@ -32,9 +32,9 @@ procedure TRegistryHandler.wl_registry_global(AWlRegistry: TWlRegistry;
 begin
   WriteLn(Format('Got a registry event for %s id %d', [AInterface, AName]));
   if AInterface = 'wl_compositor' then
-    compositor := TWlCompositor.Create(AWlRegistry.Bind(AName, @wl_compositor_interface, 1))
+    compositor := TWlCompositor.BindFrom(AWlRegistry, AName, 1)
   else if AInterface = 'wl_shell' then
-    shell := TWlShell.Create(AWlRegistry.Bind(AName, @wl_shell_interface, 1));
+    shell := TWlShell.BindFrom(AWlRegistry, AName, 1);
 end;
 
 procedure TRegistryHandler.wl_registry_global_remove(AWlRegistry: TWlRegistry; AName: DWord);

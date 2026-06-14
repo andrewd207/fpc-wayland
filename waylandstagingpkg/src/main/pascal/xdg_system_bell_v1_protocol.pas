@@ -29,6 +29,8 @@ type
 
   TXdgSystemBellV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TXdgSystemBellV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
@@ -41,7 +43,6 @@ type
 
 
 
-procedure InitInterfaces;
 
 
 
@@ -54,15 +55,21 @@ var
 implementation
 
 var
+  vxdg_system_bell_v1_registered: Boolean = False;
   vIntf_xdg_system_bell_v1_Listener: Txdg_system_bell_v1_listener;
-  vInterfacesRegistered: Boolean = False;
 
 
 
 constructor TXdgSystemBellV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TXdgSystemBellV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TXdgSystemBellV1;
+begin
+  RegisterInterface;
+  Result := TXdgSystemBellV1.Create(ARegistry.Bind(AName, @xdg_system_bell_v1_interface, AVersion));
 end;
 
 destructor TXdgSystemBellV1.Destroy;
@@ -105,19 +112,17 @@ const
     (name: 'ring'; signature: '?o'; types: @pInterfaces[8])
   );
 
-procedure InitInterfaces;
+class procedure TXdgSystemBellV1.RegisterInterface;
 begin
-  if vInterfacesRegistered then Exit;
-  vInterfacesRegistered := True;
-
-
+  if vxdg_system_bell_v1_registered then Exit;
+  vxdg_system_bell_v1_registered := True;
   xdg_system_bell_v1_interface.name := PChar(XDG_SYSTEM_BELL_V1_INTERFACE_NAME);
   xdg_system_bell_v1_interface.version := 1;
   xdg_system_bell_v1_interface.method_count := 2;
   xdg_system_bell_v1_interface.methods := @xdg_system_bell_v1_requests;
   xdg_system_bell_v1_interface.event_count := 0;
   xdg_system_bell_v1_interface.events := nil;
-
 end;
+
 
 end.

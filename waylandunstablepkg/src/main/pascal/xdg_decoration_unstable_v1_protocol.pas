@@ -50,6 +50,8 @@ type
 
   TXdgDecorationManagerV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TXdgDecorationManagerV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
@@ -62,6 +64,8 @@ type
 
   TXdgToplevelDecorationV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TXdgToplevelDecorationV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
@@ -76,7 +80,6 @@ type
 
 
 
-procedure InitInterfaces;
 
 
 
@@ -91,16 +94,23 @@ var
 implementation
 
 var
+  vxdg_decoration_manager_v1_registered: Boolean = False;
   vIntf_xdg_decoration_manager_v1_Listener: Txdg_decoration_manager_v1_listener;
+  vxdg_toplevel_decoration_v1_registered: Boolean = False;
   vIntf_xdg_toplevel_decoration_v1_Listener: Txdg_toplevel_decoration_v1_listener;
-  vInterfacesRegistered: Boolean = False;
 
 
 
 constructor TXdgDecorationManagerV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TXdgDecorationManagerV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TXdgDecorationManagerV1;
+begin
+  RegisterInterface;
+  Result := TXdgDecorationManagerV1.Create(ARegistry.Bind(AName, @xdg_decoration_manager_v1_interface, AVersion));
 end;
 
 destructor TXdgDecorationManagerV1.Destroy;
@@ -113,6 +123,7 @@ function TXdgDecorationManagerV1.GetToplevelDecoration(AToplevel: TXdgToplevel; 
 var
   id: Pwl_proxy;
 begin
+  TXdgToplevelDecorationV1.RegisterInterface;
   id := wl_proxy_marshal_constructor(FProxy,
       _GET_TOPLEVEL_DECORATION, @xdg_toplevel_decoration_v1_interface, nil, AToplevel.Proxy);
   if AProxyClass = nil then
@@ -129,8 +140,14 @@ begin
 end;
 constructor TXdgToplevelDecorationV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TXdgToplevelDecorationV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TXdgToplevelDecorationV1;
+begin
+  RegisterInterface;
+  Result := TXdgToplevelDecorationV1.Create(ARegistry.Bind(AName, @xdg_toplevel_decoration_v1_interface, AVersion));
 end;
 
 destructor TXdgToplevelDecorationV1.Destroy;
@@ -196,27 +213,30 @@ const
     (name: 'configure'; signature: 'u'; types: @pInterfaces[0])
   );
 
-procedure InitInterfaces;
+class procedure TXdgDecorationManagerV1.RegisterInterface;
 begin
-  if vInterfacesRegistered then Exit;
-  vInterfacesRegistered := True;
-  Pointer(vIntf_xdg_toplevel_decoration_v1_Listener.configure) := @xdg_toplevel_decoration_v1_configure_Intf;
-
-
+  if vxdg_decoration_manager_v1_registered then Exit;
+  vxdg_decoration_manager_v1_registered := True;
   xdg_decoration_manager_v1_interface.name := PChar(XDG_DECORATION_MANAGER_V1_INTERFACE_NAME);
   xdg_decoration_manager_v1_interface.version := 1;
   xdg_decoration_manager_v1_interface.method_count := 2;
   xdg_decoration_manager_v1_interface.methods := @xdg_decoration_manager_v1_requests;
   xdg_decoration_manager_v1_interface.event_count := 0;
   xdg_decoration_manager_v1_interface.events := nil;
+end;
 
+class procedure TXdgToplevelDecorationV1.RegisterInterface;
+begin
+  if vxdg_toplevel_decoration_v1_registered then Exit;
+  vxdg_toplevel_decoration_v1_registered := True;
+  Pointer(vIntf_xdg_toplevel_decoration_v1_Listener.configure) := @xdg_toplevel_decoration_v1_configure_Intf;
   xdg_toplevel_decoration_v1_interface.name := PChar(XDG_TOPLEVEL_DECORATION_V1_INTERFACE_NAME);
   xdg_toplevel_decoration_v1_interface.version := 1;
   xdg_toplevel_decoration_v1_interface.method_count := 3;
   xdg_toplevel_decoration_v1_interface.methods := @xdg_toplevel_decoration_v1_requests;
   xdg_toplevel_decoration_v1_interface.event_count := 1;
   xdg_toplevel_decoration_v1_interface.events := @xdg_toplevel_decoration_v1_events;
-
 end;
+
 
 end.

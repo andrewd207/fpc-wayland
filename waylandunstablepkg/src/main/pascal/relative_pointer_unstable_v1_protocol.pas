@@ -41,6 +41,8 @@ type
 
   TWpRelativePointerManagerV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpRelativePointerManagerV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
@@ -53,6 +55,8 @@ type
 
   TWpRelativePointerV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpRelativePointerV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
@@ -63,7 +67,6 @@ type
 
 
 
-procedure InitInterfaces;
 
 
 
@@ -78,16 +81,23 @@ var
 implementation
 
 var
+  vwp_relative_pointer_manager_v1_registered: Boolean = False;
   vIntf_wp_relative_pointer_manager_v1_Listener: Twp_relative_pointer_manager_v1_listener;
+  vwp_relative_pointer_v1_registered: Boolean = False;
   vIntf_wp_relative_pointer_v1_Listener: Twp_relative_pointer_v1_listener;
-  vInterfacesRegistered: Boolean = False;
 
 
 
 constructor TWpRelativePointerManagerV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TWpRelativePointerManagerV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpRelativePointerManagerV1;
+begin
+  RegisterInterface;
+  Result := TWpRelativePointerManagerV1.Create(ARegistry.Bind(AName, @wp_relative_pointer_manager_v1_interface, AVersion));
 end;
 
 destructor TWpRelativePointerManagerV1.Destroy;
@@ -100,6 +110,7 @@ function TWpRelativePointerManagerV1.GetRelativePointer(APointer: TWlPointer; AP
 var
   id: Pwl_proxy;
 begin
+  TWpRelativePointerV1.RegisterInterface;
   id := wl_proxy_marshal_constructor(FProxy,
       _GET_RELATIVE_POINTER, @wp_relative_pointer_v1_interface, nil, APointer.Proxy);
   if AProxyClass = nil then
@@ -116,8 +127,14 @@ begin
 end;
 constructor TWpRelativePointerV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TWpRelativePointerV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpRelativePointerV1;
+begin
+  RegisterInterface;
+  Result := TWpRelativePointerV1.Create(ARegistry.Bind(AName, @wp_relative_pointer_v1_interface, AVersion));
 end;
 
 destructor TWpRelativePointerV1.Destroy;
@@ -171,27 +188,30 @@ const
     (name: 'relative_motion'; signature: 'uuffff'; types: @pInterfaces[0])
   );
 
-procedure InitInterfaces;
+class procedure TWpRelativePointerManagerV1.RegisterInterface;
 begin
-  if vInterfacesRegistered then Exit;
-  vInterfacesRegistered := True;
-  Pointer(vIntf_wp_relative_pointer_v1_Listener.relative_motion) := @wp_relative_pointer_v1_relative_motion_Intf;
-
-
+  if vwp_relative_pointer_manager_v1_registered then Exit;
+  vwp_relative_pointer_manager_v1_registered := True;
   wp_relative_pointer_manager_v1_interface.name := PChar(WP_RELATIVE_POINTER_MANAGER_V1_INTERFACE_NAME);
   wp_relative_pointer_manager_v1_interface.version := 1;
   wp_relative_pointer_manager_v1_interface.method_count := 2;
   wp_relative_pointer_manager_v1_interface.methods := @wp_relative_pointer_manager_v1_requests;
   wp_relative_pointer_manager_v1_interface.event_count := 0;
   wp_relative_pointer_manager_v1_interface.events := nil;
+end;
 
+class procedure TWpRelativePointerV1.RegisterInterface;
+begin
+  if vwp_relative_pointer_v1_registered then Exit;
+  vwp_relative_pointer_v1_registered := True;
+  Pointer(vIntf_wp_relative_pointer_v1_Listener.relative_motion) := @wp_relative_pointer_v1_relative_motion_Intf;
   wp_relative_pointer_v1_interface.name := PChar(WP_RELATIVE_POINTER_V1_INTERFACE_NAME);
   wp_relative_pointer_v1_interface.version := 1;
   wp_relative_pointer_v1_interface.method_count := 1;
   wp_relative_pointer_v1_interface.methods := @wp_relative_pointer_v1_requests;
   wp_relative_pointer_v1_interface.event_count := 1;
   wp_relative_pointer_v1_interface.events := @wp_relative_pointer_v1_events;
-
 end;
+
 
 end.

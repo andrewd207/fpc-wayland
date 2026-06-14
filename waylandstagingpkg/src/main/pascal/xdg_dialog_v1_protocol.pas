@@ -43,6 +43,8 @@ type
 
   TXdgWmDialogV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TXdgWmDialogV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
@@ -55,6 +57,8 @@ type
 
   TXdgDialogV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TXdgDialogV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
@@ -69,7 +73,6 @@ type
 
 
 
-procedure InitInterfaces;
 
 
 
@@ -84,16 +87,23 @@ var
 implementation
 
 var
+  vxdg_wm_dialog_v1_registered: Boolean = False;
   vIntf_xdg_wm_dialog_v1_Listener: Txdg_wm_dialog_v1_listener;
+  vxdg_dialog_v1_registered: Boolean = False;
   vIntf_xdg_dialog_v1_Listener: Txdg_dialog_v1_listener;
-  vInterfacesRegistered: Boolean = False;
 
 
 
 constructor TXdgWmDialogV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TXdgWmDialogV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TXdgWmDialogV1;
+begin
+  RegisterInterface;
+  Result := TXdgWmDialogV1.Create(ARegistry.Bind(AName, @xdg_wm_dialog_v1_interface, AVersion));
 end;
 
 destructor TXdgWmDialogV1.Destroy;
@@ -106,6 +116,7 @@ function TXdgWmDialogV1.GetXdgDialog(AToplevel: TXdgToplevel; AProxyClass: TWLPr
 var
   id: Pwl_proxy;
 begin
+  TXdgDialogV1.RegisterInterface;
   id := wl_proxy_marshal_constructor(FProxy,
       _GET_XDG_DIALOG, @xdg_dialog_v1_interface, nil, AToplevel.Proxy);
   if AProxyClass = nil then
@@ -122,8 +133,14 @@ begin
 end;
 constructor TXdgDialogV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TXdgDialogV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TXdgDialogV1;
+begin
+  RegisterInterface;
+  Result := TXdgDialogV1.Create(ARegistry.Bind(AName, @xdg_dialog_v1_interface, AVersion));
 end;
 
 destructor TXdgDialogV1.Destroy;
@@ -177,26 +194,29 @@ const
     (name: 'unset_modal'; signature: ''; types: @pInterfaces[0])
   );
 
-procedure InitInterfaces;
+class procedure TXdgWmDialogV1.RegisterInterface;
 begin
-  if vInterfacesRegistered then Exit;
-  vInterfacesRegistered := True;
-
-
+  if vxdg_wm_dialog_v1_registered then Exit;
+  vxdg_wm_dialog_v1_registered := True;
   xdg_wm_dialog_v1_interface.name := PChar(XDG_WM_DIALOG_V1_INTERFACE_NAME);
   xdg_wm_dialog_v1_interface.version := 1;
   xdg_wm_dialog_v1_interface.method_count := 2;
   xdg_wm_dialog_v1_interface.methods := @xdg_wm_dialog_v1_requests;
   xdg_wm_dialog_v1_interface.event_count := 0;
   xdg_wm_dialog_v1_interface.events := nil;
+end;
 
+class procedure TXdgDialogV1.RegisterInterface;
+begin
+  if vxdg_dialog_v1_registered then Exit;
+  vxdg_dialog_v1_registered := True;
   xdg_dialog_v1_interface.name := PChar(XDG_DIALOG_V1_INTERFACE_NAME);
   xdg_dialog_v1_interface.version := 1;
   xdg_dialog_v1_interface.method_count := 3;
   xdg_dialog_v1_interface.methods := @xdg_dialog_v1_requests;
   xdg_dialog_v1_interface.event_count := 0;
   xdg_dialog_v1_interface.events := nil;
-
 end;
+
 
 end.

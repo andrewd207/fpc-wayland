@@ -66,6 +66,8 @@ type
 
   TWpLinuxExplicitSynchronizationV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpLinuxExplicitSynchronizationV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
@@ -78,6 +80,8 @@ type
 
   TWpLinuxSurfaceSynchronizationV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpLinuxSurfaceSynchronizationV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
@@ -92,13 +96,14 @@ type
 
   TWpLinuxBufferReleaseV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpLinuxBufferReleaseV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
     function AddListener(AIntf: IWpLinuxBufferReleaseV1Listener): LongInt;
   end;
 
 
 
-procedure InitInterfaces;
 
 
 
@@ -115,17 +120,25 @@ var
 implementation
 
 var
+  vwp_linux_explicit_synchronization_v1_registered: Boolean = False;
   vIntf_wp_linux_explicit_synchronization_v1_Listener: Twp_linux_explicit_synchronization_v1_listener;
+  vwp_linux_surface_synchronization_v1_registered: Boolean = False;
   vIntf_wp_linux_surface_synchronization_v1_Listener: Twp_linux_surface_synchronization_v1_listener;
+  vwp_linux_buffer_release_v1_registered: Boolean = False;
   vIntf_wp_linux_buffer_release_v1_Listener: Twp_linux_buffer_release_v1_listener;
-  vInterfacesRegistered: Boolean = False;
 
 
 
 constructor TWpLinuxExplicitSynchronizationV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TWpLinuxExplicitSynchronizationV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpLinuxExplicitSynchronizationV1;
+begin
+  RegisterInterface;
+  Result := TWpLinuxExplicitSynchronizationV1.Create(ARegistry.Bind(AName, @wp_linux_explicit_synchronization_v1_interface, AVersion));
 end;
 
 destructor TWpLinuxExplicitSynchronizationV1.Destroy;
@@ -138,6 +151,7 @@ function TWpLinuxExplicitSynchronizationV1.GetSynchronization(ASurface: TWlSurfa
 var
   id: Pwl_proxy;
 begin
+  TWpLinuxSurfaceSynchronizationV1.RegisterInterface;
   id := wl_proxy_marshal_constructor(FProxy,
       _GET_SYNCHRONIZATION, @wp_linux_surface_synchronization_v1_interface, nil, ASurface.Proxy);
   if AProxyClass = nil then
@@ -154,8 +168,14 @@ begin
 end;
 constructor TWpLinuxSurfaceSynchronizationV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TWpLinuxSurfaceSynchronizationV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpLinuxSurfaceSynchronizationV1;
+begin
+  RegisterInterface;
+  Result := TWpLinuxSurfaceSynchronizationV1.Create(ARegistry.Bind(AName, @wp_linux_surface_synchronization_v1_interface, AVersion));
 end;
 
 destructor TWpLinuxSurfaceSynchronizationV1.Destroy;
@@ -173,6 +193,7 @@ function TWpLinuxSurfaceSynchronizationV1.GetRelease(AProxyClass: TWLProxyObject
 var
   release: Pwl_proxy;
 begin
+  TWpLinuxBufferReleaseV1.RegisterInterface;
   release := wl_proxy_marshal_constructor(FProxy,
       _GET_RELEASE, @wp_linux_buffer_release_v1_interface, nil);
   if AProxyClass = nil then
@@ -189,8 +210,14 @@ begin
 end;
 constructor TWpLinuxBufferReleaseV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TWpLinuxBufferReleaseV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpLinuxBufferReleaseV1;
+begin
+  RegisterInterface;
+  Result := TWpLinuxBufferReleaseV1.Create(ARegistry.Bind(AName, @wp_linux_buffer_release_v1_interface, AVersion));
 end;
 
 function TWpLinuxBufferReleaseV1.AddListener(AIntf: IWpLinuxBufferReleaseV1Listener): LongInt;
@@ -251,35 +278,43 @@ const
     (name: 'immediate_release'; signature: ''; types: @pInterfaces[0])
   );
 
-procedure InitInterfaces;
+class procedure TWpLinuxExplicitSynchronizationV1.RegisterInterface;
 begin
-  if vInterfacesRegistered then Exit;
-  vInterfacesRegistered := True;
-  Pointer(vIntf_wp_linux_buffer_release_v1_Listener.fenced_release) := @wp_linux_buffer_release_v1_fenced_release_Intf;
-  Pointer(vIntf_wp_linux_buffer_release_v1_Listener.immediate_release) := @wp_linux_buffer_release_v1_immediate_release_Intf;
-
-
+  if vwp_linux_explicit_synchronization_v1_registered then Exit;
+  vwp_linux_explicit_synchronization_v1_registered := True;
   wp_linux_explicit_synchronization_v1_interface.name := PChar(WP_LINUX_EXPLICIT_SYNCHRONIZATION_V1_INTERFACE_NAME);
   wp_linux_explicit_synchronization_v1_interface.version := 2;
   wp_linux_explicit_synchronization_v1_interface.method_count := 2;
   wp_linux_explicit_synchronization_v1_interface.methods := @wp_linux_explicit_synchronization_v1_requests;
   wp_linux_explicit_synchronization_v1_interface.event_count := 0;
   wp_linux_explicit_synchronization_v1_interface.events := nil;
+end;
 
+class procedure TWpLinuxSurfaceSynchronizationV1.RegisterInterface;
+begin
+  if vwp_linux_surface_synchronization_v1_registered then Exit;
+  vwp_linux_surface_synchronization_v1_registered := True;
   wp_linux_surface_synchronization_v1_interface.name := PChar(WP_LINUX_SURFACE_SYNCHRONIZATION_V1_INTERFACE_NAME);
   wp_linux_surface_synchronization_v1_interface.version := 2;
   wp_linux_surface_synchronization_v1_interface.method_count := 3;
   wp_linux_surface_synchronization_v1_interface.methods := @wp_linux_surface_synchronization_v1_requests;
   wp_linux_surface_synchronization_v1_interface.event_count := 0;
   wp_linux_surface_synchronization_v1_interface.events := nil;
+end;
 
+class procedure TWpLinuxBufferReleaseV1.RegisterInterface;
+begin
+  if vwp_linux_buffer_release_v1_registered then Exit;
+  vwp_linux_buffer_release_v1_registered := True;
+  Pointer(vIntf_wp_linux_buffer_release_v1_Listener.fenced_release) := @wp_linux_buffer_release_v1_fenced_release_Intf;
+  Pointer(vIntf_wp_linux_buffer_release_v1_Listener.immediate_release) := @wp_linux_buffer_release_v1_immediate_release_Intf;
   wp_linux_buffer_release_v1_interface.name := PChar(WP_LINUX_BUFFER_RELEASE_V1_INTERFACE_NAME);
   wp_linux_buffer_release_v1_interface.version := 1;
   wp_linux_buffer_release_v1_interface.method_count := 0;
   wp_linux_buffer_release_v1_interface.methods := nil;
   wp_linux_buffer_release_v1_interface.event_count := 2;
   wp_linux_buffer_release_v1_interface.events := @wp_linux_buffer_release_v1_events;
-
 end;
+
 
 end.

@@ -111,6 +111,8 @@ type
 
   TExtImageCopyCaptureManagerV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TExtImageCopyCaptureManagerV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _CREATE_SESSION = 0;
@@ -125,6 +127,8 @@ type
 
   TExtImageCopyCaptureSessionV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TExtImageCopyCaptureSessionV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _CREATE_FRAME = 0;
@@ -137,6 +141,8 @@ type
 
   TExtImageCopyCaptureFrameV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TExtImageCopyCaptureFrameV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
@@ -153,6 +159,8 @@ type
 
   TExtImageCopyCaptureCursorSessionV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TExtImageCopyCaptureCursorSessionV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
@@ -165,7 +173,6 @@ type
 
 
 
-procedure InitInterfaces;
 
 
 
@@ -184,24 +191,34 @@ var
 implementation
 
 var
+  vext_image_copy_capture_manager_v1_registered: Boolean = False;
   vIntf_ext_image_copy_capture_manager_v1_Listener: Text_image_copy_capture_manager_v1_listener;
+  vext_image_copy_capture_session_v1_registered: Boolean = False;
   vIntf_ext_image_copy_capture_session_v1_Listener: Text_image_copy_capture_session_v1_listener;
+  vext_image_copy_capture_frame_v1_registered: Boolean = False;
   vIntf_ext_image_copy_capture_frame_v1_Listener: Text_image_copy_capture_frame_v1_listener;
+  vext_image_copy_capture_cursor_session_v1_registered: Boolean = False;
   vIntf_ext_image_copy_capture_cursor_session_v1_Listener: Text_image_copy_capture_cursor_session_v1_listener;
-  vInterfacesRegistered: Boolean = False;
 
 
 
 constructor TExtImageCopyCaptureManagerV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TExtImageCopyCaptureManagerV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TExtImageCopyCaptureManagerV1;
+begin
+  RegisterInterface;
+  Result := TExtImageCopyCaptureManagerV1.Create(ARegistry.Bind(AName, @ext_image_copy_capture_manager_v1_interface, AVersion));
 end;
 
 function TExtImageCopyCaptureManagerV1.CreateSession(ASource: TExtImageCaptureSourceV1; AOptions: DWord; AProxyClass: TWLProxyObjectClass = nil {TExtImageCopyCaptureSessionV1}): TExtImageCopyCaptureSessionV1;
 var
   session: Pwl_proxy;
 begin
+  TExtImageCopyCaptureSessionV1.RegisterInterface;
   session := wl_proxy_marshal_constructor(FProxy,
       _CREATE_SESSION, @ext_image_copy_capture_session_v1_interface, nil, ASource.Proxy, AOptions);
   if AProxyClass = nil then
@@ -215,6 +232,7 @@ function TExtImageCopyCaptureManagerV1.CreatePointerCursorSession(ASource: TExtI
 var
   session: Pwl_proxy;
 begin
+  TExtImageCopyCaptureCursorSessionV1.RegisterInterface;
   session := wl_proxy_marshal_constructor(FProxy,
       _CREATE_POINTER_CURSOR_SESSION, @ext_image_copy_capture_cursor_session_v1_interface, nil, ASource.Proxy, APointer.Proxy);
   if AProxyClass = nil then
@@ -237,14 +255,21 @@ begin
 end;
 constructor TExtImageCopyCaptureSessionV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TExtImageCopyCaptureSessionV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TExtImageCopyCaptureSessionV1;
+begin
+  RegisterInterface;
+  Result := TExtImageCopyCaptureSessionV1.Create(ARegistry.Bind(AName, @ext_image_copy_capture_session_v1_interface, AVersion));
 end;
 
 function TExtImageCopyCaptureSessionV1.CreateFrame(AProxyClass: TWLProxyObjectClass = nil {TExtImageCopyCaptureFrameV1}): TExtImageCopyCaptureFrameV1;
 var
   frame: Pwl_proxy;
 begin
+  TExtImageCopyCaptureFrameV1.RegisterInterface;
   frame := wl_proxy_marshal_constructor(FProxy,
       _CREATE_FRAME, @ext_image_copy_capture_frame_v1_interface, nil);
   if AProxyClass = nil then
@@ -267,8 +292,14 @@ begin
 end;
 constructor TExtImageCopyCaptureFrameV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TExtImageCopyCaptureFrameV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TExtImageCopyCaptureFrameV1;
+begin
+  RegisterInterface;
+  Result := TExtImageCopyCaptureFrameV1.Create(ARegistry.Bind(AName, @ext_image_copy_capture_frame_v1_interface, AVersion));
 end;
 
 destructor TExtImageCopyCaptureFrameV1.Destroy;
@@ -299,8 +330,14 @@ begin
 end;
 constructor TExtImageCopyCaptureCursorSessionV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TExtImageCopyCaptureCursorSessionV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TExtImageCopyCaptureCursorSessionV1;
+begin
+  RegisterInterface;
+  Result := TExtImageCopyCaptureCursorSessionV1.Create(ARegistry.Bind(AName, @ext_image_copy_capture_cursor_session_v1_interface, AVersion));
 end;
 
 destructor TExtImageCopyCaptureCursorSessionV1.Destroy;
@@ -313,6 +350,7 @@ function TExtImageCopyCaptureCursorSessionV1.GetCaptureSession(AProxyClass: TWLP
 var
   session: Pwl_proxy;
 begin
+  TExtImageCopyCaptureSessionV1.RegisterInterface;
   session := wl_proxy_marshal_constructor(FProxy,
       _GET_CAPTURE_SESSION, @ext_image_copy_capture_session_v1_interface, nil);
   if AProxyClass = nil then
@@ -530,55 +568,68 @@ const
     (name: 'hotspot'; signature: 'ii'; types: @pInterfaces[0])
   );
 
-procedure InitInterfaces;
+class procedure TExtImageCopyCaptureManagerV1.RegisterInterface;
 begin
-  if vInterfacesRegistered then Exit;
-  vInterfacesRegistered := True;
-  Pointer(vIntf_ext_image_copy_capture_session_v1_Listener.buffer_size) := @ext_image_copy_capture_session_v1_buffer_size_Intf;
-  Pointer(vIntf_ext_image_copy_capture_session_v1_Listener.shm_format) := @ext_image_copy_capture_session_v1_shm_format_Intf;
-  Pointer(vIntf_ext_image_copy_capture_session_v1_Listener.dmabuf_device) := @ext_image_copy_capture_session_v1_dmabuf_device_Intf;
-  Pointer(vIntf_ext_image_copy_capture_session_v1_Listener.dmabuf_format) := @ext_image_copy_capture_session_v1_dmabuf_format_Intf;
-  Pointer(vIntf_ext_image_copy_capture_session_v1_Listener.done) := @ext_image_copy_capture_session_v1_done_Intf;
-  Pointer(vIntf_ext_image_copy_capture_session_v1_Listener.stopped) := @ext_image_copy_capture_session_v1_stopped_Intf;
-  Pointer(vIntf_ext_image_copy_capture_frame_v1_Listener.transform) := @ext_image_copy_capture_frame_v1_transform_Intf;
-  Pointer(vIntf_ext_image_copy_capture_frame_v1_Listener.damage) := @ext_image_copy_capture_frame_v1_damage_Intf;
-  Pointer(vIntf_ext_image_copy_capture_frame_v1_Listener.presentation_time) := @ext_image_copy_capture_frame_v1_presentation_time_Intf;
-  Pointer(vIntf_ext_image_copy_capture_frame_v1_Listener.ready) := @ext_image_copy_capture_frame_v1_ready_Intf;
-  Pointer(vIntf_ext_image_copy_capture_frame_v1_Listener.failed) := @ext_image_copy_capture_frame_v1_failed_Intf;
-  Pointer(vIntf_ext_image_copy_capture_cursor_session_v1_Listener.enter) := @ext_image_copy_capture_cursor_session_v1_enter_Intf;
-  Pointer(vIntf_ext_image_copy_capture_cursor_session_v1_Listener.leave) := @ext_image_copy_capture_cursor_session_v1_leave_Intf;
-  Pointer(vIntf_ext_image_copy_capture_cursor_session_v1_Listener.position) := @ext_image_copy_capture_cursor_session_v1_position_Intf;
-  Pointer(vIntf_ext_image_copy_capture_cursor_session_v1_Listener.hotspot) := @ext_image_copy_capture_cursor_session_v1_hotspot_Intf;
-
-
+  if vext_image_copy_capture_manager_v1_registered then Exit;
+  vext_image_copy_capture_manager_v1_registered := True;
   ext_image_copy_capture_manager_v1_interface.name := PChar(EXT_IMAGE_COPY_CAPTURE_MANAGER_V1_INTERFACE_NAME);
   ext_image_copy_capture_manager_v1_interface.version := 1;
   ext_image_copy_capture_manager_v1_interface.method_count := 3;
   ext_image_copy_capture_manager_v1_interface.methods := @ext_image_copy_capture_manager_v1_requests;
   ext_image_copy_capture_manager_v1_interface.event_count := 0;
   ext_image_copy_capture_manager_v1_interface.events := nil;
+end;
 
+class procedure TExtImageCopyCaptureSessionV1.RegisterInterface;
+begin
+  if vext_image_copy_capture_session_v1_registered then Exit;
+  vext_image_copy_capture_session_v1_registered := True;
+  Pointer(vIntf_ext_image_copy_capture_session_v1_Listener.buffer_size) := @ext_image_copy_capture_session_v1_buffer_size_Intf;
+  Pointer(vIntf_ext_image_copy_capture_session_v1_Listener.shm_format) := @ext_image_copy_capture_session_v1_shm_format_Intf;
+  Pointer(vIntf_ext_image_copy_capture_session_v1_Listener.dmabuf_device) := @ext_image_copy_capture_session_v1_dmabuf_device_Intf;
+  Pointer(vIntf_ext_image_copy_capture_session_v1_Listener.dmabuf_format) := @ext_image_copy_capture_session_v1_dmabuf_format_Intf;
+  Pointer(vIntf_ext_image_copy_capture_session_v1_Listener.done) := @ext_image_copy_capture_session_v1_done_Intf;
+  Pointer(vIntf_ext_image_copy_capture_session_v1_Listener.stopped) := @ext_image_copy_capture_session_v1_stopped_Intf;
   ext_image_copy_capture_session_v1_interface.name := PChar(EXT_IMAGE_COPY_CAPTURE_SESSION_V1_INTERFACE_NAME);
   ext_image_copy_capture_session_v1_interface.version := 1;
   ext_image_copy_capture_session_v1_interface.method_count := 2;
   ext_image_copy_capture_session_v1_interface.methods := @ext_image_copy_capture_session_v1_requests;
   ext_image_copy_capture_session_v1_interface.event_count := 6;
   ext_image_copy_capture_session_v1_interface.events := @ext_image_copy_capture_session_v1_events;
+end;
 
+class procedure TExtImageCopyCaptureFrameV1.RegisterInterface;
+begin
+  if vext_image_copy_capture_frame_v1_registered then Exit;
+  vext_image_copy_capture_frame_v1_registered := True;
+  Pointer(vIntf_ext_image_copy_capture_frame_v1_Listener.transform) := @ext_image_copy_capture_frame_v1_transform_Intf;
+  Pointer(vIntf_ext_image_copy_capture_frame_v1_Listener.damage) := @ext_image_copy_capture_frame_v1_damage_Intf;
+  Pointer(vIntf_ext_image_copy_capture_frame_v1_Listener.presentation_time) := @ext_image_copy_capture_frame_v1_presentation_time_Intf;
+  Pointer(vIntf_ext_image_copy_capture_frame_v1_Listener.ready) := @ext_image_copy_capture_frame_v1_ready_Intf;
+  Pointer(vIntf_ext_image_copy_capture_frame_v1_Listener.failed) := @ext_image_copy_capture_frame_v1_failed_Intf;
   ext_image_copy_capture_frame_v1_interface.name := PChar(EXT_IMAGE_COPY_CAPTURE_FRAME_V1_INTERFACE_NAME);
   ext_image_copy_capture_frame_v1_interface.version := 1;
   ext_image_copy_capture_frame_v1_interface.method_count := 4;
   ext_image_copy_capture_frame_v1_interface.methods := @ext_image_copy_capture_frame_v1_requests;
   ext_image_copy_capture_frame_v1_interface.event_count := 5;
   ext_image_copy_capture_frame_v1_interface.events := @ext_image_copy_capture_frame_v1_events;
+end;
 
+class procedure TExtImageCopyCaptureCursorSessionV1.RegisterInterface;
+begin
+  if vext_image_copy_capture_cursor_session_v1_registered then Exit;
+  vext_image_copy_capture_cursor_session_v1_registered := True;
+  Pointer(vIntf_ext_image_copy_capture_cursor_session_v1_Listener.enter) := @ext_image_copy_capture_cursor_session_v1_enter_Intf;
+  Pointer(vIntf_ext_image_copy_capture_cursor_session_v1_Listener.leave) := @ext_image_copy_capture_cursor_session_v1_leave_Intf;
+  Pointer(vIntf_ext_image_copy_capture_cursor_session_v1_Listener.position) := @ext_image_copy_capture_cursor_session_v1_position_Intf;
+  Pointer(vIntf_ext_image_copy_capture_cursor_session_v1_Listener.hotspot) := @ext_image_copy_capture_cursor_session_v1_hotspot_Intf;
   ext_image_copy_capture_cursor_session_v1_interface.name := PChar(EXT_IMAGE_COPY_CAPTURE_CURSOR_SESSION_V1_INTERFACE_NAME);
   ext_image_copy_capture_cursor_session_v1_interface.version := 1;
   ext_image_copy_capture_cursor_session_v1_interface.method_count := 2;
   ext_image_copy_capture_cursor_session_v1_interface.methods := @ext_image_copy_capture_cursor_session_v1_requests;
   ext_image_copy_capture_cursor_session_v1_interface.event_count := 4;
   ext_image_copy_capture_cursor_session_v1_interface.events := @ext_image_copy_capture_cursor_session_v1_events;
-
 end;
+
 
 end.

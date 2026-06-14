@@ -47,6 +47,8 @@ type
 
   TWpAlphaModifierV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpAlphaModifierV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
@@ -59,6 +61,8 @@ type
 
   TWpAlphaModifierSurfaceV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpAlphaModifierSurfaceV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
@@ -71,7 +75,6 @@ type
 
 
 
-procedure InitInterfaces;
 
 
 
@@ -86,16 +89,23 @@ var
 implementation
 
 var
+  vwp_alpha_modifier_v1_registered: Boolean = False;
   vIntf_wp_alpha_modifier_v1_Listener: Twp_alpha_modifier_v1_listener;
+  vwp_alpha_modifier_surface_v1_registered: Boolean = False;
   vIntf_wp_alpha_modifier_surface_v1_Listener: Twp_alpha_modifier_surface_v1_listener;
-  vInterfacesRegistered: Boolean = False;
 
 
 
 constructor TWpAlphaModifierV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TWpAlphaModifierV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpAlphaModifierV1;
+begin
+  RegisterInterface;
+  Result := TWpAlphaModifierV1.Create(ARegistry.Bind(AName, @wp_alpha_modifier_v1_interface, AVersion));
 end;
 
 destructor TWpAlphaModifierV1.Destroy;
@@ -108,6 +118,7 @@ function TWpAlphaModifierV1.GetSurface(ASurface: TWlSurface; AProxyClass: TWLPro
 var
   id: Pwl_proxy;
 begin
+  TWpAlphaModifierSurfaceV1.RegisterInterface;
   id := wl_proxy_marshal_constructor(FProxy,
       _GET_SURFACE, @wp_alpha_modifier_surface_v1_interface, nil, ASurface.Proxy);
   if AProxyClass = nil then
@@ -124,8 +135,14 @@ begin
 end;
 constructor TWpAlphaModifierSurfaceV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TWpAlphaModifierSurfaceV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpAlphaModifierSurfaceV1;
+begin
+  RegisterInterface;
+  Result := TWpAlphaModifierSurfaceV1.Create(ARegistry.Bind(AName, @wp_alpha_modifier_surface_v1_interface, AVersion));
 end;
 
 destructor TWpAlphaModifierSurfaceV1.Destroy;
@@ -173,26 +190,29 @@ const
     (name: 'set_multiplier'; signature: 'u'; types: @pInterfaces[0])
   );
 
-procedure InitInterfaces;
+class procedure TWpAlphaModifierV1.RegisterInterface;
 begin
-  if vInterfacesRegistered then Exit;
-  vInterfacesRegistered := True;
-
-
+  if vwp_alpha_modifier_v1_registered then Exit;
+  vwp_alpha_modifier_v1_registered := True;
   wp_alpha_modifier_v1_interface.name := PChar(WP_ALPHA_MODIFIER_V1_INTERFACE_NAME);
   wp_alpha_modifier_v1_interface.version := 1;
   wp_alpha_modifier_v1_interface.method_count := 2;
   wp_alpha_modifier_v1_interface.methods := @wp_alpha_modifier_v1_requests;
   wp_alpha_modifier_v1_interface.event_count := 0;
   wp_alpha_modifier_v1_interface.events := nil;
+end;
 
+class procedure TWpAlphaModifierSurfaceV1.RegisterInterface;
+begin
+  if vwp_alpha_modifier_surface_v1_registered then Exit;
+  vwp_alpha_modifier_surface_v1_registered := True;
   wp_alpha_modifier_surface_v1_interface.name := PChar(WP_ALPHA_MODIFIER_SURFACE_V1_INTERFACE_NAME);
   wp_alpha_modifier_surface_v1_interface.version := 1;
   wp_alpha_modifier_surface_v1_interface.method_count := 2;
   wp_alpha_modifier_surface_v1_interface.methods := @wp_alpha_modifier_surface_v1_requests;
   wp_alpha_modifier_surface_v1_interface.event_count := 0;
   wp_alpha_modifier_surface_v1_interface.events := nil;
-
 end;
+
 
 end.

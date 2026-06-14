@@ -63,6 +63,8 @@ type
 
   TXdgExporterV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TXdgExporterV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
@@ -75,6 +77,8 @@ type
 
   TXdgImporterV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TXdgImporterV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
@@ -87,6 +91,8 @@ type
 
   TXdgExportedV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TXdgExportedV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
@@ -97,6 +103,8 @@ type
 
   TXdgImportedV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TXdgImportedV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
@@ -109,7 +117,6 @@ type
 
 
 
-procedure InitInterfaces;
 
 
 
@@ -128,18 +135,27 @@ var
 implementation
 
 var
+  vxdg_exporter_v1_registered: Boolean = False;
   vIntf_xdg_exporter_v1_Listener: Txdg_exporter_v1_listener;
+  vxdg_importer_v1_registered: Boolean = False;
   vIntf_xdg_importer_v1_Listener: Txdg_importer_v1_listener;
+  vxdg_exported_v1_registered: Boolean = False;
   vIntf_xdg_exported_v1_Listener: Txdg_exported_v1_listener;
+  vxdg_imported_v1_registered: Boolean = False;
   vIntf_xdg_imported_v1_Listener: Txdg_imported_v1_listener;
-  vInterfacesRegistered: Boolean = False;
 
 
 
 constructor TXdgExporterV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TXdgExporterV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TXdgExporterV1;
+begin
+  RegisterInterface;
+  Result := TXdgExporterV1.Create(ARegistry.Bind(AName, @xdg_exporter_v1_interface, AVersion));
 end;
 
 destructor TXdgExporterV1.Destroy;
@@ -152,6 +168,7 @@ function TXdgExporterV1.Export(ASurface: TWlSurface; AProxyClass: TWLProxyObject
 var
   id: Pwl_proxy;
 begin
+  TXdgExportedV1.RegisterInterface;
   id := wl_proxy_marshal_constructor(FProxy,
       _EXPORT, @xdg_exported_v1_interface, nil, ASurface.Proxy);
   if AProxyClass = nil then
@@ -168,8 +185,14 @@ begin
 end;
 constructor TXdgImporterV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TXdgImporterV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TXdgImporterV1;
+begin
+  RegisterInterface;
+  Result := TXdgImporterV1.Create(ARegistry.Bind(AName, @xdg_importer_v1_interface, AVersion));
 end;
 
 destructor TXdgImporterV1.Destroy;
@@ -182,6 +205,7 @@ function TXdgImporterV1.Import(AHandle: String; AProxyClass: TWLProxyObjectClass
 var
   id: Pwl_proxy;
 begin
+  TXdgImportedV1.RegisterInterface;
   id := wl_proxy_marshal_constructor(FProxy,
       _IMPORT, @xdg_imported_v1_interface, nil, PChar(AHandle));
   if AProxyClass = nil then
@@ -198,8 +222,14 @@ begin
 end;
 constructor TXdgExportedV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TXdgExportedV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TXdgExportedV1;
+begin
+  RegisterInterface;
+  Result := TXdgExportedV1.Create(ARegistry.Bind(AName, @xdg_exported_v1_interface, AVersion));
 end;
 
 destructor TXdgExportedV1.Destroy;
@@ -215,8 +245,14 @@ begin
 end;
 constructor TXdgImportedV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TXdgImportedV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TXdgImportedV1;
+begin
+  RegisterInterface;
+  Result := TXdgImportedV1.Create(ARegistry.Bind(AName, @xdg_imported_v1_interface, AVersion));
 end;
 
 destructor TXdgImportedV1.Destroy;
@@ -298,42 +334,55 @@ const
     (name: 'destroyed'; signature: ''; types: @pInterfaces[0])
   );
 
-procedure InitInterfaces;
+class procedure TXdgExporterV1.RegisterInterface;
 begin
-  if vInterfacesRegistered then Exit;
-  vInterfacesRegistered := True;
-  Pointer(vIntf_xdg_exported_v1_Listener.handle) := @xdg_exported_v1_handle_Intf;
-  Pointer(vIntf_xdg_imported_v1_Listener.destroyed) := @xdg_imported_v1_destroyed_Intf;
-
-
+  if vxdg_exporter_v1_registered then Exit;
+  vxdg_exporter_v1_registered := True;
   xdg_exporter_v1_interface.name := PChar(XDG_EXPORTER_V1_INTERFACE_NAME);
   xdg_exporter_v1_interface.version := 1;
   xdg_exporter_v1_interface.method_count := 2;
   xdg_exporter_v1_interface.methods := @xdg_exporter_v1_requests;
   xdg_exporter_v1_interface.event_count := 0;
   xdg_exporter_v1_interface.events := nil;
+end;
 
+class procedure TXdgImporterV1.RegisterInterface;
+begin
+  if vxdg_importer_v1_registered then Exit;
+  vxdg_importer_v1_registered := True;
   xdg_importer_v1_interface.name := PChar(XDG_IMPORTER_V1_INTERFACE_NAME);
   xdg_importer_v1_interface.version := 1;
   xdg_importer_v1_interface.method_count := 2;
   xdg_importer_v1_interface.methods := @xdg_importer_v1_requests;
   xdg_importer_v1_interface.event_count := 0;
   xdg_importer_v1_interface.events := nil;
+end;
 
+class procedure TXdgExportedV1.RegisterInterface;
+begin
+  if vxdg_exported_v1_registered then Exit;
+  vxdg_exported_v1_registered := True;
+  Pointer(vIntf_xdg_exported_v1_Listener.handle) := @xdg_exported_v1_handle_Intf;
   xdg_exported_v1_interface.name := PChar(XDG_EXPORTED_V1_INTERFACE_NAME);
   xdg_exported_v1_interface.version := 1;
   xdg_exported_v1_interface.method_count := 1;
   xdg_exported_v1_interface.methods := @xdg_exported_v1_requests;
   xdg_exported_v1_interface.event_count := 1;
   xdg_exported_v1_interface.events := @xdg_exported_v1_events;
+end;
 
+class procedure TXdgImportedV1.RegisterInterface;
+begin
+  if vxdg_imported_v1_registered then Exit;
+  vxdg_imported_v1_registered := True;
+  Pointer(vIntf_xdg_imported_v1_Listener.destroyed) := @xdg_imported_v1_destroyed_Intf;
   xdg_imported_v1_interface.name := PChar(XDG_IMPORTED_V1_INTERFACE_NAME);
   xdg_imported_v1_interface.version := 1;
   xdg_imported_v1_interface.method_count := 2;
   xdg_imported_v1_interface.methods := @xdg_imported_v1_requests;
   xdg_imported_v1_interface.event_count := 1;
   xdg_imported_v1_interface.events := @xdg_imported_v1_events;
-
 end;
+
 
 end.

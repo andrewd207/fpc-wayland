@@ -50,6 +50,8 @@ type
 
   TWpContentTypeManagerV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpContentTypeManagerV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
@@ -62,6 +64,8 @@ type
 
   TWpContentTypeV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpContentTypeV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
@@ -74,7 +78,6 @@ type
 
 
 
-procedure InitInterfaces;
 
 
 
@@ -89,16 +92,23 @@ var
 implementation
 
 var
+  vwp_content_type_manager_v1_registered: Boolean = False;
   vIntf_wp_content_type_manager_v1_Listener: Twp_content_type_manager_v1_listener;
+  vwp_content_type_v1_registered: Boolean = False;
   vIntf_wp_content_type_v1_Listener: Twp_content_type_v1_listener;
-  vInterfacesRegistered: Boolean = False;
 
 
 
 constructor TWpContentTypeManagerV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TWpContentTypeManagerV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpContentTypeManagerV1;
+begin
+  RegisterInterface;
+  Result := TWpContentTypeManagerV1.Create(ARegistry.Bind(AName, @wp_content_type_manager_v1_interface, AVersion));
 end;
 
 destructor TWpContentTypeManagerV1.Destroy;
@@ -111,6 +121,7 @@ function TWpContentTypeManagerV1.GetSurfaceContentType(ASurface: TWlSurface; APr
 var
   id: Pwl_proxy;
 begin
+  TWpContentTypeV1.RegisterInterface;
   id := wl_proxy_marshal_constructor(FProxy,
       _GET_SURFACE_CONTENT_TYPE, @wp_content_type_v1_interface, nil, ASurface.Proxy);
   if AProxyClass = nil then
@@ -127,8 +138,14 @@ begin
 end;
 constructor TWpContentTypeV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TWpContentTypeV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpContentTypeV1;
+begin
+  RegisterInterface;
+  Result := TWpContentTypeV1.Create(ARegistry.Bind(AName, @wp_content_type_v1_interface, AVersion));
 end;
 
 destructor TWpContentTypeV1.Destroy;
@@ -176,26 +193,29 @@ const
     (name: 'set_content_type'; signature: 'u'; types: @pInterfaces[0])
   );
 
-procedure InitInterfaces;
+class procedure TWpContentTypeManagerV1.RegisterInterface;
 begin
-  if vInterfacesRegistered then Exit;
-  vInterfacesRegistered := True;
-
-
+  if vwp_content_type_manager_v1_registered then Exit;
+  vwp_content_type_manager_v1_registered := True;
   wp_content_type_manager_v1_interface.name := PChar(WP_CONTENT_TYPE_MANAGER_V1_INTERFACE_NAME);
   wp_content_type_manager_v1_interface.version := 1;
   wp_content_type_manager_v1_interface.method_count := 2;
   wp_content_type_manager_v1_interface.methods := @wp_content_type_manager_v1_requests;
   wp_content_type_manager_v1_interface.event_count := 0;
   wp_content_type_manager_v1_interface.events := nil;
+end;
 
+class procedure TWpContentTypeV1.RegisterInterface;
+begin
+  if vwp_content_type_v1_registered then Exit;
+  vwp_content_type_v1_registered := True;
   wp_content_type_v1_interface.name := PChar(WP_CONTENT_TYPE_V1_INTERFACE_NAME);
   wp_content_type_v1_interface.version := 1;
   wp_content_type_v1_interface.method_count := 2;
   wp_content_type_v1_interface.methods := @wp_content_type_v1_requests;
   wp_content_type_v1_interface.event_count := 0;
   wp_content_type_v1_interface.events := nil;
-
 end;
+
 
 end.

@@ -41,6 +41,8 @@ type
 
   TWpInputTimestampsManagerV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpInputTimestampsManagerV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
@@ -57,6 +59,8 @@ type
 
   TWpInputTimestampsV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpInputTimestampsV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
@@ -67,7 +71,6 @@ type
 
 
 
-procedure InitInterfaces;
 
 
 
@@ -82,16 +85,23 @@ var
 implementation
 
 var
+  vwp_input_timestamps_manager_v1_registered: Boolean = False;
   vIntf_wp_input_timestamps_manager_v1_Listener: Twp_input_timestamps_manager_v1_listener;
+  vwp_input_timestamps_v1_registered: Boolean = False;
   vIntf_wp_input_timestamps_v1_Listener: Twp_input_timestamps_v1_listener;
-  vInterfacesRegistered: Boolean = False;
 
 
 
 constructor TWpInputTimestampsManagerV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TWpInputTimestampsManagerV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpInputTimestampsManagerV1;
+begin
+  RegisterInterface;
+  Result := TWpInputTimestampsManagerV1.Create(ARegistry.Bind(AName, @wp_input_timestamps_manager_v1_interface, AVersion));
 end;
 
 destructor TWpInputTimestampsManagerV1.Destroy;
@@ -104,6 +114,7 @@ function TWpInputTimestampsManagerV1.GetKeyboardTimestamps(AKeyboard: TWlKeyboar
 var
   id: Pwl_proxy;
 begin
+  TWpInputTimestampsV1.RegisterInterface;
   id := wl_proxy_marshal_constructor(FProxy,
       _GET_KEYBOARD_TIMESTAMPS, @wp_input_timestamps_v1_interface, nil, AKeyboard.Proxy);
   if AProxyClass = nil then
@@ -117,6 +128,7 @@ function TWpInputTimestampsManagerV1.GetPointerTimestamps(APointer: TWlPointer; 
 var
   id: Pwl_proxy;
 begin
+  TWpInputTimestampsV1.RegisterInterface;
   id := wl_proxy_marshal_constructor(FProxy,
       _GET_POINTER_TIMESTAMPS, @wp_input_timestamps_v1_interface, nil, APointer.Proxy);
   if AProxyClass = nil then
@@ -130,6 +142,7 @@ function TWpInputTimestampsManagerV1.GetTouchTimestamps(ATouch: TWlTouch; AProxy
 var
   id: Pwl_proxy;
 begin
+  TWpInputTimestampsV1.RegisterInterface;
   id := wl_proxy_marshal_constructor(FProxy,
       _GET_TOUCH_TIMESTAMPS, @wp_input_timestamps_v1_interface, nil, ATouch.Proxy);
   if AProxyClass = nil then
@@ -146,8 +159,14 @@ begin
 end;
 constructor TWpInputTimestampsV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TWpInputTimestampsV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpInputTimestampsV1;
+begin
+  RegisterInterface;
+  Result := TWpInputTimestampsV1.Create(ARegistry.Bind(AName, @wp_input_timestamps_v1_interface, AVersion));
 end;
 
 destructor TWpInputTimestampsV1.Destroy;
@@ -207,27 +226,30 @@ const
     (name: 'timestamp'; signature: 'uuu'; types: @pInterfaces[0])
   );
 
-procedure InitInterfaces;
+class procedure TWpInputTimestampsManagerV1.RegisterInterface;
 begin
-  if vInterfacesRegistered then Exit;
-  vInterfacesRegistered := True;
-  Pointer(vIntf_wp_input_timestamps_v1_Listener.timestamp) := @wp_input_timestamps_v1_timestamp_Intf;
-
-
+  if vwp_input_timestamps_manager_v1_registered then Exit;
+  vwp_input_timestamps_manager_v1_registered := True;
   wp_input_timestamps_manager_v1_interface.name := PChar(WP_INPUT_TIMESTAMPS_MANAGER_V1_INTERFACE_NAME);
   wp_input_timestamps_manager_v1_interface.version := 1;
   wp_input_timestamps_manager_v1_interface.method_count := 4;
   wp_input_timestamps_manager_v1_interface.methods := @wp_input_timestamps_manager_v1_requests;
   wp_input_timestamps_manager_v1_interface.event_count := 0;
   wp_input_timestamps_manager_v1_interface.events := nil;
+end;
 
+class procedure TWpInputTimestampsV1.RegisterInterface;
+begin
+  if vwp_input_timestamps_v1_registered then Exit;
+  vwp_input_timestamps_v1_registered := True;
+  Pointer(vIntf_wp_input_timestamps_v1_Listener.timestamp) := @wp_input_timestamps_v1_timestamp_Intf;
   wp_input_timestamps_v1_interface.name := PChar(WP_INPUT_TIMESTAMPS_V1_INTERFACE_NAME);
   wp_input_timestamps_v1_interface.version := 1;
   wp_input_timestamps_v1_interface.method_count := 1;
   wp_input_timestamps_v1_interface.methods := @wp_input_timestamps_v1_requests;
   wp_input_timestamps_v1_interface.event_count := 1;
   wp_input_timestamps_v1_interface.events := @wp_input_timestamps_v1_events;
-
 end;
+
 
 end.

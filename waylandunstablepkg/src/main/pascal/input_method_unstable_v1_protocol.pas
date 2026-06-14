@@ -79,6 +79,8 @@ type
 
   TWpInputMethodContextV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpInputMethodContextV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
@@ -115,12 +117,16 @@ type
 
   TWpInputMethodV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpInputMethodV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
     function AddListener(AIntf: IWpInputMethodV1Listener): LongInt;
   end;
 
   TWpInputPanelV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpInputPanelV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _GET_INPUT_PANEL_SURFACE = 0;
@@ -131,6 +137,8 @@ type
 
   TWpInputPanelSurfaceV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpInputPanelSurfaceV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _SET_TOPLEVEL = 0;
@@ -143,7 +151,6 @@ type
 
 
 
-procedure InitInterfaces;
 
 
 
@@ -162,18 +169,27 @@ var
 implementation
 
 var
+  vwp_input_method_context_v1_registered: Boolean = False;
   vIntf_wp_input_method_context_v1_Listener: Twp_input_method_context_v1_listener;
+  vwp_input_method_v1_registered: Boolean = False;
   vIntf_wp_input_method_v1_Listener: Twp_input_method_v1_listener;
+  vwp_input_panel_v1_registered: Boolean = False;
   vIntf_wp_input_panel_v1_Listener: Twp_input_panel_v1_listener;
+  vwp_input_panel_surface_v1_registered: Boolean = False;
   vIntf_wp_input_panel_surface_v1_Listener: Twp_input_panel_surface_v1_listener;
-  vInterfacesRegistered: Boolean = False;
 
 
 
 constructor TWpInputMethodContextV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TWpInputMethodContextV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpInputMethodContextV1;
+begin
+  RegisterInterface;
+  Result := TWpInputMethodContextV1.Create(ARegistry.Bind(AName, @wp_input_method_context_v1_interface, AVersion));
 end;
 
 destructor TWpInputMethodContextV1.Destroy;
@@ -226,6 +242,7 @@ function TWpInputMethodContextV1.GrabKeyboard(AProxyClass: TWLProxyObjectClass =
 var
   keyboard: Pwl_proxy;
 begin
+  TWlKeyboard.RegisterInterface;
   keyboard := wl_proxy_marshal_constructor(FProxy,
       _GRAB_KEYBOARD, @wl_keyboard_interface, nil);
   if AProxyClass = nil then
@@ -262,8 +279,14 @@ begin
 end;
 constructor TWpInputMethodV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TWpInputMethodV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpInputMethodV1;
+begin
+  RegisterInterface;
+  Result := TWpInputMethodV1.Create(ARegistry.Bind(AName, @wp_input_method_v1_interface, AVersion));
 end;
 
 function TWpInputMethodV1.AddListener(AIntf: IWpInputMethodV1Listener): LongInt;
@@ -273,14 +296,21 @@ begin
 end;
 constructor TWpInputPanelV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TWpInputPanelV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpInputPanelV1;
+begin
+  RegisterInterface;
+  Result := TWpInputPanelV1.Create(ARegistry.Bind(AName, @wp_input_panel_v1_interface, AVersion));
 end;
 
 function TWpInputPanelV1.GetInputPanelSurface(ASurface: TWlSurface; AProxyClass: TWLProxyObjectClass = nil {TWpInputPanelSurfaceV1}): TWpInputPanelSurfaceV1;
 var
   id: Pwl_proxy;
 begin
+  TWpInputPanelSurfaceV1.RegisterInterface;
   id := wl_proxy_marshal_constructor(FProxy,
       _GET_INPUT_PANEL_SURFACE, @wp_input_panel_surface_v1_interface, nil, ASurface.Proxy);
   if AProxyClass = nil then
@@ -297,8 +327,14 @@ begin
 end;
 constructor TWpInputPanelSurfaceV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TWpInputPanelSurfaceV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpInputPanelSurfaceV1;
+begin
+  RegisterInterface;
+  Result := TWpInputPanelSurfaceV1.Create(ARegistry.Bind(AName, @wp_input_panel_surface_v1_interface, AVersion));
 end;
 
 procedure TWpInputPanelSurfaceV1.SetToplevel(AOutput: TWlOutput; APosition: DWord);
@@ -448,48 +484,61 @@ const
     (name: 'set_overlay_panel'; signature: ''; types: @pInterfaces[0])
   );
 
-procedure InitInterfaces;
+class procedure TWpInputMethodContextV1.RegisterInterface;
 begin
-  if vInterfacesRegistered then Exit;
-  vInterfacesRegistered := True;
+  if vwp_input_method_context_v1_registered then Exit;
+  vwp_input_method_context_v1_registered := True;
   Pointer(vIntf_wp_input_method_context_v1_Listener.surrounding_text) := @wp_input_method_context_v1_surrounding_text_Intf;
   Pointer(vIntf_wp_input_method_context_v1_Listener.reset) := @wp_input_method_context_v1_reset_Intf;
   Pointer(vIntf_wp_input_method_context_v1_Listener.content_type) := @wp_input_method_context_v1_content_type_Intf;
   Pointer(vIntf_wp_input_method_context_v1_Listener.invoke_action) := @wp_input_method_context_v1_invoke_action_Intf;
   Pointer(vIntf_wp_input_method_context_v1_Listener.commit_state) := @wp_input_method_context_v1_commit_state_Intf;
   Pointer(vIntf_wp_input_method_context_v1_Listener.preferred_language) := @wp_input_method_context_v1_preferred_language_Intf;
-  Pointer(vIntf_wp_input_method_v1_Listener.activate) := @wp_input_method_v1_activate_Intf;
-  Pointer(vIntf_wp_input_method_v1_Listener.deactivate) := @wp_input_method_v1_deactivate_Intf;
-
-
   wp_input_method_context_v1_interface.name := PChar(WP_INPUT_METHOD_CONTEXT_V1_INTERFACE_NAME);
   wp_input_method_context_v1_interface.version := 1;
   wp_input_method_context_v1_interface.method_count := 14;
   wp_input_method_context_v1_interface.methods := @wp_input_method_context_v1_requests;
   wp_input_method_context_v1_interface.event_count := 6;
   wp_input_method_context_v1_interface.events := @wp_input_method_context_v1_events;
+end;
 
+class procedure TWpInputMethodV1.RegisterInterface;
+begin
+  if vwp_input_method_v1_registered then Exit;
+  vwp_input_method_v1_registered := True;
+  Pointer(vIntf_wp_input_method_v1_Listener.activate) := @wp_input_method_v1_activate_Intf;
+  Pointer(vIntf_wp_input_method_v1_Listener.deactivate) := @wp_input_method_v1_deactivate_Intf;
   wp_input_method_v1_interface.name := PChar(WP_INPUT_METHOD_V1_INTERFACE_NAME);
   wp_input_method_v1_interface.version := 1;
   wp_input_method_v1_interface.method_count := 0;
   wp_input_method_v1_interface.methods := nil;
   wp_input_method_v1_interface.event_count := 2;
   wp_input_method_v1_interface.events := @wp_input_method_v1_events;
+end;
 
+class procedure TWpInputPanelV1.RegisterInterface;
+begin
+  if vwp_input_panel_v1_registered then Exit;
+  vwp_input_panel_v1_registered := True;
   wp_input_panel_v1_interface.name := PChar(WP_INPUT_PANEL_V1_INTERFACE_NAME);
   wp_input_panel_v1_interface.version := 1;
   wp_input_panel_v1_interface.method_count := 1;
   wp_input_panel_v1_interface.methods := @wp_input_panel_v1_requests;
   wp_input_panel_v1_interface.event_count := 0;
   wp_input_panel_v1_interface.events := nil;
+end;
 
+class procedure TWpInputPanelSurfaceV1.RegisterInterface;
+begin
+  if vwp_input_panel_surface_v1_registered then Exit;
+  vwp_input_panel_surface_v1_registered := True;
   wp_input_panel_surface_v1_interface.name := PChar(WP_INPUT_PANEL_SURFACE_V1_INTERFACE_NAME);
   wp_input_panel_surface_v1_interface.version := 1;
   wp_input_panel_surface_v1_interface.method_count := 2;
   wp_input_panel_surface_v1_interface.methods := @wp_input_panel_surface_v1_requests;
   wp_input_panel_surface_v1_interface.event_count := 0;
   wp_input_panel_surface_v1_interface.events := nil;
-
 end;
+
 
 end.

@@ -50,6 +50,8 @@ type
 
   TWpSecurityContextManagerV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpSecurityContextManagerV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
@@ -62,6 +64,8 @@ type
 
   TWpSecurityContextV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpSecurityContextV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
@@ -80,7 +84,6 @@ type
 
 
 
-procedure InitInterfaces;
 
 
 
@@ -95,16 +98,23 @@ var
 implementation
 
 var
+  vwp_security_context_manager_v1_registered: Boolean = False;
   vIntf_wp_security_context_manager_v1_Listener: Twp_security_context_manager_v1_listener;
+  vwp_security_context_v1_registered: Boolean = False;
   vIntf_wp_security_context_v1_Listener: Twp_security_context_v1_listener;
-  vInterfacesRegistered: Boolean = False;
 
 
 
 constructor TWpSecurityContextManagerV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TWpSecurityContextManagerV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpSecurityContextManagerV1;
+begin
+  RegisterInterface;
+  Result := TWpSecurityContextManagerV1.Create(ARegistry.Bind(AName, @wp_security_context_manager_v1_interface, AVersion));
 end;
 
 destructor TWpSecurityContextManagerV1.Destroy;
@@ -117,6 +127,7 @@ function TWpSecurityContextManagerV1.CreateListener(AListenFd: LongInt{fd}; AClo
 var
   id: Pwl_proxy;
 begin
+  TWpSecurityContextV1.RegisterInterface;
   id := wl_proxy_marshal_constructor(FProxy,
       _CREATE_LISTENER, @wp_security_context_v1_interface, nil, AListenFd, ACloseFd);
   if AProxyClass = nil then
@@ -133,8 +144,14 @@ begin
 end;
 constructor TWpSecurityContextV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TWpSecurityContextV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpSecurityContextV1;
+begin
+  RegisterInterface;
+  Result := TWpSecurityContextV1.Create(ARegistry.Bind(AName, @wp_security_context_v1_interface, AVersion));
 end;
 
 destructor TWpSecurityContextV1.Destroy;
@@ -201,26 +218,29 @@ const
     (name: 'commit'; signature: ''; types: @pInterfaces[0])
   );
 
-procedure InitInterfaces;
+class procedure TWpSecurityContextManagerV1.RegisterInterface;
 begin
-  if vInterfacesRegistered then Exit;
-  vInterfacesRegistered := True;
-
-
+  if vwp_security_context_manager_v1_registered then Exit;
+  vwp_security_context_manager_v1_registered := True;
   wp_security_context_manager_v1_interface.name := PChar(WP_SECURITY_CONTEXT_MANAGER_V1_INTERFACE_NAME);
   wp_security_context_manager_v1_interface.version := 1;
   wp_security_context_manager_v1_interface.method_count := 2;
   wp_security_context_manager_v1_interface.methods := @wp_security_context_manager_v1_requests;
   wp_security_context_manager_v1_interface.event_count := 0;
   wp_security_context_manager_v1_interface.events := nil;
+end;
 
+class procedure TWpSecurityContextV1.RegisterInterface;
+begin
+  if vwp_security_context_v1_registered then Exit;
+  vwp_security_context_v1_registered := True;
   wp_security_context_v1_interface.name := PChar(WP_SECURITY_CONTEXT_V1_INTERFACE_NAME);
   wp_security_context_v1_interface.version := 1;
   wp_security_context_v1_interface.method_count := 5;
   wp_security_context_v1_interface.methods := @wp_security_context_v1_requests;
   wp_security_context_v1_interface.event_count := 0;
   wp_security_context_v1_interface.events := nil;
-
 end;
+
 
 end.

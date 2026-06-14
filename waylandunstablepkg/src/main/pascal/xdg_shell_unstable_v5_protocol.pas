@@ -81,6 +81,8 @@ type
 
   TXdgShell = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TXdgShell;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
@@ -99,6 +101,8 @@ type
 
   TXdgSurface = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TXdgSurface;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
@@ -135,6 +139,8 @@ type
 
   TXdgPopup = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TXdgPopup;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
@@ -145,7 +151,6 @@ type
 
 
 
-procedure InitInterfaces;
 
 
 
@@ -162,17 +167,25 @@ var
 implementation
 
 var
+  vxdg_shell_registered: Boolean = False;
   vIntf_xdg_shell_Listener: Txdg_shell_listener;
+  vxdg_surface_registered: Boolean = False;
   vIntf_xdg_surface_Listener: Txdg_surface_listener;
+  vxdg_popup_registered: Boolean = False;
   vIntf_xdg_popup_Listener: Txdg_popup_listener;
-  vInterfacesRegistered: Boolean = False;
 
 
 
 constructor TXdgShell.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TXdgShell.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TXdgShell;
+begin
+  RegisterInterface;
+  Result := TXdgShell.Create(ARegistry.Bind(AName, @xdg_shell_interface, AVersion));
 end;
 
 destructor TXdgShell.Destroy;
@@ -190,6 +203,7 @@ function TXdgShell.GetXdgSurface(ASurface: TWlSurface; AProxyClass: TWLProxyObje
 var
   id: Pwl_proxy;
 begin
+  TXdgSurface.RegisterInterface;
   id := wl_proxy_marshal_constructor(FProxy,
       _GET_XDG_SURFACE, @xdg_surface_interface, nil, ASurface.Proxy);
   if AProxyClass = nil then
@@ -203,6 +217,7 @@ function TXdgShell.GetXdgPopup(ASurface: TWlSurface; AParent: TWlSurface; ASeat:
 var
   id: Pwl_proxy;
 begin
+  TXdgPopup.RegisterInterface;
   id := wl_proxy_marshal_constructor(FProxy,
       _GET_XDG_POPUP, @xdg_popup_interface, nil, ASurface.Proxy, AParent.Proxy, ASeat.Proxy, ASerial, AX, AY);
   if AProxyClass = nil then
@@ -224,8 +239,14 @@ begin
 end;
 constructor TXdgSurface.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TXdgSurface.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TXdgSurface;
+begin
+  RegisterInterface;
+  Result := TXdgSurface.Create(ARegistry.Bind(AName, @xdg_surface_interface, AVersion));
 end;
 
 destructor TXdgSurface.Destroy;
@@ -306,8 +327,14 @@ begin
 end;
 constructor TXdgPopup.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TXdgPopup.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TXdgPopup;
+begin
+  RegisterInterface;
+  Result := TXdgPopup.Create(ARegistry.Bind(AName, @xdg_popup_interface, AVersion));
 end;
 
 destructor TXdgPopup.Destroy;
@@ -432,37 +459,45 @@ const
     (name: 'popup_done'; signature: ''; types: @pInterfaces[0])
   );
 
-procedure InitInterfaces;
+class procedure TXdgShell.RegisterInterface;
 begin
-  if vInterfacesRegistered then Exit;
-  vInterfacesRegistered := True;
+  if vxdg_shell_registered then Exit;
+  vxdg_shell_registered := True;
   Pointer(vIntf_xdg_shell_Listener.ping) := @xdg_shell_ping_Intf;
-  Pointer(vIntf_xdg_surface_Listener.configure) := @xdg_surface_configure_Intf;
-  Pointer(vIntf_xdg_surface_Listener.close) := @xdg_surface_close_Intf;
-  Pointer(vIntf_xdg_popup_Listener.popup_done) := @xdg_popup_popup_done_Intf;
-
-
   xdg_shell_interface.name := PChar(XDG_SHELL_INTERFACE_NAME);
   xdg_shell_interface.version := 1;
   xdg_shell_interface.method_count := 5;
   xdg_shell_interface.methods := @xdg_shell_requests;
   xdg_shell_interface.event_count := 1;
   xdg_shell_interface.events := @xdg_shell_events;
+end;
 
+class procedure TXdgSurface.RegisterInterface;
+begin
+  if vxdg_surface_registered then Exit;
+  vxdg_surface_registered := True;
+  Pointer(vIntf_xdg_surface_Listener.configure) := @xdg_surface_configure_Intf;
+  Pointer(vIntf_xdg_surface_Listener.close) := @xdg_surface_close_Intf;
   xdg_surface_interface.name := PChar(XDG_SURFACE_INTERFACE_NAME);
   xdg_surface_interface.version := 1;
   xdg_surface_interface.method_count := 14;
   xdg_surface_interface.methods := @xdg_surface_requests;
   xdg_surface_interface.event_count := 2;
   xdg_surface_interface.events := @xdg_surface_events;
+end;
 
+class procedure TXdgPopup.RegisterInterface;
+begin
+  if vxdg_popup_registered then Exit;
+  vxdg_popup_registered := True;
+  Pointer(vIntf_xdg_popup_Listener.popup_done) := @xdg_popup_popup_done_Intf;
   xdg_popup_interface.name := PChar(XDG_POPUP_INTERFACE_NAME);
   xdg_popup_interface.version := 1;
   xdg_popup_interface.method_count := 1;
   xdg_popup_interface.methods := @xdg_popup_requests;
   xdg_popup_interface.event_count := 1;
   xdg_popup_interface.events := @xdg_popup_events;
-
 end;
+
 
 end.

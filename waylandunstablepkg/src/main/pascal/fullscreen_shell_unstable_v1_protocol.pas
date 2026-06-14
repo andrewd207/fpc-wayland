@@ -59,6 +59,8 @@ type
 
   TWpFullscreenShellV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpFullscreenShellV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _RELEASE = 0;
@@ -73,13 +75,14 @@ type
 
   TWpFullscreenShellModeFeedbackV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpFullscreenShellModeFeedbackV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
     function AddListener(AIntf: IWpFullscreenShellModeFeedbackV1Listener): LongInt;
   end;
 
 
 
-procedure InitInterfaces;
 
 
 
@@ -94,16 +97,23 @@ var
 implementation
 
 var
+  vwp_fullscreen_shell_v1_registered: Boolean = False;
   vIntf_wp_fullscreen_shell_v1_Listener: Twp_fullscreen_shell_v1_listener;
+  vwp_fullscreen_shell_mode_feedback_v1_registered: Boolean = False;
   vIntf_wp_fullscreen_shell_mode_feedback_v1_Listener: Twp_fullscreen_shell_mode_feedback_v1_listener;
-  vInterfacesRegistered: Boolean = False;
 
 
 
 constructor TWpFullscreenShellV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TWpFullscreenShellV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpFullscreenShellV1;
+begin
+  RegisterInterface;
+  Result := TWpFullscreenShellV1.Create(ARegistry.Bind(AName, @wp_fullscreen_shell_v1_interface, AVersion));
 end;
 
 procedure TWpFullscreenShellV1.Release;
@@ -121,6 +131,7 @@ function TWpFullscreenShellV1.PresentSurfaceForMode(ASurface: TWlSurface; AOutpu
 var
   feedback: Pwl_proxy;
 begin
+  TWpFullscreenShellModeFeedbackV1.RegisterInterface;
   feedback := wl_proxy_marshal_constructor(FProxy,
       _PRESENT_SURFACE_FOR_MODE, @wp_fullscreen_shell_mode_feedback_v1_interface, nil, ASurface.Proxy, AOutput.Proxy, AFramerate);
   if AProxyClass = nil then
@@ -137,8 +148,14 @@ begin
 end;
 constructor TWpFullscreenShellModeFeedbackV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TWpFullscreenShellModeFeedbackV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpFullscreenShellModeFeedbackV1;
+begin
+  RegisterInterface;
+  Result := TWpFullscreenShellModeFeedbackV1.Create(ARegistry.Bind(AName, @wp_fullscreen_shell_mode_feedback_v1_interface, AVersion));
 end;
 
 function TWpFullscreenShellModeFeedbackV1.AddListener(AIntf: IWpFullscreenShellModeFeedbackV1Listener): LongInt;
@@ -221,30 +238,33 @@ const
     (name: 'present_cancelled'; signature: ''; types: @pInterfaces[0])
   );
 
-procedure InitInterfaces;
+class procedure TWpFullscreenShellV1.RegisterInterface;
 begin
-  if vInterfacesRegistered then Exit;
-  vInterfacesRegistered := True;
+  if vwp_fullscreen_shell_v1_registered then Exit;
+  vwp_fullscreen_shell_v1_registered := True;
   Pointer(vIntf_wp_fullscreen_shell_v1_Listener.capability) := @wp_fullscreen_shell_v1_capability_Intf;
-  Pointer(vIntf_wp_fullscreen_shell_mode_feedback_v1_Listener.mode_successful) := @wp_fullscreen_shell_mode_feedback_v1_mode_successful_Intf;
-  Pointer(vIntf_wp_fullscreen_shell_mode_feedback_v1_Listener.mode_failed) := @wp_fullscreen_shell_mode_feedback_v1_mode_failed_Intf;
-  Pointer(vIntf_wp_fullscreen_shell_mode_feedback_v1_Listener.present_cancelled) := @wp_fullscreen_shell_mode_feedback_v1_present_cancelled_Intf;
-
-
   wp_fullscreen_shell_v1_interface.name := PChar(WP_FULLSCREEN_SHELL_V1_INTERFACE_NAME);
   wp_fullscreen_shell_v1_interface.version := 1;
   wp_fullscreen_shell_v1_interface.method_count := 3;
   wp_fullscreen_shell_v1_interface.methods := @wp_fullscreen_shell_v1_requests;
   wp_fullscreen_shell_v1_interface.event_count := 1;
   wp_fullscreen_shell_v1_interface.events := @wp_fullscreen_shell_v1_events;
+end;
 
+class procedure TWpFullscreenShellModeFeedbackV1.RegisterInterface;
+begin
+  if vwp_fullscreen_shell_mode_feedback_v1_registered then Exit;
+  vwp_fullscreen_shell_mode_feedback_v1_registered := True;
+  Pointer(vIntf_wp_fullscreen_shell_mode_feedback_v1_Listener.mode_successful) := @wp_fullscreen_shell_mode_feedback_v1_mode_successful_Intf;
+  Pointer(vIntf_wp_fullscreen_shell_mode_feedback_v1_Listener.mode_failed) := @wp_fullscreen_shell_mode_feedback_v1_mode_failed_Intf;
+  Pointer(vIntf_wp_fullscreen_shell_mode_feedback_v1_Listener.present_cancelled) := @wp_fullscreen_shell_mode_feedback_v1_present_cancelled_Intf;
   wp_fullscreen_shell_mode_feedback_v1_interface.name := PChar(WP_FULLSCREEN_SHELL_MODE_FEEDBACK_V1_INTERFACE_NAME);
   wp_fullscreen_shell_mode_feedback_v1_interface.version := 1;
   wp_fullscreen_shell_mode_feedback_v1_interface.method_count := 0;
   wp_fullscreen_shell_mode_feedback_v1_interface.methods := nil;
   wp_fullscreen_shell_mode_feedback_v1_interface.event_count := 3;
   wp_fullscreen_shell_mode_feedback_v1_interface.events := @wp_fullscreen_shell_mode_feedback_v1_events;
-
 end;
+
 
 end.

@@ -49,6 +49,8 @@ type
 
   TExtImageCaptureSourceV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TExtImageCaptureSourceV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
@@ -59,6 +61,8 @@ type
 
   TExtOutputImageCaptureSourceManagerV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TExtOutputImageCaptureSourceManagerV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _CREATE_SOURCE = 0;
@@ -71,6 +75,8 @@ type
 
   TExtForeignToplevelImageCaptureSourceManagerV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TExtForeignToplevelImageCaptureSourceManagerV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _CREATE_SOURCE = 0;
@@ -83,7 +89,6 @@ type
 
 
 
-procedure InitInterfaces;
 
 
 
@@ -100,17 +105,25 @@ var
 implementation
 
 var
+  vext_image_capture_source_v1_registered: Boolean = False;
   vIntf_ext_image_capture_source_v1_Listener: Text_image_capture_source_v1_listener;
+  vext_output_image_capture_source_manager_v1_registered: Boolean = False;
   vIntf_ext_output_image_capture_source_manager_v1_Listener: Text_output_image_capture_source_manager_v1_listener;
+  vext_foreign_toplevel_image_capture_source_manager_v1_registered: Boolean = False;
   vIntf_ext_foreign_toplevel_image_capture_source_manager_v1_Listener: Text_foreign_toplevel_image_capture_source_manager_v1_listener;
-  vInterfacesRegistered: Boolean = False;
 
 
 
 constructor TExtImageCaptureSourceV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TExtImageCaptureSourceV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TExtImageCaptureSourceV1;
+begin
+  RegisterInterface;
+  Result := TExtImageCaptureSourceV1.Create(ARegistry.Bind(AName, @ext_image_capture_source_v1_interface, AVersion));
 end;
 
 destructor TExtImageCaptureSourceV1.Destroy;
@@ -126,14 +139,21 @@ begin
 end;
 constructor TExtOutputImageCaptureSourceManagerV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TExtOutputImageCaptureSourceManagerV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TExtOutputImageCaptureSourceManagerV1;
+begin
+  RegisterInterface;
+  Result := TExtOutputImageCaptureSourceManagerV1.Create(ARegistry.Bind(AName, @ext_output_image_capture_source_manager_v1_interface, AVersion));
 end;
 
 function TExtOutputImageCaptureSourceManagerV1.CreateSource(AOutput: TWlOutput; AProxyClass: TWLProxyObjectClass = nil {TExtImageCaptureSourceV1}): TExtImageCaptureSourceV1;
 var
   source: Pwl_proxy;
 begin
+  TExtImageCaptureSourceV1.RegisterInterface;
   source := wl_proxy_marshal_constructor(FProxy,
       _CREATE_SOURCE, @ext_image_capture_source_v1_interface, nil, AOutput.Proxy);
   if AProxyClass = nil then
@@ -156,14 +176,21 @@ begin
 end;
 constructor TExtForeignToplevelImageCaptureSourceManagerV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TExtForeignToplevelImageCaptureSourceManagerV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TExtForeignToplevelImageCaptureSourceManagerV1;
+begin
+  RegisterInterface;
+  Result := TExtForeignToplevelImageCaptureSourceManagerV1.Create(ARegistry.Bind(AName, @ext_foreign_toplevel_image_capture_source_manager_v1_interface, AVersion));
 end;
 
 function TExtForeignToplevelImageCaptureSourceManagerV1.CreateSource(AToplevelHandle: TExtForeignToplevelHandleV1; AProxyClass: TWLProxyObjectClass = nil {TExtImageCaptureSourceV1}): TExtImageCaptureSourceV1;
 var
   source: Pwl_proxy;
 begin
+  TExtImageCaptureSourceV1.RegisterInterface;
   source := wl_proxy_marshal_constructor(FProxy,
       _CREATE_SOURCE, @ext_image_capture_source_v1_interface, nil, AToplevelHandle.Proxy);
   if AProxyClass = nil then
@@ -218,33 +245,41 @@ const
     (name: 'destroy'; signature: ''; types: @pInterfaces[0])
   );
 
-procedure InitInterfaces;
+class procedure TExtImageCaptureSourceV1.RegisterInterface;
 begin
-  if vInterfacesRegistered then Exit;
-  vInterfacesRegistered := True;
-
-
+  if vext_image_capture_source_v1_registered then Exit;
+  vext_image_capture_source_v1_registered := True;
   ext_image_capture_source_v1_interface.name := PChar(EXT_IMAGE_CAPTURE_SOURCE_V1_INTERFACE_NAME);
   ext_image_capture_source_v1_interface.version := 1;
   ext_image_capture_source_v1_interface.method_count := 1;
   ext_image_capture_source_v1_interface.methods := @ext_image_capture_source_v1_requests;
   ext_image_capture_source_v1_interface.event_count := 0;
   ext_image_capture_source_v1_interface.events := nil;
+end;
 
+class procedure TExtOutputImageCaptureSourceManagerV1.RegisterInterface;
+begin
+  if vext_output_image_capture_source_manager_v1_registered then Exit;
+  vext_output_image_capture_source_manager_v1_registered := True;
   ext_output_image_capture_source_manager_v1_interface.name := PChar(EXT_OUTPUT_IMAGE_CAPTURE_SOURCE_MANAGER_V1_INTERFACE_NAME);
   ext_output_image_capture_source_manager_v1_interface.version := 1;
   ext_output_image_capture_source_manager_v1_interface.method_count := 2;
   ext_output_image_capture_source_manager_v1_interface.methods := @ext_output_image_capture_source_manager_v1_requests;
   ext_output_image_capture_source_manager_v1_interface.event_count := 0;
   ext_output_image_capture_source_manager_v1_interface.events := nil;
+end;
 
+class procedure TExtForeignToplevelImageCaptureSourceManagerV1.RegisterInterface;
+begin
+  if vext_foreign_toplevel_image_capture_source_manager_v1_registered then Exit;
+  vext_foreign_toplevel_image_capture_source_manager_v1_registered := True;
   ext_foreign_toplevel_image_capture_source_manager_v1_interface.name := PChar(EXT_FOREIGN_TOPLEVEL_IMAGE_CAPTURE_SOURCE_MANAGER_V1_INTERFACE_NAME);
   ext_foreign_toplevel_image_capture_source_manager_v1_interface.version := 1;
   ext_foreign_toplevel_image_capture_source_manager_v1_interface.method_count := 2;
   ext_foreign_toplevel_image_capture_source_manager_v1_interface.methods := @ext_foreign_toplevel_image_capture_source_manager_v1_requests;
   ext_foreign_toplevel_image_capture_source_manager_v1_interface.event_count := 0;
   ext_foreign_toplevel_image_capture_source_manager_v1_interface.events := nil;
-
 end;
+
 
 end.

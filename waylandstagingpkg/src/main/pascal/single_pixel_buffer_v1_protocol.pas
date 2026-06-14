@@ -29,6 +29,8 @@ type
 
   TWpSinglePixelBufferManagerV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpSinglePixelBufferManagerV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
@@ -41,7 +43,6 @@ type
 
 
 
-procedure InitInterfaces;
 
 
 
@@ -54,15 +55,21 @@ var
 implementation
 
 var
+  vwp_single_pixel_buffer_manager_v1_registered: Boolean = False;
   vIntf_wp_single_pixel_buffer_manager_v1_Listener: Twp_single_pixel_buffer_manager_v1_listener;
-  vInterfacesRegistered: Boolean = False;
 
 
 
 constructor TWpSinglePixelBufferManagerV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TWpSinglePixelBufferManagerV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpSinglePixelBufferManagerV1;
+begin
+  RegisterInterface;
+  Result := TWpSinglePixelBufferManagerV1.Create(ARegistry.Bind(AName, @wp_single_pixel_buffer_manager_v1_interface, AVersion));
 end;
 
 destructor TWpSinglePixelBufferManagerV1.Destroy;
@@ -75,6 +82,7 @@ function TWpSinglePixelBufferManagerV1.CreateU32RgbaBuffer(AR: DWord; AG: DWord;
 var
   id: Pwl_proxy;
 begin
+  TWlBuffer.RegisterInterface;
   id := wl_proxy_marshal_constructor(FProxy,
       _CREATE_U32_RGBA_BUFFER, @wl_buffer_interface, nil, AR, AG, AB, AA);
   if AProxyClass = nil then
@@ -117,19 +125,17 @@ const
     (name: 'create_u32_rgba_buffer'; signature: 'nuuuu'; types: @pInterfaces[8])
   );
 
-procedure InitInterfaces;
+class procedure TWpSinglePixelBufferManagerV1.RegisterInterface;
 begin
-  if vInterfacesRegistered then Exit;
-  vInterfacesRegistered := True;
-
-
+  if vwp_single_pixel_buffer_manager_v1_registered then Exit;
+  vwp_single_pixel_buffer_manager_v1_registered := True;
   wp_single_pixel_buffer_manager_v1_interface.name := PChar(WP_SINGLE_PIXEL_BUFFER_MANAGER_V1_INTERFACE_NAME);
   wp_single_pixel_buffer_manager_v1_interface.version := 1;
   wp_single_pixel_buffer_manager_v1_interface.method_count := 2;
   wp_single_pixel_buffer_manager_v1_interface.methods := @wp_single_pixel_buffer_manager_v1_requests;
   wp_single_pixel_buffer_manager_v1_interface.event_count := 0;
   wp_single_pixel_buffer_manager_v1_interface.events := nil;
-
 end;
+
 
 end.

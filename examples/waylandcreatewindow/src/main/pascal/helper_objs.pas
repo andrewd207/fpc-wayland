@@ -86,20 +86,20 @@ procedure TDisplay.wl_registry_global(AWlRegistry: TWlRegistry; AName: DWord;
   AInterface: String; AVersion: DWord);
 begin
   case AInterface of
-    'wl_compositor': FCompositor := TWlCompositor.Create(AWlRegistry.Bind(AName, @wl_compositor_interface, 1));
-    'wl_shell'     : FShell := TWlShell.Create(AWlRegistry.Bind(AName, @wl_shell_interface, 1));
+    'wl_compositor': FCompositor := TWlCompositor.BindFrom(AWlRegistry, AName, 1);
+    'wl_shell'     : FShell := TWlShell.BindFrom(AWlRegistry, AName, 1);
     'wl_shm'       :
       begin
-        FShm := TWlShm.Create(AWlRegistry.Bind(AName, @wl_shm_interface, 1));
+        FShm := TWlShm.BindFrom(AWlRegistry, AName, 1);
         FShm.AddListener(Self);
       end;
     'wl_seat':
       begin
-        FSeat := TWlSeat.Create(AWlRegistry.Bind(AName, @wl_seat_interface, 1));
+        FSeat := TWlSeat.BindFrom(AWlRegistry, AName, 1);
         FSeat.AddListener(Self);
       end;
     'zwp_relative_pointer_manager_v1':
-        FRelativePointerManager := TWpRelativePointerManagerV1.Create(AWlRegistry.Bind(AName, @wp_relative_pointer_manager_v1_interface, 1));
+        FRelativePointerManager := TWpRelativePointerManagerV1.BindFrom(AWlRegistry, AName, 1);
   else
     WriteLn(AInterface);
   end;
@@ -127,11 +127,6 @@ end;
 
 constructor TDisplay.Create;
 begin
-  // The relative-pointer manager is bound as a registry global (before any
-  // object of that unit exists), so register its interfaces up front. The
-  // wayland core interfaces are registered when TWlDisplay is constructed.
-  relative_pointer_unstable_v1_protocol.InitInterfaces;
-
   FDisplay := TWlDisplay(TWlDisplay.Connect(''));
   FRegistry := FDisplay.GetRegistry;
   FRegistry.AddListener(Self);

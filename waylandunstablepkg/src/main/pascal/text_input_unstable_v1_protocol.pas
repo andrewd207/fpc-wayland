@@ -105,6 +105,8 @@ type
 
   TWpTextInputV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpTextInputV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _ACTIVATE = 0;
@@ -135,6 +137,8 @@ type
 
   TWpTextInputManagerV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpTextInputManagerV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _CREATE_TEXT_INPUT = 0;
@@ -145,7 +149,6 @@ type
 
 
 
-procedure InitInterfaces;
 
 
 
@@ -160,16 +163,23 @@ var
 implementation
 
 var
+  vwp_text_input_v1_registered: Boolean = False;
   vIntf_wp_text_input_v1_Listener: Twp_text_input_v1_listener;
+  vwp_text_input_manager_v1_registered: Boolean = False;
   vIntf_wp_text_input_manager_v1_Listener: Twp_text_input_manager_v1_listener;
-  vInterfacesRegistered: Boolean = False;
 
 
 
 constructor TWpTextInputV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TWpTextInputV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpTextInputV1;
+begin
+  RegisterInterface;
+  Result := TWpTextInputV1.Create(ARegistry.Bind(AName, @wp_text_input_v1_interface, AVersion));
 end;
 
 procedure TWpTextInputV1.Activate(ASeat: TWlSeat; ASurface: TWlSurface);
@@ -234,14 +244,21 @@ begin
 end;
 constructor TWpTextInputManagerV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TWpTextInputManagerV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpTextInputManagerV1;
+begin
+  RegisterInterface;
+  Result := TWpTextInputManagerV1.Create(ARegistry.Bind(AName, @wp_text_input_manager_v1_interface, AVersion));
 end;
 
 function TWpTextInputManagerV1.CreateTextInput(AProxyClass: TWLProxyObjectClass = nil {TWpTextInputV1}): TWpTextInputV1;
 var
   id: Pwl_proxy;
 begin
+  TWpTextInputV1.RegisterInterface;
   id := wl_proxy_marshal_constructor(FProxy,
       _CREATE_TEXT_INPUT, @wp_text_input_v1_interface, nil);
   if AProxyClass = nil then
@@ -428,10 +445,10 @@ const
     (name: 'create_text_input'; signature: 'n'; types: @pInterfaces[12])
   );
 
-procedure InitInterfaces;
+class procedure TWpTextInputV1.RegisterInterface;
 begin
-  if vInterfacesRegistered then Exit;
-  vInterfacesRegistered := True;
+  if vwp_text_input_v1_registered then Exit;
+  vwp_text_input_v1_registered := True;
   Pointer(vIntf_wp_text_input_v1_Listener.enter) := @wp_text_input_v1_enter_Intf;
   Pointer(vIntf_wp_text_input_v1_Listener.leave) := @wp_text_input_v1_leave_Intf;
   Pointer(vIntf_wp_text_input_v1_Listener.modifiers_map) := @wp_text_input_v1_modifiers_map_Intf;
@@ -445,22 +462,25 @@ begin
   Pointer(vIntf_wp_text_input_v1_Listener.keysym) := @wp_text_input_v1_keysym_Intf;
   Pointer(vIntf_wp_text_input_v1_Listener.language) := @wp_text_input_v1_language_Intf;
   Pointer(vIntf_wp_text_input_v1_Listener.text_direction) := @wp_text_input_v1_text_direction_Intf;
-
-
   wp_text_input_v1_interface.name := PChar(WP_TEXT_INPUT_V1_INTERFACE_NAME);
   wp_text_input_v1_interface.version := 1;
   wp_text_input_v1_interface.method_count := 11;
   wp_text_input_v1_interface.methods := @wp_text_input_v1_requests;
   wp_text_input_v1_interface.event_count := 13;
   wp_text_input_v1_interface.events := @wp_text_input_v1_events;
+end;
 
+class procedure TWpTextInputManagerV1.RegisterInterface;
+begin
+  if vwp_text_input_manager_v1_registered then Exit;
+  vwp_text_input_manager_v1_registered := True;
   wp_text_input_manager_v1_interface.name := PChar(WP_TEXT_INPUT_MANAGER_V1_INTERFACE_NAME);
   wp_text_input_manager_v1_interface.version := 1;
   wp_text_input_manager_v1_interface.method_count := 1;
   wp_text_input_manager_v1_interface.methods := @wp_text_input_manager_v1_requests;
   wp_text_input_manager_v1_interface.event_count := 0;
   wp_text_input_manager_v1_interface.events := nil;
-
 end;
+
 
 end.

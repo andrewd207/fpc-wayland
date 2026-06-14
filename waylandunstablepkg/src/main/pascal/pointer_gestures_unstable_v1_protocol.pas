@@ -75,6 +75,8 @@ type
 
   TWpPointerGesturesV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpPointerGesturesV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _GET_SWIPE_GESTURE = 0;
@@ -91,6 +93,8 @@ type
 
   TWpPointerGestureSwipeV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpPointerGestureSwipeV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
@@ -101,6 +105,8 @@ type
 
   TWpPointerGesturePinchV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpPointerGesturePinchV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
@@ -111,6 +117,8 @@ type
 
   TWpPointerGestureHoldV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpPointerGestureHoldV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
@@ -121,7 +129,6 @@ type
 
 
 
-procedure InitInterfaces;
 
 
 
@@ -140,24 +147,34 @@ var
 implementation
 
 var
+  vwp_pointer_gestures_v1_registered: Boolean = False;
   vIntf_wp_pointer_gestures_v1_Listener: Twp_pointer_gestures_v1_listener;
+  vwp_pointer_gesture_swipe_v1_registered: Boolean = False;
   vIntf_wp_pointer_gesture_swipe_v1_Listener: Twp_pointer_gesture_swipe_v1_listener;
+  vwp_pointer_gesture_pinch_v1_registered: Boolean = False;
   vIntf_wp_pointer_gesture_pinch_v1_Listener: Twp_pointer_gesture_pinch_v1_listener;
+  vwp_pointer_gesture_hold_v1_registered: Boolean = False;
   vIntf_wp_pointer_gesture_hold_v1_Listener: Twp_pointer_gesture_hold_v1_listener;
-  vInterfacesRegistered: Boolean = False;
 
 
 
 constructor TWpPointerGesturesV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TWpPointerGesturesV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpPointerGesturesV1;
+begin
+  RegisterInterface;
+  Result := TWpPointerGesturesV1.Create(ARegistry.Bind(AName, @wp_pointer_gestures_v1_interface, AVersion));
 end;
 
 function TWpPointerGesturesV1.GetSwipeGesture(APointer: TWlPointer; AProxyClass: TWLProxyObjectClass = nil {TWpPointerGestureSwipeV1}): TWpPointerGestureSwipeV1;
 var
   id: Pwl_proxy;
 begin
+  TWpPointerGestureSwipeV1.RegisterInterface;
   id := wl_proxy_marshal_constructor(FProxy,
       _GET_SWIPE_GESTURE, @wp_pointer_gesture_swipe_v1_interface, nil, APointer.Proxy);
   if AProxyClass = nil then
@@ -171,6 +188,7 @@ function TWpPointerGesturesV1.GetPinchGesture(APointer: TWlPointer; AProxyClass:
 var
   id: Pwl_proxy;
 begin
+  TWpPointerGesturePinchV1.RegisterInterface;
   id := wl_proxy_marshal_constructor(FProxy,
       _GET_PINCH_GESTURE, @wp_pointer_gesture_pinch_v1_interface, nil, APointer.Proxy);
   if AProxyClass = nil then
@@ -190,6 +208,7 @@ function TWpPointerGesturesV1.GetHoldGesture(APointer: TWlPointer; AProxyClass: 
 var
   id: Pwl_proxy;
 begin
+  TWpPointerGestureHoldV1.RegisterInterface;
   id := wl_proxy_marshal_constructor(FProxy,
       _GET_HOLD_GESTURE, @wp_pointer_gesture_hold_v1_interface, nil, APointer.Proxy);
   if AProxyClass = nil then
@@ -206,8 +225,14 @@ begin
 end;
 constructor TWpPointerGestureSwipeV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TWpPointerGestureSwipeV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpPointerGestureSwipeV1;
+begin
+  RegisterInterface;
+  Result := TWpPointerGestureSwipeV1.Create(ARegistry.Bind(AName, @wp_pointer_gesture_swipe_v1_interface, AVersion));
 end;
 
 destructor TWpPointerGestureSwipeV1.Destroy;
@@ -223,8 +248,14 @@ begin
 end;
 constructor TWpPointerGesturePinchV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TWpPointerGesturePinchV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpPointerGesturePinchV1;
+begin
+  RegisterInterface;
+  Result := TWpPointerGesturePinchV1.Create(ARegistry.Bind(AName, @wp_pointer_gesture_pinch_v1_interface, AVersion));
 end;
 
 destructor TWpPointerGesturePinchV1.Destroy;
@@ -240,8 +271,14 @@ begin
 end;
 constructor TWpPointerGestureHoldV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TWpPointerGestureHoldV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpPointerGestureHoldV1;
+begin
+  RegisterInterface;
+  Result := TWpPointerGestureHoldV1.Create(ARegistry.Bind(AName, @wp_pointer_gesture_hold_v1_interface, AVersion));
 end;
 
 destructor TWpPointerGestureHoldV1.Destroy;
@@ -393,48 +430,61 @@ const
     (name: 'end'; signature: '3uui'; types: @pInterfaces[0])
   );
 
-procedure InitInterfaces;
+class procedure TWpPointerGesturesV1.RegisterInterface;
 begin
-  if vInterfacesRegistered then Exit;
-  vInterfacesRegistered := True;
-  Pointer(vIntf_wp_pointer_gesture_swipe_v1_Listener.begin_) := @wp_pointer_gesture_swipe_v1_begin_Intf;
-  Pointer(vIntf_wp_pointer_gesture_swipe_v1_Listener.update) := @wp_pointer_gesture_swipe_v1_update_Intf;
-  Pointer(vIntf_wp_pointer_gesture_swipe_v1_Listener.end_) := @wp_pointer_gesture_swipe_v1_end_Intf;
-  Pointer(vIntf_wp_pointer_gesture_pinch_v1_Listener.begin_) := @wp_pointer_gesture_pinch_v1_begin_Intf;
-  Pointer(vIntf_wp_pointer_gesture_pinch_v1_Listener.update) := @wp_pointer_gesture_pinch_v1_update_Intf;
-  Pointer(vIntf_wp_pointer_gesture_pinch_v1_Listener.end_) := @wp_pointer_gesture_pinch_v1_end_Intf;
-  Pointer(vIntf_wp_pointer_gesture_hold_v1_Listener.begin_) := @wp_pointer_gesture_hold_v1_begin_Intf;
-  Pointer(vIntf_wp_pointer_gesture_hold_v1_Listener.end_) := @wp_pointer_gesture_hold_v1_end_Intf;
-
-
+  if vwp_pointer_gestures_v1_registered then Exit;
+  vwp_pointer_gestures_v1_registered := True;
   wp_pointer_gestures_v1_interface.name := PChar(WP_POINTER_GESTURES_V1_INTERFACE_NAME);
   wp_pointer_gestures_v1_interface.version := 3;
   wp_pointer_gestures_v1_interface.method_count := 4;
   wp_pointer_gestures_v1_interface.methods := @wp_pointer_gestures_v1_requests;
   wp_pointer_gestures_v1_interface.event_count := 0;
   wp_pointer_gestures_v1_interface.events := nil;
+end;
 
+class procedure TWpPointerGestureSwipeV1.RegisterInterface;
+begin
+  if vwp_pointer_gesture_swipe_v1_registered then Exit;
+  vwp_pointer_gesture_swipe_v1_registered := True;
+  Pointer(vIntf_wp_pointer_gesture_swipe_v1_Listener.begin_) := @wp_pointer_gesture_swipe_v1_begin_Intf;
+  Pointer(vIntf_wp_pointer_gesture_swipe_v1_Listener.update) := @wp_pointer_gesture_swipe_v1_update_Intf;
+  Pointer(vIntf_wp_pointer_gesture_swipe_v1_Listener.end_) := @wp_pointer_gesture_swipe_v1_end_Intf;
   wp_pointer_gesture_swipe_v1_interface.name := PChar(WP_POINTER_GESTURE_SWIPE_V1_INTERFACE_NAME);
   wp_pointer_gesture_swipe_v1_interface.version := 2;
   wp_pointer_gesture_swipe_v1_interface.method_count := 1;
   wp_pointer_gesture_swipe_v1_interface.methods := @wp_pointer_gesture_swipe_v1_requests;
   wp_pointer_gesture_swipe_v1_interface.event_count := 3;
   wp_pointer_gesture_swipe_v1_interface.events := @wp_pointer_gesture_swipe_v1_events;
+end;
 
+class procedure TWpPointerGesturePinchV1.RegisterInterface;
+begin
+  if vwp_pointer_gesture_pinch_v1_registered then Exit;
+  vwp_pointer_gesture_pinch_v1_registered := True;
+  Pointer(vIntf_wp_pointer_gesture_pinch_v1_Listener.begin_) := @wp_pointer_gesture_pinch_v1_begin_Intf;
+  Pointer(vIntf_wp_pointer_gesture_pinch_v1_Listener.update) := @wp_pointer_gesture_pinch_v1_update_Intf;
+  Pointer(vIntf_wp_pointer_gesture_pinch_v1_Listener.end_) := @wp_pointer_gesture_pinch_v1_end_Intf;
   wp_pointer_gesture_pinch_v1_interface.name := PChar(WP_POINTER_GESTURE_PINCH_V1_INTERFACE_NAME);
   wp_pointer_gesture_pinch_v1_interface.version := 2;
   wp_pointer_gesture_pinch_v1_interface.method_count := 1;
   wp_pointer_gesture_pinch_v1_interface.methods := @wp_pointer_gesture_pinch_v1_requests;
   wp_pointer_gesture_pinch_v1_interface.event_count := 3;
   wp_pointer_gesture_pinch_v1_interface.events := @wp_pointer_gesture_pinch_v1_events;
+end;
 
+class procedure TWpPointerGestureHoldV1.RegisterInterface;
+begin
+  if vwp_pointer_gesture_hold_v1_registered then Exit;
+  vwp_pointer_gesture_hold_v1_registered := True;
+  Pointer(vIntf_wp_pointer_gesture_hold_v1_Listener.begin_) := @wp_pointer_gesture_hold_v1_begin_Intf;
+  Pointer(vIntf_wp_pointer_gesture_hold_v1_Listener.end_) := @wp_pointer_gesture_hold_v1_end_Intf;
   wp_pointer_gesture_hold_v1_interface.name := PChar(WP_POINTER_GESTURE_HOLD_V1_INTERFACE_NAME);
   wp_pointer_gesture_hold_v1_interface.version := 3;
   wp_pointer_gesture_hold_v1_interface.method_count := 1;
   wp_pointer_gesture_hold_v1_interface.methods := @wp_pointer_gesture_hold_v1_requests;
   wp_pointer_gesture_hold_v1_interface.event_count := 2;
   wp_pointer_gesture_hold_v1_interface.events := @wp_pointer_gesture_hold_v1_events;
-
 end;
+
 
 end.

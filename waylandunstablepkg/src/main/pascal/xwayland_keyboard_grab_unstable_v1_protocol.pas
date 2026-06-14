@@ -39,6 +39,8 @@ type
 
   TWpXwaylandKeyboardGrabManagerV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpXwaylandKeyboardGrabManagerV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
@@ -51,6 +53,8 @@ type
 
   TWpXwaylandKeyboardGrabV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpXwaylandKeyboardGrabV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
@@ -61,7 +65,6 @@ type
 
 
 
-procedure InitInterfaces;
 
 
 
@@ -76,16 +79,23 @@ var
 implementation
 
 var
+  vwp_xwayland_keyboard_grab_manager_v1_registered: Boolean = False;
   vIntf_wp_xwayland_keyboard_grab_manager_v1_Listener: Twp_xwayland_keyboard_grab_manager_v1_listener;
+  vwp_xwayland_keyboard_grab_v1_registered: Boolean = False;
   vIntf_wp_xwayland_keyboard_grab_v1_Listener: Twp_xwayland_keyboard_grab_v1_listener;
-  vInterfacesRegistered: Boolean = False;
 
 
 
 constructor TWpXwaylandKeyboardGrabManagerV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TWpXwaylandKeyboardGrabManagerV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpXwaylandKeyboardGrabManagerV1;
+begin
+  RegisterInterface;
+  Result := TWpXwaylandKeyboardGrabManagerV1.Create(ARegistry.Bind(AName, @wp_xwayland_keyboard_grab_manager_v1_interface, AVersion));
 end;
 
 destructor TWpXwaylandKeyboardGrabManagerV1.Destroy;
@@ -98,6 +108,7 @@ function TWpXwaylandKeyboardGrabManagerV1.GrabKeyboard(ASurface: TWlSurface; ASe
 var
   id: Pwl_proxy;
 begin
+  TWpXwaylandKeyboardGrabV1.RegisterInterface;
   id := wl_proxy_marshal_constructor(FProxy,
       _GRAB_KEYBOARD, @wp_xwayland_keyboard_grab_v1_interface, nil, ASurface.Proxy, ASeat.Proxy);
   if AProxyClass = nil then
@@ -114,8 +125,14 @@ begin
 end;
 constructor TWpXwaylandKeyboardGrabV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TWpXwaylandKeyboardGrabV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpXwaylandKeyboardGrabV1;
+begin
+  RegisterInterface;
+  Result := TWpXwaylandKeyboardGrabV1.Create(ARegistry.Bind(AName, @wp_xwayland_keyboard_grab_v1_interface, AVersion));
 end;
 
 destructor TWpXwaylandKeyboardGrabV1.Destroy;
@@ -158,26 +175,29 @@ const
     (name: 'destroy'; signature: ''; types: @pInterfaces[0])
   );
 
-procedure InitInterfaces;
+class procedure TWpXwaylandKeyboardGrabManagerV1.RegisterInterface;
 begin
-  if vInterfacesRegistered then Exit;
-  vInterfacesRegistered := True;
-
-
+  if vwp_xwayland_keyboard_grab_manager_v1_registered then Exit;
+  vwp_xwayland_keyboard_grab_manager_v1_registered := True;
   wp_xwayland_keyboard_grab_manager_v1_interface.name := PChar(WP_XWAYLAND_KEYBOARD_GRAB_MANAGER_V1_INTERFACE_NAME);
   wp_xwayland_keyboard_grab_manager_v1_interface.version := 1;
   wp_xwayland_keyboard_grab_manager_v1_interface.method_count := 2;
   wp_xwayland_keyboard_grab_manager_v1_interface.methods := @wp_xwayland_keyboard_grab_manager_v1_requests;
   wp_xwayland_keyboard_grab_manager_v1_interface.event_count := 0;
   wp_xwayland_keyboard_grab_manager_v1_interface.events := nil;
+end;
 
+class procedure TWpXwaylandKeyboardGrabV1.RegisterInterface;
+begin
+  if vwp_xwayland_keyboard_grab_v1_registered then Exit;
+  vwp_xwayland_keyboard_grab_v1_registered := True;
   wp_xwayland_keyboard_grab_v1_interface.name := PChar(WP_XWAYLAND_KEYBOARD_GRAB_V1_INTERFACE_NAME);
   wp_xwayland_keyboard_grab_v1_interface.version := 1;
   wp_xwayland_keyboard_grab_v1_interface.method_count := 1;
   wp_xwayland_keyboard_grab_v1_interface.methods := @wp_xwayland_keyboard_grab_v1_requests;
   wp_xwayland_keyboard_grab_v1_interface.event_count := 0;
   wp_xwayland_keyboard_grab_v1_interface.events := nil;
-
 end;
+
 
 end.

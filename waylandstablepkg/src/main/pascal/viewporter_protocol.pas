@@ -50,6 +50,8 @@ type
 
   TWpViewporter = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpViewporter;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
@@ -62,6 +64,8 @@ type
 
   TWpViewport = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpViewport;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
@@ -76,7 +80,6 @@ type
 
 
 
-procedure InitInterfaces;
 
 
 
@@ -91,16 +94,23 @@ var
 implementation
 
 var
+  vwp_viewporter_registered: Boolean = False;
   vIntf_wp_viewporter_Listener: Twp_viewporter_listener;
+  vwp_viewport_registered: Boolean = False;
   vIntf_wp_viewport_Listener: Twp_viewport_listener;
-  vInterfacesRegistered: Boolean = False;
 
 
 
 constructor TWpViewporter.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TWpViewporter.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpViewporter;
+begin
+  RegisterInterface;
+  Result := TWpViewporter.Create(ARegistry.Bind(AName, @wp_viewporter_interface, AVersion));
 end;
 
 destructor TWpViewporter.Destroy;
@@ -113,6 +123,7 @@ function TWpViewporter.GetViewport(ASurface: TWlSurface; AProxyClass: TWLProxyOb
 var
   id: Pwl_proxy;
 begin
+  TWpViewport.RegisterInterface;
   id := wl_proxy_marshal_constructor(FProxy,
       _GET_VIEWPORT, @wp_viewport_interface, nil, ASurface.Proxy);
   if AProxyClass = nil then
@@ -129,8 +140,14 @@ begin
 end;
 constructor TWpViewport.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TWpViewport.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpViewport;
+begin
+  RegisterInterface;
+  Result := TWpViewport.Create(ARegistry.Bind(AName, @wp_viewport_interface, AVersion));
 end;
 
 destructor TWpViewport.Destroy;
@@ -184,26 +201,29 @@ const
     (name: 'set_destination'; signature: 'ii'; types: @pInterfaces[0])
   );
 
-procedure InitInterfaces;
+class procedure TWpViewporter.RegisterInterface;
 begin
-  if vInterfacesRegistered then Exit;
-  vInterfacesRegistered := True;
-
-
+  if vwp_viewporter_registered then Exit;
+  vwp_viewporter_registered := True;
   wp_viewporter_interface.name := PChar(WP_VIEWPORTER_INTERFACE_NAME);
   wp_viewporter_interface.version := 1;
   wp_viewporter_interface.method_count := 2;
   wp_viewporter_interface.methods := @wp_viewporter_requests;
   wp_viewporter_interface.event_count := 0;
   wp_viewporter_interface.events := nil;
+end;
 
+class procedure TWpViewport.RegisterInterface;
+begin
+  if vwp_viewport_registered then Exit;
+  vwp_viewport_registered := True;
   wp_viewport_interface.name := PChar(WP_VIEWPORT_INTERFACE_NAME);
   wp_viewport_interface.version := 1;
   wp_viewport_interface.method_count := 3;
   wp_viewport_interface.methods := @wp_viewport_requests;
   wp_viewport_interface.event_count := 0;
   wp_viewport_interface.events := nil;
-
 end;
+
 
 end.

@@ -50,6 +50,8 @@ type
 
   TExtBackgroundEffectManagerV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TExtBackgroundEffectManagerV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
@@ -62,6 +64,8 @@ type
 
   TExtBackgroundEffectSurfaceV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TExtBackgroundEffectSurfaceV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
@@ -74,7 +78,6 @@ type
 
 
 
-procedure InitInterfaces;
 
 
 
@@ -89,16 +92,23 @@ var
 implementation
 
 var
+  vext_background_effect_manager_v1_registered: Boolean = False;
   vIntf_ext_background_effect_manager_v1_Listener: Text_background_effect_manager_v1_listener;
+  vext_background_effect_surface_v1_registered: Boolean = False;
   vIntf_ext_background_effect_surface_v1_Listener: Text_background_effect_surface_v1_listener;
-  vInterfacesRegistered: Boolean = False;
 
 
 
 constructor TExtBackgroundEffectManagerV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TExtBackgroundEffectManagerV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TExtBackgroundEffectManagerV1;
+begin
+  RegisterInterface;
+  Result := TExtBackgroundEffectManagerV1.Create(ARegistry.Bind(AName, @ext_background_effect_manager_v1_interface, AVersion));
 end;
 
 destructor TExtBackgroundEffectManagerV1.Destroy;
@@ -111,6 +121,7 @@ function TExtBackgroundEffectManagerV1.GetBackgroundEffect(ASurface: TWlSurface;
 var
   id: Pwl_proxy;
 begin
+  TExtBackgroundEffectSurfaceV1.RegisterInterface;
   id := wl_proxy_marshal_constructor(FProxy,
       _GET_BACKGROUND_EFFECT, @ext_background_effect_surface_v1_interface, nil, ASurface.Proxy);
   if AProxyClass = nil then
@@ -127,8 +138,14 @@ begin
 end;
 constructor TExtBackgroundEffectSurfaceV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TExtBackgroundEffectSurfaceV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TExtBackgroundEffectSurfaceV1;
+begin
+  RegisterInterface;
+  Result := TExtBackgroundEffectSurfaceV1.Create(ARegistry.Bind(AName, @ext_background_effect_surface_v1_interface, AVersion));
 end;
 
 destructor TExtBackgroundEffectSurfaceV1.Destroy;
@@ -189,27 +206,30 @@ const
     (name: 'set_blur_region'; signature: '?o'; types: @pInterfaces[10])
   );
 
-procedure InitInterfaces;
+class procedure TExtBackgroundEffectManagerV1.RegisterInterface;
 begin
-  if vInterfacesRegistered then Exit;
-  vInterfacesRegistered := True;
+  if vext_background_effect_manager_v1_registered then Exit;
+  vext_background_effect_manager_v1_registered := True;
   Pointer(vIntf_ext_background_effect_manager_v1_Listener.capabilities) := @ext_background_effect_manager_v1_capabilities_Intf;
-
-
   ext_background_effect_manager_v1_interface.name := PChar(EXT_BACKGROUND_EFFECT_MANAGER_V1_INTERFACE_NAME);
   ext_background_effect_manager_v1_interface.version := 1;
   ext_background_effect_manager_v1_interface.method_count := 2;
   ext_background_effect_manager_v1_interface.methods := @ext_background_effect_manager_v1_requests;
   ext_background_effect_manager_v1_interface.event_count := 1;
   ext_background_effect_manager_v1_interface.events := @ext_background_effect_manager_v1_events;
+end;
 
+class procedure TExtBackgroundEffectSurfaceV1.RegisterInterface;
+begin
+  if vext_background_effect_surface_v1_registered then Exit;
+  vext_background_effect_surface_v1_registered := True;
   ext_background_effect_surface_v1_interface.name := PChar(EXT_BACKGROUND_EFFECT_SURFACE_V1_INTERFACE_NAME);
   ext_background_effect_surface_v1_interface.version := 1;
   ext_background_effect_surface_v1_interface.method_count := 2;
   ext_background_effect_surface_v1_interface.methods := @ext_background_effect_surface_v1_requests;
   ext_background_effect_surface_v1_interface.event_count := 0;
   ext_background_effect_surface_v1_interface.events := nil;
-
 end;
+
 
 end.

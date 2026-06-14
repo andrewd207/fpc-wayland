@@ -70,6 +70,8 @@ type
 
   TExtSessionLockManagerV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TExtSessionLockManagerV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
@@ -82,6 +84,8 @@ type
 
   TExtSessionLockV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TExtSessionLockV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
@@ -96,6 +100,8 @@ type
 
   TExtSessionLockSurfaceV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TExtSessionLockSurfaceV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
@@ -108,7 +114,6 @@ type
 
 
 
-procedure InitInterfaces;
 
 
 
@@ -125,17 +130,25 @@ var
 implementation
 
 var
+  vext_session_lock_manager_v1_registered: Boolean = False;
   vIntf_ext_session_lock_manager_v1_Listener: Text_session_lock_manager_v1_listener;
+  vext_session_lock_v1_registered: Boolean = False;
   vIntf_ext_session_lock_v1_Listener: Text_session_lock_v1_listener;
+  vext_session_lock_surface_v1_registered: Boolean = False;
   vIntf_ext_session_lock_surface_v1_Listener: Text_session_lock_surface_v1_listener;
-  vInterfacesRegistered: Boolean = False;
 
 
 
 constructor TExtSessionLockManagerV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TExtSessionLockManagerV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TExtSessionLockManagerV1;
+begin
+  RegisterInterface;
+  Result := TExtSessionLockManagerV1.Create(ARegistry.Bind(AName, @ext_session_lock_manager_v1_interface, AVersion));
 end;
 
 destructor TExtSessionLockManagerV1.Destroy;
@@ -148,6 +161,7 @@ function TExtSessionLockManagerV1.Lock(AProxyClass: TWLProxyObjectClass = nil {T
 var
   id: Pwl_proxy;
 begin
+  TExtSessionLockV1.RegisterInterface;
   id := wl_proxy_marshal_constructor(FProxy,
       _LOCK, @ext_session_lock_v1_interface, nil);
   if AProxyClass = nil then
@@ -164,8 +178,14 @@ begin
 end;
 constructor TExtSessionLockV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TExtSessionLockV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TExtSessionLockV1;
+begin
+  RegisterInterface;
+  Result := TExtSessionLockV1.Create(ARegistry.Bind(AName, @ext_session_lock_v1_interface, AVersion));
 end;
 
 destructor TExtSessionLockV1.Destroy;
@@ -178,6 +198,7 @@ function TExtSessionLockV1.GetLockSurface(ASurface: TWlSurface; AOutput: TWlOutp
 var
   id: Pwl_proxy;
 begin
+  TExtSessionLockSurfaceV1.RegisterInterface;
   id := wl_proxy_marshal_constructor(FProxy,
       _GET_LOCK_SURFACE, @ext_session_lock_surface_v1_interface, nil, ASurface.Proxy, AOutput.Proxy);
   if AProxyClass = nil then
@@ -200,8 +221,14 @@ begin
 end;
 constructor TExtSessionLockSurfaceV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TExtSessionLockSurfaceV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TExtSessionLockSurfaceV1;
+begin
+  RegisterInterface;
+  Result := TExtSessionLockSurfaceV1.Create(ARegistry.Bind(AName, @ext_session_lock_surface_v1_interface, AVersion));
 end;
 
 destructor TExtSessionLockSurfaceV1.Destroy;
@@ -290,36 +317,44 @@ const
     (name: 'configure'; signature: 'uuu'; types: @pInterfaces[0])
   );
 
-procedure InitInterfaces;
+class procedure TExtSessionLockManagerV1.RegisterInterface;
 begin
-  if vInterfacesRegistered then Exit;
-  vInterfacesRegistered := True;
-  Pointer(vIntf_ext_session_lock_v1_Listener.locked) := @ext_session_lock_v1_locked_Intf;
-  Pointer(vIntf_ext_session_lock_v1_Listener.finished) := @ext_session_lock_v1_finished_Intf;
-  Pointer(vIntf_ext_session_lock_surface_v1_Listener.configure) := @ext_session_lock_surface_v1_configure_Intf;
-
-
+  if vext_session_lock_manager_v1_registered then Exit;
+  vext_session_lock_manager_v1_registered := True;
   ext_session_lock_manager_v1_interface.name := PChar(EXT_SESSION_LOCK_MANAGER_V1_INTERFACE_NAME);
   ext_session_lock_manager_v1_interface.version := 1;
   ext_session_lock_manager_v1_interface.method_count := 2;
   ext_session_lock_manager_v1_interface.methods := @ext_session_lock_manager_v1_requests;
   ext_session_lock_manager_v1_interface.event_count := 0;
   ext_session_lock_manager_v1_interface.events := nil;
+end;
 
+class procedure TExtSessionLockV1.RegisterInterface;
+begin
+  if vext_session_lock_v1_registered then Exit;
+  vext_session_lock_v1_registered := True;
+  Pointer(vIntf_ext_session_lock_v1_Listener.locked) := @ext_session_lock_v1_locked_Intf;
+  Pointer(vIntf_ext_session_lock_v1_Listener.finished) := @ext_session_lock_v1_finished_Intf;
   ext_session_lock_v1_interface.name := PChar(EXT_SESSION_LOCK_V1_INTERFACE_NAME);
   ext_session_lock_v1_interface.version := 1;
   ext_session_lock_v1_interface.method_count := 3;
   ext_session_lock_v1_interface.methods := @ext_session_lock_v1_requests;
   ext_session_lock_v1_interface.event_count := 2;
   ext_session_lock_v1_interface.events := @ext_session_lock_v1_events;
+end;
 
+class procedure TExtSessionLockSurfaceV1.RegisterInterface;
+begin
+  if vext_session_lock_surface_v1_registered then Exit;
+  vext_session_lock_surface_v1_registered := True;
+  Pointer(vIntf_ext_session_lock_surface_v1_Listener.configure) := @ext_session_lock_surface_v1_configure_Intf;
   ext_session_lock_surface_v1_interface.name := PChar(EXT_SESSION_LOCK_SURFACE_V1_INTERFACE_NAME);
   ext_session_lock_surface_v1_interface.version := 1;
   ext_session_lock_surface_v1_interface.method_count := 2;
   ext_session_lock_surface_v1_interface.methods := @ext_session_lock_surface_v1_requests;
   ext_session_lock_surface_v1_interface.event_count := 1;
   ext_session_lock_surface_v1_interface.events := @ext_session_lock_surface_v1_events;
-
 end;
+
 
 end.

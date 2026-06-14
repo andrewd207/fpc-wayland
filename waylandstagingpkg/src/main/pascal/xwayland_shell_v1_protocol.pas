@@ -48,6 +48,8 @@ type
 
   TXwaylandShellV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TXwaylandShellV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
@@ -60,6 +62,8 @@ type
 
   TXwaylandSurfaceV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TXwaylandSurfaceV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _SET_SERIAL = 0;
@@ -72,7 +76,6 @@ type
 
 
 
-procedure InitInterfaces;
 
 
 
@@ -87,16 +90,23 @@ var
 implementation
 
 var
+  vxwayland_shell_v1_registered: Boolean = False;
   vIntf_xwayland_shell_v1_Listener: Txwayland_shell_v1_listener;
+  vxwayland_surface_v1_registered: Boolean = False;
   vIntf_xwayland_surface_v1_Listener: Txwayland_surface_v1_listener;
-  vInterfacesRegistered: Boolean = False;
 
 
 
 constructor TXwaylandShellV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TXwaylandShellV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TXwaylandShellV1;
+begin
+  RegisterInterface;
+  Result := TXwaylandShellV1.Create(ARegistry.Bind(AName, @xwayland_shell_v1_interface, AVersion));
 end;
 
 destructor TXwaylandShellV1.Destroy;
@@ -109,6 +119,7 @@ function TXwaylandShellV1.GetXwaylandSurface(ASurface: TWlSurface; AProxyClass: 
 var
   id: Pwl_proxy;
 begin
+  TXwaylandSurfaceV1.RegisterInterface;
   id := wl_proxy_marshal_constructor(FProxy,
       _GET_XWAYLAND_SURFACE, @xwayland_surface_v1_interface, nil, ASurface.Proxy);
   if AProxyClass = nil then
@@ -125,8 +136,14 @@ begin
 end;
 constructor TXwaylandSurfaceV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TXwaylandSurfaceV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TXwaylandSurfaceV1;
+begin
+  RegisterInterface;
+  Result := TXwaylandSurfaceV1.Create(ARegistry.Bind(AName, @xwayland_surface_v1_interface, AVersion));
 end;
 
 procedure TXwaylandSurfaceV1.SetSerial(ASerialLo: DWord; ASerialHi: DWord);
@@ -174,26 +191,29 @@ const
     (name: 'destroy'; signature: ''; types: @pInterfaces[0])
   );
 
-procedure InitInterfaces;
+class procedure TXwaylandShellV1.RegisterInterface;
 begin
-  if vInterfacesRegistered then Exit;
-  vInterfacesRegistered := True;
-
-
+  if vxwayland_shell_v1_registered then Exit;
+  vxwayland_shell_v1_registered := True;
   xwayland_shell_v1_interface.name := PChar(XWAYLAND_SHELL_V1_INTERFACE_NAME);
   xwayland_shell_v1_interface.version := 1;
   xwayland_shell_v1_interface.method_count := 2;
   xwayland_shell_v1_interface.methods := @xwayland_shell_v1_requests;
   xwayland_shell_v1_interface.event_count := 0;
   xwayland_shell_v1_interface.events := nil;
+end;
 
+class procedure TXwaylandSurfaceV1.RegisterInterface;
+begin
+  if vxwayland_surface_v1_registered then Exit;
+  vxwayland_surface_v1_registered := True;
   xwayland_surface_v1_interface.name := PChar(XWAYLAND_SURFACE_V1_INTERFACE_NAME);
   xwayland_surface_v1_interface.version := 1;
   xwayland_surface_v1_interface.method_count := 2;
   xwayland_surface_v1_interface.methods := @xwayland_surface_v1_requests;
   xwayland_surface_v1_interface.event_count := 0;
   xwayland_surface_v1_interface.events := nil;
-
 end;
+
 
 end.

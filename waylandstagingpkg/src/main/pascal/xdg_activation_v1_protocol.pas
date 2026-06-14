@@ -45,6 +45,8 @@ type
 
   TXdgActivationV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TXdgActivationV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
@@ -59,6 +61,8 @@ type
 
   TXdgActivationTokenV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TXdgActivationTokenV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _SET_SERIAL = 0;
@@ -77,7 +81,6 @@ type
 
 
 
-procedure InitInterfaces;
 
 
 
@@ -92,16 +95,23 @@ var
 implementation
 
 var
+  vxdg_activation_v1_registered: Boolean = False;
   vIntf_xdg_activation_v1_Listener: Txdg_activation_v1_listener;
+  vxdg_activation_token_v1_registered: Boolean = False;
   vIntf_xdg_activation_token_v1_Listener: Txdg_activation_token_v1_listener;
-  vInterfacesRegistered: Boolean = False;
 
 
 
 constructor TXdgActivationV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TXdgActivationV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TXdgActivationV1;
+begin
+  RegisterInterface;
+  Result := TXdgActivationV1.Create(ARegistry.Bind(AName, @xdg_activation_v1_interface, AVersion));
 end;
 
 destructor TXdgActivationV1.Destroy;
@@ -114,6 +124,7 @@ function TXdgActivationV1.GetActivationToken(AProxyClass: TWLProxyObjectClass = 
 var
   id: Pwl_proxy;
 begin
+  TXdgActivationTokenV1.RegisterInterface;
   id := wl_proxy_marshal_constructor(FProxy,
       _GET_ACTIVATION_TOKEN, @xdg_activation_token_v1_interface, nil);
   if AProxyClass = nil then
@@ -135,8 +146,14 @@ begin
 end;
 constructor TXdgActivationTokenV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TXdgActivationTokenV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TXdgActivationTokenV1;
+begin
+  RegisterInterface;
+  Result := TXdgActivationTokenV1.Create(ARegistry.Bind(AName, @xdg_activation_token_v1_interface, AVersion));
 end;
 
 procedure TXdgActivationTokenV1.SetSerial(ASerial: DWord; ASeat: TWlSeat);
@@ -219,27 +236,30 @@ const
     (name: 'done'; signature: 's'; types: @pInterfaces[0])
   );
 
-procedure InitInterfaces;
+class procedure TXdgActivationV1.RegisterInterface;
 begin
-  if vInterfacesRegistered then Exit;
-  vInterfacesRegistered := True;
-  Pointer(vIntf_xdg_activation_token_v1_Listener.done) := @xdg_activation_token_v1_done_Intf;
-
-
+  if vxdg_activation_v1_registered then Exit;
+  vxdg_activation_v1_registered := True;
   xdg_activation_v1_interface.name := PChar(XDG_ACTIVATION_V1_INTERFACE_NAME);
   xdg_activation_v1_interface.version := 1;
   xdg_activation_v1_interface.method_count := 3;
   xdg_activation_v1_interface.methods := @xdg_activation_v1_requests;
   xdg_activation_v1_interface.event_count := 0;
   xdg_activation_v1_interface.events := nil;
+end;
 
+class procedure TXdgActivationTokenV1.RegisterInterface;
+begin
+  if vxdg_activation_token_v1_registered then Exit;
+  vxdg_activation_token_v1_registered := True;
+  Pointer(vIntf_xdg_activation_token_v1_Listener.done) := @xdg_activation_token_v1_done_Intf;
   xdg_activation_token_v1_interface.name := PChar(XDG_ACTIVATION_TOKEN_V1_INTERFACE_NAME);
   xdg_activation_token_v1_interface.version := 1;
   xdg_activation_token_v1_interface.method_count := 5;
   xdg_activation_token_v1_interface.methods := @xdg_activation_token_v1_requests;
   xdg_activation_token_v1_interface.event_count := 1;
   xdg_activation_token_v1_interface.events := @xdg_activation_token_v1_events;
-
 end;
+
 
 end.

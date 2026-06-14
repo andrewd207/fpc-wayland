@@ -47,6 +47,8 @@ type
 
   TWpKeyboardShortcutsInhibitManagerV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpKeyboardShortcutsInhibitManagerV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
@@ -59,6 +61,8 @@ type
 
   TWpKeyboardShortcutsInhibitorV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpKeyboardShortcutsInhibitorV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
@@ -69,7 +73,6 @@ type
 
 
 
-procedure InitInterfaces;
 
 
 
@@ -84,16 +87,23 @@ var
 implementation
 
 var
+  vwp_keyboard_shortcuts_inhibit_manager_v1_registered: Boolean = False;
   vIntf_wp_keyboard_shortcuts_inhibit_manager_v1_Listener: Twp_keyboard_shortcuts_inhibit_manager_v1_listener;
+  vwp_keyboard_shortcuts_inhibitor_v1_registered: Boolean = False;
   vIntf_wp_keyboard_shortcuts_inhibitor_v1_Listener: Twp_keyboard_shortcuts_inhibitor_v1_listener;
-  vInterfacesRegistered: Boolean = False;
 
 
 
 constructor TWpKeyboardShortcutsInhibitManagerV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TWpKeyboardShortcutsInhibitManagerV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpKeyboardShortcutsInhibitManagerV1;
+begin
+  RegisterInterface;
+  Result := TWpKeyboardShortcutsInhibitManagerV1.Create(ARegistry.Bind(AName, @wp_keyboard_shortcuts_inhibit_manager_v1_interface, AVersion));
 end;
 
 destructor TWpKeyboardShortcutsInhibitManagerV1.Destroy;
@@ -106,6 +116,7 @@ function TWpKeyboardShortcutsInhibitManagerV1.InhibitShortcuts(ASurface: TWlSurf
 var
   id: Pwl_proxy;
 begin
+  TWpKeyboardShortcutsInhibitorV1.RegisterInterface;
   id := wl_proxy_marshal_constructor(FProxy,
       _INHIBIT_SHORTCUTS, @wp_keyboard_shortcuts_inhibitor_v1_interface, nil, ASurface.Proxy, ASeat.Proxy);
   if AProxyClass = nil then
@@ -122,8 +133,14 @@ begin
 end;
 constructor TWpKeyboardShortcutsInhibitorV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TWpKeyboardShortcutsInhibitorV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpKeyboardShortcutsInhibitorV1;
+begin
+  RegisterInterface;
+  Result := TWpKeyboardShortcutsInhibitorV1.Create(ARegistry.Bind(AName, @wp_keyboard_shortcuts_inhibitor_v1_interface, AVersion));
 end;
 
 destructor TWpKeyboardShortcutsInhibitorV1.Destroy;
@@ -188,28 +205,31 @@ const
     (name: 'inactive'; signature: ''; types: @pInterfaces[0])
   );
 
-procedure InitInterfaces;
+class procedure TWpKeyboardShortcutsInhibitManagerV1.RegisterInterface;
 begin
-  if vInterfacesRegistered then Exit;
-  vInterfacesRegistered := True;
-  Pointer(vIntf_wp_keyboard_shortcuts_inhibitor_v1_Listener.active) := @wp_keyboard_shortcuts_inhibitor_v1_active_Intf;
-  Pointer(vIntf_wp_keyboard_shortcuts_inhibitor_v1_Listener.inactive) := @wp_keyboard_shortcuts_inhibitor_v1_inactive_Intf;
-
-
+  if vwp_keyboard_shortcuts_inhibit_manager_v1_registered then Exit;
+  vwp_keyboard_shortcuts_inhibit_manager_v1_registered := True;
   wp_keyboard_shortcuts_inhibit_manager_v1_interface.name := PChar(WP_KEYBOARD_SHORTCUTS_INHIBIT_MANAGER_V1_INTERFACE_NAME);
   wp_keyboard_shortcuts_inhibit_manager_v1_interface.version := 1;
   wp_keyboard_shortcuts_inhibit_manager_v1_interface.method_count := 2;
   wp_keyboard_shortcuts_inhibit_manager_v1_interface.methods := @wp_keyboard_shortcuts_inhibit_manager_v1_requests;
   wp_keyboard_shortcuts_inhibit_manager_v1_interface.event_count := 0;
   wp_keyboard_shortcuts_inhibit_manager_v1_interface.events := nil;
+end;
 
+class procedure TWpKeyboardShortcutsInhibitorV1.RegisterInterface;
+begin
+  if vwp_keyboard_shortcuts_inhibitor_v1_registered then Exit;
+  vwp_keyboard_shortcuts_inhibitor_v1_registered := True;
+  Pointer(vIntf_wp_keyboard_shortcuts_inhibitor_v1_Listener.active) := @wp_keyboard_shortcuts_inhibitor_v1_active_Intf;
+  Pointer(vIntf_wp_keyboard_shortcuts_inhibitor_v1_Listener.inactive) := @wp_keyboard_shortcuts_inhibitor_v1_inactive_Intf;
   wp_keyboard_shortcuts_inhibitor_v1_interface.name := PChar(WP_KEYBOARD_SHORTCUTS_INHIBITOR_V1_INTERFACE_NAME);
   wp_keyboard_shortcuts_inhibitor_v1_interface.version := 1;
   wp_keyboard_shortcuts_inhibitor_v1_interface.method_count := 1;
   wp_keyboard_shortcuts_inhibitor_v1_interface.methods := @wp_keyboard_shortcuts_inhibitor_v1_requests;
   wp_keyboard_shortcuts_inhibitor_v1_interface.event_count := 2;
   wp_keyboard_shortcuts_inhibitor_v1_interface.events := @wp_keyboard_shortcuts_inhibitor_v1_events;
-
 end;
+
 
 end.

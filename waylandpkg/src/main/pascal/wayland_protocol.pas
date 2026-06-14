@@ -590,6 +590,8 @@ type
 
   TWlDisplay = class(TWlDisplayBase)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWlDisplay;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _SYNC = 0;
@@ -602,6 +604,8 @@ type
 
   TWlRegistry = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWlRegistry;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _BIND = 0;
@@ -612,12 +616,16 @@ type
 
   TWlCallback = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWlCallback;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
     function AddListener(AIntf: IWlCallbackListener): LongInt;
   end;
 
   TWlCompositor = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWlCompositor;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _CREATE_SURFACE = 0;
@@ -630,6 +638,8 @@ type
 
   TWlShmPool = class(TWlShmPoolBase)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWlShmPool;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _CREATE_BUFFER = 0;
@@ -644,6 +654,8 @@ type
 
   TWlShm = class(TWlShmBase)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWlShm;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _CREATE_POOL = 0;
@@ -654,6 +666,8 @@ type
 
   TWlBuffer = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWlBuffer;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
@@ -664,6 +678,8 @@ type
 
   TWlDataOffer = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWlDataOffer;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _ACCEPT = 0;
@@ -682,6 +698,8 @@ type
 
   TWlDataSource = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWlDataSource;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _OFFER = 0;
@@ -696,6 +714,8 @@ type
 
   TWlDataDevice = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWlDataDevice;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _START_DRAG = 0;
@@ -710,6 +730,8 @@ type
 
   TWlDataDeviceManager = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWlDataDeviceManager;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _CREATE_DATA_SOURCE = 0;
@@ -722,6 +744,8 @@ type
 
   TWlShell = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWlShell;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _GET_SHELL_SURFACE = 0;
@@ -732,6 +756,8 @@ type
 
   TWlShellSurface = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWlShellSurface;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _PONG = 0;
@@ -760,6 +786,8 @@ type
 
   TWlSurface = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWlSurface;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
@@ -790,6 +818,8 @@ type
 
   TWlSeat = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWlSeat;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _GET_POINTER = 0;
@@ -806,6 +836,8 @@ type
 
   TWlPointer = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWlPointer;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _SET_CURSOR = 0;
@@ -818,6 +850,8 @@ type
 
   TWlKeyboard = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWlKeyboard;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _RELEASE = 0;
@@ -828,6 +862,8 @@ type
 
   TWlTouch = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWlTouch;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _RELEASE = 0;
@@ -838,6 +874,8 @@ type
 
   TWlOutput = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWlOutput;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _RELEASE = 0;
@@ -848,6 +886,8 @@ type
 
   TWlRegion = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWlRegion;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
@@ -862,6 +902,8 @@ type
 
   TWlSubcompositor = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWlSubcompositor;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
@@ -874,6 +916,8 @@ type
 
   TWlSubsurface = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWlSubsurface;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
@@ -894,7 +938,6 @@ type
 
 
 
-procedure InitInterfaces;
 
 
 
@@ -949,42 +992,70 @@ var
 implementation
 
 var
+  vwl_display_registered: Boolean = False;
   vIntf_wl_display_Listener: Twl_display_listener;
+  vwl_registry_registered: Boolean = False;
   vIntf_wl_registry_Listener: Twl_registry_listener;
+  vwl_callback_registered: Boolean = False;
   vIntf_wl_callback_Listener: Twl_callback_listener;
+  vwl_compositor_registered: Boolean = False;
   vIntf_wl_compositor_Listener: Twl_compositor_listener;
+  vwl_shm_pool_registered: Boolean = False;
   vIntf_wl_shm_pool_Listener: Twl_shm_pool_listener;
+  vwl_shm_registered: Boolean = False;
   vIntf_wl_shm_Listener: Twl_shm_listener;
+  vwl_buffer_registered: Boolean = False;
   vIntf_wl_buffer_Listener: Twl_buffer_listener;
+  vwl_data_offer_registered: Boolean = False;
   vIntf_wl_data_offer_Listener: Twl_data_offer_listener;
+  vwl_data_source_registered: Boolean = False;
   vIntf_wl_data_source_Listener: Twl_data_source_listener;
+  vwl_data_device_registered: Boolean = False;
   vIntf_wl_data_device_Listener: Twl_data_device_listener;
+  vwl_data_device_manager_registered: Boolean = False;
   vIntf_wl_data_device_manager_Listener: Twl_data_device_manager_listener;
+  vwl_shell_registered: Boolean = False;
   vIntf_wl_shell_Listener: Twl_shell_listener;
+  vwl_shell_surface_registered: Boolean = False;
   vIntf_wl_shell_surface_Listener: Twl_shell_surface_listener;
+  vwl_surface_registered: Boolean = False;
   vIntf_wl_surface_Listener: Twl_surface_listener;
+  vwl_seat_registered: Boolean = False;
   vIntf_wl_seat_Listener: Twl_seat_listener;
+  vwl_pointer_registered: Boolean = False;
   vIntf_wl_pointer_Listener: Twl_pointer_listener;
+  vwl_keyboard_registered: Boolean = False;
   vIntf_wl_keyboard_Listener: Twl_keyboard_listener;
+  vwl_touch_registered: Boolean = False;
   vIntf_wl_touch_Listener: Twl_touch_listener;
+  vwl_output_registered: Boolean = False;
   vIntf_wl_output_Listener: Twl_output_listener;
+  vwl_region_registered: Boolean = False;
   vIntf_wl_region_Listener: Twl_region_listener;
+  vwl_subcompositor_registered: Boolean = False;
   vIntf_wl_subcompositor_Listener: Twl_subcompositor_listener;
+  vwl_subsurface_registered: Boolean = False;
   vIntf_wl_subsurface_Listener: Twl_subsurface_listener;
-  vInterfacesRegistered: Boolean = False;
 
 
 
 constructor TWlDisplay.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TWlDisplay.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWlDisplay;
+begin
+  RegisterInterface;
+  Result := TWlDisplay.Create(ARegistry.Bind(AName, @wl_display_interface, AVersion));
 end;
 
 function TWlDisplay.Sync(AProxyClass: TWLProxyObjectClass = nil {TWlCallback}): TWlCallback;
 var
   callback: Pwl_proxy;
 begin
+  TWlCallback.RegisterInterface;
   callback := wl_proxy_marshal_constructor(FProxy,
       _SYNC, @wl_callback_interface, nil);
   if AProxyClass = nil then
@@ -998,6 +1069,7 @@ function TWlDisplay.GetRegistry(AProxyClass: TWLProxyObjectClass = nil {TWlRegis
 var
   registry: Pwl_proxy;
 begin
+  TWlRegistry.RegisterInterface;
   registry := wl_proxy_marshal_constructor(FProxy,
       _GET_REGISTRY, @wl_registry_interface, nil);
   if AProxyClass = nil then
@@ -1014,8 +1086,14 @@ begin
 end;
 constructor TWlRegistry.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TWlRegistry.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWlRegistry;
+begin
+  RegisterInterface;
+  Result := TWlRegistry.Create(ARegistry.Bind(AName, @wl_registry_interface, AVersion));
 end;
 
 function TWlRegistry.Bind(AName: DWord; AInterface: Pwl_interface; AVersion: LongInt): Pwl_proxy;
@@ -1031,8 +1109,14 @@ begin
 end;
 constructor TWlCallback.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TWlCallback.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWlCallback;
+begin
+  RegisterInterface;
+  Result := TWlCallback.Create(ARegistry.Bind(AName, @wl_callback_interface, AVersion));
 end;
 
 function TWlCallback.AddListener(AIntf: IWlCallbackListener): LongInt;
@@ -1042,14 +1126,21 @@ begin
 end;
 constructor TWlCompositor.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TWlCompositor.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWlCompositor;
+begin
+  RegisterInterface;
+  Result := TWlCompositor.Create(ARegistry.Bind(AName, @wl_compositor_interface, AVersion));
 end;
 
 function TWlCompositor.CreateSurface(AProxyClass: TWLProxyObjectClass = nil {TWlSurface}): TWlSurface;
 var
   id: Pwl_proxy;
 begin
+  TWlSurface.RegisterInterface;
   id := wl_proxy_marshal_constructor(FProxy,
       _CREATE_SURFACE, @wl_surface_interface, nil);
   if AProxyClass = nil then
@@ -1063,6 +1154,7 @@ function TWlCompositor.CreateRegion(AProxyClass: TWLProxyObjectClass = nil {TWlR
 var
   id: Pwl_proxy;
 begin
+  TWlRegion.RegisterInterface;
   id := wl_proxy_marshal_constructor(FProxy,
       _CREATE_REGION, @wl_region_interface, nil);
   if AProxyClass = nil then
@@ -1079,14 +1171,21 @@ begin
 end;
 constructor TWlShmPool.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TWlShmPool.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWlShmPool;
+begin
+  RegisterInterface;
+  Result := TWlShmPool.Create(ARegistry.Bind(AName, @wl_shm_pool_interface, AVersion));
 end;
 
 function TWlShmPool.CreateBuffer(AOffset: LongInt; AWidth: LongInt; AHeight: LongInt; AStride: LongInt; AFormat: DWord; AProxyClass: TWLProxyObjectClass = nil {TWlBuffer}): TWlBuffer;
 var
   id: Pwl_proxy;
 begin
+  TWlBuffer.RegisterInterface;
   id := wl_proxy_marshal_constructor(FProxy,
       _CREATE_BUFFER, @wl_buffer_interface, nil, AOffset, AWidth, AHeight, AStride, AFormat);
   if AProxyClass = nil then
@@ -1114,14 +1213,21 @@ begin
 end;
 constructor TWlShm.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TWlShm.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWlShm;
+begin
+  RegisterInterface;
+  Result := TWlShm.Create(ARegistry.Bind(AName, @wl_shm_interface, AVersion));
 end;
 
 function TWlShm.CreatePool(AFd: LongInt{fd}; ASize: LongInt; AProxyClass: TWLProxyObjectClass = nil {TWlShmPool}): TWlShmPool;
 var
   id: Pwl_proxy;
 begin
+  TWlShmPool.RegisterInterface;
   id := wl_proxy_marshal_constructor(FProxy,
       _CREATE_POOL, @wl_shm_pool_interface, nil, AFd, ASize);
   if AProxyClass = nil then
@@ -1138,8 +1244,14 @@ begin
 end;
 constructor TWlBuffer.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TWlBuffer.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWlBuffer;
+begin
+  RegisterInterface;
+  Result := TWlBuffer.Create(ARegistry.Bind(AName, @wl_buffer_interface, AVersion));
 end;
 
 destructor TWlBuffer.Destroy;
@@ -1155,8 +1267,14 @@ begin
 end;
 constructor TWlDataOffer.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TWlDataOffer.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWlDataOffer;
+begin
+  RegisterInterface;
+  Result := TWlDataOffer.Create(ARegistry.Bind(AName, @wl_data_offer_interface, AVersion));
 end;
 
 procedure TWlDataOffer.Accept(ASerial: DWord; AMimeType: String);
@@ -1192,8 +1310,14 @@ begin
 end;
 constructor TWlDataSource.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TWlDataSource.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWlDataSource;
+begin
+  RegisterInterface;
+  Result := TWlDataSource.Create(ARegistry.Bind(AName, @wl_data_source_interface, AVersion));
 end;
 
 procedure TWlDataSource.Offer(AMimeType: String);
@@ -1219,8 +1343,14 @@ begin
 end;
 constructor TWlDataDevice.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TWlDataDevice.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWlDataDevice;
+begin
+  RegisterInterface;
+  Result := TWlDataDevice.Create(ARegistry.Bind(AName, @wl_data_device_interface, AVersion));
 end;
 
 procedure TWlDataDevice.StartDrag(ASource: TWlDataSource; AOrigin: TWlSurface; AIcon: TWlSurface; ASerial: DWord);
@@ -1246,14 +1376,21 @@ begin
 end;
 constructor TWlDataDeviceManager.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TWlDataDeviceManager.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWlDataDeviceManager;
+begin
+  RegisterInterface;
+  Result := TWlDataDeviceManager.Create(ARegistry.Bind(AName, @wl_data_device_manager_interface, AVersion));
 end;
 
 function TWlDataDeviceManager.CreateDataSource(AProxyClass: TWLProxyObjectClass = nil {TWlDataSource}): TWlDataSource;
 var
   id: Pwl_proxy;
 begin
+  TWlDataSource.RegisterInterface;
   id := wl_proxy_marshal_constructor(FProxy,
       _CREATE_DATA_SOURCE, @wl_data_source_interface, nil);
   if AProxyClass = nil then
@@ -1267,6 +1404,7 @@ function TWlDataDeviceManager.GetDataDevice(ASeat: TWlSeat; AProxyClass: TWLProx
 var
   id: Pwl_proxy;
 begin
+  TWlDataDevice.RegisterInterface;
   id := wl_proxy_marshal_constructor(FProxy,
       _GET_DATA_DEVICE, @wl_data_device_interface, nil, ASeat.Proxy);
   if AProxyClass = nil then
@@ -1283,14 +1421,21 @@ begin
 end;
 constructor TWlShell.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TWlShell.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWlShell;
+begin
+  RegisterInterface;
+  Result := TWlShell.Create(ARegistry.Bind(AName, @wl_shell_interface, AVersion));
 end;
 
 function TWlShell.GetShellSurface(ASurface: TWlSurface; AProxyClass: TWLProxyObjectClass = nil {TWlShellSurface}): TWlShellSurface;
 var
   id: Pwl_proxy;
 begin
+  TWlShellSurface.RegisterInterface;
   id := wl_proxy_marshal_constructor(FProxy,
       _GET_SHELL_SURFACE, @wl_shell_surface_interface, nil, ASurface.Proxy);
   if AProxyClass = nil then
@@ -1307,8 +1452,14 @@ begin
 end;
 constructor TWlShellSurface.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TWlShellSurface.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWlShellSurface;
+begin
+  RegisterInterface;
+  Result := TWlShellSurface.Create(ARegistry.Bind(AName, @wl_shell_surface_interface, AVersion));
 end;
 
 procedure TWlShellSurface.Pong(ASerial: DWord);
@@ -1368,8 +1519,14 @@ begin
 end;
 constructor TWlSurface.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TWlSurface.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWlSurface;
+begin
+  RegisterInterface;
+  Result := TWlSurface.Create(ARegistry.Bind(AName, @wl_surface_interface, AVersion));
 end;
 
 destructor TWlSurface.Destroy;
@@ -1392,6 +1549,7 @@ function TWlSurface.Frame(AProxyClass: TWLProxyObjectClass = nil {TWlCallback}):
 var
   callback: Pwl_proxy;
 begin
+  TWlCallback.RegisterInterface;
   callback := wl_proxy_marshal_constructor(FProxy,
       _FRAME, @wl_callback_interface, nil);
   if AProxyClass = nil then
@@ -1443,14 +1601,21 @@ begin
 end;
 constructor TWlSeat.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TWlSeat.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWlSeat;
+begin
+  RegisterInterface;
+  Result := TWlSeat.Create(ARegistry.Bind(AName, @wl_seat_interface, AVersion));
 end;
 
 function TWlSeat.GetPointer(AProxyClass: TWLProxyObjectClass = nil {TWlPointer}): TWlPointer;
 var
   id: Pwl_proxy;
 begin
+  TWlPointer.RegisterInterface;
   id := wl_proxy_marshal_constructor(FProxy,
       _GET_POINTER, @wl_pointer_interface, nil);
   if AProxyClass = nil then
@@ -1464,6 +1629,7 @@ function TWlSeat.GetKeyboard(AProxyClass: TWLProxyObjectClass = nil {TWlKeyboard
 var
   id: Pwl_proxy;
 begin
+  TWlKeyboard.RegisterInterface;
   id := wl_proxy_marshal_constructor(FProxy,
       _GET_KEYBOARD, @wl_keyboard_interface, nil);
   if AProxyClass = nil then
@@ -1477,6 +1643,7 @@ function TWlSeat.GetTouch(AProxyClass: TWLProxyObjectClass = nil {TWlTouch}): TW
 var
   id: Pwl_proxy;
 begin
+  TWlTouch.RegisterInterface;
   id := wl_proxy_marshal_constructor(FProxy,
       _GET_TOUCH, @wl_touch_interface, nil);
   if AProxyClass = nil then
@@ -1499,8 +1666,14 @@ begin
 end;
 constructor TWlPointer.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TWlPointer.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWlPointer;
+begin
+  RegisterInterface;
+  Result := TWlPointer.Create(ARegistry.Bind(AName, @wl_pointer_interface, AVersion));
 end;
 
 procedure TWlPointer.SetCursor(ASerial: DWord; ASurface: TWlSurface; AHotspotX: LongInt; AHotspotY: LongInt);
@@ -1521,8 +1694,14 @@ begin
 end;
 constructor TWlKeyboard.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TWlKeyboard.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWlKeyboard;
+begin
+  RegisterInterface;
+  Result := TWlKeyboard.Create(ARegistry.Bind(AName, @wl_keyboard_interface, AVersion));
 end;
 
 procedure TWlKeyboard.Release;
@@ -1538,8 +1717,14 @@ begin
 end;
 constructor TWlTouch.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TWlTouch.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWlTouch;
+begin
+  RegisterInterface;
+  Result := TWlTouch.Create(ARegistry.Bind(AName, @wl_touch_interface, AVersion));
 end;
 
 procedure TWlTouch.Release;
@@ -1555,8 +1740,14 @@ begin
 end;
 constructor TWlOutput.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TWlOutput.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWlOutput;
+begin
+  RegisterInterface;
+  Result := TWlOutput.Create(ARegistry.Bind(AName, @wl_output_interface, AVersion));
 end;
 
 procedure TWlOutput.Release;
@@ -1572,8 +1763,14 @@ begin
 end;
 constructor TWlRegion.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TWlRegion.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWlRegion;
+begin
+  RegisterInterface;
+  Result := TWlRegion.Create(ARegistry.Bind(AName, @wl_region_interface, AVersion));
 end;
 
 destructor TWlRegion.Destroy;
@@ -1599,8 +1796,14 @@ begin
 end;
 constructor TWlSubcompositor.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TWlSubcompositor.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWlSubcompositor;
+begin
+  RegisterInterface;
+  Result := TWlSubcompositor.Create(ARegistry.Bind(AName, @wl_subcompositor_interface, AVersion));
 end;
 
 destructor TWlSubcompositor.Destroy;
@@ -1613,6 +1816,7 @@ function TWlSubcompositor.GetSubsurface(ASurface: TWlSurface; AParent: TWlSurfac
 var
   id: Pwl_proxy;
 begin
+  TWlSubsurface.RegisterInterface;
   id := wl_proxy_marshal_constructor(FProxy,
       _GET_SUBSURFACE, @wl_subsurface_interface, nil, ASurface.Proxy, AParent.Proxy);
   if AProxyClass = nil then
@@ -1629,8 +1833,14 @@ begin
 end;
 constructor TWlSubsurface.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TWlSubsurface.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWlSubsurface;
+begin
+  RegisterInterface;
+  Result := TWlSubsurface.Create(ARegistry.Bind(AName, @wl_subsurface_interface, AVersion));
 end;
 
 destructor TWlSubsurface.Destroy;
@@ -2521,41 +2731,221 @@ const
     (name: 'set_desync'; signature: ''; types: @pInterfaces[0])
   );
 
-procedure InitInterfaces;
+class procedure TWlDisplay.RegisterInterface;
 begin
-  if vInterfacesRegistered then Exit;
-  vInterfacesRegistered := True;
+  if vwl_display_registered then Exit;
+  vwl_display_registered := True;
   Pointer(vIntf_wl_display_Listener.error) := @wl_display_error_Intf;
   Pointer(vIntf_wl_display_Listener.delete_id) := @wl_display_delete_id_Intf;
+  wl_display_interface.name := PChar(WL_DISPLAY_INTERFACE_NAME);
+  wl_display_interface.version := 1;
+  wl_display_interface.method_count := 2;
+  wl_display_interface.methods := @wl_display_requests;
+  wl_display_interface.event_count := 2;
+  wl_display_interface.events := @wl_display_events;
+end;
+
+class procedure TWlRegistry.RegisterInterface;
+begin
+  if vwl_registry_registered then Exit;
+  vwl_registry_registered := True;
   Pointer(vIntf_wl_registry_Listener.global) := @wl_registry_global_Intf;
   Pointer(vIntf_wl_registry_Listener.global_remove) := @wl_registry_global_remove_Intf;
+  wl_registry_interface.name := PChar(WL_REGISTRY_INTERFACE_NAME);
+  wl_registry_interface.version := 1;
+  wl_registry_interface.method_count := 1;
+  wl_registry_interface.methods := @wl_registry_requests;
+  wl_registry_interface.event_count := 2;
+  wl_registry_interface.events := @wl_registry_events;
+end;
+
+class procedure TWlCallback.RegisterInterface;
+begin
+  if vwl_callback_registered then Exit;
+  vwl_callback_registered := True;
   Pointer(vIntf_wl_callback_Listener.done) := @wl_callback_done_Intf;
+  wl_callback_interface.name := PChar(WL_CALLBACK_INTERFACE_NAME);
+  wl_callback_interface.version := 1;
+  wl_callback_interface.method_count := 0;
+  wl_callback_interface.methods := nil;
+  wl_callback_interface.event_count := 1;
+  wl_callback_interface.events := @wl_callback_events;
+end;
+
+class procedure TWlCompositor.RegisterInterface;
+begin
+  if vwl_compositor_registered then Exit;
+  vwl_compositor_registered := True;
+  wl_compositor_interface.name := PChar(WL_COMPOSITOR_INTERFACE_NAME);
+  wl_compositor_interface.version := 6;
+  wl_compositor_interface.method_count := 2;
+  wl_compositor_interface.methods := @wl_compositor_requests;
+  wl_compositor_interface.event_count := 0;
+  wl_compositor_interface.events := nil;
+end;
+
+class procedure TWlShmPool.RegisterInterface;
+begin
+  if vwl_shm_pool_registered then Exit;
+  vwl_shm_pool_registered := True;
+  wl_shm_pool_interface.name := PChar(WL_SHM_POOL_INTERFACE_NAME);
+  wl_shm_pool_interface.version := 1;
+  wl_shm_pool_interface.method_count := 3;
+  wl_shm_pool_interface.methods := @wl_shm_pool_requests;
+  wl_shm_pool_interface.event_count := 0;
+  wl_shm_pool_interface.events := nil;
+end;
+
+class procedure TWlShm.RegisterInterface;
+begin
+  if vwl_shm_registered then Exit;
+  vwl_shm_registered := True;
   Pointer(vIntf_wl_shm_Listener.format) := @wl_shm_format_Intf;
+  wl_shm_interface.name := PChar(WL_SHM_INTERFACE_NAME);
+  wl_shm_interface.version := 1;
+  wl_shm_interface.method_count := 1;
+  wl_shm_interface.methods := @wl_shm_requests;
+  wl_shm_interface.event_count := 1;
+  wl_shm_interface.events := @wl_shm_events;
+end;
+
+class procedure TWlBuffer.RegisterInterface;
+begin
+  if vwl_buffer_registered then Exit;
+  vwl_buffer_registered := True;
   Pointer(vIntf_wl_buffer_Listener.release) := @wl_buffer_release_Intf;
+  wl_buffer_interface.name := PChar(WL_BUFFER_INTERFACE_NAME);
+  wl_buffer_interface.version := 1;
+  wl_buffer_interface.method_count := 1;
+  wl_buffer_interface.methods := @wl_buffer_requests;
+  wl_buffer_interface.event_count := 1;
+  wl_buffer_interface.events := @wl_buffer_events;
+end;
+
+class procedure TWlDataOffer.RegisterInterface;
+begin
+  if vwl_data_offer_registered then Exit;
+  vwl_data_offer_registered := True;
   Pointer(vIntf_wl_data_offer_Listener.offer) := @wl_data_offer_offer_Intf;
   Pointer(vIntf_wl_data_offer_Listener.source_actions) := @wl_data_offer_source_actions_Intf;
   Pointer(vIntf_wl_data_offer_Listener.action) := @wl_data_offer_action_Intf;
+  wl_data_offer_interface.name := PChar(WL_DATA_OFFER_INTERFACE_NAME);
+  wl_data_offer_interface.version := 3;
+  wl_data_offer_interface.method_count := 5;
+  wl_data_offer_interface.methods := @wl_data_offer_requests;
+  wl_data_offer_interface.event_count := 3;
+  wl_data_offer_interface.events := @wl_data_offer_events;
+end;
+
+class procedure TWlDataSource.RegisterInterface;
+begin
+  if vwl_data_source_registered then Exit;
+  vwl_data_source_registered := True;
   Pointer(vIntf_wl_data_source_Listener.target) := @wl_data_source_target_Intf;
   Pointer(vIntf_wl_data_source_Listener.send) := @wl_data_source_send_Intf;
   Pointer(vIntf_wl_data_source_Listener.cancelled) := @wl_data_source_cancelled_Intf;
   Pointer(vIntf_wl_data_source_Listener.dnd_drop_performed) := @wl_data_source_dnd_drop_performed_Intf;
   Pointer(vIntf_wl_data_source_Listener.dnd_finished) := @wl_data_source_dnd_finished_Intf;
   Pointer(vIntf_wl_data_source_Listener.action) := @wl_data_source_action_Intf;
+  wl_data_source_interface.name := PChar(WL_DATA_SOURCE_INTERFACE_NAME);
+  wl_data_source_interface.version := 3;
+  wl_data_source_interface.method_count := 3;
+  wl_data_source_interface.methods := @wl_data_source_requests;
+  wl_data_source_interface.event_count := 6;
+  wl_data_source_interface.events := @wl_data_source_events;
+end;
+
+class procedure TWlDataDevice.RegisterInterface;
+begin
+  if vwl_data_device_registered then Exit;
+  vwl_data_device_registered := True;
   Pointer(vIntf_wl_data_device_Listener.data_offer) := @wl_data_device_data_offer_Intf;
   Pointer(vIntf_wl_data_device_Listener.enter) := @wl_data_device_enter_Intf;
   Pointer(vIntf_wl_data_device_Listener.leave) := @wl_data_device_leave_Intf;
   Pointer(vIntf_wl_data_device_Listener.motion) := @wl_data_device_motion_Intf;
   Pointer(vIntf_wl_data_device_Listener.drop) := @wl_data_device_drop_Intf;
   Pointer(vIntf_wl_data_device_Listener.selection) := @wl_data_device_selection_Intf;
+  wl_data_device_interface.name := PChar(WL_DATA_DEVICE_INTERFACE_NAME);
+  wl_data_device_interface.version := 3;
+  wl_data_device_interface.method_count := 3;
+  wl_data_device_interface.methods := @wl_data_device_requests;
+  wl_data_device_interface.event_count := 6;
+  wl_data_device_interface.events := @wl_data_device_events;
+end;
+
+class procedure TWlDataDeviceManager.RegisterInterface;
+begin
+  if vwl_data_device_manager_registered then Exit;
+  vwl_data_device_manager_registered := True;
+  wl_data_device_manager_interface.name := PChar(WL_DATA_DEVICE_MANAGER_INTERFACE_NAME);
+  wl_data_device_manager_interface.version := 3;
+  wl_data_device_manager_interface.method_count := 2;
+  wl_data_device_manager_interface.methods := @wl_data_device_manager_requests;
+  wl_data_device_manager_interface.event_count := 0;
+  wl_data_device_manager_interface.events := nil;
+end;
+
+class procedure TWlShell.RegisterInterface;
+begin
+  if vwl_shell_registered then Exit;
+  vwl_shell_registered := True;
+  wl_shell_interface.name := PChar(WL_SHELL_INTERFACE_NAME);
+  wl_shell_interface.version := 1;
+  wl_shell_interface.method_count := 1;
+  wl_shell_interface.methods := @wl_shell_requests;
+  wl_shell_interface.event_count := 0;
+  wl_shell_interface.events := nil;
+end;
+
+class procedure TWlShellSurface.RegisterInterface;
+begin
+  if vwl_shell_surface_registered then Exit;
+  vwl_shell_surface_registered := True;
   Pointer(vIntf_wl_shell_surface_Listener.ping) := @wl_shell_surface_ping_Intf;
   Pointer(vIntf_wl_shell_surface_Listener.configure) := @wl_shell_surface_configure_Intf;
   Pointer(vIntf_wl_shell_surface_Listener.popup_done) := @wl_shell_surface_popup_done_Intf;
+  wl_shell_surface_interface.name := PChar(WL_SHELL_SURFACE_INTERFACE_NAME);
+  wl_shell_surface_interface.version := 1;
+  wl_shell_surface_interface.method_count := 10;
+  wl_shell_surface_interface.methods := @wl_shell_surface_requests;
+  wl_shell_surface_interface.event_count := 3;
+  wl_shell_surface_interface.events := @wl_shell_surface_events;
+end;
+
+class procedure TWlSurface.RegisterInterface;
+begin
+  if vwl_surface_registered then Exit;
+  vwl_surface_registered := True;
   Pointer(vIntf_wl_surface_Listener.enter) := @wl_surface_enter_Intf;
   Pointer(vIntf_wl_surface_Listener.leave) := @wl_surface_leave_Intf;
   Pointer(vIntf_wl_surface_Listener.preferred_buffer_scale) := @wl_surface_preferred_buffer_scale_Intf;
   Pointer(vIntf_wl_surface_Listener.preferred_buffer_transform) := @wl_surface_preferred_buffer_transform_Intf;
+  wl_surface_interface.name := PChar(WL_SURFACE_INTERFACE_NAME);
+  wl_surface_interface.version := 6;
+  wl_surface_interface.method_count := 11;
+  wl_surface_interface.methods := @wl_surface_requests;
+  wl_surface_interface.event_count := 4;
+  wl_surface_interface.events := @wl_surface_events;
+end;
+
+class procedure TWlSeat.RegisterInterface;
+begin
+  if vwl_seat_registered then Exit;
+  vwl_seat_registered := True;
   Pointer(vIntf_wl_seat_Listener.capabilities) := @wl_seat_capabilities_Intf;
   Pointer(vIntf_wl_seat_Listener.name) := @wl_seat_name_Intf;
+  wl_seat_interface.name := PChar(WL_SEAT_INTERFACE_NAME);
+  wl_seat_interface.version := 9;
+  wl_seat_interface.method_count := 4;
+  wl_seat_interface.methods := @wl_seat_requests;
+  wl_seat_interface.event_count := 2;
+  wl_seat_interface.events := @wl_seat_events;
+end;
+
+class procedure TWlPointer.RegisterInterface;
+begin
+  if vwl_pointer_registered then Exit;
+  vwl_pointer_registered := True;
   Pointer(vIntf_wl_pointer_Listener.enter) := @wl_pointer_enter_Intf;
   Pointer(vIntf_wl_pointer_Listener.leave) := @wl_pointer_leave_Intf;
   Pointer(vIntf_wl_pointer_Listener.motion) := @wl_pointer_motion_Intf;
@@ -2567,12 +2957,36 @@ begin
   Pointer(vIntf_wl_pointer_Listener.axis_discrete) := @wl_pointer_axis_discrete_Intf;
   Pointer(vIntf_wl_pointer_Listener.axis_value120) := @wl_pointer_axis_value120_Intf;
   Pointer(vIntf_wl_pointer_Listener.axis_relative_direction) := @wl_pointer_axis_relative_direction_Intf;
+  wl_pointer_interface.name := PChar(WL_POINTER_INTERFACE_NAME);
+  wl_pointer_interface.version := 9;
+  wl_pointer_interface.method_count := 2;
+  wl_pointer_interface.methods := @wl_pointer_requests;
+  wl_pointer_interface.event_count := 11;
+  wl_pointer_interface.events := @wl_pointer_events;
+end;
+
+class procedure TWlKeyboard.RegisterInterface;
+begin
+  if vwl_keyboard_registered then Exit;
+  vwl_keyboard_registered := True;
   Pointer(vIntf_wl_keyboard_Listener.keymap) := @wl_keyboard_keymap_Intf;
   Pointer(vIntf_wl_keyboard_Listener.enter) := @wl_keyboard_enter_Intf;
   Pointer(vIntf_wl_keyboard_Listener.leave) := @wl_keyboard_leave_Intf;
   Pointer(vIntf_wl_keyboard_Listener.key) := @wl_keyboard_key_Intf;
   Pointer(vIntf_wl_keyboard_Listener.modifiers) := @wl_keyboard_modifiers_Intf;
   Pointer(vIntf_wl_keyboard_Listener.repeat_info) := @wl_keyboard_repeat_info_Intf;
+  wl_keyboard_interface.name := PChar(WL_KEYBOARD_INTERFACE_NAME);
+  wl_keyboard_interface.version := 9;
+  wl_keyboard_interface.method_count := 1;
+  wl_keyboard_interface.methods := @wl_keyboard_requests;
+  wl_keyboard_interface.event_count := 6;
+  wl_keyboard_interface.events := @wl_keyboard_events;
+end;
+
+class procedure TWlTouch.RegisterInterface;
+begin
+  if vwl_touch_registered then Exit;
+  vwl_touch_registered := True;
   Pointer(vIntf_wl_touch_Listener.down) := @wl_touch_down_Intf;
   Pointer(vIntf_wl_touch_Listener.up) := @wl_touch_up_Intf;
   Pointer(vIntf_wl_touch_Listener.motion) := @wl_touch_motion_Intf;
@@ -2580,168 +2994,67 @@ begin
   Pointer(vIntf_wl_touch_Listener.cancel) := @wl_touch_cancel_Intf;
   Pointer(vIntf_wl_touch_Listener.shape) := @wl_touch_shape_Intf;
   Pointer(vIntf_wl_touch_Listener.orientation) := @wl_touch_orientation_Intf;
-  Pointer(vIntf_wl_output_Listener.geometry) := @wl_output_geometry_Intf;
-  Pointer(vIntf_wl_output_Listener.mode) := @wl_output_mode_Intf;
-  Pointer(vIntf_wl_output_Listener.done) := @wl_output_done_Intf;
-  Pointer(vIntf_wl_output_Listener.scale) := @wl_output_scale_Intf;
-  Pointer(vIntf_wl_output_Listener.name) := @wl_output_name_Intf;
-  Pointer(vIntf_wl_output_Listener.description) := @wl_output_description_Intf;
-
-
-  wl_display_interface.name := PChar(WL_DISPLAY_INTERFACE_NAME);
-  wl_display_interface.version := 1;
-  wl_display_interface.method_count := 2;
-  wl_display_interface.methods := @wl_display_requests;
-  wl_display_interface.event_count := 2;
-  wl_display_interface.events := @wl_display_events;
-
-  wl_registry_interface.name := PChar(WL_REGISTRY_INTERFACE_NAME);
-  wl_registry_interface.version := 1;
-  wl_registry_interface.method_count := 1;
-  wl_registry_interface.methods := @wl_registry_requests;
-  wl_registry_interface.event_count := 2;
-  wl_registry_interface.events := @wl_registry_events;
-
-  wl_callback_interface.name := PChar(WL_CALLBACK_INTERFACE_NAME);
-  wl_callback_interface.version := 1;
-  wl_callback_interface.method_count := 0;
-  wl_callback_interface.methods := nil;
-  wl_callback_interface.event_count := 1;
-  wl_callback_interface.events := @wl_callback_events;
-
-  wl_compositor_interface.name := PChar(WL_COMPOSITOR_INTERFACE_NAME);
-  wl_compositor_interface.version := 6;
-  wl_compositor_interface.method_count := 2;
-  wl_compositor_interface.methods := @wl_compositor_requests;
-  wl_compositor_interface.event_count := 0;
-  wl_compositor_interface.events := nil;
-
-  wl_shm_pool_interface.name := PChar(WL_SHM_POOL_INTERFACE_NAME);
-  wl_shm_pool_interface.version := 1;
-  wl_shm_pool_interface.method_count := 3;
-  wl_shm_pool_interface.methods := @wl_shm_pool_requests;
-  wl_shm_pool_interface.event_count := 0;
-  wl_shm_pool_interface.events := nil;
-
-  wl_shm_interface.name := PChar(WL_SHM_INTERFACE_NAME);
-  wl_shm_interface.version := 1;
-  wl_shm_interface.method_count := 1;
-  wl_shm_interface.methods := @wl_shm_requests;
-  wl_shm_interface.event_count := 1;
-  wl_shm_interface.events := @wl_shm_events;
-
-  wl_buffer_interface.name := PChar(WL_BUFFER_INTERFACE_NAME);
-  wl_buffer_interface.version := 1;
-  wl_buffer_interface.method_count := 1;
-  wl_buffer_interface.methods := @wl_buffer_requests;
-  wl_buffer_interface.event_count := 1;
-  wl_buffer_interface.events := @wl_buffer_events;
-
-  wl_data_offer_interface.name := PChar(WL_DATA_OFFER_INTERFACE_NAME);
-  wl_data_offer_interface.version := 3;
-  wl_data_offer_interface.method_count := 5;
-  wl_data_offer_interface.methods := @wl_data_offer_requests;
-  wl_data_offer_interface.event_count := 3;
-  wl_data_offer_interface.events := @wl_data_offer_events;
-
-  wl_data_source_interface.name := PChar(WL_DATA_SOURCE_INTERFACE_NAME);
-  wl_data_source_interface.version := 3;
-  wl_data_source_interface.method_count := 3;
-  wl_data_source_interface.methods := @wl_data_source_requests;
-  wl_data_source_interface.event_count := 6;
-  wl_data_source_interface.events := @wl_data_source_events;
-
-  wl_data_device_interface.name := PChar(WL_DATA_DEVICE_INTERFACE_NAME);
-  wl_data_device_interface.version := 3;
-  wl_data_device_interface.method_count := 3;
-  wl_data_device_interface.methods := @wl_data_device_requests;
-  wl_data_device_interface.event_count := 6;
-  wl_data_device_interface.events := @wl_data_device_events;
-
-  wl_data_device_manager_interface.name := PChar(WL_DATA_DEVICE_MANAGER_INTERFACE_NAME);
-  wl_data_device_manager_interface.version := 3;
-  wl_data_device_manager_interface.method_count := 2;
-  wl_data_device_manager_interface.methods := @wl_data_device_manager_requests;
-  wl_data_device_manager_interface.event_count := 0;
-  wl_data_device_manager_interface.events := nil;
-
-  wl_shell_interface.name := PChar(WL_SHELL_INTERFACE_NAME);
-  wl_shell_interface.version := 1;
-  wl_shell_interface.method_count := 1;
-  wl_shell_interface.methods := @wl_shell_requests;
-  wl_shell_interface.event_count := 0;
-  wl_shell_interface.events := nil;
-
-  wl_shell_surface_interface.name := PChar(WL_SHELL_SURFACE_INTERFACE_NAME);
-  wl_shell_surface_interface.version := 1;
-  wl_shell_surface_interface.method_count := 10;
-  wl_shell_surface_interface.methods := @wl_shell_surface_requests;
-  wl_shell_surface_interface.event_count := 3;
-  wl_shell_surface_interface.events := @wl_shell_surface_events;
-
-  wl_surface_interface.name := PChar(WL_SURFACE_INTERFACE_NAME);
-  wl_surface_interface.version := 6;
-  wl_surface_interface.method_count := 11;
-  wl_surface_interface.methods := @wl_surface_requests;
-  wl_surface_interface.event_count := 4;
-  wl_surface_interface.events := @wl_surface_events;
-
-  wl_seat_interface.name := PChar(WL_SEAT_INTERFACE_NAME);
-  wl_seat_interface.version := 9;
-  wl_seat_interface.method_count := 4;
-  wl_seat_interface.methods := @wl_seat_requests;
-  wl_seat_interface.event_count := 2;
-  wl_seat_interface.events := @wl_seat_events;
-
-  wl_pointer_interface.name := PChar(WL_POINTER_INTERFACE_NAME);
-  wl_pointer_interface.version := 9;
-  wl_pointer_interface.method_count := 2;
-  wl_pointer_interface.methods := @wl_pointer_requests;
-  wl_pointer_interface.event_count := 11;
-  wl_pointer_interface.events := @wl_pointer_events;
-
-  wl_keyboard_interface.name := PChar(WL_KEYBOARD_INTERFACE_NAME);
-  wl_keyboard_interface.version := 9;
-  wl_keyboard_interface.method_count := 1;
-  wl_keyboard_interface.methods := @wl_keyboard_requests;
-  wl_keyboard_interface.event_count := 6;
-  wl_keyboard_interface.events := @wl_keyboard_events;
-
   wl_touch_interface.name := PChar(WL_TOUCH_INTERFACE_NAME);
   wl_touch_interface.version := 9;
   wl_touch_interface.method_count := 1;
   wl_touch_interface.methods := @wl_touch_requests;
   wl_touch_interface.event_count := 7;
   wl_touch_interface.events := @wl_touch_events;
+end;
 
+class procedure TWlOutput.RegisterInterface;
+begin
+  if vwl_output_registered then Exit;
+  vwl_output_registered := True;
+  Pointer(vIntf_wl_output_Listener.geometry) := @wl_output_geometry_Intf;
+  Pointer(vIntf_wl_output_Listener.mode) := @wl_output_mode_Intf;
+  Pointer(vIntf_wl_output_Listener.done) := @wl_output_done_Intf;
+  Pointer(vIntf_wl_output_Listener.scale) := @wl_output_scale_Intf;
+  Pointer(vIntf_wl_output_Listener.name) := @wl_output_name_Intf;
+  Pointer(vIntf_wl_output_Listener.description) := @wl_output_description_Intf;
   wl_output_interface.name := PChar(WL_OUTPUT_INTERFACE_NAME);
   wl_output_interface.version := 4;
   wl_output_interface.method_count := 1;
   wl_output_interface.methods := @wl_output_requests;
   wl_output_interface.event_count := 6;
   wl_output_interface.events := @wl_output_events;
+end;
 
+class procedure TWlRegion.RegisterInterface;
+begin
+  if vwl_region_registered then Exit;
+  vwl_region_registered := True;
   wl_region_interface.name := PChar(WL_REGION_INTERFACE_NAME);
   wl_region_interface.version := 1;
   wl_region_interface.method_count := 3;
   wl_region_interface.methods := @wl_region_requests;
   wl_region_interface.event_count := 0;
   wl_region_interface.events := nil;
+end;
 
+class procedure TWlSubcompositor.RegisterInterface;
+begin
+  if vwl_subcompositor_registered then Exit;
+  vwl_subcompositor_registered := True;
   wl_subcompositor_interface.name := PChar(WL_SUBCOMPOSITOR_INTERFACE_NAME);
   wl_subcompositor_interface.version := 1;
   wl_subcompositor_interface.method_count := 2;
   wl_subcompositor_interface.methods := @wl_subcompositor_requests;
   wl_subcompositor_interface.event_count := 0;
   wl_subcompositor_interface.events := nil;
+end;
 
+class procedure TWlSubsurface.RegisterInterface;
+begin
+  if vwl_subsurface_registered then Exit;
+  vwl_subsurface_registered := True;
   wl_subsurface_interface.name := PChar(WL_SUBSURFACE_INTERFACE_NAME);
   wl_subsurface_interface.version := 1;
   wl_subsurface_interface.method_count := 6;
   wl_subsurface_interface.methods := @wl_subsurface_requests;
   wl_subsurface_interface.event_count := 0;
   wl_subsurface_interface.events := nil;
-
 end;
+
 
 end.

@@ -49,6 +49,8 @@ type
 
   TWpCommitTimingManagerV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpCommitTimingManagerV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
@@ -61,6 +63,8 @@ type
 
   TWpCommitTimerV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpCommitTimerV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _SET_TIMESTAMP = 0;
@@ -73,7 +77,6 @@ type
 
 
 
-procedure InitInterfaces;
 
 
 
@@ -88,16 +91,23 @@ var
 implementation
 
 var
+  vwp_commit_timing_manager_v1_registered: Boolean = False;
   vIntf_wp_commit_timing_manager_v1_Listener: Twp_commit_timing_manager_v1_listener;
+  vwp_commit_timer_v1_registered: Boolean = False;
   vIntf_wp_commit_timer_v1_Listener: Twp_commit_timer_v1_listener;
-  vInterfacesRegistered: Boolean = False;
 
 
 
 constructor TWpCommitTimingManagerV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TWpCommitTimingManagerV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpCommitTimingManagerV1;
+begin
+  RegisterInterface;
+  Result := TWpCommitTimingManagerV1.Create(ARegistry.Bind(AName, @wp_commit_timing_manager_v1_interface, AVersion));
 end;
 
 destructor TWpCommitTimingManagerV1.Destroy;
@@ -110,6 +120,7 @@ function TWpCommitTimingManagerV1.GetTimer(ASurface: TWlSurface; AProxyClass: TW
 var
   id: Pwl_proxy;
 begin
+  TWpCommitTimerV1.RegisterInterface;
   id := wl_proxy_marshal_constructor(FProxy,
       _GET_TIMER, @wp_commit_timer_v1_interface, nil, ASurface.Proxy);
   if AProxyClass = nil then
@@ -126,8 +137,14 @@ begin
 end;
 constructor TWpCommitTimerV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TWpCommitTimerV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpCommitTimerV1;
+begin
+  RegisterInterface;
+  Result := TWpCommitTimerV1.Create(ARegistry.Bind(AName, @wp_commit_timer_v1_interface, AVersion));
 end;
 
 procedure TWpCommitTimerV1.SetTimestamp(ATvSecHi: DWord; ATvSecLo: DWord; ATvNsec: DWord);
@@ -175,26 +192,29 @@ const
     (name: 'destroy'; signature: ''; types: @pInterfaces[0])
   );
 
-procedure InitInterfaces;
+class procedure TWpCommitTimingManagerV1.RegisterInterface;
 begin
-  if vInterfacesRegistered then Exit;
-  vInterfacesRegistered := True;
-
-
+  if vwp_commit_timing_manager_v1_registered then Exit;
+  vwp_commit_timing_manager_v1_registered := True;
   wp_commit_timing_manager_v1_interface.name := PChar(WP_COMMIT_TIMING_MANAGER_V1_INTERFACE_NAME);
   wp_commit_timing_manager_v1_interface.version := 1;
   wp_commit_timing_manager_v1_interface.method_count := 2;
   wp_commit_timing_manager_v1_interface.methods := @wp_commit_timing_manager_v1_requests;
   wp_commit_timing_manager_v1_interface.event_count := 0;
   wp_commit_timing_manager_v1_interface.events := nil;
+end;
 
+class procedure TWpCommitTimerV1.RegisterInterface;
+begin
+  if vwp_commit_timer_v1_registered then Exit;
+  vwp_commit_timer_v1_registered := True;
   wp_commit_timer_v1_interface.name := PChar(WP_COMMIT_TIMER_V1_INTERFACE_NAME);
   wp_commit_timer_v1_interface.version := 1;
   wp_commit_timer_v1_interface.method_count := 2;
   wp_commit_timer_v1_interface.methods := @wp_commit_timer_v1_requests;
   wp_commit_timer_v1_interface.event_count := 0;
   wp_commit_timer_v1_interface.events := nil;
-
 end;
+
 
 end.

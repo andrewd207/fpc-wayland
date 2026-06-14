@@ -69,6 +69,8 @@ type
 
   TWpPrimarySelectionDeviceManagerV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpPrimarySelectionDeviceManagerV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _CREATE_SOURCE = 0;
@@ -83,6 +85,8 @@ type
 
   TWpPrimarySelectionDeviceV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpPrimarySelectionDeviceV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _SET_SELECTION = 0;
@@ -95,6 +99,8 @@ type
 
   TWpPrimarySelectionOfferV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpPrimarySelectionOfferV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _RECEIVE = 0;
@@ -107,6 +113,8 @@ type
 
   TWpPrimarySelectionSourceV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpPrimarySelectionSourceV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _OFFER = 0;
@@ -119,7 +127,6 @@ type
 
 
 
-procedure InitInterfaces;
 
 
 
@@ -138,24 +145,34 @@ var
 implementation
 
 var
+  vwp_primary_selection_device_manager_v1_registered: Boolean = False;
   vIntf_wp_primary_selection_device_manager_v1_Listener: Twp_primary_selection_device_manager_v1_listener;
+  vwp_primary_selection_device_v1_registered: Boolean = False;
   vIntf_wp_primary_selection_device_v1_Listener: Twp_primary_selection_device_v1_listener;
+  vwp_primary_selection_offer_v1_registered: Boolean = False;
   vIntf_wp_primary_selection_offer_v1_Listener: Twp_primary_selection_offer_v1_listener;
+  vwp_primary_selection_source_v1_registered: Boolean = False;
   vIntf_wp_primary_selection_source_v1_Listener: Twp_primary_selection_source_v1_listener;
-  vInterfacesRegistered: Boolean = False;
 
 
 
 constructor TWpPrimarySelectionDeviceManagerV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TWpPrimarySelectionDeviceManagerV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpPrimarySelectionDeviceManagerV1;
+begin
+  RegisterInterface;
+  Result := TWpPrimarySelectionDeviceManagerV1.Create(ARegistry.Bind(AName, @wp_primary_selection_device_manager_v1_interface, AVersion));
 end;
 
 function TWpPrimarySelectionDeviceManagerV1.CreateSource(AProxyClass: TWLProxyObjectClass = nil {TWpPrimarySelectionSourceV1}): TWpPrimarySelectionSourceV1;
 var
   id: Pwl_proxy;
 begin
+  TWpPrimarySelectionSourceV1.RegisterInterface;
   id := wl_proxy_marshal_constructor(FProxy,
       _CREATE_SOURCE, @wp_primary_selection_source_v1_interface, nil);
   if AProxyClass = nil then
@@ -169,6 +186,7 @@ function TWpPrimarySelectionDeviceManagerV1.GetDevice(ASeat: TWlSeat; AProxyClas
 var
   id: Pwl_proxy;
 begin
+  TWpPrimarySelectionDeviceV1.RegisterInterface;
   id := wl_proxy_marshal_constructor(FProxy,
       _GET_DEVICE, @wp_primary_selection_device_v1_interface, nil, ASeat.Proxy);
   if AProxyClass = nil then
@@ -191,8 +209,14 @@ begin
 end;
 constructor TWpPrimarySelectionDeviceV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TWpPrimarySelectionDeviceV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpPrimarySelectionDeviceV1;
+begin
+  RegisterInterface;
+  Result := TWpPrimarySelectionDeviceV1.Create(ARegistry.Bind(AName, @wp_primary_selection_device_v1_interface, AVersion));
 end;
 
 procedure TWpPrimarySelectionDeviceV1.SetSelection(ASource: TWpPrimarySelectionSourceV1; ASerial: DWord);
@@ -213,8 +237,14 @@ begin
 end;
 constructor TWpPrimarySelectionOfferV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TWpPrimarySelectionOfferV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpPrimarySelectionOfferV1;
+begin
+  RegisterInterface;
+  Result := TWpPrimarySelectionOfferV1.Create(ARegistry.Bind(AName, @wp_primary_selection_offer_v1_interface, AVersion));
 end;
 
 procedure TWpPrimarySelectionOfferV1.Receive(AMimeType: String; AFd: LongInt{fd});
@@ -235,8 +265,14 @@ begin
 end;
 constructor TWpPrimarySelectionSourceV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TWpPrimarySelectionSourceV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpPrimarySelectionSourceV1;
+begin
+  RegisterInterface;
+  Result := TWpPrimarySelectionSourceV1.Create(ARegistry.Bind(AName, @wp_primary_selection_source_v1_interface, AVersion));
 end;
 
 procedure TWpPrimarySelectionSourceV1.Offer(AMimeType: String);
@@ -353,45 +389,58 @@ const
     (name: 'cancelled'; signature: ''; types: @pInterfaces[0])
   );
 
-procedure InitInterfaces;
+class procedure TWpPrimarySelectionDeviceManagerV1.RegisterInterface;
 begin
-  if vInterfacesRegistered then Exit;
-  vInterfacesRegistered := True;
-  Pointer(vIntf_wp_primary_selection_device_v1_Listener.data_offer) := @wp_primary_selection_device_v1_data_offer_Intf;
-  Pointer(vIntf_wp_primary_selection_device_v1_Listener.selection) := @wp_primary_selection_device_v1_selection_Intf;
-  Pointer(vIntf_wp_primary_selection_offer_v1_Listener.offer) := @wp_primary_selection_offer_v1_offer_Intf;
-  Pointer(vIntf_wp_primary_selection_source_v1_Listener.send) := @wp_primary_selection_source_v1_send_Intf;
-  Pointer(vIntf_wp_primary_selection_source_v1_Listener.cancelled) := @wp_primary_selection_source_v1_cancelled_Intf;
-
-
+  if vwp_primary_selection_device_manager_v1_registered then Exit;
+  vwp_primary_selection_device_manager_v1_registered := True;
   wp_primary_selection_device_manager_v1_interface.name := PChar(WP_PRIMARY_SELECTION_DEVICE_MANAGER_V1_INTERFACE_NAME);
   wp_primary_selection_device_manager_v1_interface.version := 1;
   wp_primary_selection_device_manager_v1_interface.method_count := 3;
   wp_primary_selection_device_manager_v1_interface.methods := @wp_primary_selection_device_manager_v1_requests;
   wp_primary_selection_device_manager_v1_interface.event_count := 0;
   wp_primary_selection_device_manager_v1_interface.events := nil;
+end;
 
+class procedure TWpPrimarySelectionDeviceV1.RegisterInterface;
+begin
+  if vwp_primary_selection_device_v1_registered then Exit;
+  vwp_primary_selection_device_v1_registered := True;
+  Pointer(vIntf_wp_primary_selection_device_v1_Listener.data_offer) := @wp_primary_selection_device_v1_data_offer_Intf;
+  Pointer(vIntf_wp_primary_selection_device_v1_Listener.selection) := @wp_primary_selection_device_v1_selection_Intf;
   wp_primary_selection_device_v1_interface.name := PChar(WP_PRIMARY_SELECTION_DEVICE_V1_INTERFACE_NAME);
   wp_primary_selection_device_v1_interface.version := 1;
   wp_primary_selection_device_v1_interface.method_count := 2;
   wp_primary_selection_device_v1_interface.methods := @wp_primary_selection_device_v1_requests;
   wp_primary_selection_device_v1_interface.event_count := 2;
   wp_primary_selection_device_v1_interface.events := @wp_primary_selection_device_v1_events;
+end;
 
+class procedure TWpPrimarySelectionOfferV1.RegisterInterface;
+begin
+  if vwp_primary_selection_offer_v1_registered then Exit;
+  vwp_primary_selection_offer_v1_registered := True;
+  Pointer(vIntf_wp_primary_selection_offer_v1_Listener.offer) := @wp_primary_selection_offer_v1_offer_Intf;
   wp_primary_selection_offer_v1_interface.name := PChar(WP_PRIMARY_SELECTION_OFFER_V1_INTERFACE_NAME);
   wp_primary_selection_offer_v1_interface.version := 1;
   wp_primary_selection_offer_v1_interface.method_count := 2;
   wp_primary_selection_offer_v1_interface.methods := @wp_primary_selection_offer_v1_requests;
   wp_primary_selection_offer_v1_interface.event_count := 1;
   wp_primary_selection_offer_v1_interface.events := @wp_primary_selection_offer_v1_events;
+end;
 
+class procedure TWpPrimarySelectionSourceV1.RegisterInterface;
+begin
+  if vwp_primary_selection_source_v1_registered then Exit;
+  vwp_primary_selection_source_v1_registered := True;
+  Pointer(vIntf_wp_primary_selection_source_v1_Listener.send) := @wp_primary_selection_source_v1_send_Intf;
+  Pointer(vIntf_wp_primary_selection_source_v1_Listener.cancelled) := @wp_primary_selection_source_v1_cancelled_Intf;
   wp_primary_selection_source_v1_interface.name := PChar(WP_PRIMARY_SELECTION_SOURCE_V1_INTERFACE_NAME);
   wp_primary_selection_source_v1_interface.version := 1;
   wp_primary_selection_source_v1_interface.method_count := 2;
   wp_primary_selection_source_v1_interface.methods := @wp_primary_selection_source_v1_requests;
   wp_primary_selection_source_v1_interface.event_count := 2;
   wp_primary_selection_source_v1_interface.events := @wp_primary_selection_source_v1_events;
-
 end;
+
 
 end.

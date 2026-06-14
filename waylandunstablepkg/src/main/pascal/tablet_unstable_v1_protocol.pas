@@ -131,6 +131,8 @@ type
 
   TWpTabletManagerV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpTabletManagerV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _GET_TABLET_SEAT = 0;
@@ -143,6 +145,8 @@ type
 
   TWpTabletSeatV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpTabletSeatV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
@@ -153,6 +157,8 @@ type
 
   TWpTabletToolV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpTabletToolV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _SET_CURSOR = 0;
@@ -165,6 +171,8 @@ type
 
   TWpTabletV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpTabletV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
@@ -175,7 +183,6 @@ type
 
 
 
-procedure InitInterfaces;
 
 
 
@@ -194,24 +201,34 @@ var
 implementation
 
 var
+  vwp_tablet_manager_v1_registered: Boolean = False;
   vIntf_wp_tablet_manager_v1_Listener: Twp_tablet_manager_v1_listener;
+  vwp_tablet_seat_v1_registered: Boolean = False;
   vIntf_wp_tablet_seat_v1_Listener: Twp_tablet_seat_v1_listener;
+  vwp_tablet_tool_v1_registered: Boolean = False;
   vIntf_wp_tablet_tool_v1_Listener: Twp_tablet_tool_v1_listener;
+  vwp_tablet_v1_registered: Boolean = False;
   vIntf_wp_tablet_v1_Listener: Twp_tablet_v1_listener;
-  vInterfacesRegistered: Boolean = False;
 
 
 
 constructor TWpTabletManagerV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TWpTabletManagerV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpTabletManagerV1;
+begin
+  RegisterInterface;
+  Result := TWpTabletManagerV1.Create(ARegistry.Bind(AName, @wp_tablet_manager_v1_interface, AVersion));
 end;
 
 function TWpTabletManagerV1.GetTabletSeat(ASeat: TWlSeat; AProxyClass: TWLProxyObjectClass = nil {TWpTabletSeatV1}): TWpTabletSeatV1;
 var
   tablet_seat: Pwl_proxy;
 begin
+  TWpTabletSeatV1.RegisterInterface;
   tablet_seat := wl_proxy_marshal_constructor(FProxy,
       _GET_TABLET_SEAT, @wp_tablet_seat_v1_interface, nil, ASeat.Proxy);
   if AProxyClass = nil then
@@ -234,8 +251,14 @@ begin
 end;
 constructor TWpTabletSeatV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TWpTabletSeatV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpTabletSeatV1;
+begin
+  RegisterInterface;
+  Result := TWpTabletSeatV1.Create(ARegistry.Bind(AName, @wp_tablet_seat_v1_interface, AVersion));
 end;
 
 destructor TWpTabletSeatV1.Destroy;
@@ -251,8 +274,14 @@ begin
 end;
 constructor TWpTabletToolV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TWpTabletToolV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpTabletToolV1;
+begin
+  RegisterInterface;
+  Result := TWpTabletToolV1.Create(ARegistry.Bind(AName, @wp_tablet_tool_v1_interface, AVersion));
 end;
 
 procedure TWpTabletToolV1.SetCursor(ASerial: DWord; ASurface: TWlSurface; AHotspotX: LongInt; AHotspotY: LongInt);
@@ -273,8 +302,14 @@ begin
 end;
 constructor TWpTabletV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TWpTabletV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpTabletV1;
+begin
+  RegisterInterface;
+  Result := TWpTabletV1.Create(ARegistry.Bind(AName, @wp_tablet_v1_interface, AVersion));
 end;
 
 destructor TWpTabletV1.Destroy;
@@ -596,12 +631,36 @@ const
     (name: 'removed'; signature: ''; types: @pInterfaces[0])
   );
 
-procedure InitInterfaces;
+class procedure TWpTabletManagerV1.RegisterInterface;
 begin
-  if vInterfacesRegistered then Exit;
-  vInterfacesRegistered := True;
+  if vwp_tablet_manager_v1_registered then Exit;
+  vwp_tablet_manager_v1_registered := True;
+  wp_tablet_manager_v1_interface.name := PChar(WP_TABLET_MANAGER_V1_INTERFACE_NAME);
+  wp_tablet_manager_v1_interface.version := 1;
+  wp_tablet_manager_v1_interface.method_count := 2;
+  wp_tablet_manager_v1_interface.methods := @wp_tablet_manager_v1_requests;
+  wp_tablet_manager_v1_interface.event_count := 0;
+  wp_tablet_manager_v1_interface.events := nil;
+end;
+
+class procedure TWpTabletSeatV1.RegisterInterface;
+begin
+  if vwp_tablet_seat_v1_registered then Exit;
+  vwp_tablet_seat_v1_registered := True;
   Pointer(vIntf_wp_tablet_seat_v1_Listener.tablet_added) := @wp_tablet_seat_v1_tablet_added_Intf;
   Pointer(vIntf_wp_tablet_seat_v1_Listener.tool_added) := @wp_tablet_seat_v1_tool_added_Intf;
+  wp_tablet_seat_v1_interface.name := PChar(WP_TABLET_SEAT_V1_INTERFACE_NAME);
+  wp_tablet_seat_v1_interface.version := 1;
+  wp_tablet_seat_v1_interface.method_count := 1;
+  wp_tablet_seat_v1_interface.methods := @wp_tablet_seat_v1_requests;
+  wp_tablet_seat_v1_interface.event_count := 2;
+  wp_tablet_seat_v1_interface.events := @wp_tablet_seat_v1_events;
+end;
+
+class procedure TWpTabletToolV1.RegisterInterface;
+begin
+  if vwp_tablet_tool_v1_registered then Exit;
+  vwp_tablet_tool_v1_registered := True;
   Pointer(vIntf_wp_tablet_tool_v1_Listener.type_) := @wp_tablet_tool_v1_type_Intf;
   Pointer(vIntf_wp_tablet_tool_v1_Listener.hardware_serial) := @wp_tablet_tool_v1_hardware_serial_Intf;
   Pointer(vIntf_wp_tablet_tool_v1_Listener.hardware_id_wacom) := @wp_tablet_tool_v1_hardware_id_wacom_Intf;
@@ -621,41 +680,30 @@ begin
   Pointer(vIntf_wp_tablet_tool_v1_Listener.wheel) := @wp_tablet_tool_v1_wheel_Intf;
   Pointer(vIntf_wp_tablet_tool_v1_Listener.button) := @wp_tablet_tool_v1_button_Intf;
   Pointer(vIntf_wp_tablet_tool_v1_Listener.frame) := @wp_tablet_tool_v1_frame_Intf;
-  Pointer(vIntf_wp_tablet_v1_Listener.name) := @wp_tablet_v1_name_Intf;
-  Pointer(vIntf_wp_tablet_v1_Listener.id) := @wp_tablet_v1_id_Intf;
-  Pointer(vIntf_wp_tablet_v1_Listener.path) := @wp_tablet_v1_path_Intf;
-  Pointer(vIntf_wp_tablet_v1_Listener.done) := @wp_tablet_v1_done_Intf;
-  Pointer(vIntf_wp_tablet_v1_Listener.removed) := @wp_tablet_v1_removed_Intf;
-
-
-  wp_tablet_manager_v1_interface.name := PChar(WP_TABLET_MANAGER_V1_INTERFACE_NAME);
-  wp_tablet_manager_v1_interface.version := 1;
-  wp_tablet_manager_v1_interface.method_count := 2;
-  wp_tablet_manager_v1_interface.methods := @wp_tablet_manager_v1_requests;
-  wp_tablet_manager_v1_interface.event_count := 0;
-  wp_tablet_manager_v1_interface.events := nil;
-
-  wp_tablet_seat_v1_interface.name := PChar(WP_TABLET_SEAT_V1_INTERFACE_NAME);
-  wp_tablet_seat_v1_interface.version := 1;
-  wp_tablet_seat_v1_interface.method_count := 1;
-  wp_tablet_seat_v1_interface.methods := @wp_tablet_seat_v1_requests;
-  wp_tablet_seat_v1_interface.event_count := 2;
-  wp_tablet_seat_v1_interface.events := @wp_tablet_seat_v1_events;
-
   wp_tablet_tool_v1_interface.name := PChar(WP_TABLET_TOOL_V1_INTERFACE_NAME);
   wp_tablet_tool_v1_interface.version := 1;
   wp_tablet_tool_v1_interface.method_count := 2;
   wp_tablet_tool_v1_interface.methods := @wp_tablet_tool_v1_requests;
   wp_tablet_tool_v1_interface.event_count := 19;
   wp_tablet_tool_v1_interface.events := @wp_tablet_tool_v1_events;
+end;
 
+class procedure TWpTabletV1.RegisterInterface;
+begin
+  if vwp_tablet_v1_registered then Exit;
+  vwp_tablet_v1_registered := True;
+  Pointer(vIntf_wp_tablet_v1_Listener.name) := @wp_tablet_v1_name_Intf;
+  Pointer(vIntf_wp_tablet_v1_Listener.id) := @wp_tablet_v1_id_Intf;
+  Pointer(vIntf_wp_tablet_v1_Listener.path) := @wp_tablet_v1_path_Intf;
+  Pointer(vIntf_wp_tablet_v1_Listener.done) := @wp_tablet_v1_done_Intf;
+  Pointer(vIntf_wp_tablet_v1_Listener.removed) := @wp_tablet_v1_removed_Intf;
   wp_tablet_v1_interface.name := PChar(WP_TABLET_V1_INTERFACE_NAME);
   wp_tablet_v1_interface.version := 1;
   wp_tablet_v1_interface.method_count := 1;
   wp_tablet_v1_interface.methods := @wp_tablet_v1_requests;
   wp_tablet_v1_interface.event_count := 5;
   wp_tablet_v1_interface.events := @wp_tablet_v1_events;
-
 end;
+
 
 end.

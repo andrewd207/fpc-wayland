@@ -81,6 +81,8 @@ type
 
   TExtDataControlManagerV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TExtDataControlManagerV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _CREATE_DATA_SOURCE = 0;
@@ -95,6 +97,8 @@ type
 
   TExtDataControlDeviceV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TExtDataControlDeviceV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _SET_SELECTION = 0;
@@ -109,6 +113,8 @@ type
 
   TExtDataControlSourceV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TExtDataControlSourceV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _OFFER = 0;
@@ -121,6 +127,8 @@ type
 
   TExtDataControlOfferV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TExtDataControlOfferV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _RECEIVE = 0;
@@ -133,7 +141,6 @@ type
 
 
 
-procedure InitInterfaces;
 
 
 
@@ -152,24 +159,34 @@ var
 implementation
 
 var
+  vext_data_control_manager_v1_registered: Boolean = False;
   vIntf_ext_data_control_manager_v1_Listener: Text_data_control_manager_v1_listener;
+  vext_data_control_device_v1_registered: Boolean = False;
   vIntf_ext_data_control_device_v1_Listener: Text_data_control_device_v1_listener;
+  vext_data_control_source_v1_registered: Boolean = False;
   vIntf_ext_data_control_source_v1_Listener: Text_data_control_source_v1_listener;
+  vext_data_control_offer_v1_registered: Boolean = False;
   vIntf_ext_data_control_offer_v1_Listener: Text_data_control_offer_v1_listener;
-  vInterfacesRegistered: Boolean = False;
 
 
 
 constructor TExtDataControlManagerV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TExtDataControlManagerV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TExtDataControlManagerV1;
+begin
+  RegisterInterface;
+  Result := TExtDataControlManagerV1.Create(ARegistry.Bind(AName, @ext_data_control_manager_v1_interface, AVersion));
 end;
 
 function TExtDataControlManagerV1.CreateDataSource(AProxyClass: TWLProxyObjectClass = nil {TExtDataControlSourceV1}): TExtDataControlSourceV1;
 var
   id: Pwl_proxy;
 begin
+  TExtDataControlSourceV1.RegisterInterface;
   id := wl_proxy_marshal_constructor(FProxy,
       _CREATE_DATA_SOURCE, @ext_data_control_source_v1_interface, nil);
   if AProxyClass = nil then
@@ -183,6 +200,7 @@ function TExtDataControlManagerV1.GetDataDevice(ASeat: TWlSeat; AProxyClass: TWL
 var
   id: Pwl_proxy;
 begin
+  TExtDataControlDeviceV1.RegisterInterface;
   id := wl_proxy_marshal_constructor(FProxy,
       _GET_DATA_DEVICE, @ext_data_control_device_v1_interface, nil, ASeat.Proxy);
   if AProxyClass = nil then
@@ -205,8 +223,14 @@ begin
 end;
 constructor TExtDataControlDeviceV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TExtDataControlDeviceV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TExtDataControlDeviceV1;
+begin
+  RegisterInterface;
+  Result := TExtDataControlDeviceV1.Create(ARegistry.Bind(AName, @ext_data_control_device_v1_interface, AVersion));
 end;
 
 procedure TExtDataControlDeviceV1.SetSelection(ASource: TExtDataControlSourceV1);
@@ -232,8 +256,14 @@ begin
 end;
 constructor TExtDataControlSourceV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TExtDataControlSourceV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TExtDataControlSourceV1;
+begin
+  RegisterInterface;
+  Result := TExtDataControlSourceV1.Create(ARegistry.Bind(AName, @ext_data_control_source_v1_interface, AVersion));
 end;
 
 procedure TExtDataControlSourceV1.Offer(AMimeType: String);
@@ -254,8 +284,14 @@ begin
 end;
 constructor TExtDataControlOfferV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TExtDataControlOfferV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TExtDataControlOfferV1;
+begin
+  RegisterInterface;
+  Result := TExtDataControlOfferV1.Create(ARegistry.Bind(AName, @ext_data_control_offer_v1_interface, AVersion));
 end;
 
 procedure TExtDataControlOfferV1.Receive(AMimeType: String; AFd: LongInt{fd});
@@ -394,47 +430,60 @@ const
     (name: 'offer'; signature: 's'; types: @pInterfaces[0])
   );
 
-procedure InitInterfaces;
+class procedure TExtDataControlManagerV1.RegisterInterface;
 begin
-  if vInterfacesRegistered then Exit;
-  vInterfacesRegistered := True;
-  Pointer(vIntf_ext_data_control_device_v1_Listener.data_offer) := @ext_data_control_device_v1_data_offer_Intf;
-  Pointer(vIntf_ext_data_control_device_v1_Listener.selection) := @ext_data_control_device_v1_selection_Intf;
-  Pointer(vIntf_ext_data_control_device_v1_Listener.finished) := @ext_data_control_device_v1_finished_Intf;
-  Pointer(vIntf_ext_data_control_device_v1_Listener.primary_selection) := @ext_data_control_device_v1_primary_selection_Intf;
-  Pointer(vIntf_ext_data_control_source_v1_Listener.send) := @ext_data_control_source_v1_send_Intf;
-  Pointer(vIntf_ext_data_control_source_v1_Listener.cancelled) := @ext_data_control_source_v1_cancelled_Intf;
-  Pointer(vIntf_ext_data_control_offer_v1_Listener.offer) := @ext_data_control_offer_v1_offer_Intf;
-
-
+  if vext_data_control_manager_v1_registered then Exit;
+  vext_data_control_manager_v1_registered := True;
   ext_data_control_manager_v1_interface.name := PChar(EXT_DATA_CONTROL_MANAGER_V1_INTERFACE_NAME);
   ext_data_control_manager_v1_interface.version := 1;
   ext_data_control_manager_v1_interface.method_count := 3;
   ext_data_control_manager_v1_interface.methods := @ext_data_control_manager_v1_requests;
   ext_data_control_manager_v1_interface.event_count := 0;
   ext_data_control_manager_v1_interface.events := nil;
+end;
 
+class procedure TExtDataControlDeviceV1.RegisterInterface;
+begin
+  if vext_data_control_device_v1_registered then Exit;
+  vext_data_control_device_v1_registered := True;
+  Pointer(vIntf_ext_data_control_device_v1_Listener.data_offer) := @ext_data_control_device_v1_data_offer_Intf;
+  Pointer(vIntf_ext_data_control_device_v1_Listener.selection) := @ext_data_control_device_v1_selection_Intf;
+  Pointer(vIntf_ext_data_control_device_v1_Listener.finished) := @ext_data_control_device_v1_finished_Intf;
+  Pointer(vIntf_ext_data_control_device_v1_Listener.primary_selection) := @ext_data_control_device_v1_primary_selection_Intf;
   ext_data_control_device_v1_interface.name := PChar(EXT_DATA_CONTROL_DEVICE_V1_INTERFACE_NAME);
   ext_data_control_device_v1_interface.version := 1;
   ext_data_control_device_v1_interface.method_count := 3;
   ext_data_control_device_v1_interface.methods := @ext_data_control_device_v1_requests;
   ext_data_control_device_v1_interface.event_count := 4;
   ext_data_control_device_v1_interface.events := @ext_data_control_device_v1_events;
+end;
 
+class procedure TExtDataControlSourceV1.RegisterInterface;
+begin
+  if vext_data_control_source_v1_registered then Exit;
+  vext_data_control_source_v1_registered := True;
+  Pointer(vIntf_ext_data_control_source_v1_Listener.send) := @ext_data_control_source_v1_send_Intf;
+  Pointer(vIntf_ext_data_control_source_v1_Listener.cancelled) := @ext_data_control_source_v1_cancelled_Intf;
   ext_data_control_source_v1_interface.name := PChar(EXT_DATA_CONTROL_SOURCE_V1_INTERFACE_NAME);
   ext_data_control_source_v1_interface.version := 1;
   ext_data_control_source_v1_interface.method_count := 2;
   ext_data_control_source_v1_interface.methods := @ext_data_control_source_v1_requests;
   ext_data_control_source_v1_interface.event_count := 2;
   ext_data_control_source_v1_interface.events := @ext_data_control_source_v1_events;
+end;
 
+class procedure TExtDataControlOfferV1.RegisterInterface;
+begin
+  if vext_data_control_offer_v1_registered then Exit;
+  vext_data_control_offer_v1_registered := True;
+  Pointer(vIntf_ext_data_control_offer_v1_Listener.offer) := @ext_data_control_offer_v1_offer_Intf;
   ext_data_control_offer_v1_interface.name := PChar(EXT_DATA_CONTROL_OFFER_V1_INTERFACE_NAME);
   ext_data_control_offer_v1_interface.version := 1;
   ext_data_control_offer_v1_interface.method_count := 2;
   ext_data_control_offer_v1_interface.methods := @ext_data_control_offer_v1_requests;
   ext_data_control_offer_v1_interface.event_count := 1;
   ext_data_control_offer_v1_interface.events := @ext_data_control_offer_v1_events;
-
 end;
+
 
 end.

@@ -87,6 +87,8 @@ type
 
   TWpDrmLeaseDeviceV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpDrmLeaseDeviceV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _CREATE_LEASE_REQUEST = 0;
@@ -99,6 +101,8 @@ type
 
   TWpDrmLeaseConnectorV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpDrmLeaseConnectorV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
@@ -109,6 +113,8 @@ type
 
   TWpDrmLeaseRequestV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpDrmLeaseRequestV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _REQUEST_CONNECTOR = 0;
@@ -121,6 +127,8 @@ type
 
   TWpDrmLeaseV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpDrmLeaseV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
@@ -131,7 +139,6 @@ type
 
 
 
-procedure InitInterfaces;
 
 
 
@@ -150,24 +157,34 @@ var
 implementation
 
 var
+  vwp_drm_lease_device_v1_registered: Boolean = False;
   vIntf_wp_drm_lease_device_v1_Listener: Twp_drm_lease_device_v1_listener;
+  vwp_drm_lease_connector_v1_registered: Boolean = False;
   vIntf_wp_drm_lease_connector_v1_Listener: Twp_drm_lease_connector_v1_listener;
+  vwp_drm_lease_request_v1_registered: Boolean = False;
   vIntf_wp_drm_lease_request_v1_Listener: Twp_drm_lease_request_v1_listener;
+  vwp_drm_lease_v1_registered: Boolean = False;
   vIntf_wp_drm_lease_v1_Listener: Twp_drm_lease_v1_listener;
-  vInterfacesRegistered: Boolean = False;
 
 
 
 constructor TWpDrmLeaseDeviceV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TWpDrmLeaseDeviceV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpDrmLeaseDeviceV1;
+begin
+  RegisterInterface;
+  Result := TWpDrmLeaseDeviceV1.Create(ARegistry.Bind(AName, @wp_drm_lease_device_v1_interface, AVersion));
 end;
 
 function TWpDrmLeaseDeviceV1.CreateLeaseRequest(AProxyClass: TWLProxyObjectClass = nil {TWpDrmLeaseRequestV1}): TWpDrmLeaseRequestV1;
 var
   id: Pwl_proxy;
 begin
+  TWpDrmLeaseRequestV1.RegisterInterface;
   id := wl_proxy_marshal_constructor(FProxy,
       _CREATE_LEASE_REQUEST, @wp_drm_lease_request_v1_interface, nil);
   if AProxyClass = nil then
@@ -189,8 +206,14 @@ begin
 end;
 constructor TWpDrmLeaseConnectorV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TWpDrmLeaseConnectorV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpDrmLeaseConnectorV1;
+begin
+  RegisterInterface;
+  Result := TWpDrmLeaseConnectorV1.Create(ARegistry.Bind(AName, @wp_drm_lease_connector_v1_interface, AVersion));
 end;
 
 destructor TWpDrmLeaseConnectorV1.Destroy;
@@ -206,8 +229,14 @@ begin
 end;
 constructor TWpDrmLeaseRequestV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TWpDrmLeaseRequestV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpDrmLeaseRequestV1;
+begin
+  RegisterInterface;
+  Result := TWpDrmLeaseRequestV1.Create(ARegistry.Bind(AName, @wp_drm_lease_request_v1_interface, AVersion));
 end;
 
 procedure TWpDrmLeaseRequestV1.RequestConnector(AConnector: TWpDrmLeaseConnectorV1);
@@ -219,6 +248,7 @@ function TWpDrmLeaseRequestV1.Submit(AProxyClass: TWLProxyObjectClass = nil {TWp
 var
   id: Pwl_proxy;
 begin
+  TWpDrmLeaseV1.RegisterInterface;
   id := wl_proxy_marshal_constructor(FProxy,
       _SUBMIT, @wp_drm_lease_v1_interface, nil);
   if AProxyClass = nil then
@@ -236,8 +266,14 @@ begin
 end;
 constructor TWpDrmLeaseV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TWpDrmLeaseV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpDrmLeaseV1;
+begin
+  RegisterInterface;
+  Result := TWpDrmLeaseV1.Create(ARegistry.Bind(AName, @wp_drm_lease_v1_interface, AVersion));
 end;
 
 destructor TWpDrmLeaseV1.Destroy;
@@ -403,51 +439,64 @@ const
     (name: 'finished'; signature: ''; types: @pInterfaces[0])
   );
 
-procedure InitInterfaces;
+class procedure TWpDrmLeaseDeviceV1.RegisterInterface;
 begin
-  if vInterfacesRegistered then Exit;
-  vInterfacesRegistered := True;
+  if vwp_drm_lease_device_v1_registered then Exit;
+  vwp_drm_lease_device_v1_registered := True;
   Pointer(vIntf_wp_drm_lease_device_v1_Listener.drm_fd) := @wp_drm_lease_device_v1_drm_fd_Intf;
   Pointer(vIntf_wp_drm_lease_device_v1_Listener.connector) := @wp_drm_lease_device_v1_connector_Intf;
   Pointer(vIntf_wp_drm_lease_device_v1_Listener.done) := @wp_drm_lease_device_v1_done_Intf;
   Pointer(vIntf_wp_drm_lease_device_v1_Listener.released) := @wp_drm_lease_device_v1_released_Intf;
-  Pointer(vIntf_wp_drm_lease_connector_v1_Listener.name) := @wp_drm_lease_connector_v1_name_Intf;
-  Pointer(vIntf_wp_drm_lease_connector_v1_Listener.description) := @wp_drm_lease_connector_v1_description_Intf;
-  Pointer(vIntf_wp_drm_lease_connector_v1_Listener.connector_id) := @wp_drm_lease_connector_v1_connector_id_Intf;
-  Pointer(vIntf_wp_drm_lease_connector_v1_Listener.done) := @wp_drm_lease_connector_v1_done_Intf;
-  Pointer(vIntf_wp_drm_lease_connector_v1_Listener.withdrawn) := @wp_drm_lease_connector_v1_withdrawn_Intf;
-  Pointer(vIntf_wp_drm_lease_v1_Listener.lease_fd) := @wp_drm_lease_v1_lease_fd_Intf;
-  Pointer(vIntf_wp_drm_lease_v1_Listener.finished) := @wp_drm_lease_v1_finished_Intf;
-
-
   wp_drm_lease_device_v1_interface.name := PChar(WP_DRM_LEASE_DEVICE_V1_INTERFACE_NAME);
   wp_drm_lease_device_v1_interface.version := 1;
   wp_drm_lease_device_v1_interface.method_count := 2;
   wp_drm_lease_device_v1_interface.methods := @wp_drm_lease_device_v1_requests;
   wp_drm_lease_device_v1_interface.event_count := 4;
   wp_drm_lease_device_v1_interface.events := @wp_drm_lease_device_v1_events;
+end;
 
+class procedure TWpDrmLeaseConnectorV1.RegisterInterface;
+begin
+  if vwp_drm_lease_connector_v1_registered then Exit;
+  vwp_drm_lease_connector_v1_registered := True;
+  Pointer(vIntf_wp_drm_lease_connector_v1_Listener.name) := @wp_drm_lease_connector_v1_name_Intf;
+  Pointer(vIntf_wp_drm_lease_connector_v1_Listener.description) := @wp_drm_lease_connector_v1_description_Intf;
+  Pointer(vIntf_wp_drm_lease_connector_v1_Listener.connector_id) := @wp_drm_lease_connector_v1_connector_id_Intf;
+  Pointer(vIntf_wp_drm_lease_connector_v1_Listener.done) := @wp_drm_lease_connector_v1_done_Intf;
+  Pointer(vIntf_wp_drm_lease_connector_v1_Listener.withdrawn) := @wp_drm_lease_connector_v1_withdrawn_Intf;
   wp_drm_lease_connector_v1_interface.name := PChar(WP_DRM_LEASE_CONNECTOR_V1_INTERFACE_NAME);
   wp_drm_lease_connector_v1_interface.version := 1;
   wp_drm_lease_connector_v1_interface.method_count := 1;
   wp_drm_lease_connector_v1_interface.methods := @wp_drm_lease_connector_v1_requests;
   wp_drm_lease_connector_v1_interface.event_count := 5;
   wp_drm_lease_connector_v1_interface.events := @wp_drm_lease_connector_v1_events;
+end;
 
+class procedure TWpDrmLeaseRequestV1.RegisterInterface;
+begin
+  if vwp_drm_lease_request_v1_registered then Exit;
+  vwp_drm_lease_request_v1_registered := True;
   wp_drm_lease_request_v1_interface.name := PChar(WP_DRM_LEASE_REQUEST_V1_INTERFACE_NAME);
   wp_drm_lease_request_v1_interface.version := 1;
   wp_drm_lease_request_v1_interface.method_count := 2;
   wp_drm_lease_request_v1_interface.methods := @wp_drm_lease_request_v1_requests;
   wp_drm_lease_request_v1_interface.event_count := 0;
   wp_drm_lease_request_v1_interface.events := nil;
+end;
 
+class procedure TWpDrmLeaseV1.RegisterInterface;
+begin
+  if vwp_drm_lease_v1_registered then Exit;
+  vwp_drm_lease_v1_registered := True;
+  Pointer(vIntf_wp_drm_lease_v1_Listener.lease_fd) := @wp_drm_lease_v1_lease_fd_Intf;
+  Pointer(vIntf_wp_drm_lease_v1_Listener.finished) := @wp_drm_lease_v1_finished_Intf;
   wp_drm_lease_v1_interface.name := PChar(WP_DRM_LEASE_V1_INTERFACE_NAME);
   wp_drm_lease_v1_interface.version := 1;
   wp_drm_lease_v1_interface.method_count := 1;
   wp_drm_lease_v1_interface.methods := @wp_drm_lease_v1_requests;
   wp_drm_lease_v1_interface.event_count := 2;
   wp_drm_lease_v1_interface.events := @wp_drm_lease_v1_events;
-
 end;
+
 
 end.

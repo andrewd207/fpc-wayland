@@ -217,6 +217,8 @@ type
 
   TWpColorManagerV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpColorManagerV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
@@ -239,6 +241,8 @@ type
 
   TWpColorManagementOutputV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpColorManagementOutputV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
@@ -251,6 +255,8 @@ type
 
   TWpColorManagementSurfaceV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpColorManagementSurfaceV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
@@ -265,6 +271,8 @@ type
 
   TWpColorManagementSurfaceFeedbackV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpColorManagementSurfaceFeedbackV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
@@ -279,6 +287,8 @@ type
 
   TWpImageDescriptionCreatorIccV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpImageDescriptionCreatorIccV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _CREATE = 0;
@@ -291,6 +301,8 @@ type
 
   TWpImageDescriptionCreatorParamsV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpImageDescriptionCreatorParamsV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _CREATE = 0;
@@ -319,6 +331,8 @@ type
 
   TWpImageDescriptionV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpImageDescriptionV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
@@ -331,13 +345,14 @@ type
 
   TWpImageDescriptionInfoV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpImageDescriptionInfoV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
     function AddListener(AIntf: IWpImageDescriptionInfoV1Listener): LongInt;
   end;
 
 
 
-procedure InitInterfaces;
 
 
 
@@ -364,22 +379,35 @@ var
 implementation
 
 var
+  vwp_color_manager_v1_registered: Boolean = False;
   vIntf_wp_color_manager_v1_Listener: Twp_color_manager_v1_listener;
+  vwp_color_management_output_v1_registered: Boolean = False;
   vIntf_wp_color_management_output_v1_Listener: Twp_color_management_output_v1_listener;
+  vwp_color_management_surface_v1_registered: Boolean = False;
   vIntf_wp_color_management_surface_v1_Listener: Twp_color_management_surface_v1_listener;
+  vwp_color_management_surface_feedback_v1_registered: Boolean = False;
   vIntf_wp_color_management_surface_feedback_v1_Listener: Twp_color_management_surface_feedback_v1_listener;
+  vwp_image_description_creator_icc_v1_registered: Boolean = False;
   vIntf_wp_image_description_creator_icc_v1_Listener: Twp_image_description_creator_icc_v1_listener;
+  vwp_image_description_creator_params_v1_registered: Boolean = False;
   vIntf_wp_image_description_creator_params_v1_Listener: Twp_image_description_creator_params_v1_listener;
+  vwp_image_description_v1_registered: Boolean = False;
   vIntf_wp_image_description_v1_Listener: Twp_image_description_v1_listener;
+  vwp_image_description_info_v1_registered: Boolean = False;
   vIntf_wp_image_description_info_v1_Listener: Twp_image_description_info_v1_listener;
-  vInterfacesRegistered: Boolean = False;
 
 
 
 constructor TWpColorManagerV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TWpColorManagerV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpColorManagerV1;
+begin
+  RegisterInterface;
+  Result := TWpColorManagerV1.Create(ARegistry.Bind(AName, @wp_color_manager_v1_interface, AVersion));
 end;
 
 destructor TWpColorManagerV1.Destroy;
@@ -392,6 +420,7 @@ function TWpColorManagerV1.GetOutput(AOutput: TWlOutput; AProxyClass: TWLProxyOb
 var
   id: Pwl_proxy;
 begin
+  TWpColorManagementOutputV1.RegisterInterface;
   id := wl_proxy_marshal_constructor(FProxy,
       _GET_OUTPUT, @wp_color_management_output_v1_interface, nil, AOutput.Proxy);
   if AProxyClass = nil then
@@ -405,6 +434,7 @@ function TWpColorManagerV1.GetSurface(ASurface: TWlSurface; AProxyClass: TWLProx
 var
   id: Pwl_proxy;
 begin
+  TWpColorManagementSurfaceV1.RegisterInterface;
   id := wl_proxy_marshal_constructor(FProxy,
       _GET_SURFACE, @wp_color_management_surface_v1_interface, nil, ASurface.Proxy);
   if AProxyClass = nil then
@@ -418,6 +448,7 @@ function TWpColorManagerV1.GetSurfaceFeedback(ASurface: TWlSurface; AProxyClass:
 var
   id: Pwl_proxy;
 begin
+  TWpColorManagementSurfaceFeedbackV1.RegisterInterface;
   id := wl_proxy_marshal_constructor(FProxy,
       _GET_SURFACE_FEEDBACK, @wp_color_management_surface_feedback_v1_interface, nil, ASurface.Proxy);
   if AProxyClass = nil then
@@ -431,6 +462,7 @@ function TWpColorManagerV1.CreateIccCreator(AProxyClass: TWLProxyObjectClass = n
 var
   obj: Pwl_proxy;
 begin
+  TWpImageDescriptionCreatorIccV1.RegisterInterface;
   obj := wl_proxy_marshal_constructor(FProxy,
       _CREATE_ICC_CREATOR, @wp_image_description_creator_icc_v1_interface, nil);
   if AProxyClass = nil then
@@ -444,6 +476,7 @@ function TWpColorManagerV1.CreateParametricCreator(AProxyClass: TWLProxyObjectCl
 var
   obj: Pwl_proxy;
 begin
+  TWpImageDescriptionCreatorParamsV1.RegisterInterface;
   obj := wl_proxy_marshal_constructor(FProxy,
       _CREATE_PARAMETRIC_CREATOR, @wp_image_description_creator_params_v1_interface, nil);
   if AProxyClass = nil then
@@ -457,6 +490,7 @@ function TWpColorManagerV1.CreateWindowsScrgb(AProxyClass: TWLProxyObjectClass =
 var
   image_description: Pwl_proxy;
 begin
+  TWpImageDescriptionV1.RegisterInterface;
   image_description := wl_proxy_marshal_constructor(FProxy,
       _CREATE_WINDOWS_SCRGB, @wp_image_description_v1_interface, nil);
   if AProxyClass = nil then
@@ -473,8 +507,14 @@ begin
 end;
 constructor TWpColorManagementOutputV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TWpColorManagementOutputV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpColorManagementOutputV1;
+begin
+  RegisterInterface;
+  Result := TWpColorManagementOutputV1.Create(ARegistry.Bind(AName, @wp_color_management_output_v1_interface, AVersion));
 end;
 
 destructor TWpColorManagementOutputV1.Destroy;
@@ -487,6 +527,7 @@ function TWpColorManagementOutputV1.GetImageDescription(AProxyClass: TWLProxyObj
 var
   image_description: Pwl_proxy;
 begin
+  TWpImageDescriptionV1.RegisterInterface;
   image_description := wl_proxy_marshal_constructor(FProxy,
       _GET_IMAGE_DESCRIPTION, @wp_image_description_v1_interface, nil);
   if AProxyClass = nil then
@@ -503,8 +544,14 @@ begin
 end;
 constructor TWpColorManagementSurfaceV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TWpColorManagementSurfaceV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpColorManagementSurfaceV1;
+begin
+  RegisterInterface;
+  Result := TWpColorManagementSurfaceV1.Create(ARegistry.Bind(AName, @wp_color_management_surface_v1_interface, AVersion));
 end;
 
 destructor TWpColorManagementSurfaceV1.Destroy;
@@ -530,8 +577,14 @@ begin
 end;
 constructor TWpColorManagementSurfaceFeedbackV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TWpColorManagementSurfaceFeedbackV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpColorManagementSurfaceFeedbackV1;
+begin
+  RegisterInterface;
+  Result := TWpColorManagementSurfaceFeedbackV1.Create(ARegistry.Bind(AName, @wp_color_management_surface_feedback_v1_interface, AVersion));
 end;
 
 destructor TWpColorManagementSurfaceFeedbackV1.Destroy;
@@ -544,6 +597,7 @@ function TWpColorManagementSurfaceFeedbackV1.GetPreferred(AProxyClass: TWLProxyO
 var
   image_description: Pwl_proxy;
 begin
+  TWpImageDescriptionV1.RegisterInterface;
   image_description := wl_proxy_marshal_constructor(FProxy,
       _GET_PREFERRED, @wp_image_description_v1_interface, nil);
   if AProxyClass = nil then
@@ -557,6 +611,7 @@ function TWpColorManagementSurfaceFeedbackV1.GetPreferredParametric(AProxyClass:
 var
   image_description: Pwl_proxy;
 begin
+  TWpImageDescriptionV1.RegisterInterface;
   image_description := wl_proxy_marshal_constructor(FProxy,
       _GET_PREFERRED_PARAMETRIC, @wp_image_description_v1_interface, nil);
   if AProxyClass = nil then
@@ -573,14 +628,21 @@ begin
 end;
 constructor TWpImageDescriptionCreatorIccV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TWpImageDescriptionCreatorIccV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpImageDescriptionCreatorIccV1;
+begin
+  RegisterInterface;
+  Result := TWpImageDescriptionCreatorIccV1.Create(ARegistry.Bind(AName, @wp_image_description_creator_icc_v1_interface, AVersion));
 end;
 
 function TWpImageDescriptionCreatorIccV1.Create(AProxyClass: TWLProxyObjectClass = nil {TWpImageDescriptionV1}): TWpImageDescriptionV1;
 var
   image_description: Pwl_proxy;
 begin
+  TWpImageDescriptionV1.RegisterInterface;
   image_description := wl_proxy_marshal_constructor(FProxy,
       _CREATE, @wp_image_description_v1_interface, nil);
   if AProxyClass = nil then
@@ -603,14 +665,21 @@ begin
 end;
 constructor TWpImageDescriptionCreatorParamsV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TWpImageDescriptionCreatorParamsV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpImageDescriptionCreatorParamsV1;
+begin
+  RegisterInterface;
+  Result := TWpImageDescriptionCreatorParamsV1.Create(ARegistry.Bind(AName, @wp_image_description_creator_params_v1_interface, AVersion));
 end;
 
 function TWpImageDescriptionCreatorParamsV1.Create(AProxyClass: TWLProxyObjectClass = nil {TWpImageDescriptionV1}): TWpImageDescriptionV1;
 var
   image_description: Pwl_proxy;
 begin
+  TWpImageDescriptionV1.RegisterInterface;
   image_description := wl_proxy_marshal_constructor(FProxy,
       _CREATE, @wp_image_description_v1_interface, nil);
   if AProxyClass = nil then
@@ -673,8 +742,14 @@ begin
 end;
 constructor TWpImageDescriptionV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TWpImageDescriptionV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpImageDescriptionV1;
+begin
+  RegisterInterface;
+  Result := TWpImageDescriptionV1.Create(ARegistry.Bind(AName, @wp_image_description_v1_interface, AVersion));
 end;
 
 destructor TWpImageDescriptionV1.Destroy;
@@ -687,6 +762,7 @@ function TWpImageDescriptionV1.GetInformation(AProxyClass: TWLProxyObjectClass =
 var
   information: Pwl_proxy;
 begin
+  TWpImageDescriptionInfoV1.RegisterInterface;
   information := wl_proxy_marshal_constructor(FProxy,
       _GET_INFORMATION, @wp_image_description_info_v1_interface, nil);
   if AProxyClass = nil then
@@ -703,8 +779,14 @@ begin
 end;
 constructor TWpImageDescriptionInfoV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TWpImageDescriptionInfoV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpImageDescriptionInfoV1;
+begin
+  RegisterInterface;
+  Result := TWpImageDescriptionInfoV1.Create(ARegistry.Bind(AName, @wp_image_description_info_v1_interface, AVersion));
 end;
 
 function TWpImageDescriptionInfoV1.AddListener(AIntf: IWpImageDescriptionInfoV1Listener): LongInt;
@@ -1001,19 +1083,103 @@ const
     (name: 'target_max_fall'; signature: 'u'; types: @pInterfaces[0])
   );
 
-procedure InitInterfaces;
+class procedure TWpColorManagerV1.RegisterInterface;
 begin
-  if vInterfacesRegistered then Exit;
-  vInterfacesRegistered := True;
+  if vwp_color_manager_v1_registered then Exit;
+  vwp_color_manager_v1_registered := True;
   Pointer(vIntf_wp_color_manager_v1_Listener.supported_intent) := @wp_color_manager_v1_supported_intent_Intf;
   Pointer(vIntf_wp_color_manager_v1_Listener.supported_feature) := @wp_color_manager_v1_supported_feature_Intf;
   Pointer(vIntf_wp_color_manager_v1_Listener.supported_tf_named) := @wp_color_manager_v1_supported_tf_named_Intf;
   Pointer(vIntf_wp_color_manager_v1_Listener.supported_primaries_named) := @wp_color_manager_v1_supported_primaries_named_Intf;
   Pointer(vIntf_wp_color_manager_v1_Listener.done) := @wp_color_manager_v1_done_Intf;
+  wp_color_manager_v1_interface.name := PChar(WP_COLOR_MANAGER_V1_INTERFACE_NAME);
+  wp_color_manager_v1_interface.version := 1;
+  wp_color_manager_v1_interface.method_count := 7;
+  wp_color_manager_v1_interface.methods := @wp_color_manager_v1_requests;
+  wp_color_manager_v1_interface.event_count := 5;
+  wp_color_manager_v1_interface.events := @wp_color_manager_v1_events;
+end;
+
+class procedure TWpColorManagementOutputV1.RegisterInterface;
+begin
+  if vwp_color_management_output_v1_registered then Exit;
+  vwp_color_management_output_v1_registered := True;
   Pointer(vIntf_wp_color_management_output_v1_Listener.image_description_changed) := @wp_color_management_output_v1_image_description_changed_Intf;
+  wp_color_management_output_v1_interface.name := PChar(WP_COLOR_MANAGEMENT_OUTPUT_V1_INTERFACE_NAME);
+  wp_color_management_output_v1_interface.version := 1;
+  wp_color_management_output_v1_interface.method_count := 2;
+  wp_color_management_output_v1_interface.methods := @wp_color_management_output_v1_requests;
+  wp_color_management_output_v1_interface.event_count := 1;
+  wp_color_management_output_v1_interface.events := @wp_color_management_output_v1_events;
+end;
+
+class procedure TWpColorManagementSurfaceV1.RegisterInterface;
+begin
+  if vwp_color_management_surface_v1_registered then Exit;
+  vwp_color_management_surface_v1_registered := True;
+  wp_color_management_surface_v1_interface.name := PChar(WP_COLOR_MANAGEMENT_SURFACE_V1_INTERFACE_NAME);
+  wp_color_management_surface_v1_interface.version := 1;
+  wp_color_management_surface_v1_interface.method_count := 3;
+  wp_color_management_surface_v1_interface.methods := @wp_color_management_surface_v1_requests;
+  wp_color_management_surface_v1_interface.event_count := 0;
+  wp_color_management_surface_v1_interface.events := nil;
+end;
+
+class procedure TWpColorManagementSurfaceFeedbackV1.RegisterInterface;
+begin
+  if vwp_color_management_surface_feedback_v1_registered then Exit;
+  vwp_color_management_surface_feedback_v1_registered := True;
   Pointer(vIntf_wp_color_management_surface_feedback_v1_Listener.preferred_changed) := @wp_color_management_surface_feedback_v1_preferred_changed_Intf;
+  wp_color_management_surface_feedback_v1_interface.name := PChar(WP_COLOR_MANAGEMENT_SURFACE_FEEDBACK_V1_INTERFACE_NAME);
+  wp_color_management_surface_feedback_v1_interface.version := 1;
+  wp_color_management_surface_feedback_v1_interface.method_count := 3;
+  wp_color_management_surface_feedback_v1_interface.methods := @wp_color_management_surface_feedback_v1_requests;
+  wp_color_management_surface_feedback_v1_interface.event_count := 1;
+  wp_color_management_surface_feedback_v1_interface.events := @wp_color_management_surface_feedback_v1_events;
+end;
+
+class procedure TWpImageDescriptionCreatorIccV1.RegisterInterface;
+begin
+  if vwp_image_description_creator_icc_v1_registered then Exit;
+  vwp_image_description_creator_icc_v1_registered := True;
+  wp_image_description_creator_icc_v1_interface.name := PChar(WP_IMAGE_DESCRIPTION_CREATOR_ICC_V1_INTERFACE_NAME);
+  wp_image_description_creator_icc_v1_interface.version := 1;
+  wp_image_description_creator_icc_v1_interface.method_count := 2;
+  wp_image_description_creator_icc_v1_interface.methods := @wp_image_description_creator_icc_v1_requests;
+  wp_image_description_creator_icc_v1_interface.event_count := 0;
+  wp_image_description_creator_icc_v1_interface.events := nil;
+end;
+
+class procedure TWpImageDescriptionCreatorParamsV1.RegisterInterface;
+begin
+  if vwp_image_description_creator_params_v1_registered then Exit;
+  vwp_image_description_creator_params_v1_registered := True;
+  wp_image_description_creator_params_v1_interface.name := PChar(WP_IMAGE_DESCRIPTION_CREATOR_PARAMS_V1_INTERFACE_NAME);
+  wp_image_description_creator_params_v1_interface.version := 1;
+  wp_image_description_creator_params_v1_interface.method_count := 10;
+  wp_image_description_creator_params_v1_interface.methods := @wp_image_description_creator_params_v1_requests;
+  wp_image_description_creator_params_v1_interface.event_count := 0;
+  wp_image_description_creator_params_v1_interface.events := nil;
+end;
+
+class procedure TWpImageDescriptionV1.RegisterInterface;
+begin
+  if vwp_image_description_v1_registered then Exit;
+  vwp_image_description_v1_registered := True;
   Pointer(vIntf_wp_image_description_v1_Listener.failed) := @wp_image_description_v1_failed_Intf;
   Pointer(vIntf_wp_image_description_v1_Listener.ready) := @wp_image_description_v1_ready_Intf;
+  wp_image_description_v1_interface.name := PChar(WP_IMAGE_DESCRIPTION_V1_INTERFACE_NAME);
+  wp_image_description_v1_interface.version := 1;
+  wp_image_description_v1_interface.method_count := 2;
+  wp_image_description_v1_interface.methods := @wp_image_description_v1_requests;
+  wp_image_description_v1_interface.event_count := 2;
+  wp_image_description_v1_interface.events := @wp_image_description_v1_events;
+end;
+
+class procedure TWpImageDescriptionInfoV1.RegisterInterface;
+begin
+  if vwp_image_description_info_v1_registered then Exit;
+  vwp_image_description_info_v1_registered := True;
   Pointer(vIntf_wp_image_description_info_v1_Listener.done) := @wp_image_description_info_v1_done_Intf;
   Pointer(vIntf_wp_image_description_info_v1_Listener.icc_file) := @wp_image_description_info_v1_icc_file_Intf;
   Pointer(vIntf_wp_image_description_info_v1_Listener.primaries) := @wp_image_description_info_v1_primaries_Intf;
@@ -1025,64 +1191,13 @@ begin
   Pointer(vIntf_wp_image_description_info_v1_Listener.target_luminance) := @wp_image_description_info_v1_target_luminance_Intf;
   Pointer(vIntf_wp_image_description_info_v1_Listener.target_max_cll) := @wp_image_description_info_v1_target_max_cll_Intf;
   Pointer(vIntf_wp_image_description_info_v1_Listener.target_max_fall) := @wp_image_description_info_v1_target_max_fall_Intf;
-
-
-  wp_color_manager_v1_interface.name := PChar(WP_COLOR_MANAGER_V1_INTERFACE_NAME);
-  wp_color_manager_v1_interface.version := 1;
-  wp_color_manager_v1_interface.method_count := 7;
-  wp_color_manager_v1_interface.methods := @wp_color_manager_v1_requests;
-  wp_color_manager_v1_interface.event_count := 5;
-  wp_color_manager_v1_interface.events := @wp_color_manager_v1_events;
-
-  wp_color_management_output_v1_interface.name := PChar(WP_COLOR_MANAGEMENT_OUTPUT_V1_INTERFACE_NAME);
-  wp_color_management_output_v1_interface.version := 1;
-  wp_color_management_output_v1_interface.method_count := 2;
-  wp_color_management_output_v1_interface.methods := @wp_color_management_output_v1_requests;
-  wp_color_management_output_v1_interface.event_count := 1;
-  wp_color_management_output_v1_interface.events := @wp_color_management_output_v1_events;
-
-  wp_color_management_surface_v1_interface.name := PChar(WP_COLOR_MANAGEMENT_SURFACE_V1_INTERFACE_NAME);
-  wp_color_management_surface_v1_interface.version := 1;
-  wp_color_management_surface_v1_interface.method_count := 3;
-  wp_color_management_surface_v1_interface.methods := @wp_color_management_surface_v1_requests;
-  wp_color_management_surface_v1_interface.event_count := 0;
-  wp_color_management_surface_v1_interface.events := nil;
-
-  wp_color_management_surface_feedback_v1_interface.name := PChar(WP_COLOR_MANAGEMENT_SURFACE_FEEDBACK_V1_INTERFACE_NAME);
-  wp_color_management_surface_feedback_v1_interface.version := 1;
-  wp_color_management_surface_feedback_v1_interface.method_count := 3;
-  wp_color_management_surface_feedback_v1_interface.methods := @wp_color_management_surface_feedback_v1_requests;
-  wp_color_management_surface_feedback_v1_interface.event_count := 1;
-  wp_color_management_surface_feedback_v1_interface.events := @wp_color_management_surface_feedback_v1_events;
-
-  wp_image_description_creator_icc_v1_interface.name := PChar(WP_IMAGE_DESCRIPTION_CREATOR_ICC_V1_INTERFACE_NAME);
-  wp_image_description_creator_icc_v1_interface.version := 1;
-  wp_image_description_creator_icc_v1_interface.method_count := 2;
-  wp_image_description_creator_icc_v1_interface.methods := @wp_image_description_creator_icc_v1_requests;
-  wp_image_description_creator_icc_v1_interface.event_count := 0;
-  wp_image_description_creator_icc_v1_interface.events := nil;
-
-  wp_image_description_creator_params_v1_interface.name := PChar(WP_IMAGE_DESCRIPTION_CREATOR_PARAMS_V1_INTERFACE_NAME);
-  wp_image_description_creator_params_v1_interface.version := 1;
-  wp_image_description_creator_params_v1_interface.method_count := 10;
-  wp_image_description_creator_params_v1_interface.methods := @wp_image_description_creator_params_v1_requests;
-  wp_image_description_creator_params_v1_interface.event_count := 0;
-  wp_image_description_creator_params_v1_interface.events := nil;
-
-  wp_image_description_v1_interface.name := PChar(WP_IMAGE_DESCRIPTION_V1_INTERFACE_NAME);
-  wp_image_description_v1_interface.version := 1;
-  wp_image_description_v1_interface.method_count := 2;
-  wp_image_description_v1_interface.methods := @wp_image_description_v1_requests;
-  wp_image_description_v1_interface.event_count := 2;
-  wp_image_description_v1_interface.events := @wp_image_description_v1_events;
-
   wp_image_description_info_v1_interface.name := PChar(WP_IMAGE_DESCRIPTION_INFO_V1_INTERFACE_NAME);
   wp_image_description_info_v1_interface.version := 1;
   wp_image_description_info_v1_interface.method_count := 0;
   wp_image_description_info_v1_interface.methods := nil;
   wp_image_description_info_v1_interface.event_count := 11;
   wp_image_description_info_v1_interface.events := @wp_image_description_info_v1_events;
-
 end;
+
 
 end.

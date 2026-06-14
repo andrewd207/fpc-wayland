@@ -53,6 +53,8 @@ type
 
   TExtForeignToplevelListV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TExtForeignToplevelListV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _STOP = 0;
@@ -65,6 +67,8 @@ type
 
   TExtForeignToplevelHandleV1 = class(TWLProxyObject)
   public
+    class procedure RegisterInterface; virtual;
+    class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TExtForeignToplevelHandleV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _DESTROY = 0;
@@ -75,7 +79,6 @@ type
 
 
 
-procedure InitInterfaces;
 
 
 
@@ -90,16 +93,23 @@ var
 implementation
 
 var
+  vext_foreign_toplevel_list_v1_registered: Boolean = False;
   vIntf_ext_foreign_toplevel_list_v1_Listener: Text_foreign_toplevel_list_v1_listener;
+  vext_foreign_toplevel_handle_v1_registered: Boolean = False;
   vIntf_ext_foreign_toplevel_handle_v1_Listener: Text_foreign_toplevel_handle_v1_listener;
-  vInterfacesRegistered: Boolean = False;
 
 
 
 constructor TExtForeignToplevelListV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TExtForeignToplevelListV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TExtForeignToplevelListV1;
+begin
+  RegisterInterface;
+  Result := TExtForeignToplevelListV1.Create(ARegistry.Bind(AName, @ext_foreign_toplevel_list_v1_interface, AVersion));
 end;
 
 procedure TExtForeignToplevelListV1.Stop;
@@ -120,8 +130,14 @@ begin
 end;
 constructor TExtForeignToplevelHandleV1.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True);
 begin
-  InitInterfaces;
+  RegisterInterface;
   inherited Create(AProxy, AOwnsProxy);
+end;
+
+class function TExtForeignToplevelHandleV1.BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TExtForeignToplevelHandleV1;
+begin
+  RegisterInterface;
+  Result := TExtForeignToplevelHandleV1.Create(ARegistry.Bind(AName, @ext_foreign_toplevel_handle_v1_interface, AVersion));
 end;
 
 destructor TExtForeignToplevelHandleV1.Destroy;
@@ -235,33 +251,36 @@ const
     (name: 'identifier'; signature: 's'; types: @pInterfaces[0])
   );
 
-procedure InitInterfaces;
+class procedure TExtForeignToplevelListV1.RegisterInterface;
 begin
-  if vInterfacesRegistered then Exit;
-  vInterfacesRegistered := True;
+  if vext_foreign_toplevel_list_v1_registered then Exit;
+  vext_foreign_toplevel_list_v1_registered := True;
   Pointer(vIntf_ext_foreign_toplevel_list_v1_Listener.toplevel) := @ext_foreign_toplevel_list_v1_toplevel_Intf;
   Pointer(vIntf_ext_foreign_toplevel_list_v1_Listener.finished) := @ext_foreign_toplevel_list_v1_finished_Intf;
-  Pointer(vIntf_ext_foreign_toplevel_handle_v1_Listener.closed) := @ext_foreign_toplevel_handle_v1_closed_Intf;
-  Pointer(vIntf_ext_foreign_toplevel_handle_v1_Listener.done) := @ext_foreign_toplevel_handle_v1_done_Intf;
-  Pointer(vIntf_ext_foreign_toplevel_handle_v1_Listener.title) := @ext_foreign_toplevel_handle_v1_title_Intf;
-  Pointer(vIntf_ext_foreign_toplevel_handle_v1_Listener.app_id) := @ext_foreign_toplevel_handle_v1_app_id_Intf;
-  Pointer(vIntf_ext_foreign_toplevel_handle_v1_Listener.identifier) := @ext_foreign_toplevel_handle_v1_identifier_Intf;
-
-
   ext_foreign_toplevel_list_v1_interface.name := PChar(EXT_FOREIGN_TOPLEVEL_LIST_V1_INTERFACE_NAME);
   ext_foreign_toplevel_list_v1_interface.version := 1;
   ext_foreign_toplevel_list_v1_interface.method_count := 2;
   ext_foreign_toplevel_list_v1_interface.methods := @ext_foreign_toplevel_list_v1_requests;
   ext_foreign_toplevel_list_v1_interface.event_count := 2;
   ext_foreign_toplevel_list_v1_interface.events := @ext_foreign_toplevel_list_v1_events;
+end;
 
+class procedure TExtForeignToplevelHandleV1.RegisterInterface;
+begin
+  if vext_foreign_toplevel_handle_v1_registered then Exit;
+  vext_foreign_toplevel_handle_v1_registered := True;
+  Pointer(vIntf_ext_foreign_toplevel_handle_v1_Listener.closed) := @ext_foreign_toplevel_handle_v1_closed_Intf;
+  Pointer(vIntf_ext_foreign_toplevel_handle_v1_Listener.done) := @ext_foreign_toplevel_handle_v1_done_Intf;
+  Pointer(vIntf_ext_foreign_toplevel_handle_v1_Listener.title) := @ext_foreign_toplevel_handle_v1_title_Intf;
+  Pointer(vIntf_ext_foreign_toplevel_handle_v1_Listener.app_id) := @ext_foreign_toplevel_handle_v1_app_id_Intf;
+  Pointer(vIntf_ext_foreign_toplevel_handle_v1_Listener.identifier) := @ext_foreign_toplevel_handle_v1_identifier_Intf;
   ext_foreign_toplevel_handle_v1_interface.name := PChar(EXT_FOREIGN_TOPLEVEL_HANDLE_V1_INTERFACE_NAME);
   ext_foreign_toplevel_handle_v1_interface.version := 1;
   ext_foreign_toplevel_handle_v1_interface.method_count := 1;
   ext_foreign_toplevel_handle_v1_interface.methods := @ext_foreign_toplevel_handle_v1_requests;
   ext_foreign_toplevel_handle_v1_interface.event_count := 5;
   ext_foreign_toplevel_handle_v1_interface.events := @ext_foreign_toplevel_handle_v1_events;
-
 end;
+
 
 end.
