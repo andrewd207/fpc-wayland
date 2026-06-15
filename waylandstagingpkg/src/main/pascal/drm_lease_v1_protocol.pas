@@ -393,7 +393,7 @@ end;
 
 
 const
-  pInterfaces: array[0..10] of Pwl_interface = (
+  pInterfaces: array[0..11] of Pwl_interface = (
     (nil),
     (nil),
     (nil),
@@ -404,6 +404,7 @@ const
     (nil),
     (@wp_drm_lease_request_v1_interface),
     (@wp_drm_lease_connector_v1_interface),
+    (@wp_drm_lease_connector_v1_interface),
     (@wp_drm_lease_v1_interface)
   );
 
@@ -413,7 +414,7 @@ const
   );
   wp_drm_lease_device_v1_events: array[0..3] of Twl_message = (
     (name: 'drm_fd'; signature: 'h'; types: @pInterfaces[0]),
-    (name: 'connector'; signature: 'n'; types: @pInterfaces[0]),
+    (name: 'connector'; signature: 'n'; types: @pInterfaces[9]),
     (name: 'done'; signature: ''; types: @pInterfaces[0]),
     (name: 'released'; signature: ''; types: @pInterfaces[0])
   );
@@ -428,8 +429,8 @@ const
     (name: 'withdrawn'; signature: ''; types: @pInterfaces[0])
   );
   wp_drm_lease_request_v1_requests: array[0..1] of Twl_message = (
-    (name: 'request_connector'; signature: 'o'; types: @pInterfaces[9]),
-    (name: 'submit'; signature: 'n'; types: @pInterfaces[10])
+    (name: 'request_connector'; signature: 'o'; types: @pInterfaces[10]),
+    (name: 'submit'; signature: 'n'; types: @pInterfaces[11])
   );
   wp_drm_lease_v1_requests: array[0..0] of Twl_message = (
     (name: 'destroy'; signature: ''; types: @pInterfaces[0])

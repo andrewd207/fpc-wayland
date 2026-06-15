@@ -564,7 +564,7 @@ end;
 
 
 const
-  pInterfaces: array[0..16] of Pwl_interface = (
+  pInterfaces: array[0..18] of Pwl_interface = (
     (nil),
     (nil),
     (nil),
@@ -575,6 +575,8 @@ const
     (nil),
     (@wp_tablet_seat_v1_interface),
     (@wl_seat_interface),
+    (@wp_tablet_v1_interface),
+    (@wp_tablet_tool_v1_interface),
     (nil),
     (@wl_surface_interface),
     (nil),
@@ -592,11 +594,11 @@ const
     (name: 'destroy'; signature: ''; types: @pInterfaces[0])
   );
   wp_tablet_seat_v1_events: array[0..1] of Twl_message = (
-    (name: 'tablet_added'; signature: 'n'; types: @pInterfaces[0]),
-    (name: 'tool_added'; signature: 'n'; types: @pInterfaces[0])
+    (name: 'tablet_added'; signature: 'n'; types: @pInterfaces[10]),
+    (name: 'tool_added'; signature: 'n'; types: @pInterfaces[11])
   );
   wp_tablet_tool_v1_requests: array[0..1] of Twl_message = (
-    (name: 'set_cursor'; signature: 'u?oii'; types: @pInterfaces[10]),
+    (name: 'set_cursor'; signature: 'u?oii'; types: @pInterfaces[12]),
     (name: 'destroy'; signature: ''; types: @pInterfaces[0])
   );
   wp_tablet_tool_v1_events: array[0..18] of Twl_message = (
@@ -606,7 +608,7 @@ const
     (name: 'capability'; signature: 'u'; types: @pInterfaces[0]),
     (name: 'done'; signature: ''; types: @pInterfaces[0]),
     (name: 'removed'; signature: ''; types: @pInterfaces[0]),
-    (name: 'proximity_in'; signature: 'uoo'; types: @pInterfaces[14]),
+    (name: 'proximity_in'; signature: 'uoo'; types: @pInterfaces[16]),
     (name: 'proximity_out'; signature: ''; types: @pInterfaces[0]),
     (name: 'down'; signature: 'u'; types: @pInterfaces[0]),
     (name: 'up'; signature: ''; types: @pInterfaces[0]),

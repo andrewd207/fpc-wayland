@@ -431,7 +431,7 @@ end;
 
 
 const
-  pInterfaces: array[0..13] of Pwl_interface = (
+  pInterfaces: array[0..14] of Pwl_interface = (
     (nil),
     (nil),
     (nil),
@@ -441,6 +441,7 @@ const
     (nil),
     (nil),
     (@wl_keyboard_interface),
+    (@wp_input_method_context_v1_interface),
     (@wp_input_method_context_v1_interface),
     (@wp_input_panel_surface_v1_interface),
     (@wl_surface_interface),
@@ -473,14 +474,14 @@ const
     (name: 'preferred_language'; signature: 's'; types: @pInterfaces[0])
   );
   wp_input_method_v1_events: array[0..1] of Twl_message = (
-    (name: 'activate'; signature: 'n'; types: @pInterfaces[0]),
-    (name: 'deactivate'; signature: 'o'; types: @pInterfaces[9])
+    (name: 'activate'; signature: 'n'; types: @pInterfaces[9]),
+    (name: 'deactivate'; signature: 'o'; types: @pInterfaces[10])
   );
   wp_input_panel_v1_requests: array[0..0] of Twl_message = (
-    (name: 'get_input_panel_surface'; signature: 'no'; types: @pInterfaces[10])
+    (name: 'get_input_panel_surface'; signature: 'no'; types: @pInterfaces[11])
   );
   wp_input_panel_surface_v1_requests: array[0..1] of Twl_message = (
-    (name: 'set_toplevel'; signature: 'ou'; types: @pInterfaces[12]),
+    (name: 'set_toplevel'; signature: 'ou'; types: @pInterfaces[13]),
     (name: 'set_overlay_panel'; signature: ''; types: @pInterfaces[0])
   );
 

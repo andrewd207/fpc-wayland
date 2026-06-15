@@ -221,7 +221,7 @@ end;
 
 
 const
-  pInterfaces: array[0..7] of Pwl_interface = (
+  pInterfaces: array[0..8] of Pwl_interface = (
     (nil),
     (nil),
     (nil),
@@ -229,7 +229,8 @@ const
     (nil),
     (nil),
     (nil),
-    (nil)
+    (nil),
+    (@ext_foreign_toplevel_handle_v1_interface)
   );
 
   ext_foreign_toplevel_list_v1_requests: array[0..1] of Twl_message = (
@@ -237,7 +238,7 @@ const
     (name: 'destroy'; signature: ''; types: @pInterfaces[0])
   );
   ext_foreign_toplevel_list_v1_events: array[0..1] of Twl_message = (
-    (name: 'toplevel'; signature: 'n'; types: @pInterfaces[0]),
+    (name: 'toplevel'; signature: 'n'; types: @pInterfaces[8]),
     (name: 'finished'; signature: ''; types: @pInterfaces[0])
   );
   ext_foreign_toplevel_handle_v1_requests: array[0..0] of Twl_message = (

@@ -380,7 +380,7 @@ end;
 
 
 const
-  pInterfaces: array[0..14] of Pwl_interface = (
+  pInterfaces: array[0..15] of Pwl_interface = (
     (nil),
     (nil),
     (nil),
@@ -394,6 +394,7 @@ const
     (@wl_seat_interface),
     (@ext_data_control_source_v1_interface),
     (@ext_data_control_source_v1_interface),
+    (@ext_data_control_offer_v1_interface),
     (@ext_data_control_offer_v1_interface),
     (@ext_data_control_offer_v1_interface)
   );
@@ -409,10 +410,10 @@ const
     (name: 'set_primary_selection'; signature: '?o'; types: @pInterfaces[12])
   );
   ext_data_control_device_v1_events: array[0..3] of Twl_message = (
-    (name: 'data_offer'; signature: 'n'; types: @pInterfaces[0]),
-    (name: 'selection'; signature: '?o'; types: @pInterfaces[13]),
+    (name: 'data_offer'; signature: 'n'; types: @pInterfaces[13]),
+    (name: 'selection'; signature: '?o'; types: @pInterfaces[14]),
     (name: 'finished'; signature: ''; types: @pInterfaces[0]),
-    (name: 'primary_selection'; signature: '?o'; types: @pInterfaces[14])
+    (name: 'primary_selection'; signature: '?o'; types: @pInterfaces[15])
   );
   ext_data_control_source_v1_requests: array[0..1] of Twl_message = (
     (name: 'offer'; signature: 's'; types: @pInterfaces[0]),

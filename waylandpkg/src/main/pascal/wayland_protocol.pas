@@ -2435,7 +2435,7 @@ end;
 
 
 const
-  pInterfaces: array[0..93] of Pwl_interface = (
+  pInterfaces: array[0..94] of Pwl_interface = (
     (nil),
     (nil),
     (nil),
@@ -2463,6 +2463,7 @@ const
     (nil),
     (@wl_data_source_interface),
     (nil),
+    (@wl_data_offer_interface),
     (nil),
     (@wl_surface_interface),
     (nil),
@@ -2602,29 +2603,29 @@ const
     (name: 'release'; signature: '2'; types: @pInterfaces[0])
   );
   wl_data_device_events: array[0..5] of Twl_message = (
-    (name: 'data_offer'; signature: 'n'; types: @pInterfaces[0]),
-    (name: 'enter'; signature: 'uoff?o'; types: @pInterfaces[27]),
+    (name: 'data_offer'; signature: 'n'; types: @pInterfaces[27]),
+    (name: 'enter'; signature: 'uoff?o'; types: @pInterfaces[28]),
     (name: 'leave'; signature: ''; types: @pInterfaces[0]),
     (name: 'motion'; signature: 'uff'; types: @pInterfaces[0]),
     (name: 'drop'; signature: ''; types: @pInterfaces[0]),
-    (name: 'selection'; signature: '?o'; types: @pInterfaces[32])
+    (name: 'selection'; signature: '?o'; types: @pInterfaces[33])
   );
   wl_data_device_manager_requests: array[0..1] of Twl_message = (
-    (name: 'create_data_source'; signature: 'n'; types: @pInterfaces[33]),
-    (name: 'get_data_device'; signature: 'no'; types: @pInterfaces[34])
+    (name: 'create_data_source'; signature: 'n'; types: @pInterfaces[34]),
+    (name: 'get_data_device'; signature: 'no'; types: @pInterfaces[35])
   );
   wl_shell_requests: array[0..0] of Twl_message = (
-    (name: 'get_shell_surface'; signature: 'no'; types: @pInterfaces[36])
+    (name: 'get_shell_surface'; signature: 'no'; types: @pInterfaces[37])
   );
   wl_shell_surface_requests: array[0..9] of Twl_message = (
     (name: 'pong'; signature: 'u'; types: @pInterfaces[0]),
-    (name: 'move'; signature: 'ou'; types: @pInterfaces[38]),
-    (name: 'resize'; signature: 'ouu'; types: @pInterfaces[40]),
+    (name: 'move'; signature: 'ou'; types: @pInterfaces[39]),
+    (name: 'resize'; signature: 'ouu'; types: @pInterfaces[41]),
     (name: 'set_toplevel'; signature: ''; types: @pInterfaces[0]),
-    (name: 'set_transient'; signature: 'oiiu'; types: @pInterfaces[43]),
-    (name: 'set_fullscreen'; signature: 'uu?o'; types: @pInterfaces[47]),
-    (name: 'set_popup'; signature: 'ouoiiu'; types: @pInterfaces[50]),
-    (name: 'set_maximized'; signature: '?o'; types: @pInterfaces[56]),
+    (name: 'set_transient'; signature: 'oiiu'; types: @pInterfaces[44]),
+    (name: 'set_fullscreen'; signature: 'uu?o'; types: @pInterfaces[48]),
+    (name: 'set_popup'; signature: 'ouoiiu'; types: @pInterfaces[51]),
+    (name: 'set_maximized'; signature: '?o'; types: @pInterfaces[57]),
     (name: 'set_title'; signature: 's'; types: @pInterfaces[0]),
     (name: 'set_class'; signature: 's'; types: @pInterfaces[0])
   );
@@ -2635,11 +2636,11 @@ const
   );
   wl_surface_requests: array[0..10] of Twl_message = (
     (name: 'destroy'; signature: ''; types: @pInterfaces[0]),
-    (name: 'attach'; signature: '?oii'; types: @pInterfaces[57]),
+    (name: 'attach'; signature: '?oii'; types: @pInterfaces[58]),
     (name: 'damage'; signature: 'iiii'; types: @pInterfaces[0]),
-    (name: 'frame'; signature: 'n'; types: @pInterfaces[60]),
-    (name: 'set_opaque_region'; signature: '?o'; types: @pInterfaces[61]),
-    (name: 'set_input_region'; signature: '?o'; types: @pInterfaces[62]),
+    (name: 'frame'; signature: 'n'; types: @pInterfaces[61]),
+    (name: 'set_opaque_region'; signature: '?o'; types: @pInterfaces[62]),
+    (name: 'set_input_region'; signature: '?o'; types: @pInterfaces[63]),
     (name: 'commit'; signature: ''; types: @pInterfaces[0]),
     (name: 'set_buffer_transform'; signature: '2i'; types: @pInterfaces[0]),
     (name: 'set_buffer_scale'; signature: '3i'; types: @pInterfaces[0]),
@@ -2647,15 +2648,15 @@ const
     (name: 'offset'; signature: '5ii'; types: @pInterfaces[0])
   );
   wl_surface_events: array[0..3] of Twl_message = (
-    (name: 'enter'; signature: 'o'; types: @pInterfaces[63]),
-    (name: 'leave'; signature: 'o'; types: @pInterfaces[64]),
+    (name: 'enter'; signature: 'o'; types: @pInterfaces[64]),
+    (name: 'leave'; signature: 'o'; types: @pInterfaces[65]),
     (name: 'preferred_buffer_scale'; signature: '6i'; types: @pInterfaces[0]),
     (name: 'preferred_buffer_transform'; signature: '6u'; types: @pInterfaces[0])
   );
   wl_seat_requests: array[0..3] of Twl_message = (
-    (name: 'get_pointer'; signature: 'n'; types: @pInterfaces[65]),
-    (name: 'get_keyboard'; signature: 'n'; types: @pInterfaces[66]),
-    (name: 'get_touch'; signature: 'n'; types: @pInterfaces[67]),
+    (name: 'get_pointer'; signature: 'n'; types: @pInterfaces[66]),
+    (name: 'get_keyboard'; signature: 'n'; types: @pInterfaces[67]),
+    (name: 'get_touch'; signature: 'n'; types: @pInterfaces[68]),
     (name: 'release'; signature: '5'; types: @pInterfaces[0])
   );
   wl_seat_events: array[0..1] of Twl_message = (
@@ -2663,12 +2664,12 @@ const
     (name: 'name'; signature: '2s'; types: @pInterfaces[0])
   );
   wl_pointer_requests: array[0..1] of Twl_message = (
-    (name: 'set_cursor'; signature: 'u?oii'; types: @pInterfaces[68]),
+    (name: 'set_cursor'; signature: 'u?oii'; types: @pInterfaces[69]),
     (name: 'release'; signature: '3'; types: @pInterfaces[0])
   );
   wl_pointer_events: array[0..10] of Twl_message = (
-    (name: 'enter'; signature: 'uoff'; types: @pInterfaces[72]),
-    (name: 'leave'; signature: 'uo'; types: @pInterfaces[76]),
+    (name: 'enter'; signature: 'uoff'; types: @pInterfaces[73]),
+    (name: 'leave'; signature: 'uo'; types: @pInterfaces[77]),
     (name: 'motion'; signature: 'uff'; types: @pInterfaces[0]),
     (name: 'button'; signature: 'uuuu'; types: @pInterfaces[0]),
     (name: 'axis'; signature: 'uuf'; types: @pInterfaces[0]),
@@ -2684,8 +2685,8 @@ const
   );
   wl_keyboard_events: array[0..5] of Twl_message = (
     (name: 'keymap'; signature: 'uhu'; types: @pInterfaces[0]),
-    (name: 'enter'; signature: 'uoa'; types: @pInterfaces[78]),
-    (name: 'leave'; signature: 'uo'; types: @pInterfaces[81]),
+    (name: 'enter'; signature: 'uoa'; types: @pInterfaces[79]),
+    (name: 'leave'; signature: 'uo'; types: @pInterfaces[82]),
     (name: 'key'; signature: 'uuuu'; types: @pInterfaces[0]),
     (name: 'modifiers'; signature: 'uuuuu'; types: @pInterfaces[0]),
     (name: 'repeat_info'; signature: '4ii'; types: @pInterfaces[0])
@@ -2694,7 +2695,7 @@ const
     (name: 'release'; signature: '3'; types: @pInterfaces[0])
   );
   wl_touch_events: array[0..6] of Twl_message = (
-    (name: 'down'; signature: 'uuoiff'; types: @pInterfaces[83]),
+    (name: 'down'; signature: 'uuoiff'; types: @pInterfaces[84]),
     (name: 'up'; signature: 'uui'; types: @pInterfaces[0]),
     (name: 'motion'; signature: 'uiff'; types: @pInterfaces[0]),
     (name: 'frame'; signature: ''; types: @pInterfaces[0]),
@@ -2720,13 +2721,13 @@ const
   );
   wl_subcompositor_requests: array[0..1] of Twl_message = (
     (name: 'destroy'; signature: ''; types: @pInterfaces[0]),
-    (name: 'get_subsurface'; signature: 'noo'; types: @pInterfaces[89])
+    (name: 'get_subsurface'; signature: 'noo'; types: @pInterfaces[90])
   );
   wl_subsurface_requests: array[0..5] of Twl_message = (
     (name: 'destroy'; signature: ''; types: @pInterfaces[0]),
     (name: 'set_position'; signature: 'ii'; types: @pInterfaces[0]),
-    (name: 'place_above'; signature: 'o'; types: @pInterfaces[92]),
-    (name: 'place_below'; signature: 'o'; types: @pInterfaces[93]),
+    (name: 'place_above'; signature: 'o'; types: @pInterfaces[93]),
+    (name: 'place_below'; signature: 'o'; types: @pInterfaces[94]),
     (name: 'set_sync'; signature: ''; types: @pInterfaces[0]),
     (name: 'set_desync'; signature: ''; types: @pInterfaces[0])
   );

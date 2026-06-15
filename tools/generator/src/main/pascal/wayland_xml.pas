@@ -330,9 +330,13 @@ begin
   lNode:= FNode.FirstChild;
   while Assigned(lNode) do
   begin
+    // Match any arg carrying an interface: 'object' args, but also 'new_id'
+    // args (e.g. wl_data_device.data_offer). This value is used as the flag
+    // that decides whether a dedicated pInterfaces block is emitted for the
+    // event; missing 'new_id' here pointed such events at the shared nil slot
+    // and crashed libwayland when it constructed the incoming proxy.
     if (lNode.NodeName = 'arg')
-    and (TDomElement(lNode).GetAttribute('type') = 'object')
-    //and (TDomElement(lNode).GetAttribute('name') = 'id')
+    and (TDomElement(lNode).GetAttribute('interface') <> '')
     then
       Exit(TDomElement(lNode).GetAttribute('interface'));
     lNode := lNode.NextSibling;

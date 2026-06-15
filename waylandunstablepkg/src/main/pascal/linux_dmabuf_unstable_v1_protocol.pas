@@ -403,7 +403,7 @@ end;
 
 
 const
-  pInterfaces: array[0..16] of Pwl_interface = (
+  pInterfaces: array[0..17] of Pwl_interface = (
     (nil),
     (nil),
     (nil),
@@ -420,7 +420,8 @@ const
     (nil),
     (nil),
     (nil),
-    (nil)
+    (nil),
+    (@wl_buffer_interface)
   );
 
   wp_linux_dmabuf_v1_requests: array[0..3] of Twl_message = (
@@ -440,7 +441,7 @@ const
     (name: 'create_immed'; signature: '2niiuu'; types: @pInterfaces[12])
   );
   wp_linux_buffer_params_v1_events: array[0..1] of Twl_message = (
-    (name: 'created'; signature: 'n'; types: @pInterfaces[0]),
+    (name: 'created'; signature: 'n'; types: @pInterfaces[17]),
     (name: 'failed'; signature: ''; types: @pInterfaces[0])
   );
   wp_linux_dmabuf_feedback_v1_requests: array[0..0] of Twl_message = (

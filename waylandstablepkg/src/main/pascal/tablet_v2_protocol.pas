@@ -1155,7 +1155,7 @@ end;
 
 
 const
-  pInterfaces: array[0..21] of Pwl_interface = (
+  pInterfaces: array[0..28] of Pwl_interface = (
     (nil),
     (nil),
     (nil),
@@ -1166,6 +1166,9 @@ const
     (nil),
     (@wp_tablet_seat_v2_interface),
     (@wl_seat_interface),
+    (@wp_tablet_v2_interface),
+    (@wp_tablet_tool_v2_interface),
+    (@wp_tablet_pad_v2_interface),
     (nil),
     (@wl_surface_interface),
     (nil),
@@ -1173,6 +1176,10 @@ const
     (nil),
     (@wp_tablet_v2_interface),
     (@wl_surface_interface),
+    (@wp_tablet_pad_ring_v2_interface),
+    (@wp_tablet_pad_strip_v2_interface),
+    (@wp_tablet_pad_dial_v2_interface),
+    (@wp_tablet_pad_group_v2_interface),
     (nil),
     (@wp_tablet_v2_interface),
     (@wl_surface_interface),
@@ -1188,12 +1195,12 @@ const
     (name: 'destroy'; signature: ''; types: @pInterfaces[0])
   );
   wp_tablet_seat_v2_events: array[0..2] of Twl_message = (
-    (name: 'tablet_added'; signature: 'n'; types: @pInterfaces[0]),
-    (name: 'tool_added'; signature: 'n'; types: @pInterfaces[0]),
-    (name: 'pad_added'; signature: 'n'; types: @pInterfaces[0])
+    (name: 'tablet_added'; signature: 'n'; types: @pInterfaces[10]),
+    (name: 'tool_added'; signature: 'n'; types: @pInterfaces[11]),
+    (name: 'pad_added'; signature: 'n'; types: @pInterfaces[12])
   );
   wp_tablet_tool_v2_requests: array[0..1] of Twl_message = (
-    (name: 'set_cursor'; signature: 'u?oii'; types: @pInterfaces[10]),
+    (name: 'set_cursor'; signature: 'u?oii'; types: @pInterfaces[13]),
     (name: 'destroy'; signature: ''; types: @pInterfaces[0])
   );
   wp_tablet_tool_v2_events: array[0..18] of Twl_message = (
@@ -1203,7 +1210,7 @@ const
     (name: 'capability'; signature: 'u'; types: @pInterfaces[0]),
     (name: 'done'; signature: ''; types: @pInterfaces[0]),
     (name: 'removed'; signature: ''; types: @pInterfaces[0]),
-    (name: 'proximity_in'; signature: 'uoo'; types: @pInterfaces[14]),
+    (name: 'proximity_in'; signature: 'uoo'; types: @pInterfaces[17]),
     (name: 'proximity_out'; signature: ''; types: @pInterfaces[0]),
     (name: 'down'; signature: 'u'; types: @pInterfaces[0]),
     (name: 'up'; signature: ''; types: @pInterfaces[0]),
@@ -1253,25 +1260,25 @@ const
   );
   wp_tablet_pad_group_v2_events: array[0..6] of Twl_message = (
     (name: 'buttons'; signature: 'a'; types: @pInterfaces[0]),
-    (name: 'ring'; signature: 'n'; types: @pInterfaces[0]),
-    (name: 'strip'; signature: 'n'; types: @pInterfaces[0]),
+    (name: 'ring'; signature: 'n'; types: @pInterfaces[20]),
+    (name: 'strip'; signature: 'n'; types: @pInterfaces[21]),
     (name: 'modes'; signature: 'u'; types: @pInterfaces[0]),
     (name: 'done'; signature: ''; types: @pInterfaces[0]),
     (name: 'mode_switch'; signature: 'uuu'; types: @pInterfaces[0]),
-    (name: 'dial'; signature: '2n'; types: @pInterfaces[0])
+    (name: 'dial'; signature: '2n'; types: @pInterfaces[22])
   );
   wp_tablet_pad_v2_requests: array[0..1] of Twl_message = (
     (name: 'set_feedback'; signature: 'usu'; types: @pInterfaces[0]),
     (name: 'destroy'; signature: ''; types: @pInterfaces[0])
   );
   wp_tablet_pad_v2_events: array[0..7] of Twl_message = (
-    (name: 'group'; signature: 'n'; types: @pInterfaces[0]),
+    (name: 'group'; signature: 'n'; types: @pInterfaces[23]),
     (name: 'path'; signature: 's'; types: @pInterfaces[0]),
     (name: 'buttons'; signature: 'u'; types: @pInterfaces[0]),
     (name: 'done'; signature: ''; types: @pInterfaces[0]),
     (name: 'button'; signature: 'uuu'; types: @pInterfaces[0]),
-    (name: 'enter'; signature: 'uoo'; types: @pInterfaces[17]),
-    (name: 'leave'; signature: 'uo'; types: @pInterfaces[20]),
+    (name: 'enter'; signature: 'uoo'; types: @pInterfaces[24]),
+    (name: 'leave'; signature: 'uo'; types: @pInterfaces[27]),
     (name: 'removed'; signature: ''; types: @pInterfaces[0])
   );
   wp_tablet_pad_dial_v2_requests: array[0..1] of Twl_message = (

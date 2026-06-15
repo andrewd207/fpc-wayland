@@ -343,7 +343,7 @@ end;
 
 
 const
-  pInterfaces: array[0..13] of Pwl_interface = (
+  pInterfaces: array[0..14] of Pwl_interface = (
     (nil),
     (nil),
     (nil),
@@ -357,6 +357,7 @@ const
     (@wl_seat_interface),
     (@wp_primary_selection_source_v1_interface),
     (nil),
+    (@wp_primary_selection_offer_v1_interface),
     (@wp_primary_selection_offer_v1_interface)
   );
 
@@ -370,8 +371,8 @@ const
     (name: 'destroy'; signature: ''; types: @pInterfaces[0])
   );
   wp_primary_selection_device_v1_events: array[0..1] of Twl_message = (
-    (name: 'data_offer'; signature: 'n'; types: @pInterfaces[0]),
-    (name: 'selection'; signature: '?o'; types: @pInterfaces[13])
+    (name: 'data_offer'; signature: 'n'; types: @pInterfaces[13]),
+    (name: 'selection'; signature: '?o'; types: @pInterfaces[14])
   );
   wp_primary_selection_offer_v1_requests: array[0..1] of Twl_message = (
     (name: 'receive'; signature: 'sh'; types: @pInterfaces[0]),

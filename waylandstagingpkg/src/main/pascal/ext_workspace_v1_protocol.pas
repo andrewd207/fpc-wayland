@@ -417,7 +417,7 @@ end;
 
 
 const
-  pInterfaces: array[0..12] of Pwl_interface = (
+  pInterfaces: array[0..14] of Pwl_interface = (
     (nil),
     (nil),
     (nil),
@@ -426,6 +426,8 @@ const
     (nil),
     (nil),
     (nil),
+    (@ext_workspace_group_handle_v1_interface),
+    (@ext_workspace_handle_v1_interface),
     (@wl_output_interface),
     (@wl_output_interface),
     (@ext_workspace_handle_v1_interface),
@@ -438,8 +440,8 @@ const
     (name: 'stop'; signature: ''; types: @pInterfaces[0])
   );
   ext_workspace_manager_v1_events: array[0..3] of Twl_message = (
-    (name: 'workspace_group'; signature: 'n'; types: @pInterfaces[0]),
-    (name: 'workspace'; signature: 'n'; types: @pInterfaces[0]),
+    (name: 'workspace_group'; signature: 'n'; types: @pInterfaces[8]),
+    (name: 'workspace'; signature: 'n'; types: @pInterfaces[9]),
     (name: 'done'; signature: ''; types: @pInterfaces[0]),
     (name: 'finished'; signature: ''; types: @pInterfaces[0])
   );
@@ -449,17 +451,17 @@ const
   );
   ext_workspace_group_handle_v1_events: array[0..5] of Twl_message = (
     (name: 'capabilities'; signature: 'u'; types: @pInterfaces[0]),
-    (name: 'output_enter'; signature: 'o'; types: @pInterfaces[8]),
-    (name: 'output_leave'; signature: 'o'; types: @pInterfaces[9]),
-    (name: 'workspace_enter'; signature: 'o'; types: @pInterfaces[10]),
-    (name: 'workspace_leave'; signature: 'o'; types: @pInterfaces[11]),
+    (name: 'output_enter'; signature: 'o'; types: @pInterfaces[10]),
+    (name: 'output_leave'; signature: 'o'; types: @pInterfaces[11]),
+    (name: 'workspace_enter'; signature: 'o'; types: @pInterfaces[12]),
+    (name: 'workspace_leave'; signature: 'o'; types: @pInterfaces[13]),
     (name: 'removed'; signature: ''; types: @pInterfaces[0])
   );
   ext_workspace_handle_v1_requests: array[0..4] of Twl_message = (
     (name: 'destroy'; signature: ''; types: @pInterfaces[0]),
     (name: 'activate'; signature: ''; types: @pInterfaces[0]),
     (name: 'deactivate'; signature: ''; types: @pInterfaces[0]),
-    (name: 'assign'; signature: 'o'; types: @pInterfaces[12]),
+    (name: 'assign'; signature: 'o'; types: @pInterfaces[14]),
     (name: 'remove'; signature: ''; types: @pInterfaces[0])
   );
   ext_workspace_handle_v1_events: array[0..5] of Twl_message = (
