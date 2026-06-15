@@ -205,7 +205,7 @@ end;
 
 procedure TWpLockedPointerV1.SetCursorPositionHint(ASurfaceX: Twl_fixed; ASurfaceY: Twl_fixed);
 begin
-  wl_proxy_marshal(FProxy, _SET_CURSOR_POSITION_HINT, ASurfaceX, ASurfaceY);
+  wl_proxy_marshal(FProxy, _SET_CURSOR_POSITION_HINT, ASurfaceX.AsFixed24_8, ASurfaceY.AsFixed24_8);
 end;
 
 procedure TWpLockedPointerV1.SetRegion(ARegion: TWlRegion);

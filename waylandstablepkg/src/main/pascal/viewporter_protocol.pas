@@ -158,7 +158,7 @@ end;
 
 procedure TWpViewport.SetSource(AX: Twl_fixed; AY: Twl_fixed; AWidth: Twl_fixed; AHeight: Twl_fixed);
 begin
-  wl_proxy_marshal(FProxy, _SET_SOURCE, AX, AY, AWidth, AHeight);
+  wl_proxy_marshal(FProxy, _SET_SOURCE, AX.AsFixed24_8, AY.AsFixed24_8, AWidth.AsFixed24_8, AHeight.AsFixed24_8);
 end;
 
 procedure TWpViewport.SetDestination(AWidth: LongInt; AHeight: LongInt);

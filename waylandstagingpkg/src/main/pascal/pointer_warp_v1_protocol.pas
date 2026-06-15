@@ -80,7 +80,7 @@ end;
 
 procedure TWpPointerWarpV1.WarpPointer(ASurface: TWlSurface; APointer: TWlPointer; AX: Twl_fixed; AY: Twl_fixed; ASerial: DWord);
 begin
-  wl_proxy_marshal(FProxy, _WARP_POINTER, ASurface.Proxy, APointer.Proxy, AX, AY, ASerial);
+  wl_proxy_marshal(FProxy, _WARP_POINTER, ASurface.Proxy, APointer.Proxy, AX.AsFixed24_8, AY.AsFixed24_8, ASerial);
 end;
 
 function TWpPointerWarpV1.AddListener(AIntf: IWpPointerWarpV1Listener): LongInt;

@@ -763,7 +763,10 @@ begin
   lArgs := '';
   for TBaseNode(lArg) in lParams do
   begin
-    lArgs+=', '+lArg.Name;
+    if lArg.&Type = 'fixed' then
+      lArgs+=', '+lArg.Name+'.AsFixed24_8'
+    else
+      lArgs+=', '+lArg.Name;
   end;
   lArgs+=');';
 
@@ -917,6 +920,8 @@ begin
   begin
     if lArg.&Type = 'object' then
       lTmp:='.Proxy'
+    else if lArg.&Type = 'fixed' then
+      lTmp:='.AsFixed24_8'
     else
       lTmp := '';
     if lArg.&Type = 'string' then
