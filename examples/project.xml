@@ -5,9 +5,9 @@
     <packaging>pom</packaging>
   </build>
   <modules>
-    <module>waylandfindcompositor</module>
-    <module>waylandcreatesurface</module>
-    <module>waylandcreatewindow</module>
-    <module>waylandtest</module>
+    <module activeByDefault="false">waylandfindcompositor</module>
+    <module activeByDefault="false">waylandcreatesurface</module>
+    <module activeByDefault="false">waylandcreatewindow</module>
+    <module activeByDefault="false">waylandtest</module>
   </modules>
 </project>
