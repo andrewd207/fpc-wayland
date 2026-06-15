@@ -23,10 +23,10 @@ type
   end;
 
 const
-  WP_PRESENTATION_FEEDBACK_KIND_VSYNC = $1; // 
-  WP_PRESENTATION_FEEDBACK_KIND_HW_CLOCK = $2; // 
-  WP_PRESENTATION_FEEDBACK_KIND_HW_COMPLETION = $4; // 
-  WP_PRESENTATION_FEEDBACK_KIND_ZERO_COPY = $8; // 
+  WP_PRESENTATION_FEEDBACK_KIND_VSYNC = $1; // presentation was vsync'd
+  WP_PRESENTATION_FEEDBACK_KIND_HW_CLOCK = $2; // hardware provided the presentation timestamp
+  WP_PRESENTATION_FEEDBACK_KIND_HW_COMPLETION = $4; // hardware signalled the start of the presentation
+  WP_PRESENTATION_FEEDBACK_KIND_ZERO_COPY = $8; // presentation was done zero-copy
 
 type
   Pwp_presentation_feedback_listener = ^Twp_presentation_feedback_listener;

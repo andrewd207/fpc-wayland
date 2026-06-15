@@ -148,6 +148,9 @@ type
     XKB_MOD_INVALID = $ffffffff;
     XKB_LED_INVALID = $ffffffff;
     XKB_KEYCODE_MAX = $ffffffff-1;
+
+{$I libxkbcommon-keys.inc}
+
      type
     Pxkb_rule_names = ^xkb_rule_names;
     xkb_rule_names = record

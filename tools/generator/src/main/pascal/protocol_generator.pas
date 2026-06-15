@@ -50,10 +50,10 @@ type
     procedure NoteInterfaceUse(const AInterface: String);
     function Pascalify(AName: String): String;
 
-    function ArgToArg(AArg: TArg; APascalify: Boolean; var ANeedsWrapper: Boolean
-      ): String;
+    function ArgToArg(AArg: TArg; APascalify: Boolean; var ANeedsWrapper: Boolean;
+      AFixedAsTWL_Fixed: Boolean = True): String;
     function ArgTypeToPascalType(AType: String; AInterface: String;
-      APascalify: Boolean; var ANeedsWrapper: Boolean): String;
+      APascalify: Boolean; var ANeedsWrapper: Boolean; AFixedAsTWL_Fixed: Boolean = True): String;
 
     procedure ArgsToSig(Element: TBaseNode; AData: Pointer{PString});
     procedure ArgTypesToInterfacePointer(Element: TBaseNode; AData: Pointer);
@@ -336,12 +336,13 @@ var
   lWrapperLine: String;
   lWrapperDecl: String;
   lWrapperBind, lWrapperVar, lWrapperVarAssign, lArg, lInterface,
-    lInterfaceArg: String;
+    lInterfaceArg, lComment: String;
+  lSince: String;
   lNeedsWrapper: Boolean;
       procedure WriteEvent;
       begin
         Sections[sTypes].Add(lArgs+'); cdecl;');
-        Sections[sListenerDecl].Add(lInterfaceLine+');');
+        Sections[sListenerDecl].Add(lInterfaceLine+');'+ lSince);
         Sections[sListenerImpl].Add(lWrapperDecl+'); cdecl;');
         Sections[sListenerImpl].Add('var');
         Sections[sListenerImpl].Add(lWrapperVar);
@@ -355,6 +356,7 @@ var
 
         Sections[sListenerBind].Add(lWrapperBind);
         lArgs:='';
+        lSince := '';
      end;
 
 begin
@@ -378,7 +380,11 @@ begin
           Delete(lValue, 1, 2);
           lValue:='$'+  lValue;
         end;
-        Sections[sTypes].Add('  '+UpperCase(StripZ(Element.Name)+'_'+lEnum.Name+'_'+lEntry.Name)+' = '+lValue +'; // '+ lEntry.Summary);
+        lComment := lEntry.Summary;
+        if lComment <> '' then
+          lComment := ' // '+ StringReplace(lComment, '’', '''', [rfReplaceAll]);
+
+        Sections[sTypes].Add('  '+UpperCase(StripZ(Element.Name)+'_'+lEnum.Name+'_'+lEntry.Name)+' = '+lValue +';'+ lComment);
       end;
     end;
 
@@ -407,6 +413,7 @@ begin
   Element.ForEachEvent(@CollectEventsForListener, lList);
 
   lArgs := '';
+  lSince := '';
   for lNode in lList do
   begin
     if lNode is TEvent then
@@ -427,6 +434,8 @@ begin
 
       // for IxxxListener
       lInterfaceLine := '    procedure '+StripZ(Element.Name)+'_'+lEvent.Name+'(A'+Pascalify(StripZ(Element.Name))+': T'+Pascalify(StripZ(Element.Name));
+      if lEvent.Since <> '' then
+        lSince := Format(' {since: %s}', [lEvent.Since]);
       lWrapperVar := '  AIntf: ' + lInterfaceName+';';
       lWrapperVarAssign := '  AIntf := '+lInterfaceName+'(AData^.ListenerUserData);';
       lWrapperDecl   := 'procedure '+StripZ(Element.Name)+'_'+lEvent.Name+'_Intf(AData: PWLUserData; A'+StripZ(Element.Name)+': P'+StripZ(Element.Name);
@@ -438,12 +447,15 @@ begin
     end
     else
     begin
-      lArg := ArgToArg(TArg(lNode), False, lNeedsWrapper);
-      lInterfaceArg := ArgToArg(TArg(lNode), True, lNeedsWrapper);
+      lArg := ArgToArg(TArg(lNode), False, lNeedsWrapper, False);
+      lInterfaceArg := ArgToArg(TArg(lNode), True, lNeedsWrapper, True);
       lTypeName:=ArgTypeToPascalType(TArg(lNode).&Type, TArg(lNode).&Interface, True, lNeedsWrapper);
 
 
-      lName := 'A'+Pascalify(lNode.Name);
+      if TArg(lNode).&Type = 'fixed' then
+        lName := 'Twl_fixed(A'+Pascalify(lNode.Name)+')'
+      else
+        lName := 'A'+Pascalify(lNode.Name);
 
       if lTypeName = 'String' then
         lTypeName:='Pchar';
@@ -568,18 +580,20 @@ begin
   until lPos < 1;
 end;
 
-function TGenerator.ArgToArg(AArg: TArg; APascalify: Boolean; var ANeedsWrapper: Boolean): String;
+function TGenerator.ArgToArg(AArg: TArg; APascalify: Boolean;
+  var ANeedsWrapper: Boolean; AFixedAsTWL_Fixed: Boolean): String;
 var
   lName, lType: String;
 begin
   lName := 'A'+Pascalify(AArg.Name);
-  lType := ArgTypeToPascalType(AArg.&Type, AArg.&Interface, APascalify, ANeedsWrapper);
+  lType := ArgTypeToPascalType(AArg.&Type, AArg.&Interface, APascalify, ANeedsWrapper, AFixedAsTWL_Fixed);
 
   Result := Format('%s: %s', [lName, lType]);
 end;
 
 function TGenerator.ArgTypeToPascalType(AType: String; AInterface: String;
-  APascalify: Boolean; var ANeedsWrapper: Boolean): String;
+  APascalify: Boolean; var ANeedsWrapper: Boolean; AFixedAsTWL_Fixed: Boolean
+  ): String;
 begin
   ANeedsWrapper:=False;
   case AType of
@@ -611,7 +625,7 @@ begin
         end;
       'int':  Result := 'LongInt';
       'uint': Result := 'DWord';
-      'fixed': Result := 'Longint{24.8}';
+      'fixed': if AFixedAsTWL_Fixed then Result := 'Twl_fixed' else Result := 'Longint{24.8}';
       'string':
         begin
           if APascalify then
@@ -666,8 +680,12 @@ end;
 procedure TGenerator.WriteRequestConsts(Element: TBaseNode; AData: Pointer);
 var
   lInterface: TInterface absolute AData;
+  lSince: String = '';
 begin
-  Sections[sClasses].Add('    const _'+UpperCase(Element.Name) + ' = ' + IntToStr(Element.ElementIndex)+';');
+  if (Element is TRequest) and (TRequest(Element).Since <> '') then
+    lSince := Format(' { since version: %s}', [TRequest(Element).Since]);
+
+  Sections[sClasses].Add(Format('    const _%s = %d;%s', [UpperCase(Element.Name), Element.ElementIndex, lSince]));
   //Sections[sPrivateConst].Add('_'+UpperCase(lInterface.Name+'_'+Element.Name + ' = ' + IntToStr(Element.ElementIndex)+';'));
 end;
 
@@ -723,7 +741,7 @@ begin
       if lTypeName = 'carray' then
         lTypeName:='Pwl_array';
       if lTypeName = 'cfixed' then
-        lTypeName:='cint32';
+        lTypeName:='Twl_fixed';
 
       lArgs += '; ' + lArg.Name+': '+lTypeName;
       lParams.Add(lArg);

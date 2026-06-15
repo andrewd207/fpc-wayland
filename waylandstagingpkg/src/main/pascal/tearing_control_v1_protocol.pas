@@ -21,8 +21,8 @@ type
   end;
 
 const
-  WP_TEARING_CONTROL_V1_PRESENTATION_HINT_VSYNC = 0; // 
-  WP_TEARING_CONTROL_V1_PRESENTATION_HINT_ASYNC = 1; // 
+  WP_TEARING_CONTROL_V1_PRESENTATION_HINT_VSYNC = 0; // tearing-free presentation
+  WP_TEARING_CONTROL_V1_PRESENTATION_HINT_ASYNC = 1; // asynchronous presentation
 
 type
   Pwp_tearing_control_v1_listener = ^Twp_tearing_control_v1_listener;

@@ -35,7 +35,7 @@ type
   end;
 
 const
-  WP_INPUT_PANEL_SURFACE_V1_POSITION_CENTER_BOTTOM = 0; // 
+  WP_INPUT_PANEL_SURFACE_V1_POSITION_CENTER_BOTTOM = 0;
 
 type
   Pwp_input_panel_surface_v1_listener = ^Twp_input_panel_surface_v1_listener;

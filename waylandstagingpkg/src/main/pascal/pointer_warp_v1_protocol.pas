@@ -37,7 +37,7 @@ type
     const _WARP_POINTER = 1;
   public
     destructor Destroy; override;
-    procedure WarpPointer(ASurface: TWlSurface; APointer: TWlPointer; AX: Longint{24.8}; AY: Longint{24.8}; ASerial: DWord);
+    procedure WarpPointer(ASurface: TWlSurface; APointer: TWlPointer; AX: Twl_fixed; AY: Twl_fixed; ASerial: DWord);
     function AddListener(AIntf: IWpPointerWarpV1Listener): LongInt;
   end;
 
@@ -78,7 +78,7 @@ begin
   inherited Destroy;
 end;
 
-procedure TWpPointerWarpV1.WarpPointer(ASurface: TWlSurface; APointer: TWlPointer; AX: Longint{24.8}; AY: Longint{24.8}; ASerial: DWord);
+procedure TWpPointerWarpV1.WarpPointer(ASurface: TWlSurface; APointer: TWlPointer; AX: Twl_fixed; AY: Twl_fixed; ASerial: DWord);
 begin
   wl_proxy_marshal(FProxy, _WARP_POINTER, ASurface.Proxy, APointer.Proxy, AX, AY, ASerial);
 end;

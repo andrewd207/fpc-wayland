@@ -167,13 +167,13 @@ type
     procedure wp_tablet_tool_v2_proximity_out(AWpTabletToolV2: TWpTabletToolV2);
     procedure wp_tablet_tool_v2_down(AWpTabletToolV2: TWpTabletToolV2; ASerial: DWord);
     procedure wp_tablet_tool_v2_up(AWpTabletToolV2: TWpTabletToolV2);
-    procedure wp_tablet_tool_v2_motion(AWpTabletToolV2: TWpTabletToolV2; AX: Longint{24.8}; AY: Longint{24.8});
+    procedure wp_tablet_tool_v2_motion(AWpTabletToolV2: TWpTabletToolV2; AX: Twl_fixed; AY: Twl_fixed);
     procedure wp_tablet_tool_v2_pressure(AWpTabletToolV2: TWpTabletToolV2; APressure: DWord);
     procedure wp_tablet_tool_v2_distance(AWpTabletToolV2: TWpTabletToolV2; ADistance: DWord);
-    procedure wp_tablet_tool_v2_tilt(AWpTabletToolV2: TWpTabletToolV2; ATiltX: Longint{24.8}; ATiltY: Longint{24.8});
-    procedure wp_tablet_tool_v2_rotation(AWpTabletToolV2: TWpTabletToolV2; ADegrees: Longint{24.8});
+    procedure wp_tablet_tool_v2_tilt(AWpTabletToolV2: TWpTabletToolV2; ATiltX: Twl_fixed; ATiltY: Twl_fixed);
+    procedure wp_tablet_tool_v2_rotation(AWpTabletToolV2: TWpTabletToolV2; ADegrees: Twl_fixed);
     procedure wp_tablet_tool_v2_slider(AWpTabletToolV2: TWpTabletToolV2; APosition: LongInt);
-    procedure wp_tablet_tool_v2_wheel(AWpTabletToolV2: TWpTabletToolV2; ADegrees: Longint{24.8}; AClicks: LongInt);
+    procedure wp_tablet_tool_v2_wheel(AWpTabletToolV2: TWpTabletToolV2; ADegrees: Twl_fixed; AClicks: LongInt);
     procedure wp_tablet_tool_v2_button(AWpTabletToolV2: TWpTabletToolV2; ASerial: DWord; AButton: DWord; AState: DWord);
     procedure wp_tablet_tool_v2_frame(AWpTabletToolV2: TWpTabletToolV2; ATime: DWord);
   end;
@@ -190,7 +190,7 @@ type
   IWpTabletPadRingV2Listener = interface
   ['IWpTabletPadRingV2Listener']
     procedure wp_tablet_pad_ring_v2_source(AWpTabletPadRingV2: TWpTabletPadRingV2; ASource: DWord);
-    procedure wp_tablet_pad_ring_v2_angle(AWpTabletPadRingV2: TWpTabletPadRingV2; ADegrees: Longint{24.8});
+    procedure wp_tablet_pad_ring_v2_angle(AWpTabletPadRingV2: TWpTabletPadRingV2; ADegrees: Twl_fixed);
     procedure wp_tablet_pad_ring_v2_stop(AWpTabletPadRingV2: TWpTabletPadRingV2);
     procedure wp_tablet_pad_ring_v2_frame(AWpTabletPadRingV2: TWpTabletPadRingV2; ATime: DWord);
   end;
@@ -726,7 +726,7 @@ var
 begin
   if AData = nil then Exit;
   AIntf := IWpTabletToolV2Listener(AData^.ListenerUserData);
-  AIntf.wp_tablet_tool_v2_motion(TWpTabletToolV2(AData^.PascalObject), AX, AY);
+  AIntf.wp_tablet_tool_v2_motion(TWpTabletToolV2(AData^.PascalObject), Twl_fixed(AX), Twl_fixed(AY));
 end;
 
 procedure wp_tablet_tool_v2_pressure_Intf(AData: PWLUserData; Awp_tablet_tool_v2: Pwp_tablet_tool_v2; APressure: DWord); cdecl;
@@ -753,7 +753,7 @@ var
 begin
   if AData = nil then Exit;
   AIntf := IWpTabletToolV2Listener(AData^.ListenerUserData);
-  AIntf.wp_tablet_tool_v2_tilt(TWpTabletToolV2(AData^.PascalObject), ATiltX, ATiltY);
+  AIntf.wp_tablet_tool_v2_tilt(TWpTabletToolV2(AData^.PascalObject), Twl_fixed(ATiltX), Twl_fixed(ATiltY));
 end;
 
 procedure wp_tablet_tool_v2_rotation_Intf(AData: PWLUserData; Awp_tablet_tool_v2: Pwp_tablet_tool_v2; ADegrees: Longint{24.8}); cdecl;
@@ -762,7 +762,7 @@ var
 begin
   if AData = nil then Exit;
   AIntf := IWpTabletToolV2Listener(AData^.ListenerUserData);
-  AIntf.wp_tablet_tool_v2_rotation(TWpTabletToolV2(AData^.PascalObject), ADegrees);
+  AIntf.wp_tablet_tool_v2_rotation(TWpTabletToolV2(AData^.PascalObject), Twl_fixed(ADegrees));
 end;
 
 procedure wp_tablet_tool_v2_slider_Intf(AData: PWLUserData; Awp_tablet_tool_v2: Pwp_tablet_tool_v2; APosition: LongInt); cdecl;
@@ -780,7 +780,7 @@ var
 begin
   if AData = nil then Exit;
   AIntf := IWpTabletToolV2Listener(AData^.ListenerUserData);
-  AIntf.wp_tablet_tool_v2_wheel(TWpTabletToolV2(AData^.PascalObject), ADegrees, AClicks);
+  AIntf.wp_tablet_tool_v2_wheel(TWpTabletToolV2(AData^.PascalObject), Twl_fixed(ADegrees), AClicks);
 end;
 
 procedure wp_tablet_tool_v2_button_Intf(AData: PWLUserData; Awp_tablet_tool_v2: Pwp_tablet_tool_v2; ASerial: DWord; AButton: DWord; AState: DWord); cdecl;
@@ -861,7 +861,7 @@ var
 begin
   if AData = nil then Exit;
   AIntf := IWpTabletPadRingV2Listener(AData^.ListenerUserData);
-  AIntf.wp_tablet_pad_ring_v2_angle(TWpTabletPadRingV2(AData^.PascalObject), ADegrees);
+  AIntf.wp_tablet_pad_ring_v2_angle(TWpTabletPadRingV2(AData^.PascalObject), Twl_fixed(ADegrees));
 end;
 
 procedure wp_tablet_pad_ring_v2_stop_Intf(AData: PWLUserData; Awp_tablet_pad_ring_v2: Pwp_tablet_pad_ring_v2); cdecl;

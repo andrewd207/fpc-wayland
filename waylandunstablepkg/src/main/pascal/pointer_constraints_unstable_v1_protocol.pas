@@ -15,8 +15,8 @@ type
   Pwp_confined_pointer_v1 = Pointer;
 const
   WP_POINTER_CONSTRAINTS_V1_ERROR_ALREADY_CONSTRAINED = 1; // pointer constraint already requested on that surface
-  WP_POINTER_CONSTRAINTS_V1_LIFETIME_ONESHOT = 1; // 
-  WP_POINTER_CONSTRAINTS_V1_LIFETIME_PERSISTENT = 2; // 
+  WP_POINTER_CONSTRAINTS_V1_LIFETIME_ONESHOT = 1; // the pointer constraint is defunct once deactivated
+  WP_POINTER_CONSTRAINTS_V1_LIFETIME_PERSISTENT = 2; // the pointer constraint may reactivate
 
 type
   Pwp_pointer_constraints_v1_listener = ^Twp_pointer_constraints_v1_listener;
@@ -88,7 +88,7 @@ type
     const _SET_REGION = 2;
   public
     destructor Destroy; override;
-    procedure SetCursorPositionHint(ASurfaceX: Longint{24.8}; ASurfaceY: Longint{24.8});
+    procedure SetCursorPositionHint(ASurfaceX: Twl_fixed; ASurfaceY: Twl_fixed);
     procedure SetRegion(ARegion: TWlRegion);
     function AddListener(AIntf: IWpLockedPointerV1Listener): LongInt;
   end;
@@ -203,7 +203,7 @@ begin
   inherited Destroy;
 end;
 
-procedure TWpLockedPointerV1.SetCursorPositionHint(ASurfaceX: Longint{24.8}; ASurfaceY: Longint{24.8});
+procedure TWpLockedPointerV1.SetCursorPositionHint(ASurfaceX: Twl_fixed; ASurfaceY: Twl_fixed);
 begin
   wl_proxy_marshal(FProxy, _SET_CURSOR_POSITION_HINT, ASurfaceX, ASurfaceY);
 end;

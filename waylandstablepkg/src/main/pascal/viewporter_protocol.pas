@@ -73,7 +73,7 @@ type
     const _SET_DESTINATION = 2;
   public
     destructor Destroy; override;
-    procedure SetSource(AX: Longint{24.8}; AY: Longint{24.8}; AWidth: Longint{24.8}; AHeight: Longint{24.8});
+    procedure SetSource(AX: Twl_fixed; AY: Twl_fixed; AWidth: Twl_fixed; AHeight: Twl_fixed);
     procedure SetDestination(AWidth: LongInt; AHeight: LongInt);
     function AddListener(AIntf: IWpViewportListener): LongInt;
   end;
@@ -156,7 +156,7 @@ begin
   inherited Destroy;
 end;
 
-procedure TWpViewport.SetSource(AX: Longint{24.8}; AY: Longint{24.8}; AWidth: Longint{24.8}; AHeight: Longint{24.8});
+procedure TWpViewport.SetSource(AX: Twl_fixed; AY: Twl_fixed; AWidth: Twl_fixed; AHeight: Twl_fixed);
 begin
   wl_proxy_marshal(FProxy, _SET_SOURCE, AX, AY, AWidth, AHeight);
 end;

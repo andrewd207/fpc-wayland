@@ -49,7 +49,7 @@ type
   private
     const _DESTROY = 0;
     const _GET_IDLE_NOTIFICATION = 1;
-    const _GET_INPUT_IDLE_NOTIFICATION = 2;
+    const _GET_INPUT_IDLE_NOTIFICATION = 2; { since version: 2}
   public
     destructor Destroy; override;
     function GetIdleNotification(ATimeout: DWord; ASeat: TWlSeat; AProxyClass: TWLProxyObjectClass = nil {TExtIdleNotificationV1}): TExtIdleNotificationV1;

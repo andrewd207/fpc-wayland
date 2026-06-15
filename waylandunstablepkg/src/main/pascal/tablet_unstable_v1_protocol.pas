@@ -106,7 +106,7 @@ type
     procedure wp_tablet_tool_v1_proximity_out(AWpTabletToolV1: TWpTabletToolV1);
     procedure wp_tablet_tool_v1_down(AWpTabletToolV1: TWpTabletToolV1; ASerial: DWord);
     procedure wp_tablet_tool_v1_up(AWpTabletToolV1: TWpTabletToolV1);
-    procedure wp_tablet_tool_v1_motion(AWpTabletToolV1: TWpTabletToolV1; AX: Longint{24.8}; AY: Longint{24.8});
+    procedure wp_tablet_tool_v1_motion(AWpTabletToolV1: TWpTabletToolV1; AX: Twl_fixed; AY: Twl_fixed);
     procedure wp_tablet_tool_v1_pressure(AWpTabletToolV1: TWpTabletToolV1; APressure: DWord);
     procedure wp_tablet_tool_v1_distance(AWpTabletToolV1: TWpTabletToolV1; ADistance: DWord);
     procedure wp_tablet_tool_v1_tilt(AWpTabletToolV1: TWpTabletToolV1; ATiltX: LongInt; ATiltY: LongInt);
@@ -441,7 +441,7 @@ var
 begin
   if AData = nil then Exit;
   AIntf := IWpTabletToolV1Listener(AData^.ListenerUserData);
-  AIntf.wp_tablet_tool_v1_motion(TWpTabletToolV1(AData^.PascalObject), AX, AY);
+  AIntf.wp_tablet_tool_v1_motion(TWpTabletToolV1(AData^.PascalObject), Twl_fixed(AX), Twl_fixed(AY));
 end;
 
 procedure wp_tablet_tool_v1_pressure_Intf(AData: PWLUserData; Awp_tablet_tool_v1: Pwp_tablet_tool_v1; APressure: DWord); cdecl;

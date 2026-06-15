@@ -38,7 +38,7 @@ type
 const
   EXT_WORKSPACE_HANDLE_V1_STATE_ACTIVE = 1; // the workspace is active
   EXT_WORKSPACE_HANDLE_V1_STATE_URGENT = 2; // the workspace requests attention
-  EXT_WORKSPACE_HANDLE_V1_STATE_HIDDEN = 4; // 
+  EXT_WORKSPACE_HANDLE_V1_STATE_HIDDEN = 4; // the workspace is not visible
   EXT_WORKSPACE_HANDLE_V1_WORKSPACE_CAPABILITIES_ACTIVATE = 1; // activate request is available
   EXT_WORKSPACE_HANDLE_V1_WORKSPACE_CAPABILITIES_DEACTIVATE = 2; // deactivate request is available
   EXT_WORKSPACE_HANDLE_V1_WORKSPACE_CAPABILITIES_REMOVE = 4; // remove request is available

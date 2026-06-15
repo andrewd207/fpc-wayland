@@ -64,7 +64,7 @@ type
   IWpLinuxDmabufV1Listener = interface
   ['IWpLinuxDmabufV1Listener']
     procedure wp_linux_dmabuf_v1_format(AWpLinuxDmabufV1: TWpLinuxDmabufV1; AFormat: DWord);
-    procedure wp_linux_dmabuf_v1_modifier(AWpLinuxDmabufV1: TWpLinuxDmabufV1; AFormat: DWord; AModifierHi: DWord; AModifierLo: DWord);
+    procedure wp_linux_dmabuf_v1_modifier(AWpLinuxDmabufV1: TWpLinuxDmabufV1; AFormat: DWord; AModifierHi: DWord; AModifierLo: DWord); {since: 3}
   end;
 
   IWpLinuxBufferParamsV1Listener = interface
@@ -95,8 +95,8 @@ type
   private
     const _DESTROY = 0;
     const _CREATE_PARAMS = 1;
-    const _GET_DEFAULT_FEEDBACK = 2;
-    const _GET_SURFACE_FEEDBACK = 3;
+    const _GET_DEFAULT_FEEDBACK = 2; { since version: 4}
+    const _GET_SURFACE_FEEDBACK = 3; { since version: 4}
   public
     destructor Destroy; override;
     function CreateParams(AProxyClass: TWLProxyObjectClass = nil {TWpLinuxBufferParamsV1}): TWpLinuxBufferParamsV1;
@@ -114,7 +114,7 @@ type
     const _DESTROY = 0;
     const _ADD = 1;
     const _CREATE = 2;
-    const _CREATE_IMMED = 3;
+    const _CREATE_IMMED = 3; { since version: 2}
   public
     destructor Destroy; override;
     procedure Add(AFd: LongInt{fd}; APlaneIdx: DWord; AOffset: DWord; AStride: DWord; AModifierHi: DWord; AModifierLo: DWord);

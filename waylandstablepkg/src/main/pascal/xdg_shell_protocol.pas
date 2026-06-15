@@ -32,31 +32,31 @@ type
 
 const
   XDG_POSITIONER_ERROR_INVALID_INPUT = 0; // invalid input provided
-  XDG_POSITIONER_ANCHOR_NONE = 0; // 
-  XDG_POSITIONER_ANCHOR_TOP = 1; // 
-  XDG_POSITIONER_ANCHOR_BOTTOM = 2; // 
-  XDG_POSITIONER_ANCHOR_LEFT = 3; // 
-  XDG_POSITIONER_ANCHOR_RIGHT = 4; // 
-  XDG_POSITIONER_ANCHOR_TOP_LEFT = 5; // 
-  XDG_POSITIONER_ANCHOR_BOTTOM_LEFT = 6; // 
-  XDG_POSITIONER_ANCHOR_TOP_RIGHT = 7; // 
-  XDG_POSITIONER_ANCHOR_BOTTOM_RIGHT = 8; // 
-  XDG_POSITIONER_GRAVITY_NONE = 0; // 
-  XDG_POSITIONER_GRAVITY_TOP = 1; // 
-  XDG_POSITIONER_GRAVITY_BOTTOM = 2; // 
-  XDG_POSITIONER_GRAVITY_LEFT = 3; // 
-  XDG_POSITIONER_GRAVITY_RIGHT = 4; // 
-  XDG_POSITIONER_GRAVITY_TOP_LEFT = 5; // 
-  XDG_POSITIONER_GRAVITY_BOTTOM_LEFT = 6; // 
-  XDG_POSITIONER_GRAVITY_TOP_RIGHT = 7; // 
-  XDG_POSITIONER_GRAVITY_BOTTOM_RIGHT = 8; // 
-  XDG_POSITIONER_CONSTRAINT_ADJUSTMENT_NONE = 0; // 
-  XDG_POSITIONER_CONSTRAINT_ADJUSTMENT_SLIDE_X = 1; // 
-  XDG_POSITIONER_CONSTRAINT_ADJUSTMENT_SLIDE_Y = 2; // 
-  XDG_POSITIONER_CONSTRAINT_ADJUSTMENT_FLIP_X = 4; // 
-  XDG_POSITIONER_CONSTRAINT_ADJUSTMENT_FLIP_Y = 8; // 
-  XDG_POSITIONER_CONSTRAINT_ADJUSTMENT_RESIZE_X = 16; // 
-  XDG_POSITIONER_CONSTRAINT_ADJUSTMENT_RESIZE_Y = 32; // 
+  XDG_POSITIONER_ANCHOR_NONE = 0;
+  XDG_POSITIONER_ANCHOR_TOP = 1;
+  XDG_POSITIONER_ANCHOR_BOTTOM = 2;
+  XDG_POSITIONER_ANCHOR_LEFT = 3;
+  XDG_POSITIONER_ANCHOR_RIGHT = 4;
+  XDG_POSITIONER_ANCHOR_TOP_LEFT = 5;
+  XDG_POSITIONER_ANCHOR_BOTTOM_LEFT = 6;
+  XDG_POSITIONER_ANCHOR_TOP_RIGHT = 7;
+  XDG_POSITIONER_ANCHOR_BOTTOM_RIGHT = 8;
+  XDG_POSITIONER_GRAVITY_NONE = 0;
+  XDG_POSITIONER_GRAVITY_TOP = 1;
+  XDG_POSITIONER_GRAVITY_BOTTOM = 2;
+  XDG_POSITIONER_GRAVITY_LEFT = 3;
+  XDG_POSITIONER_GRAVITY_RIGHT = 4;
+  XDG_POSITIONER_GRAVITY_TOP_LEFT = 5;
+  XDG_POSITIONER_GRAVITY_BOTTOM_LEFT = 6;
+  XDG_POSITIONER_GRAVITY_TOP_RIGHT = 7;
+  XDG_POSITIONER_GRAVITY_BOTTOM_RIGHT = 8;
+  XDG_POSITIONER_CONSTRAINT_ADJUSTMENT_NONE = 0; // don't move the child surface when constrained
+  XDG_POSITIONER_CONSTRAINT_ADJUSTMENT_SLIDE_X = 1; // move along the x axis until unconstrained
+  XDG_POSITIONER_CONSTRAINT_ADJUSTMENT_SLIDE_Y = 2; // move along the y axis until unconstrained
+  XDG_POSITIONER_CONSTRAINT_ADJUSTMENT_FLIP_X = 4; // invert the anchor and gravity on the x axis
+  XDG_POSITIONER_CONSTRAINT_ADJUSTMENT_FLIP_Y = 8; // invert the anchor and gravity on the y axis
+  XDG_POSITIONER_CONSTRAINT_ADJUSTMENT_RESIZE_X = 16; // horizontally resize the surface
+  XDG_POSITIONER_CONSTRAINT_ADJUSTMENT_RESIZE_Y = 32; // vertically resize the surface
 
 type
   Pxdg_positioner_listener = ^Txdg_positioner_listener;
@@ -81,28 +81,28 @@ const
   XDG_TOPLEVEL_ERROR_INVALID_RESIZE_EDGE = 0; // provided value is         not a valid variant of the resize_edge enum
   XDG_TOPLEVEL_ERROR_INVALID_PARENT = 1; // invalid parent toplevel
   XDG_TOPLEVEL_ERROR_INVALID_SIZE = 2; // client provided an invalid min or max size
-  XDG_TOPLEVEL_RESIZE_EDGE_NONE = 0; // 
-  XDG_TOPLEVEL_RESIZE_EDGE_TOP = 1; // 
-  XDG_TOPLEVEL_RESIZE_EDGE_BOTTOM = 2; // 
-  XDG_TOPLEVEL_RESIZE_EDGE_LEFT = 4; // 
-  XDG_TOPLEVEL_RESIZE_EDGE_TOP_LEFT = 5; // 
-  XDG_TOPLEVEL_RESIZE_EDGE_BOTTOM_LEFT = 6; // 
-  XDG_TOPLEVEL_RESIZE_EDGE_RIGHT = 8; // 
-  XDG_TOPLEVEL_RESIZE_EDGE_TOP_RIGHT = 9; // 
-  XDG_TOPLEVEL_RESIZE_EDGE_BOTTOM_RIGHT = 10; // 
+  XDG_TOPLEVEL_RESIZE_EDGE_NONE = 0;
+  XDG_TOPLEVEL_RESIZE_EDGE_TOP = 1;
+  XDG_TOPLEVEL_RESIZE_EDGE_BOTTOM = 2;
+  XDG_TOPLEVEL_RESIZE_EDGE_LEFT = 4;
+  XDG_TOPLEVEL_RESIZE_EDGE_TOP_LEFT = 5;
+  XDG_TOPLEVEL_RESIZE_EDGE_BOTTOM_LEFT = 6;
+  XDG_TOPLEVEL_RESIZE_EDGE_RIGHT = 8;
+  XDG_TOPLEVEL_RESIZE_EDGE_TOP_RIGHT = 9;
+  XDG_TOPLEVEL_RESIZE_EDGE_BOTTOM_RIGHT = 10;
   XDG_TOPLEVEL_STATE_MAXIMIZED = 1; // the surface is maximized
   XDG_TOPLEVEL_STATE_FULLSCREEN = 2; // the surface is fullscreen
   XDG_TOPLEVEL_STATE_RESIZING = 3; // the surface is being resized
   XDG_TOPLEVEL_STATE_ACTIVATED = 4; // the surface is now activated
-  XDG_TOPLEVEL_STATE_TILED_LEFT = 5; // 
-  XDG_TOPLEVEL_STATE_TILED_RIGHT = 6; // 
-  XDG_TOPLEVEL_STATE_TILED_TOP = 7; // 
-  XDG_TOPLEVEL_STATE_TILED_BOTTOM = 8; // 
-  XDG_TOPLEVEL_STATE_SUSPENDED = 9; // 
-  XDG_TOPLEVEL_STATE_CONSTRAINED_LEFT = 10; // 
-  XDG_TOPLEVEL_STATE_CONSTRAINED_RIGHT = 11; // 
-  XDG_TOPLEVEL_STATE_CONSTRAINED_TOP = 12; // 
-  XDG_TOPLEVEL_STATE_CONSTRAINED_BOTTOM = 13; // 
+  XDG_TOPLEVEL_STATE_TILED_LEFT = 5; // the surface?s left edge is tiled
+  XDG_TOPLEVEL_STATE_TILED_RIGHT = 6; // the surface?s right edge is tiled
+  XDG_TOPLEVEL_STATE_TILED_TOP = 7; // the surface?s top edge is tiled
+  XDG_TOPLEVEL_STATE_TILED_BOTTOM = 8; // the surface?s bottom edge is tiled
+  XDG_TOPLEVEL_STATE_SUSPENDED = 9; // surface repaint is suspended
+  XDG_TOPLEVEL_STATE_CONSTRAINED_LEFT = 10; // the surface?s left edge is constrained
+  XDG_TOPLEVEL_STATE_CONSTRAINED_RIGHT = 11; // the surface?s right edge is constrained
+  XDG_TOPLEVEL_STATE_CONSTRAINED_TOP = 12; // the surface?s top edge is constrained
+  XDG_TOPLEVEL_STATE_CONSTRAINED_BOTTOM = 13; // the surface?s bottom edge is tiled
   XDG_TOPLEVEL_WM_CAPABILITIES_WINDOW_MENU = 1; // show_window_menu is available
   XDG_TOPLEVEL_WM_CAPABILITIES_MAXIMIZE = 2; // set_maximized and unset_maximized are available
   XDG_TOPLEVEL_WM_CAPABILITIES_FULLSCREEN = 3; // set_fullscreen and unset_fullscreen are available
@@ -155,15 +155,15 @@ type
   ['IXdgToplevelListener']
     procedure xdg_toplevel_configure(AXdgToplevel: TXdgToplevel; AWidth: LongInt; AHeight: LongInt; AStates: Pwl_array);
     procedure xdg_toplevel_close(AXdgToplevel: TXdgToplevel);
-    procedure xdg_toplevel_configure_bounds(AXdgToplevel: TXdgToplevel; AWidth: LongInt; AHeight: LongInt);
-    procedure xdg_toplevel_wm_capabilities(AXdgToplevel: TXdgToplevel; ACapabilities: Pwl_array);
+    procedure xdg_toplevel_configure_bounds(AXdgToplevel: TXdgToplevel; AWidth: LongInt; AHeight: LongInt); {since: 4}
+    procedure xdg_toplevel_wm_capabilities(AXdgToplevel: TXdgToplevel; ACapabilities: Pwl_array); {since: 5}
   end;
 
   IXdgPopupListener = interface
   ['IXdgPopupListener']
     procedure xdg_popup_configure(AXdgPopup: TXdgPopup; AX: LongInt; AY: LongInt; AWidth: LongInt; AHeight: LongInt);
     procedure xdg_popup_popup_done(AXdgPopup: TXdgPopup);
-    procedure xdg_popup_repositioned(AXdgPopup: TXdgPopup; AToken: DWord);
+    procedure xdg_popup_repositioned(AXdgPopup: TXdgPopup; AToken: DWord); {since: 3}
   end;
 
 
@@ -200,9 +200,9 @@ type
     const _SET_GRAVITY = 4;
     const _SET_CONSTRAINT_ADJUSTMENT = 5;
     const _SET_OFFSET = 6;
-    const _SET_REACTIVE = 7;
-    const _SET_PARENT_SIZE = 8;
-    const _SET_PARENT_CONFIGURE = 9;
+    const _SET_REACTIVE = 7; { since version: 3}
+    const _SET_PARENT_SIZE = 8; { since version: 3}
+    const _SET_PARENT_CONFIGURE = 9; { since version: 3}
   public
     destructor Destroy; override;
     procedure SetSize(AWidth: LongInt; AHeight: LongInt);
@@ -283,7 +283,7 @@ type
   private
     const _DESTROY = 0;
     const _GRAB = 1;
-    const _REPOSITION = 2;
+    const _REPOSITION = 2; { since version: 3}
   public
     destructor Destroy; override;
     procedure Grab(ASeat: TWlSeat; ASerial: DWord);

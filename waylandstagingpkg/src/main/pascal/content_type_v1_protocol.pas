@@ -21,10 +21,10 @@ type
   end;
 
 const
-  WP_CONTENT_TYPE_V1_TYPE_NONE = 0; // 
-  WP_CONTENT_TYPE_V1_TYPE_PHOTO = 1; // 
-  WP_CONTENT_TYPE_V1_TYPE_VIDEO = 2; // 
-  WP_CONTENT_TYPE_V1_TYPE_GAME = 3; // 
+  WP_CONTENT_TYPE_V1_TYPE_NONE = 0; // no content type applies
+  WP_CONTENT_TYPE_V1_TYPE_PHOTO = 1; // photo content type
+  WP_CONTENT_TYPE_V1_TYPE_VIDEO = 2; // video content type
+  WP_CONTENT_TYPE_V1_TYPE_GAME = 3; // game content type
 
 type
   Pwp_content_type_v1_listener = ^Twp_content_type_v1_listener;

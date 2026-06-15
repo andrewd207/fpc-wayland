@@ -33,7 +33,7 @@ type
 
   IWpRelativePointerV1Listener = interface
   ['IWpRelativePointerV1Listener']
-    procedure wp_relative_pointer_v1_relative_motion(AWpRelativePointerV1: TWpRelativePointerV1; AUtimeHi: DWord; AUtimeLo: DWord; ADx: Longint{24.8}; ADy: Longint{24.8}; ADxUnaccel: Longint{24.8}; ADyUnaccel: Longint{24.8});
+    procedure wp_relative_pointer_v1_relative_motion(AWpRelativePointerV1: TWpRelativePointerV1; AUtimeHi: DWord; AUtimeLo: DWord; ADx: Twl_fixed; ADy: Twl_fixed; ADxUnaccel: Twl_fixed; ADyUnaccel: Twl_fixed);
   end;
 
 
@@ -158,7 +158,7 @@ var
 begin
   if AData = nil then Exit;
   AIntf := IWpRelativePointerV1Listener(AData^.ListenerUserData);
-  AIntf.wp_relative_pointer_v1_relative_motion(TWpRelativePointerV1(AData^.PascalObject), AUtimeHi, AUtimeLo, ADx, ADy, ADxUnaccel, ADyUnaccel);
+  AIntf.wp_relative_pointer_v1_relative_motion(TWpRelativePointerV1(AData^.PascalObject), AUtimeHi, AUtimeLo, Twl_fixed(ADx), Twl_fixed(ADy), Twl_fixed(ADxUnaccel), Twl_fixed(ADyUnaccel));
 end;
 
 

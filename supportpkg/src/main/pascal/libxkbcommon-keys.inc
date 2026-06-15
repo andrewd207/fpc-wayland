@@ -1,5 +1,7 @@
 {%mainunit libkbcommon.pas}
 { see copyright in mainunit }
+{$ifndef LIBXKBCOMMON_KEYS_INC}
+{$define LIBXKBCOMMON_KEYS_INC}
 const
     XKB_MOD_NAME_SHIFT = 'Shift';
     XKB_MOD_NAME_CAPS = 'Lock';
@@ -4571,4 +4573,5 @@ const
     XKB_KEY_IO = $100000ee;
     XKB_KEY_longminus = $100000f6;
     XKB_KEY_block = $100000fc;
+{$endif}
 

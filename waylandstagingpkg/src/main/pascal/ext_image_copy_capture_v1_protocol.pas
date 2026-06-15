@@ -41,9 +41,9 @@ const
   EXT_IMAGE_COPY_CAPTURE_FRAME_V1_ERROR_NO_BUFFER = 1; // capture sent without attach_buffer
   EXT_IMAGE_COPY_CAPTURE_FRAME_V1_ERROR_INVALID_BUFFER_DAMAGE = 2; // invalid buffer damage
   EXT_IMAGE_COPY_CAPTURE_FRAME_V1_ERROR_ALREADY_CAPTURED = 3; // capture request has been sent
-  EXT_IMAGE_COPY_CAPTURE_FRAME_V1_FAILURE_REASON_UNKNOWN = 0; // 
-  EXT_IMAGE_COPY_CAPTURE_FRAME_V1_FAILURE_REASON_BUFFER_CONSTRAINTS = 1; // 
-  EXT_IMAGE_COPY_CAPTURE_FRAME_V1_FAILURE_REASON_STOPPED = 2; // 
+  EXT_IMAGE_COPY_CAPTURE_FRAME_V1_FAILURE_REASON_UNKNOWN = 0; // unknown runtime error
+  EXT_IMAGE_COPY_CAPTURE_FRAME_V1_FAILURE_REASON_BUFFER_CONSTRAINTS = 1; // buffer constraints mismatch
+  EXT_IMAGE_COPY_CAPTURE_FRAME_V1_FAILURE_REASON_STOPPED = 2; // session is no longer available
 
 type
   Pext_image_copy_capture_frame_v1_listener = ^Text_image_copy_capture_frame_v1_listener;

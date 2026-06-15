@@ -53,21 +53,21 @@ type
   IWpPointerGestureSwipeV1Listener = interface
   ['IWpPointerGestureSwipeV1Listener']
     procedure wp_pointer_gesture_swipe_v1_begin(AWpPointerGestureSwipeV1: TWpPointerGestureSwipeV1; ASerial: DWord; ATime: DWord; ASurface: TWlSurface; AFingers: DWord);
-    procedure wp_pointer_gesture_swipe_v1_update(AWpPointerGestureSwipeV1: TWpPointerGestureSwipeV1; ATime: DWord; ADx: Longint{24.8}; ADy: Longint{24.8});
+    procedure wp_pointer_gesture_swipe_v1_update(AWpPointerGestureSwipeV1: TWpPointerGestureSwipeV1; ATime: DWord; ADx: Twl_fixed; ADy: Twl_fixed);
     procedure wp_pointer_gesture_swipe_v1_end(AWpPointerGestureSwipeV1: TWpPointerGestureSwipeV1; ASerial: DWord; ATime: DWord; ACancelled: LongInt);
   end;
 
   IWpPointerGesturePinchV1Listener = interface
   ['IWpPointerGesturePinchV1Listener']
     procedure wp_pointer_gesture_pinch_v1_begin(AWpPointerGesturePinchV1: TWpPointerGesturePinchV1; ASerial: DWord; ATime: DWord; ASurface: TWlSurface; AFingers: DWord);
-    procedure wp_pointer_gesture_pinch_v1_update(AWpPointerGesturePinchV1: TWpPointerGesturePinchV1; ATime: DWord; ADx: Longint{24.8}; ADy: Longint{24.8}; AScale: Longint{24.8}; ARotation: Longint{24.8});
+    procedure wp_pointer_gesture_pinch_v1_update(AWpPointerGesturePinchV1: TWpPointerGesturePinchV1; ATime: DWord; ADx: Twl_fixed; ADy: Twl_fixed; AScale: Twl_fixed; ARotation: Twl_fixed);
     procedure wp_pointer_gesture_pinch_v1_end(AWpPointerGesturePinchV1: TWpPointerGesturePinchV1; ASerial: DWord; ATime: DWord; ACancelled: LongInt);
   end;
 
   IWpPointerGestureHoldV1Listener = interface
   ['IWpPointerGestureHoldV1Listener']
-    procedure wp_pointer_gesture_hold_v1_begin(AWpPointerGestureHoldV1: TWpPointerGestureHoldV1; ASerial: DWord; ATime: DWord; ASurface: TWlSurface; AFingers: DWord);
-    procedure wp_pointer_gesture_hold_v1_end(AWpPointerGestureHoldV1: TWpPointerGestureHoldV1; ASerial: DWord; ATime: DWord; ACancelled: LongInt);
+    procedure wp_pointer_gesture_hold_v1_begin(AWpPointerGestureHoldV1: TWpPointerGestureHoldV1; ASerial: DWord; ATime: DWord; ASurface: TWlSurface; AFingers: DWord); {since: 3}
+    procedure wp_pointer_gesture_hold_v1_end(AWpPointerGestureHoldV1: TWpPointerGestureHoldV1; ASerial: DWord; ATime: DWord; ACancelled: LongInt); {since: 3}
   end;
 
 
@@ -81,8 +81,8 @@ type
   private
     const _GET_SWIPE_GESTURE = 0;
     const _GET_PINCH_GESTURE = 1;
-    const _RELEASE = 2;
-    const _GET_HOLD_GESTURE = 3;
+    const _RELEASE = 2; { since version: 2}
+    const _GET_HOLD_GESTURE = 3; { since version: 3}
   public
     function GetSwipeGesture(APointer: TWlPointer; AProxyClass: TWLProxyObjectClass = nil {TWpPointerGestureSwipeV1}): TWpPointerGestureSwipeV1;
     function GetPinchGesture(APointer: TWlPointer; AProxyClass: TWLProxyObjectClass = nil {TWpPointerGesturePinchV1}): TWpPointerGesturePinchV1;
@@ -121,7 +121,7 @@ type
     class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWpPointerGestureHoldV1;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
-    const _DESTROY = 0;
+    const _DESTROY = 0; { since version: 3}
   public
     destructor Destroy; override;
     function AddListener(AIntf: IWpPointerGestureHoldV1Listener): LongInt;
@@ -311,7 +311,7 @@ var
 begin
   if AData = nil then Exit;
   AIntf := IWpPointerGestureSwipeV1Listener(AData^.ListenerUserData);
-  AIntf.wp_pointer_gesture_swipe_v1_update(TWpPointerGestureSwipeV1(AData^.PascalObject), ATime, ADx, ADy);
+  AIntf.wp_pointer_gesture_swipe_v1_update(TWpPointerGestureSwipeV1(AData^.PascalObject), ATime, Twl_fixed(ADx), Twl_fixed(ADy));
 end;
 
 procedure wp_pointer_gesture_swipe_v1_end_Intf(AData: PWLUserData; Awp_pointer_gesture_swipe_v1: Pwp_pointer_gesture_swipe_v1; ASerial: DWord; ATime: DWord; ACancelled: LongInt); cdecl;
@@ -338,7 +338,7 @@ var
 begin
   if AData = nil then Exit;
   AIntf := IWpPointerGesturePinchV1Listener(AData^.ListenerUserData);
-  AIntf.wp_pointer_gesture_pinch_v1_update(TWpPointerGesturePinchV1(AData^.PascalObject), ATime, ADx, ADy, AScale, ARotation);
+  AIntf.wp_pointer_gesture_pinch_v1_update(TWpPointerGesturePinchV1(AData^.PascalObject), ATime, Twl_fixed(ADx), Twl_fixed(ADy), Twl_fixed(AScale), Twl_fixed(ARotation));
 end;
 
 procedure wp_pointer_gesture_pinch_v1_end_Intf(AData: PWLUserData; Awp_pointer_gesture_pinch_v1: Pwp_pointer_gesture_pinch_v1; ASerial: DWord; ATime: DWord; ACancelled: LongInt); cdecl;

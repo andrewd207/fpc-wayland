@@ -152,16 +152,16 @@ const
   WL_SHM_FORMAT_X0L0 = $304c3058; // [63:0]   X3:X2:Y3:0:Cr0:0:Y2:0:X1:X0:Y1:0:Cb0:0:Y0:0  1:1:8:2:8:2:8:2:1:1:8:2:8:2:8:2 little endian
   WL_SHM_FORMAT_Y0L2 = $324c3059; // [63:0]   A3:A2:Y3:Cr0:Y2:A1:A0:Y1:Cb0:Y0  1:1:10:10:10:1:1:10:10:10 little endian
   WL_SHM_FORMAT_X0L2 = $324c3058; // [63:0]   X3:X2:Y3:Cr0:Y2:X1:X0:Y1:Cb0:Y0  1:1:10:10:10:1:1:10:10:10 little endian
-  WL_SHM_FORMAT_YUV420_8BIT = $38305559; // 
-  WL_SHM_FORMAT_YUV420_10BIT = $30315559; // 
-  WL_SHM_FORMAT_XRGB8888_A8 = $38415258; // 
-  WL_SHM_FORMAT_XBGR8888_A8 = $38414258; // 
-  WL_SHM_FORMAT_RGBX8888_A8 = $38415852; // 
-  WL_SHM_FORMAT_BGRX8888_A8 = $38415842; // 
-  WL_SHM_FORMAT_RGB888_A8 = $38413852; // 
-  WL_SHM_FORMAT_BGR888_A8 = $38413842; // 
-  WL_SHM_FORMAT_RGB565_A8 = $38413552; // 
-  WL_SHM_FORMAT_BGR565_A8 = $38413542; // 
+  WL_SHM_FORMAT_YUV420_8BIT = $38305559;
+  WL_SHM_FORMAT_YUV420_10BIT = $30315559;
+  WL_SHM_FORMAT_XRGB8888_A8 = $38415258;
+  WL_SHM_FORMAT_XBGR8888_A8 = $38414258;
+  WL_SHM_FORMAT_RGBX8888_A8 = $38415852;
+  WL_SHM_FORMAT_BGRX8888_A8 = $38415842;
+  WL_SHM_FORMAT_RGB888_A8 = $38413852;
+  WL_SHM_FORMAT_BGR888_A8 = $38413842;
+  WL_SHM_FORMAT_RGB565_A8 = $38413552;
+  WL_SHM_FORMAT_BGR565_A8 = $38413542;
   WL_SHM_FORMAT_NV24 = $3432564e; // non-subsampled Cr:Cb plane
   WL_SHM_FORMAT_NV42 = $3234564e; // non-subsampled Cb:Cr plane
   WL_SHM_FORMAT_P210 = $30313250; // 2x1 subsampled Cr:Cb plane, 10 bit per channel
@@ -170,8 +170,8 @@ const
   WL_SHM_FORMAT_P016 = $36313050; // 2x2 subsampled Cr:Cb plane 16 bits per channel
   WL_SHM_FORMAT_AXBXGXRX106106106106 = $30314241; // [63:0] A:x:B:x:G:x:R:x 10:6:10:6:10:6:10:6 little endian
   WL_SHM_FORMAT_NV15 = $3531564e; // 2x2 subsampled Cr:Cb plane
-  WL_SHM_FORMAT_Q410 = $30313451; // 
-  WL_SHM_FORMAT_Q401 = $31303451; // 
+  WL_SHM_FORMAT_Q410 = $30313451;
+  WL_SHM_FORMAT_Q401 = $31303451;
   WL_SHM_FORMAT_XRGB16161616 = $38345258; // [63:0] x:R:G:B 16:16:16:16 little endian
   WL_SHM_FORMAT_XBGR16161616 = $38344258; // [63:0] x:B:G:R 16:16:16:16 little endian
   WL_SHM_FORMAT_ARGB16161616 = $38345241; // [63:0] A:R:G:B 16:16:16:16 little endian
@@ -474,8 +474,8 @@ type
   IWlDataOfferListener = interface
   ['IWlDataOfferListener']
     procedure wl_data_offer_offer(AWlDataOffer: TWlDataOffer; AMimeType: String);
-    procedure wl_data_offer_source_actions(AWlDataOffer: TWlDataOffer; ASourceActions: DWord);
-    procedure wl_data_offer_action(AWlDataOffer: TWlDataOffer; ADndAction: DWord);
+    procedure wl_data_offer_source_actions(AWlDataOffer: TWlDataOffer; ASourceActions: DWord); {since: 3}
+    procedure wl_data_offer_action(AWlDataOffer: TWlDataOffer; ADndAction: DWord); {since: 3}
   end;
 
   IWlDataSourceListener = interface
@@ -483,17 +483,17 @@ type
     procedure wl_data_source_target(AWlDataSource: TWlDataSource; AMimeType: String);
     procedure wl_data_source_send(AWlDataSource: TWlDataSource; AMimeType: String; AFd: LongInt{fd});
     procedure wl_data_source_cancelled(AWlDataSource: TWlDataSource);
-    procedure wl_data_source_dnd_drop_performed(AWlDataSource: TWlDataSource);
-    procedure wl_data_source_dnd_finished(AWlDataSource: TWlDataSource);
-    procedure wl_data_source_action(AWlDataSource: TWlDataSource; ADndAction: DWord);
+    procedure wl_data_source_dnd_drop_performed(AWlDataSource: TWlDataSource); {since: 3}
+    procedure wl_data_source_dnd_finished(AWlDataSource: TWlDataSource); {since: 3}
+    procedure wl_data_source_action(AWlDataSource: TWlDataSource; ADndAction: DWord); {since: 3}
   end;
 
   IWlDataDeviceListener = interface
   ['IWlDataDeviceListener']
     procedure wl_data_device_data_offer(AWlDataDevice: TWlDataDevice; AId: TWlDataOffer);
-    procedure wl_data_device_enter(AWlDataDevice: TWlDataDevice; ASerial: DWord; ASurface: TWlSurface; AX: Longint{24.8}; AY: Longint{24.8}; AId: TWlDataOffer);
+    procedure wl_data_device_enter(AWlDataDevice: TWlDataDevice; ASerial: DWord; ASurface: TWlSurface; AX: Twl_fixed; AY: Twl_fixed; AId: TWlDataOffer);
     procedure wl_data_device_leave(AWlDataDevice: TWlDataDevice);
-    procedure wl_data_device_motion(AWlDataDevice: TWlDataDevice; ATime: DWord; AX: Longint{24.8}; AY: Longint{24.8});
+    procedure wl_data_device_motion(AWlDataDevice: TWlDataDevice; ATime: DWord; AX: Twl_fixed; AY: Twl_fixed);
     procedure wl_data_device_drop(AWlDataDevice: TWlDataDevice);
     procedure wl_data_device_selection(AWlDataDevice: TWlDataDevice; AId: TWlDataOffer);
   end;
@@ -517,29 +517,29 @@ type
   ['IWlSurfaceListener']
     procedure wl_surface_enter(AWlSurface: TWlSurface; AOutput: TWlOutput);
     procedure wl_surface_leave(AWlSurface: TWlSurface; AOutput: TWlOutput);
-    procedure wl_surface_preferred_buffer_scale(AWlSurface: TWlSurface; AFactor: LongInt);
-    procedure wl_surface_preferred_buffer_transform(AWlSurface: TWlSurface; ATransform: DWord);
+    procedure wl_surface_preferred_buffer_scale(AWlSurface: TWlSurface; AFactor: LongInt); {since: 6}
+    procedure wl_surface_preferred_buffer_transform(AWlSurface: TWlSurface; ATransform: DWord); {since: 6}
   end;
 
   IWlSeatListener = interface
   ['IWlSeatListener']
     procedure wl_seat_capabilities(AWlSeat: TWlSeat; ACapabilities: DWord);
-    procedure wl_seat_name(AWlSeat: TWlSeat; AName: String);
+    procedure wl_seat_name(AWlSeat: TWlSeat; AName: String); {since: 2}
   end;
 
   IWlPointerListener = interface
   ['IWlPointerListener']
-    procedure wl_pointer_enter(AWlPointer: TWlPointer; ASerial: DWord; ASurface: TWlSurface; ASurfaceX: Longint{24.8}; ASurfaceY: Longint{24.8});
+    procedure wl_pointer_enter(AWlPointer: TWlPointer; ASerial: DWord; ASurface: TWlSurface; ASurfaceX: Twl_fixed; ASurfaceY: Twl_fixed);
     procedure wl_pointer_leave(AWlPointer: TWlPointer; ASerial: DWord; ASurface: TWlSurface);
-    procedure wl_pointer_motion(AWlPointer: TWlPointer; ATime: DWord; ASurfaceX: Longint{24.8}; ASurfaceY: Longint{24.8});
+    procedure wl_pointer_motion(AWlPointer: TWlPointer; ATime: DWord; ASurfaceX: Twl_fixed; ASurfaceY: Twl_fixed);
     procedure wl_pointer_button(AWlPointer: TWlPointer; ASerial: DWord; ATime: DWord; AButton: DWord; AState: DWord);
-    procedure wl_pointer_axis(AWlPointer: TWlPointer; ATime: DWord; AAxis: DWord; AValue: Longint{24.8});
-    procedure wl_pointer_frame(AWlPointer: TWlPointer);
-    procedure wl_pointer_axis_source(AWlPointer: TWlPointer; AAxisSource: DWord);
-    procedure wl_pointer_axis_stop(AWlPointer: TWlPointer; ATime: DWord; AAxis: DWord);
-    procedure wl_pointer_axis_discrete(AWlPointer: TWlPointer; AAxis: DWord; ADiscrete: LongInt);
-    procedure wl_pointer_axis_value120(AWlPointer: TWlPointer; AAxis: DWord; AValue120: LongInt);
-    procedure wl_pointer_axis_relative_direction(AWlPointer: TWlPointer; AAxis: DWord; ADirection: DWord);
+    procedure wl_pointer_axis(AWlPointer: TWlPointer; ATime: DWord; AAxis: DWord; AValue: Twl_fixed);
+    procedure wl_pointer_frame(AWlPointer: TWlPointer); {since: 5}
+    procedure wl_pointer_axis_source(AWlPointer: TWlPointer; AAxisSource: DWord); {since: 5}
+    procedure wl_pointer_axis_stop(AWlPointer: TWlPointer; ATime: DWord; AAxis: DWord); {since: 5}
+    procedure wl_pointer_axis_discrete(AWlPointer: TWlPointer; AAxis: DWord; ADiscrete: LongInt); {since: 5}
+    procedure wl_pointer_axis_value120(AWlPointer: TWlPointer; AAxis: DWord; AValue120: LongInt); {since: 8}
+    procedure wl_pointer_axis_relative_direction(AWlPointer: TWlPointer; AAxis: DWord; ADirection: DWord); {since: 9}
   end;
 
   IWlKeyboardListener = interface
@@ -549,28 +549,28 @@ type
     procedure wl_keyboard_leave(AWlKeyboard: TWlKeyboard; ASerial: DWord; ASurface: TWlSurface);
     procedure wl_keyboard_key(AWlKeyboard: TWlKeyboard; ASerial: DWord; ATime: DWord; AKey: DWord; AState: DWord);
     procedure wl_keyboard_modifiers(AWlKeyboard: TWlKeyboard; ASerial: DWord; AModsDepressed: DWord; AModsLatched: DWord; AModsLocked: DWord; AGroup: DWord);
-    procedure wl_keyboard_repeat_info(AWlKeyboard: TWlKeyboard; ARate: LongInt; ADelay: LongInt);
+    procedure wl_keyboard_repeat_info(AWlKeyboard: TWlKeyboard; ARate: LongInt; ADelay: LongInt); {since: 4}
   end;
 
   IWlTouchListener = interface
   ['IWlTouchListener']
-    procedure wl_touch_down(AWlTouch: TWlTouch; ASerial: DWord; ATime: DWord; ASurface: TWlSurface; AId: LongInt; AX: Longint{24.8}; AY: Longint{24.8});
+    procedure wl_touch_down(AWlTouch: TWlTouch; ASerial: DWord; ATime: DWord; ASurface: TWlSurface; AId: LongInt; AX: Twl_fixed; AY: Twl_fixed);
     procedure wl_touch_up(AWlTouch: TWlTouch; ASerial: DWord; ATime: DWord; AId: LongInt);
-    procedure wl_touch_motion(AWlTouch: TWlTouch; ATime: DWord; AId: LongInt; AX: Longint{24.8}; AY: Longint{24.8});
+    procedure wl_touch_motion(AWlTouch: TWlTouch; ATime: DWord; AId: LongInt; AX: Twl_fixed; AY: Twl_fixed);
     procedure wl_touch_frame(AWlTouch: TWlTouch);
     procedure wl_touch_cancel(AWlTouch: TWlTouch);
-    procedure wl_touch_shape(AWlTouch: TWlTouch; AId: LongInt; AMajor: Longint{24.8}; AMinor: Longint{24.8});
-    procedure wl_touch_orientation(AWlTouch: TWlTouch; AId: LongInt; AOrientation: Longint{24.8});
+    procedure wl_touch_shape(AWlTouch: TWlTouch; AId: LongInt; AMajor: Twl_fixed; AMinor: Twl_fixed); {since: 6}
+    procedure wl_touch_orientation(AWlTouch: TWlTouch; AId: LongInt; AOrientation: Twl_fixed); {since: 6}
   end;
 
   IWlOutputListener = interface
   ['IWlOutputListener']
     procedure wl_output_geometry(AWlOutput: TWlOutput; AX: LongInt; AY: LongInt; APhysicalWidth: LongInt; APhysicalHeight: LongInt; ASubpixel: LongInt; AMake: String; AModel: String; ATransform: LongInt);
     procedure wl_output_mode(AWlOutput: TWlOutput; AFlags: DWord; AWidth: LongInt; AHeight: LongInt; ARefresh: LongInt);
-    procedure wl_output_done(AWlOutput: TWlOutput);
-    procedure wl_output_scale(AWlOutput: TWlOutput; AFactor: LongInt);
-    procedure wl_output_name(AWlOutput: TWlOutput; AName: String);
-    procedure wl_output_description(AWlOutput: TWlOutput; ADescription: String);
+    procedure wl_output_done(AWlOutput: TWlOutput); {since: 2}
+    procedure wl_output_scale(AWlOutput: TWlOutput; AFactor: LongInt); {since: 2}
+    procedure wl_output_name(AWlOutput: TWlOutput; AName: String); {since: 4}
+    procedure wl_output_description(AWlOutput: TWlOutput; ADescription: String); {since: 4}
   end;
 
   IWlRegionListener = interface
@@ -685,8 +685,8 @@ type
     const _ACCEPT = 0;
     const _RECEIVE = 1;
     const _DESTROY = 2;
-    const _FINISH = 3;
-    const _SET_ACTIONS = 4;
+    const _FINISH = 3; { since version: 3}
+    const _SET_ACTIONS = 4; { since version: 3}
   public
     procedure Accept(ASerial: DWord; AMimeType: String);
     procedure Receive(AMimeType: String; AFd: LongInt{fd});
@@ -704,7 +704,7 @@ type
   private
     const _OFFER = 0;
     const _DESTROY = 1;
-    const _SET_ACTIONS = 2;
+    const _SET_ACTIONS = 2; { since version: 3}
   public
     procedure Offer(AMimeType: String);
     destructor Destroy; override;
@@ -720,7 +720,7 @@ type
   private
     const _START_DRAG = 0;
     const _SET_SELECTION = 1;
-    const _RELEASE = 2;
+    const _RELEASE = 2; { since version: 2}
   public
     procedure StartDrag(ASource: TWlDataSource; AOrigin: TWlSurface; AIcon: TWlSurface; ASerial: DWord);
     procedure SetSelection(ASource: TWlDataSource; ASerial: DWord);
@@ -797,10 +797,10 @@ type
     const _SET_OPAQUE_REGION = 4;
     const _SET_INPUT_REGION = 5;
     const _COMMIT = 6;
-    const _SET_BUFFER_TRANSFORM = 7;
-    const _SET_BUFFER_SCALE = 8;
-    const _DAMAGE_BUFFER = 9;
-    const _OFFSET = 10;
+    const _SET_BUFFER_TRANSFORM = 7; { since version: 2}
+    const _SET_BUFFER_SCALE = 8; { since version: 3}
+    const _DAMAGE_BUFFER = 9; { since version: 4}
+    const _OFFSET = 10; { since version: 5}
   public
     destructor Destroy; override;
     procedure Attach(ABuffer: TWlBuffer; AX: LongInt; AY: LongInt);
@@ -825,7 +825,7 @@ type
     const _GET_POINTER = 0;
     const _GET_KEYBOARD = 1;
     const _GET_TOUCH = 2;
-    const _RELEASE = 3;
+    const _RELEASE = 3; { since version: 5}
   public
     function GetPointer(AProxyClass: TWLProxyObjectClass = nil {TWlPointer}): TWlPointer;
     function GetKeyboard(AProxyClass: TWLProxyObjectClass = nil {TWlKeyboard}): TWlKeyboard;
@@ -841,7 +841,7 @@ type
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
     const _SET_CURSOR = 0;
-    const _RELEASE = 1;
+    const _RELEASE = 1; { since version: 3}
   public
     procedure SetCursor(ASerial: DWord; ASurface: TWlSurface; AHotspotX: LongInt; AHotspotY: LongInt);
     procedure Release;
@@ -854,7 +854,7 @@ type
     class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWlKeyboard;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
-    const _RELEASE = 0;
+    const _RELEASE = 0; { since version: 3}
   public
     procedure Release;
     function AddListener(AIntf: IWlKeyboardListener): LongInt;
@@ -866,7 +866,7 @@ type
     class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWlTouch;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
-    const _RELEASE = 0;
+    const _RELEASE = 0; { since version: 3}
   public
     procedure Release;
     function AddListener(AIntf: IWlTouchListener): LongInt;
@@ -878,7 +878,7 @@ type
     class function BindFrom(ARegistry: TWlRegistry; AName: DWord; AVersion: LongInt): TWlOutput;
     constructor Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean = True); override;
   private
-    const _RELEASE = 0;
+    const _RELEASE = 0; { since version: 3}
   public
     procedure Release;
     function AddListener(AIntf: IWlOutputListener): LongInt;
@@ -2042,7 +2042,7 @@ var
 begin
   if AData = nil then Exit;
   AIntf := IWlDataDeviceListener(AData^.ListenerUserData);
-  AIntf.wl_data_device_enter(TWlDataDevice(AData^.PascalObject), ASerial,  TWlSurface(TWLProxyObject.WLToObj(ASurface)), AX, AY,  TWlDataOffer(TWLProxyObject.WLToObj(AId)));
+  AIntf.wl_data_device_enter(TWlDataDevice(AData^.PascalObject), ASerial,  TWlSurface(TWLProxyObject.WLToObj(ASurface)), Twl_fixed(AX), Twl_fixed(AY),  TWlDataOffer(TWLProxyObject.WLToObj(AId)));
 end;
 
 procedure wl_data_device_leave_Intf(AData: PWLUserData; Awl_data_device: Pwl_data_device); cdecl;
@@ -2060,7 +2060,7 @@ var
 begin
   if AData = nil then Exit;
   AIntf := IWlDataDeviceListener(AData^.ListenerUserData);
-  AIntf.wl_data_device_motion(TWlDataDevice(AData^.PascalObject), ATime, AX, AY);
+  AIntf.wl_data_device_motion(TWlDataDevice(AData^.PascalObject), ATime, Twl_fixed(AX), Twl_fixed(AY));
 end;
 
 procedure wl_data_device_drop_Intf(AData: PWLUserData; Awl_data_device: Pwl_data_device); cdecl;
@@ -2168,7 +2168,7 @@ var
 begin
   if AData = nil then Exit;
   AIntf := IWlPointerListener(AData^.ListenerUserData);
-  AIntf.wl_pointer_enter(TWlPointer(AData^.PascalObject), ASerial,  TWlSurface(TWLProxyObject.WLToObj(ASurface)), ASurfaceX, ASurfaceY);
+  AIntf.wl_pointer_enter(TWlPointer(AData^.PascalObject), ASerial,  TWlSurface(TWLProxyObject.WLToObj(ASurface)), Twl_fixed(ASurfaceX), Twl_fixed(ASurfaceY));
 end;
 
 procedure wl_pointer_leave_Intf(AData: PWLUserData; Awl_pointer: Pwl_pointer; ASerial: DWord; ASurface: Pwl_surface); cdecl;
@@ -2186,7 +2186,7 @@ var
 begin
   if AData = nil then Exit;
   AIntf := IWlPointerListener(AData^.ListenerUserData);
-  AIntf.wl_pointer_motion(TWlPointer(AData^.PascalObject), ATime, ASurfaceX, ASurfaceY);
+  AIntf.wl_pointer_motion(TWlPointer(AData^.PascalObject), ATime, Twl_fixed(ASurfaceX), Twl_fixed(ASurfaceY));
 end;
 
 procedure wl_pointer_button_Intf(AData: PWLUserData; Awl_pointer: Pwl_pointer; ASerial: DWord; ATime: DWord; AButton: DWord; AState: DWord); cdecl;
@@ -2204,7 +2204,7 @@ var
 begin
   if AData = nil then Exit;
   AIntf := IWlPointerListener(AData^.ListenerUserData);
-  AIntf.wl_pointer_axis(TWlPointer(AData^.PascalObject), ATime, AAxis, AValue);
+  AIntf.wl_pointer_axis(TWlPointer(AData^.PascalObject), ATime, AAxis, Twl_fixed(AValue));
 end;
 
 procedure wl_pointer_frame_Intf(AData: PWLUserData; Awl_pointer: Pwl_pointer); cdecl;
@@ -2321,7 +2321,7 @@ var
 begin
   if AData = nil then Exit;
   AIntf := IWlTouchListener(AData^.ListenerUserData);
-  AIntf.wl_touch_down(TWlTouch(AData^.PascalObject), ASerial, ATime,  TWlSurface(TWLProxyObject.WLToObj(ASurface)), AId, AX, AY);
+  AIntf.wl_touch_down(TWlTouch(AData^.PascalObject), ASerial, ATime,  TWlSurface(TWLProxyObject.WLToObj(ASurface)), AId, Twl_fixed(AX), Twl_fixed(AY));
 end;
 
 procedure wl_touch_up_Intf(AData: PWLUserData; Awl_touch: Pwl_touch; ASerial: DWord; ATime: DWord; AId: LongInt); cdecl;
@@ -2339,7 +2339,7 @@ var
 begin
   if AData = nil then Exit;
   AIntf := IWlTouchListener(AData^.ListenerUserData);
-  AIntf.wl_touch_motion(TWlTouch(AData^.PascalObject), ATime, AId, AX, AY);
+  AIntf.wl_touch_motion(TWlTouch(AData^.PascalObject), ATime, AId, Twl_fixed(AX), Twl_fixed(AY));
 end;
 
 procedure wl_touch_frame_Intf(AData: PWLUserData; Awl_touch: Pwl_touch); cdecl;
@@ -2366,7 +2366,7 @@ var
 begin
   if AData = nil then Exit;
   AIntf := IWlTouchListener(AData^.ListenerUserData);
-  AIntf.wl_touch_shape(TWlTouch(AData^.PascalObject), AId, AMajor, AMinor);
+  AIntf.wl_touch_shape(TWlTouch(AData^.PascalObject), AId, Twl_fixed(AMajor), Twl_fixed(AMinor));
 end;
 
 procedure wl_touch_orientation_Intf(AData: PWLUserData; Awl_touch: Pwl_touch; AId: LongInt; AOrientation: Longint{24.8}); cdecl;
@@ -2375,7 +2375,7 @@ var
 begin
   if AData = nil then Exit;
   AIntf := IWlTouchListener(AData^.ListenerUserData);
-  AIntf.wl_touch_orientation(TWlTouch(AData^.PascalObject), AId, AOrientation);
+  AIntf.wl_touch_orientation(TWlTouch(AData^.PascalObject), AId, Twl_fixed(AOrientation));
 end;
 
 procedure wl_output_geometry_Intf(AData: PWLUserData; Awl_output: Pwl_output; AX: LongInt; AY: LongInt; APhysicalWidth: LongInt; APhysicalHeight: LongInt; ASubpixel: LongInt; AMake: Pchar; AModel: Pchar; ATransform: LongInt); cdecl;

@@ -104,6 +104,7 @@ type
   private
     FData: Pointer;
     FFd: LongInt;
+    FOwnsFdAndMem: Boolean;
     FSize: LongWord;
     FShm: TWLShmBase;
     procedure SetParams(AFd: LongInt; AData: Pointer; ASize: LongWord; AShm: TWLShmBase);
@@ -112,6 +113,7 @@ type
     procedure  Reallocate(ANewSize: LongWord);
     destructor Destroy; override;
     property   Allocated: LongWord read FSize;
+    property   OwnsFdAndMem: Boolean read FOwnsFdAndMem write FOwnsFdAndMem;
   end;
 
   { TWLShmBase }
@@ -208,7 +210,11 @@ end;
 destructor TWLShmPoolBase.Destroy;
 begin
   inherited Destroy;
-  FpClose(FFd);
+  if FOwnsFdAndMem then
+  begin
+    FpClose(FFd);
+    Fpmunmap(FData, FSize);
+  end;
 end;
 
 
@@ -256,7 +262,7 @@ begin
 
   Result := TWlShm(Self).CreatePool(fd, Asize, AClass);
   Result.SetParams(fd, data, ASize, Self);
-
+  Result.OwnsFdAndMem := True; // free the resources we allocated
 end;
 
 { TWLDisplayBase }
@@ -417,6 +423,8 @@ constructor TWLProxyObject.Create(AProxy: Pwl_proxy; AOwnsProxy: Boolean);
 begin
   FUserDataRec.PascalObject := Self;
   FProxy:=AProxy;
+  if Assigned(FProxy) then
+    wl_proxy_set_user_data(FProxy, @FUserDataRec);
 end;
 
 destructor TWLProxyObject.Destroy;

@@ -40,8 +40,8 @@ type
     procedure xdg_output_v1_logical_position(AXdgOutputV1: TXdgOutputV1; AX: LongInt; AY: LongInt);
     procedure xdg_output_v1_logical_size(AXdgOutputV1: TXdgOutputV1; AWidth: LongInt; AHeight: LongInt);
     procedure xdg_output_v1_done(AXdgOutputV1: TXdgOutputV1);
-    procedure xdg_output_v1_name(AXdgOutputV1: TXdgOutputV1; AName: String);
-    procedure xdg_output_v1_description(AXdgOutputV1: TXdgOutputV1; ADescription: String);
+    procedure xdg_output_v1_name(AXdgOutputV1: TXdgOutputV1; AName: String); {since: 2}
+    procedure xdg_output_v1_description(AXdgOutputV1: TXdgOutputV1; ADescription: String); {since: 2}
   end;
 
 
